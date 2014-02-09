@@ -1,0 +1,4 @@
+#!/bin/bash
+useradd $1
+command="/launch/runCommand $@"
+su $1 -c "$command"

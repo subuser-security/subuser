@@ -1,0 +1,19 @@
+#!/usr/bin/env python
+# This file should be compatible with both Python 2 and 3.
+# If it is not, please file a bug report.
+import sys
+import subprocess
+import os
+
+home = os.path.expanduser("~")
+
+if sys.argv[0] == "help":
+ print("You can use one of the following commands:")
+ subprocess.call(["ls",os.path.join(home,"subuser/logic/subuser-commands")])
+ print("""
+ For more information try issuing:
+ $ subuser command-name help
+ """) 
+else:
+ utilityPath = os.path.join(home,"subuser","logic","subuser-commands",sys.argv[1])
+ subprocess.call([utilityPath]+sys.argv[2:])

@@ -1,0 +1,3 @@
+#!/bin/bash
+cd /home/pwd/
+$2 "${@:3}"

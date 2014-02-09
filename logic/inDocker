@@ -1,0 +1,58 @@
+#!/usr/bin/env python
+# This file should be compatible with both Python 2 and 3.
+# If it is not, please file a bug report.
+
+import subprocess
+import json
+import sys
+import os
+import getpass
+
+programName = sys.argv[1]
+
+dockerImageName = "subuser-"+programName
+
+if len(sys.argv) > 2:
+ args = sys.argv[2:]
+else:
+ args = []
+
+username = getpass.getuser()
+
+cwd = os.getcwd()
+
+home = os.path.expanduser("~")
+
+permissionsFilePath = os.path.join(home,"subuser","subusers",programName,"permissions.json")
+permissionsFile = open(permissionsFilePath,"r")
+
+permissions=json.load(permissionsFile)
+
+if permissions["allow-network-access"]:
+ allowNetworkAccessArg = "--networking=true"
+else:
+ allowNetworkAccessArg = "--networking=false"
+
+executable = permissions["executable"]
+
+setupUserAndRunPath = os.path.join("/launch","setupUserAndRun")
+
+hostSubuserHome = os.path.join(home,"subuser","homes",programName)
+
+if not os.path.exists(hostSubuserHome):
+ os.makedirs(hostSubuserHome)
+
+dockersideScriptsPath = os.path.join(home,"subuser","logic","dockerside-scripts")
+
+dockersideBinPath = "/launch"
+
+dockersidePWDPath = os.path.join("/home","pwd")
+
+volumeArgs = ["-v="+hostSubuserHome+":"+home+":rw"
+ ,"-v="+dockersideScriptsPath+":"+dockersideBinPath+":ro"
+ ,"-v="+cwd+":"+dockersidePWDPath+":rw"]
+
+dockerCommand = ["docker","run","-i","-t","-rm",allowNetworkAccessArg]+volumeArgs+[dockerImageName,setupUserAndRunPath,username,executable]+args
+
+#print(dockerCommand)
+subprocess.call(dockerCommand)

@@ -1,0 +1,67 @@
+#!/usr/bin/env python
+# This file should be compatible with both Python 2 and 3.
+# If it is not, please file a bug report.
+import sys
+
+######################################################
+
+def showHelp():
+ """
+  Display a help message for the install mode of the subuser command.
+ """ 
+ print("""To install a package list it's name:
+ $ subuser install vim
+ """)
+
+def installProgram():
+ """
+ Build the docker image associated with a program and create a tiny executable to add that image to your path.
+ """
+ import os
+ import subprocess
+ 
+ programName = sys.argv[1]
+ print("Installing "+programName)
+
+ # build+tag docker image
+ programDir = getProgramSrcDir(programName)
+ dockerImageDir = os.path.join(programDir,"docker-image")
+ subprocess.call(["docker","build","--tag=subuser-"+programName+"",dockerImageDir])
+
+ # Create a small executable that just calls the real executable in the docker image.
+ redirect="""
+#!/bin/bash
+$HOME/subuser/logic/inDocker """+ programName +" $@"
+ executablePath=getExecutablePath(programName)
+ executableFile = open(executablePath,'w')
+ executableFile.write(redirect)
+ executableFile.close()
+ subprocess.call(["chmod","+x",executablePath])
+ 
+
+def getProgramSrcDir(progName):
+ """
+ Get the directory where the "source" of the application is stored.  That is the permissions list and the docker-image directory.
+ """
+ import os
+ home = os.path.expanduser("~")
+ programSourceDir = os.path.join(home,"subuser","subusers",progName)
+ return programSourceDir
+
+def getExecutablePath(progName):
+ """
+ Get the path to the executable that we will be installing.
+ """
+ import os
+ home = os.path.expanduser("~")
+ executablePath = os.path.join(home,"subuser","bin",progName)
+ return executablePath
+
+##################################################################
+
+if sys.argv[1] == "help":
+ showHelp()
+else:
+ installProgram()
+
+

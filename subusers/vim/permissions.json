@@ -1,0 +1,12 @@
+{
+ "description"  : "A simple powerful text editor"
+ ,"maintainer"  : "Timothy Hobbs <timothyhobbs (at) seznam dot cz>"
+ ,"version"     : "7.3"
+ ,"executable"  : "/usr/bin/vim"
+ ,"user-dirs"   : []
+ ,"system-dirs" : []
+ ,"x11" : false
+ ,"inherit-working-directory" : true
+ ,"allow-network-access" : false
+}
+
