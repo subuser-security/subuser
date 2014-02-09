@@ -1,0 +1,24 @@
+#!/usr/bin/env python
+# This file should be compatible with both Python 2 and 3.
+# If it is not, please file a bug report.
+import sys
+import subprocess
+import os
+
+home = os.path.expanduser("~")
+
+if sys.argv[1] == "available":
+ subusersPath = os.path.join(home,"subuser","subusers")
+ subprocess.call(["ls",subusersPath])
+
+elif sys.argv[1] == "installed":
+ binPath = os.path.join(home,"subuser","bin")
+ subprocess.call(["ls",binPath])
+
+else:
+ print("""You can either list programs availiable for instalation with:
+ $ subuser list available
+
+Or you can list installed programs with:
+ $ subuser list installed
+""")
