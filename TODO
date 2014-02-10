@@ -1,3 +1,5 @@
 sound support - http://www.slideshare.net/dotCloud/dockerizing-your-appli
-update command
-emacs doesn't start
+update command - be recursive
+symlink userdirs into the home directory?
+package-developers guide
+contributing.md document
