@@ -6,6 +6,7 @@ import os
 
 ######################################################
 programName = sys.argv[1]
+home = os.path.expanduser("~")
 ######################################################
 
 def showHelp():
@@ -16,6 +17,21 @@ def showHelp():
  $ subuser install vim
  """)
 
+def registerProgram(programName,programVersion):
+ import os
+ import json
+ programRegistryPath=os.path.join(home,"subuser","installed-programs.json")
+ if os.path.exists(programRegistryPath):
+  programRegistryFile = open(programRegistryPath,"r")
+  programRegistry = json.load(programRegistryFile)
+  programRegistryFile.close()
+ else:
+  programRegistry = {}
+ programRegistry[programName]=programVersion
+ programRegistryFile = open(programRegistryPath,"w")
+ json.dump(programRegistry,programRegistryFile)
+ programRegistryFile.close()
+
 def installProgram():
  """
  Build the docker image associated with a program and create a tiny executable to add that image to your path.
@@ -25,9 +41,6 @@ def installProgram():
  import json
  
  print("Installing "+programName)
-
-
- home = os.path.expanduser("~")
 
  # read permissions.json file
  permissionsFilePath = os.path.join(home,"subuser","subusers",programName,"permissions.json")
@@ -47,15 +60,14 @@ def installProgram():
  subprocess.call(["docker","build","-rm","--tag=subuser-"+programName+"",dockerImageDir])
 
  # Create a small executable that just calls the real executable in the docker image.
- redirect="""
-#!/bin/bash
-$HOME/subuser/logic/inDocker """+ programName +" $@"
+ redirect="""#!/bin/bash
+$HOME/subuser/logic/inDocker """+ programName +" $@\n"
  executablePath=getExecutablePath(programName)
  executableFile = open(executablePath,'w')
  executableFile.write(redirect)
  executableFile.close()
  subprocess.call(["chmod","+x",executablePath])
- 
+ registerProgram(programName,permissions["version"])
 
 def getProgramSrcDir(progName):
  """
