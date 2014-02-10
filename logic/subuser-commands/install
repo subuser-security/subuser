@@ -15,6 +15,9 @@ def showHelp():
  """ 
  print("""To install a package list it's name:
  $ subuser install vim
+
+Options:
+ --from-cache build this image using layers from the cache
  """)
 
 def registerProgram(programName,programVersion):
@@ -50,14 +53,18 @@ def installProgram():
 
  try:
   dependency = permissions["dependency"]
-  subprocess.call(["subuser","install",dependency])
+  subprocess.call(["subuser","install","--from-cache",dependency])
  except KeyError:
   pass
 
  # build+tag docker image
  programDir = getProgramSrcDir(programName)
  dockerImageDir = os.path.join(programDir,"docker-image")
- subprocess.call(["docker","build","-rm","--no-cache=true","--tag=subuser-"+programName+"",dockerImageDir])
+ if fromCache:
+  cacheArg = "--no-cache=false"
+ else: 
+  cacheArg = "--no-cache=true"
+ subprocess.call(["docker","build","-rm",cacheArg,"--tag=subuser-"+programName+"",dockerImageDir])
 
  # Create a small executable that just calls the real executable in the docker image.
  if 'executable' in permissions:
@@ -91,9 +98,19 @@ def getExecutablePath(progName):
 
 ##################################################################
 
+# Should we print a help message
 if sys.argv[1] == "help" or sys.argv[1] == "--help" or sys.argv[1] == "-h":
  showHelp()
-elif not os.path.exists(getProgramSrcDir(programName)):
+ exit()
+
+# Are we to use layers from the cache when building the docker image
+fromCache = False
+if sys.argv[1] == "--from-cache":
+ fromCache = True
+ programName = sys.argv[2]
+
+# Does the program the user wan't installed exist?
+if not os.path.exists(getProgramSrcDir(programName)):
  print(programName+" not available for instaliation.")
  showHelp()
 else:
