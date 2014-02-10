@@ -125,6 +125,8 @@ Design flaws in subuser:
 
 * The security advantages of running x11 apps in docker is *very* iffy at best.
 
+* DBUS/gsettings don't work
+
 * Inheriting the $PWD is a generally shitty idea.  If I run `vim` in my home dir, it can see and edit all of my files.  The only security advantage is if I run `vim` in some subdirectory.
  - I hope this will be fixed by something more sophisticated like giving access only to paths specified in the command line arguments.
 
