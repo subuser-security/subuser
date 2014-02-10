@@ -28,6 +28,8 @@ permissionsFile = open(permissionsFilePath,"r")
 
 permissions=json.load(permissionsFile)
 
+permissionsFile.close()
+
 if permissions["allow-network-access"]:
  allowNetworkAccessArg = "--networking=true"
 else:
@@ -37,7 +39,11 @@ executable = permissions["executable"]
 
 setupUserAndRunPath = os.path.join("/launch","setupUserAndRun")
 
-hostSubuserHome = os.path.join(home,"subuser","homes",programName)
+try:
+ sharedHome = permissions["shared-home"]
+ hostSubuserHome = os.path.join(home,"subuser","homes",sharedHome)
+except KeyError:
+ hostSubuserHome = os.path.join(home,"subuser","homes",programName)
 
 if not os.path.exists(hostSubuserHome):
  os.makedirs(hostSubuserHome)

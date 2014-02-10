@@ -78,6 +78,10 @@ Create an `permissions.json` file with the following form:
  ,"maintainer"  : "Timothy Hobbs <timothyhobbs (at) seznam dot cz>"
  ,"executable"  : "/usr/bin/vim"
     // Path to executable within the docker image.
+ //,"shared-home" : "emacs"
+    // Optional property: use a home dir which bellongs to some other program.  Good for sharing data between the two
+ //,"dependency"  : "some-program"
+    // Optional property: build some-program first so that this program's docker image can be built FROM the dependency to save space
  ,"user-dirs" : []
     // A list of directories in the users home directory that this application should have read-write access to.
     //These are relative paths, Ex: "Downloads" instead of "$HOME/Downloads".
