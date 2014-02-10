@@ -2,7 +2,10 @@
 # This file should be compatible with both Python 2 and 3.
 # If it is not, please file a bug report.
 import sys
+import os
 
+######################################################
+programName = sys.argv[1]
 ######################################################
 
 def showHelp():
@@ -21,7 +24,6 @@ def installProgram():
  import subprocess
  import json
  
- programName = sys.argv[1]
  print("Installing "+programName)
 
 
@@ -75,7 +77,10 @@ def getExecutablePath(progName):
 
 ##################################################################
 
-if sys.argv[1] == "help":
+if sys.argv[1] == "help" or sys.argv[1] == "--help" or sys.argv[1] == "-h":
+ showHelp()
+elif not os.path.exists(getProgramSrcDir(programName)):
+ print(programName+" not available for instaliation.")
  showHelp()
 else:
  installProgram()
