@@ -97,9 +97,18 @@ try:
 except KeyError:
  userDirVolumeArgs = []
 
+try:
+ inheritWorkingDirectory = permissions["inherit-working-directory"]
+except KeyError:
+ inheritWorkingDirectory = False
+
+if inheritWorkingDirectory:
+ workingDirectoryVolumeArg = ["-v="+cwd+":/home/pwd:rw"]
+else:
+ workingDirectoryVolumeArg = []
+
 volumeArgs = ["-v="+hostSubuserHome+":"+home+":rw"
- ,"-v="+dockersideScriptsPath+":"+dockersideBinPath+":ro"
- ,"-v="+cwd+":"+dockersidePWDPath+":rw"] + systemDirVolumeArgs + userDirVolumeArgs
+ ,"-v="+dockersideScriptsPath+":"+dockersideBinPath+":ro"] + workingDirectoryVolumeArg + systemDirVolumeArgs + userDirVolumeArgs
 
 
 dockerCommand = ["docker","run","-i","-t","-rm",allowNetworkAccessArg]+volumeArgs+x11Args+soundArgs+[dockerImageName,setupUserAndRunPath,username,executable]+args
