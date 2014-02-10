@@ -79,16 +79,16 @@ Create an `permissions.json` file with the following form:
  ,"executable"  : "/usr/bin/vim"
     // Path to executable within the docker image.
  //,"shared-home" : "emacs"
-    // Optional property: use a home dir which bellongs to some other program.  Good for sharing data between the two
+    // Optional: use a home dir which bellongs to some other program.  Good for sharing data between the two
  //,"dependency"  : "some-program"
-    // Optional property: build some-program first so that this program's docker image can be built FROM the dependency to save space
+    // Optional: build some-program first so that this program's docker image can be built FROM the dependency to save space
  ,"user-dirs" : []
-    // A list of directories in the users home directory that this application should have read-write access to.
+    // Optional: A list of directories in the users home directory that this application should have read-write access to.
     //These are relative paths, Ex: "Downloads" instead of "$HOME/Downloads".
  ,"system-dirs" : []
-    // A list of directories that this application should have read only access to.  Absolute paths: Ex: "/usr"
+    // Optional: A list of directories that this application should have read only access to.  Absolute paths: Ex: "/usr"
  ,"x11" : false
-    // This program displays an x11 window.
+    // Optional: This program displays an x11 window.
  ,"inherit-working-directory" : true
     // Should this program be able to read-write to the directory from which it was called.
  ,"allow-network-access" : false
@@ -118,8 +118,6 @@ Design flaws in subuser:
 ------------------------
 
 * Application startup time is significantly slowed
-
-* Running X11 programs through ssh on a local machine is just weird
 
 * Certain things involving sharing of data between applications, like the clipboard in `vim`, just won't work.
 

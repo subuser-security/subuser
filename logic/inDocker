@@ -66,11 +66,17 @@ dockersideScriptsPath = os.path.join(home,"subuser","logic","dockerside-scripts"
 dockersideBinPath = "/launch"
 dockersidePWDPath = os.path.join("/home","pwd")
 
-systemDirs = permissions["system-dirs"]
-systemDirVolumeArgs = makeSystemDirVolumeArgs(systemDirs)
+try:
+ systemDirs = permissions["system-dirs"]
+ systemDirVolumeArgs = makeSystemDirVolumeArgs(systemDirs)
+except KeyError:
+ systemDirVolumeArgs = []
 
-userDirs = permissions["user-dirs"]
-userDirVolumeArgs = makeUserDirVolumeArgs(userDirs)
+try:
+ userDirs = permissions["user-dirs"]
+ userDirVolumeArgs = makeUserDirVolumeArgs(userDirs)
+except KeyError:
+ userDirVolumeArgs = []
 
 volumeArgs = ["-v="+hostSubuserHome+":"+home+":rw"
  ,"-v="+dockersideScriptsPath+":"+dockersideBinPath+":ro"
