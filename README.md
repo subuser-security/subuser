@@ -121,8 +121,6 @@ Design flaws in subuser:
 
 * Certain things involving sharing of data between applications, like the clipboard in `vim`, just won't work.
 
-* Sound. I've got no idea...
-
 * Inheriting the $PWD is a generally shitty idea.  If I run `vim` in my home dir, it can see and edit all of my files.  The only security advantage is if I run `vim` in some subdirectory.
  - I hope this will be fixed by something more sophisticated like giving access only to paths specified in the command line arguments.
 
