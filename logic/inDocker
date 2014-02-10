@@ -48,7 +48,7 @@ def makeSystemDirVolumeArgs(systemDirs):
 
 def makeUserDirVolumeArgs(userDirs):
  return ["-v="+os.path.join(home,userDir)+":"+os.path.join("/userdirs/",userDir)+":rw" for userDir in userDirs]
-
+ 
 ################################################################
 dockerImageName = "subuser-"+programName
 
@@ -91,8 +91,14 @@ try:
 except KeyError:
  systemDirVolumeArgs = []
 
+def setupUserDirSymlinks(userDirs):
+ """ Create symlinks to userdirs in program's home dir. """
+ for userDir in userDirs:
+  os.symlink(os.path.join("/userdirs/",userDir),os.path.join(hostSubuserHome,userDir))
+
 try:
  userDirs = permissions["user-dirs"]
+ setupUserDirSymlinks(userDirs)
  userDirVolumeArgs = makeUserDirVolumeArgs(userDirs)
 except KeyError:
  userDirVolumeArgs = []
