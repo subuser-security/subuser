@@ -42,7 +42,7 @@ def installProgram():
  # build+tag docker image
  programDir = getProgramSrcDir(programName)
  dockerImageDir = os.path.join(programDir,"docker-image")
- subprocess.call(["docker","build","--tag=subuser-"+programName+"",dockerImageDir])
+ subprocess.call(["docker","build","-rm","--tag=subuser-"+programName+"",dockerImageDir])
 
  # Create a small executable that just calls the real executable in the docker image.
  redirect="""

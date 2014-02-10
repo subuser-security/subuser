@@ -1,0 +1,35 @@
+#!/usr/bin/env python
+# This file should be compatible with both Python 2 and 3.
+# If it is not, please file a bug report.
+import sys
+import subprocess
+import os
+#######################################################
+home = os.path.expanduser("~")
+programName = sys.argv[1]
+#######################################################
+def printHelp():
+ print("Issue the `subuser uninstall program-name` command to uninstall a program. NOTE: this operation does not remove that program's home directory.")
+
+def programExecutablePath(programName):
+ return os.path.join(home,"subuser","bin",programName)
+
+def programInstalled(programName):
+ return os.path.exists(programExecutablePath(programName))
+
+def uninstall(programName):
+ subprocess.call(["docker","rmi","subuser-"+programName])
+ os.remove(programExecutablePath(programName))
+ print("The program has been uninstalled but it's home directory remains:")
+ programHomeDir=os.path.join(home,"subuser","homes",programName)
+ print(programHomeDir)
+
+#######################################################
+
+if programName == "--help" or programName == "-h":
+ printHelp()
+elif not programInstalled(programName):
+ print("Could not uninstall "+programName+" program is not installed.")
+ printHelp()
+else:
+ uninstall(programName)
