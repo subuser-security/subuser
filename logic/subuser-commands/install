@@ -60,13 +60,15 @@ def installProgram():
  subprocess.call(["docker","build","-rm","--no-cache=true","--tag=subuser-"+programName+"",dockerImageDir])
 
  # Create a small executable that just calls the real executable in the docker image.
- redirect="""#!/bin/bash
+ if 'executable' in permissions:
+  redirect="""#!/bin/bash
 $HOME/subuser/logic/inDocker """+ programName +" $@\n"
- executablePath=getExecutablePath(programName)
- executableFile = open(executablePath,'w')
- executableFile.write(redirect)
- executableFile.close()
- subprocess.call(["chmod","+x",executablePath])
+  executablePath=getExecutablePath(programName)
+  executableFile = open(executablePath,'w')
+  executableFile.write(redirect)
+  executableFile.close()
+  subprocess.call(["chmod","+x",executablePath])
+ 
  registerProgram(programName,permissions["version"])
 
 def getProgramSrcDir(progName):

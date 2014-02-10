@@ -4,6 +4,7 @@
 import sys
 import subprocess
 import os
+import json
 
 home = os.path.expanduser("~")
 
@@ -12,8 +13,11 @@ if sys.argv[1] == "available":
  subprocess.call(["ls",subusersPath])
 
 elif sys.argv[1] == "installed":
- binPath = os.path.join(home,"subuser","bin")
- subprocess.call(["ls",binPath])
+ installedProgramsPath = os.path.join(home,"subuser","installed-programs.json")
+ installedProgramsFile = open(installedProgramsPath,"r")
+ installedPrograms     = json.load(installedProgramsFile)
+ for program, version in installedPrograms.iteritems():
+  print(program)
 
 else:
  print("""You can either list programs availiable for instalation with:
