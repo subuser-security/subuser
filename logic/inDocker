@@ -43,6 +43,11 @@ def setupHostSubuserHome(home):
  if not os.path.exists(home):
   os.makedirs(home)
 
+def makeSystemDirVolumeArgs(systemDirs):
+ return ["-v="+systemDir+":"+systemDir+":ro" for systemDir in systemDirs]
+
+def makeUserDirVolumeArgs(userDirs):
+ return ["-v="+os.path.join(home,userDir)+":"+os.path.join("/userdirs/",userDir)+":rw" for userDir in userDirs]
 
 ################################################################
 dockerImageName = "subuser-"+programName
@@ -61,9 +66,16 @@ dockersideScriptsPath = os.path.join(home,"subuser","logic","dockerside-scripts"
 dockersideBinPath = "/launch"
 dockersidePWDPath = os.path.join("/home","pwd")
 
+systemDirs = permissions["system-dirs"]
+systemDirVolumeArgs = makeSystemDirVolumeArgs(systemDirs)
+
+userDirs = permissions["user-dirs"]
+userDirVolumeArgs = makeUserDirVolumeArgs(userDirs)
+
 volumeArgs = ["-v="+hostSubuserHome+":"+home+":rw"
  ,"-v="+dockersideScriptsPath+":"+dockersideBinPath+":ro"
- ,"-v="+cwd+":"+dockersidePWDPath+":rw"]
+ ,"-v="+cwd+":"+dockersidePWDPath+":rw"] + systemDirVolumeArgs + userDirVolumeArgs
+
 
 dockerCommand = ["docker","run","-i","-t","-rm",allowNetworkAccessArg]+volumeArgs+[dockerImageName,setupUserAndRunPath,username,executable]+args
 
