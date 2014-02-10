@@ -1,0 +1,14 @@
+{
+ "description"  : "A trivial terminal emulator"
+ ,"maintainer"  : "Timothy Hobbs <timothyhobbs (at) seznam dot cz>"
+ ,"version"     : "271"
+ ,"dependency"  : "x11"
+ ,"executable"  : "/usr/bin/xterm"
+ ,"user-dirs"   : []
+ ,"system-dirs" : []
+ ,"x11" : true
+ ,"sound" : false
+ ,"inherit-working-directory" : true
+ ,"allow-network-access" : true
+}
+
