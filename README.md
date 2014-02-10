@@ -89,6 +89,8 @@ Create an `permissions.json` file with the following form:
     // Optional: A list of directories that this application should have read only access to.  Absolute paths: Ex: "/usr"
  ,"x11" : false
     // Optional: This program displays an x11 window.
+ ,"sound" : false
+    // Optional: Give this program access to your soundcard?
  ,"inherit-working-directory" : true
     // Should this program be able to read-write to the directory from which it was called.
  ,"allow-network-access" : false
@@ -120,6 +122,8 @@ Design flaws in subuser:
 * Application startup time is significantly slowed
 
 * Certain things involving sharing of data between applications, like the clipboard in `vim`, just won't work.
+
+* The security advantages of running x11 apps in docker is *very* iffy at best.
 
 * Inheriting the $PWD is a generally shitty idea.  If I run `vim` in my home dir, it can see and edit all of my files.  The only security advantage is if I run `vim` in some subdirectory.
  - I hope this will be fixed by something more sophisticated like giving access only to paths specified in the command line arguments.

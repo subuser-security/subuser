@@ -67,6 +67,25 @@ dockersideBinPath = "/launch"
 dockersidePWDPath = os.path.join("/home","pwd")
 
 try:
+ x11Enabled = permissions["x11"]
+except KeyError:
+ x11Enabled = False
+
+if x11Enabled:
+ x11Args = ["-e","DISPLAY=unix"+os.environ['DISPLAY'],"-v=/tmp/.X11-unix:/tmp/.X11-unix:rw"]
+else: x11Args = []
+
+try:
+ soundEnabled = permissions["sound"]
+except KeyError:
+ soundEnabled = False
+
+if soundEnabled:
+ soundArgs =  ["-v=/dev/snd:/dev/snd:rw","-lxc-conf='lxc.cgroup.devices.allow = c 116:* rwm'"]
+else:
+ soundArgs = []
+
+try:
  systemDirs = permissions["system-dirs"]
  systemDirVolumeArgs = makeSystemDirVolumeArgs(systemDirs)
 except KeyError:
@@ -83,7 +102,7 @@ volumeArgs = ["-v="+hostSubuserHome+":"+home+":rw"
  ,"-v="+cwd+":"+dockersidePWDPath+":rw"] + systemDirVolumeArgs + userDirVolumeArgs
 
 
-dockerCommand = ["docker","run","-i","-t","-rm",allowNetworkAccessArg]+volumeArgs+[dockerImageName,setupUserAndRunPath,username,executable]+args
+dockerCommand = ["docker","run","-i","-t","-rm",allowNetworkAccessArg]+volumeArgs+x11Args+soundArgs+[dockerImageName,setupUserAndRunPath,username,executable]+args
 
 #print(dockerCommand)
 subprocess.call(dockerCommand)
