@@ -14,15 +14,22 @@ def printHelp():
 def programExecutablePath(programName):
  return os.path.join(home,"subuser","bin",programName)
 
-def programInstalled(programName):
- return os.path.exists(programExecutablePath(programName))
-
-def unregister(programName):
+def readProgramRegistry():
  import json
  programRegistryPath=os.path.join(home,"subuser","installed-programs.json")
  programRegistryFile=open(programRegistryPath,"r")
  programRegistry=json.load(programRegistryFile)
  programRegistryFile.close()
+ return programRegistry
+
+programRegistry = readProgramRegistry()
+
+def programInstalled(programName):
+ return programName in programRegistry
+
+def unregister(programName):
+ import json
+ programRegistryPath=os.path.join(home,"subuser","installed-programs.json")
  del programRegistry[programName]
  programRegistryFile=open(programRegistryPath,"w")
  json.dump(programRegistry,programRegistryFile)
@@ -30,7 +37,12 @@ def unregister(programName):
 
 def uninstall(programName):
  subprocess.call(["docker","rmi","subuser-"+programName])
- os.remove(programExecutablePath(programName))
+
+ try:
+  os.remove(programExecutablePath(programName))
+ except OSError:
+  pass
+
  unregister(programName)
  print("The program has been uninstalled but it's home directory remains:")
  programHomeDir=os.path.join(home,"subuser","homes",programName)
