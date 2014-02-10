@@ -1,7 +1,7 @@
 {
  "description"  : "The git version controll system"
  ,"maintainer"  : "Timothy Hobbs <timothyhobbs (at) seznam dot cz>"
- ,"version"     : "7.3"
+ ,"version"     : "1.7.9.5"
  ,"executable"  : "/usr/bin/git"
  ,"user-dirs"   : []
  ,"system-dirs" : []
