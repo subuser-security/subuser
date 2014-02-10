@@ -1,3 +1,3 @@
-FROM ubuntu
+FROM subuser-x11
 RUN apt-get update
 RUN apt-get install -y firefox

@@ -3,6 +3,7 @@
  ,"maintainer"  : "Timothy Hobbs <timothyhobbs (at) seznam dot cz>"
  ,"version"     : "26.0"
  ,"executable"  : "/usr/bin/firefox"
+ ,"dependency"  : "x11"
  ,"user-dirs"   : ["Downloads"]
  ,"system-dirs" : []
  ,"x11" : true
