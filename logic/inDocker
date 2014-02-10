@@ -7,51 +7,58 @@ import json
 import sys
 import os
 import getpass
-
+###############################################################
 programName = sys.argv[1]
+username = getpass.getuser()
+cwd = os.getcwd()
+home = os.path.expanduser("~")
+###############################################################
+def getArgsToPassToProgram():
+ if len(sys.argv) > 2:
+  return sys.argv[2:]
+ else:
+  return []
 
+def readPermissionsFile():
+ permissionsFilePath = os.path.join(home,"subuser","subusers",programName,"permissions.json")
+ permissionsFile = open(permissionsFilePath,"r")
+ permissions=json.load(permissionsFile)
+ permissionsFile.close()
+ return permissions
+
+def getAllowNetworkAccessArg(permissions):
+ if permissions["allow-network-access"]:
+  return "--networking=true"
+ else:
+  return "--networking=false"
+
+def getHostSubuserHome(permissions):
+ try:
+  sharedHome = permissions["shared-home"]
+  return os.path.join(home,"subuser","homes",sharedHome)
+ except KeyError:
+  return os.path.join(home,"subuser","homes",programName)
+
+def setupHostSubuserHome(home):
+ if not os.path.exists(home):
+  os.makedirs(home)
+
+
+################################################################
 dockerImageName = "subuser-"+programName
 
-if len(sys.argv) > 2:
- args = sys.argv[2:]
-else:
- args = []
+args=getArgsToPassToProgram()
 
-username = getpass.getuser()
+permissions = readPermissionsFile()
 
-cwd = os.getcwd()
-
-home = os.path.expanduser("~")
-
-permissionsFilePath = os.path.join(home,"subuser","subusers",programName,"permissions.json")
-permissionsFile = open(permissionsFilePath,"r")
-
-permissions=json.load(permissionsFile)
-
-permissionsFile.close()
-
-if permissions["allow-network-access"]:
- allowNetworkAccessArg = "--networking=true"
-else:
- allowNetworkAccessArg = "--networking=false"
-
+allowNetworkAccessArg = getAllowNetworkAccessArg(permissions)
 executable = permissions["executable"]
-
 setupUserAndRunPath = os.path.join("/launch","setupUserAndRun")
-
-try:
- sharedHome = permissions["shared-home"]
- hostSubuserHome = os.path.join(home,"subuser","homes",sharedHome)
-except KeyError:
- hostSubuserHome = os.path.join(home,"subuser","homes",programName)
-
-if not os.path.exists(hostSubuserHome):
- os.makedirs(hostSubuserHome)
+hostSubuserHome = getHostSubuserHome(permissions)
+setupHostSubuserHome(hostSubuserHome)
 
 dockersideScriptsPath = os.path.join(home,"subuser","logic","dockerside-scripts")
-
 dockersideBinPath = "/launch"
-
 dockersidePWDPath = os.path.join("/home","pwd")
 
 volumeArgs = ["-v="+hostSubuserHome+":"+home+":rw"
