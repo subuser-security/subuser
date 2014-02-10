@@ -7,13 +7,19 @@ import os
 
 home = os.path.expanduser("~")
 
-if sys.argv[0] == "help":
+def printHelp():
  print("You can use one of the following commands:")
  subprocess.call(["ls",os.path.join(home,"subuser/logic/subuser-commands")])
- print("""
- For more information try issuing:
- $ subuser command-name help
- """) 
-else:
- utilityPath = os.path.join(home,"subuser","logic","subuser-commands",sys.argv[1])
- subprocess.call([utilityPath]+sys.argv[2:])
+
+if sys.argv[1] == "help" or sys.argv[1] == "--help" or sys.argv[1] == "-h":
+ printHelp()
+ exit()
+
+utilityPath = os.path.join(home,"subuser","logic","subuser-commands",sys.argv[1])
+
+if not os.path.exists(utilityPath):
+ print("Command not found:"+sys.argv[1])
+ printHelp()
+ exit()
+ 
+subprocess.call([utilityPath]+sys.argv[2:])
