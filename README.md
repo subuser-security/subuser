@@ -25,7 +25,7 @@ Subuser is just Docker in a pretty skirt:
 
 Subuser is meant to be easilly installed and in and of itself technically insignificant.  It is *just* a wrapper around docker, nothing more.
 
-Subuser launches docker containers with [volumes](http://docs.docker.io/en/latest/use/working_with_volumes/) shared between the host and the child container.  For X11 apps it uses X11 over ssh. That's all.
+Subuser launches docker containers with [volumes](http://docs.docker.io/en/latest/use/working_with_volumes/) shared between the host and the child container. That's all.
 
 Installing subuser:
 -------------------
