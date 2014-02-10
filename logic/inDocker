@@ -94,7 +94,10 @@ except KeyError:
 def setupUserDirSymlinks(userDirs):
  """ Create symlinks to userdirs in program's home dir. """
  for userDir in userDirs:
-  os.symlink(os.path.join("/userdirs/",userDir),os.path.join(hostSubuserHome,userDir))
+  source = os.path.join("/userdirs/",userDir)
+  destination = os.path.join(hostSubuserHome,userDir)
+  if not os.path.islink(destination):
+   os.symlink(source,destination)
 
 try:
  userDirs = permissions["user-dirs"]
