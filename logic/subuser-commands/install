@@ -19,9 +19,25 @@ def installProgram():
  """
  import os
  import subprocess
+ import json
  
  programName = sys.argv[1]
  print("Installing "+programName)
+
+
+ home = os.path.expanduser("~")
+
+ # read permissions.json file
+ permissionsFilePath = os.path.join(home,"subuser","subusers",programName,"permissions.json")
+ permissionsFile = open(permissionsFilePath,"r")
+ permissions=json.load(permissionsFile)
+ permissionsFile.close()
+
+ try:
+  dependency = permissions["dependency"]
+  subprocess.call(["subuser","install",dependency])
+ except KeyError:
+  pass
 
  # build+tag docker image
  programDir = getProgramSrcDir(programName)
