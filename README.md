@@ -49,7 +49,7 @@ Installing a program with subuser:
 You can see a list of instalable programs by doing:
 
 ````
-$ subuser list availiable
+$ subuser list available
 ````
 
 You can install one of these programs with:
