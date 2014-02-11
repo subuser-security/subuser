@@ -9,8 +9,8 @@ import json
 home = os.path.expanduser("~")
 
 if sys.argv[1] == "available":
- subusersPath = os.path.join(home,"subuser","subusers")
- subprocess.call(["ls",subusersPath])
+ availableProgramsPath = os.path.join(home,"subuser","programsThatCanBeInstalled")
+ subprocess.call(["ls",availableProgramsPath])
 
 elif sys.argv[1] == "installed":
  installedProgramsPath = os.path.join(home,"subuser","installed-programs.json")

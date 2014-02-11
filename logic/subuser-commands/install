@@ -46,7 +46,7 @@ def installProgram():
  print("Installing "+programName)
 
  # read permissions.json file
- permissionsFilePath = os.path.join(home,"subuser","subusers",programName,"permissions.json")
+ permissionsFilePath = os.path.join(home,"subuser","programsThatCanBeInstalled",programName,"permissions.json")
  permissionsFile = open(permissionsFilePath,"r")
  permissions=json.load(permissionsFile)
  permissionsFile.close()
@@ -84,7 +84,7 @@ def getProgramSrcDir(progName):
  """
  import os
  home = os.path.expanduser("~")
- programSourceDir = os.path.join(home,"subuser","subusers",progName)
+ programSourceDir = os.path.join(home,"subuser","programsThatCanBeInstalled",progName)
  return programSourceDir
 
 def getExecutablePath(progName):

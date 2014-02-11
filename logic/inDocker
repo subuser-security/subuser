@@ -20,7 +20,7 @@ def getArgsToPassToProgram():
   return []
 
 def readPermissionsFile():
- permissionsFilePath = os.path.join(home,"subuser","subusers",programName,"permissions.json")
+ permissionsFilePath = os.path.join(home,"subuser","programsThatCanBeInstalled",programName,"permissions.json")
  permissionsFile = open(permissionsFilePath,"r")
  permissions=json.load(permissionsFile)
  permissionsFile.close()

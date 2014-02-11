@@ -61,10 +61,10 @@ $ subuser install vim
 Installing programs not yet in the database:
 ----------------------------------------
 
-Create a new installation directory for your program.
+Add a new installation directory for your program to the `programsThatCanBeInstalled` directory.
 
 ````
-$ cd ~/subuser/subusers
+$ cd ~/subuser/programsThatCanBeInstalled
 $ mkdir executable-name
 $ cd executable-name
 $ mkdir docker-image
@@ -113,7 +113,7 @@ $ subuser uninstall vim
 To remove any settings and configuration files:
 
 ````
-$ rm -r ~/subuser/subuser-home/vim
+$ rm -r ~/subuser/homes/vim
 ````
 
 Design flaws/bugs in subuser:
