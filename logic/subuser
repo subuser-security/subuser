@@ -4,22 +4,29 @@
 import sys
 import subprocess
 import os
+import subuserCommands.subuserlib.paths
 
-home = os.path.expanduser("~")
+def isCommand(command):
+ if command == "__init__.py": return False
+ if command == "__init__.pyc": return False
+ if command == "subdirlib": return False
+ return True
 
 def printHelp():
  print("You can use one of the following commands:")
- subprocess.call(["ls",os.path.join(home,"subuser/logic/subuser-commands")])
+ for command in os.listdir(subuserCommands.subuserlib.paths.getSubuserCommandsPath()):
+  if isCommand(command):
+   print(command)
 
-if sys.argv[1] == "help" or sys.argv[1] == "--help" or sys.argv[1] == "-h":
+if len(sys.argv) < 2 or sys.argv[1] == "help" or sys.argv[1] == "--help" or sys.argv[1] == "-h":
  printHelp()
  exit()
 
-utilityPath = os.path.join(home,"subuser","logic","subuser-commands",sys.argv[1])
+commandExecutablePath = subuserCommands.subuserlib.paths.getSubuserCommandPath(sys.argv[1])
 
-if not os.path.exists(utilityPath):
+if not os.path.exists(commandExecutablePath):
  print("Command not found:"+sys.argv[1])
  printHelp()
  exit()
  
-subprocess.call([utilityPath]+sys.argv[2:])
+subprocess.call([commandExecutablePath]+sys.argv[2:])

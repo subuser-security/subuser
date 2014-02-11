@@ -3,20 +3,16 @@
 # If it is not, please file a bug report.
 import sys
 import subprocess
-import os
-import json
+import subuserlib.registry
+import subuserlib.paths
 
-home = os.path.expanduser("~")
 
 if sys.argv[1] == "available":
- availableProgramsPath = os.path.join(home,"subuser","programsThatCanBeInstalled")
+ availableProgramsPath = subuserlib.paths.getAvailableProgramsPath()
  subprocess.call(["ls",availableProgramsPath])
 
 elif sys.argv[1] == "installed":
- installedProgramsPath = os.path.join(home,"subuser","installed-programs.json")
- installedProgramsFile = open(installedProgramsPath,"r")
- installedPrograms     = json.load(installedProgramsFile)
- installedProgramsFile.close()
+ installedPrograms = subuserlib.registry.getInstalledPrograms()
  for program, version in installedPrograms.iteritems():
   print(program)
 

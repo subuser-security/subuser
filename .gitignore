@@ -2,3 +2,4 @@ installed-programs.json
 bin/*
 homes/*
 *.swp
+*.pyc

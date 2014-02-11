@@ -3,6 +3,8 @@
 # If it is not, please file a bug report.
 import sys
 import os
+import subuserlib.availablePrograms
+import subuserlib.registry
 
 ######################################################
 programName = sys.argv[1]
@@ -20,21 +22,6 @@ Options:
  --from-cache build this image using layers from the cache
  """)
 
-def registerProgram(programName,programVersion):
- import os
- import json
- programRegistryPath=os.path.join(home,"subuser","installed-programs.json")
- if os.path.exists(programRegistryPath):
-  programRegistryFile = open(programRegistryPath,"r")
-  programRegistry = json.load(programRegistryFile)
-  programRegistryFile.close()
- else:
-  programRegistry = {}
- programRegistry[programName]=programVersion
- programRegistryFile = open(programRegistryPath,"w")
- json.dump(programRegistry,programRegistryFile)
- programRegistryFile.close()
-
 def installProgram():
  """
  Build the docker image associated with a program and create a tiny executable to add that image to your path.
@@ -42,23 +29,22 @@ def installProgram():
  import os
  import subprocess
  import json
- 
+ import subuserlib.permissions
+ import subuserlib.paths
+
  print("Installing "+programName)
 
- # read permissions.json file
- permissionsFilePath = os.path.join(home,"subuser","programsThatCanBeInstalled",programName,"permissions.json")
- permissionsFile = open(permissionsFilePath,"r")
- permissions=json.load(permissionsFile)
- permissionsFile.close()
+ permissions = subuserlib.permissions.getPermissions(programName)
 
  try:
   dependency = permissions["dependency"]
-  subprocess.call(["subuser","install","--from-cache",dependency])
+  if not subuserlib.registry.isProgramInstalled(dependency):
+   subprocess.call(["subuser","install","--from-cache",dependency])
  except KeyError:
   pass
 
  # build+tag docker image
- programDir = getProgramSrcDir(programName)
+ programDir = subuserlib.paths.getProgramSrcDir(programName)
  dockerImageDir = os.path.join(programDir,"docker-image")
  if fromCache:
   cacheArg = "--no-cache=false"
@@ -69,32 +55,14 @@ def installProgram():
  # Create a small executable that just calls the real executable in the docker image.
  if 'executable' in permissions:
   redirect="""#!/bin/bash
-$HOME/subuser/logic/inDocker """+ programName +" $@\n"
-  executablePath=getExecutablePath(programName)
+subuser run """+ programName +" $@\n"
+  executablePath=subuserlib.paths.getExecutablePath(programName)
   executableFile = open(executablePath,'w')
   executableFile.write(redirect)
   executableFile.close()
   subprocess.call(["chmod","+x",executablePath])
  
- registerProgram(programName,permissions["version"])
-
-def getProgramSrcDir(progName):
- """
- Get the directory where the "source" of the application is stored.  That is the permissions list and the docker-image directory.
- """
- import os
- home = os.path.expanduser("~")
- programSourceDir = os.path.join(home,"subuser","programsThatCanBeInstalled",progName)
- return programSourceDir
-
-def getExecutablePath(progName):
- """
- Get the path to the executable that we will be installing.
- """
- import os
- home = os.path.expanduser("~")
- executablePath = os.path.join(home,"subuser","bin",progName)
- return executablePath
+ subuserlib.registry.registerProgram(programName,permissions["version"])
 
 ##################################################################
 
@@ -110,7 +78,7 @@ if sys.argv[1] == "--from-cache":
  programName = sys.argv[2]
 
 # Does the program the user wan't installed exist?
-if not os.path.exists(getProgramSrcDir(programName)):
+if not subuserlib.availablePrograms.available(programName):
  print(programName+" not available for instaliation.")
  showHelp()
 else:

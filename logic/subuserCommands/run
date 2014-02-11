@@ -3,10 +3,10 @@
 # If it is not, please file a bug report.
 
 import subprocess
-import json
 import sys
 import os
 import getpass
+import subuserlib.permissions
 ###############################################################
 programName = sys.argv[1]
 username = getpass.getuser()
@@ -19,25 +19,11 @@ def getArgsToPassToProgram():
  else:
   return []
 
-def readPermissionsFile():
- permissionsFilePath = os.path.join(home,"subuser","programsThatCanBeInstalled",programName,"permissions.json")
- permissionsFile = open(permissionsFilePath,"r")
- permissions=json.load(permissionsFile)
- permissionsFile.close()
- return permissions
-
 def getAllowNetworkAccessArg(permissions):
  if permissions["allow-network-access"]:
   return "--networking=true"
  else:
   return "--networking=false"
-
-def getHostSubuserHome(permissions):
- try:
-  sharedHome = permissions["shared-home"]
-  return os.path.join(home,"subuser","homes",sharedHome)
- except KeyError:
-  return os.path.join(home,"subuser","homes",programName)
 
 def setupHostSubuserHome(home):
  if not os.path.exists(home):
@@ -54,15 +40,15 @@ dockerImageName = "subuser-"+programName
 
 args=getArgsToPassToProgram()
 
-permissions = readPermissionsFile()
+permissions = subuserlib.permissions.getPermissions(programName)
 
 allowNetworkAccessArg = getAllowNetworkAccessArg(permissions)
 executable = permissions["executable"]
 setupUserAndRunPath = os.path.join("/launch","setupUserAndRun")
-hostSubuserHome = getHostSubuserHome(permissions)
+hostSubuserHome = subuserlib.paths.getProgramHomeDirOnHost(programName)
 setupHostSubuserHome(hostSubuserHome)
 
-dockersideScriptsPath = os.path.join(home,"subuser","logic","dockerside-scripts")
+dockersideScriptsPath = subuserlib.paths.getDockersideScriptsPath()
 dockersideBinPath = "/launch"
 dockersidePWDPath = os.path.join("/home","pwd")
 
