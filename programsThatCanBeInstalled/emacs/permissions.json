@@ -3,6 +3,7 @@
  ,"maintainer"  : "Timothy Hobbs <timothyhobbs (at) seznam dot cz>"
  ,"version"     : "23.3.1"
  ,"executable"  : "/usr/bin/emacs"
+ ,"dependency"  : "libx11"
  ,"user-dirs"   : []
  ,"system-dirs" : []
  ,"x11" : true

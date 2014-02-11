@@ -12,6 +12,8 @@ Contributing programs to the database:
 
  * When using the `FROM` command, you must not build your docker-image off a user uploaded image(even a verified one) you can only build off the official docker images.
 
+ * When a "program" does not declare an executable(aka, its only purpose is to provide a base image from which other programs are built) that program's name should be prefixed with the string "lib"
+
 Contributing code to the repository:
 ------------------------------------
 
