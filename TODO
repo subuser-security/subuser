@@ -6,3 +6,5 @@ add clean command - uninstall packages which do not have executables and also ar
 package-developers guide
 sometimes vim hard freezes - seems to be triggered by some key combination involving / or perhaps the search function
 print program permissions at instalation time with a "do you want to continue [y/n] prompt
+chromium doesn't work: https://github.com/travis-ci/travis-ci/issues/938
+emacs -nw doesn't work
