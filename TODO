@@ -1,4 +1,5 @@
 sound support - http://www.slideshare.net/dotCloud/dockerizing-your-appli
 update command - be recursive
+add clean command - uninstall packages which do not have executables and also are not depended upon by other programs
 package-developers guide
 sometimes vim hard freezes - seems to be triggered by some key combination involving / or perhaps the search function
