@@ -110,6 +110,23 @@ Create an `permissions.json` file with the following form:
 
 Now create a `Dockerfile` in the `docker-image` directory with vim installed in it.
 
+Updating programs:
+------------------
+
+You can update your subuser programs with:
+
+````
+$ cd ~/subuser
+$ git pull
+$ subuser update all
+````
+
+Or, if you happen to know that a program is out of date(say you've installed it through git in your dockerfile...)
+
+````
+$ subuser update vim-git
+````
+
 
 Uninstalling programs:
 ----------------------
