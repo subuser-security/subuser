@@ -165,7 +165,10 @@ Design flaws/bugs in subuser:
 See also links:
 ---------------
 
-[AppArmor](http://en.wikipedia.org/wiki/AppArmor)
-[SELinux](http://en.wikipedia.org/wiki/Security-Enhanced_Linux)
-[Android permissions](http://developer.android.com/guide/topics/security/permissions.html)
-[Jails](http://en.wikipedia.org/wiki/Jail_%28computer_security%29)
+ * [AppArmor](http://en.wikipedia.org/wiki/AppArmor)
+
+ * [SELinux](http://en.wikipedia.org/wiki/Security-Enhanced_Linux)
+ 
+ * [Android permissions](http://developer.android.com/guide/topics/security/permissions.html)
+
+ * [Jails](http://en.wikipedia.org/wiki/Jail_%28computer_security%29)
