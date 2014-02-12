@@ -129,7 +129,7 @@ def runUpdate(programsToBeUpdated):
 
 #####################################################################################
 
-if len(sys.argv) == 1:
+if len(sys.argv) == 1 or sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.argv[1] == "--help":
  printHelp()
  exit()
 
