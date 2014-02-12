@@ -12,3 +12,11 @@ def getPermissions(programName):
  permissions=json.load(permissionsFile)
  permissionsFile.close()
  return permissions
+
+def hasExecutable(programName):
+ """ Return True if the program has an executable associated with it. """
+ try:
+  getPermissions(programName)["executable"]
+  return True
+ except KeyError:
+  return False
