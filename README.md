@@ -60,6 +60,12 @@ You can install one of these programs with:
 $ subuser install vim
 ````
 
+Run the program by typing it's name at the command line.
+
+````
+$ vim SomeTextFileToEdit
+````
+
 Installing programs not yet in the database:
 ----------------------------------------
 
@@ -74,7 +80,7 @@ $ mkdir docker-image
 
 Create an `permissions.json` file with the following form:
 
-````
+````json
 {
  "description"  : "Simple universal text editor."
  ,"maintainer"  : "Timothy Hobbs <timothyhobbs (at) seznam dot cz>"
