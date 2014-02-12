@@ -41,7 +41,9 @@ $ git clone http://github.com/timthelion/subuser
 
 3. Add `~/subuser/bin` to your path by adding the line `PATH=$HOME/subuser/bin/:$PATH` to the end of your `.bashrc` file.
 
-4. Done!
+4. Log out and then back in again.
+
+5. Done!
 
 Installing a program with subuser:
 ----------------------------------
