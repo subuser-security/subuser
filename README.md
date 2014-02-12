@@ -161,3 +161,11 @@ Design flaws/bugs in subuser:
 
 * Disk usage is several times greater when installing one container per application due to the reduced ability to share dependencies
  - This can be aleviated by stacking docker images or using shared read only volumes.
+
+See also links:
+---------------
+
+[AppArmor](http://en.wikipedia.org/wiki/AppArmor)
+[SELinux](http://en.wikipedia.org/wiki/Security-Enhanced_Linux)
+[Android permissions](http://developer.android.com/guide/topics/security/permissions.html)
+[Jails](http://en.wikipedia.org/wiki/Jail_%28computer_security%29)
