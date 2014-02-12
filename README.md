@@ -82,26 +82,28 @@ Create an `permissions.json` file with the following form:
 
 ````json
 {
- "description"  : "Simple universal text editor."
- ,"maintainer"  : "Timothy Hobbs <timothyhobbs (at) seznam dot cz>"
- ,"executable"  : "/usr/bin/vim"
+ "description"                : "Simple universal text editor."
+ ,"maintainer"                : "Timothy Hobbs <timothyhobbs (at) seznam dot cz>"
+ ,"last-update-time"          : "2014-02-12-12:59"
+    // Last known time when the program was updated.
+ ,"executable"                : "/usr/bin/vim"
     // Path to executable within the docker image.
- //,"shared-home" : "emacs"
+ //,"shared-home"             : "emacs"
     // Optional: use a home dir which bellongs to some other program.  Good for sharing data between the two
- //,"dependency"  : "some-program"
+ //,"dependency"              : "some-program"
     // Optional: build some-program first so that this program's docker image can be built FROM the dependency to save space
- ,"user-dirs" : []
+ ,"user-dirs"                 : []
     // Optional: A list of directories in the users home directory that this application should have read-write access to.
     //These are relative paths, Ex: "Downloads" instead of "$HOME/Downloads".
- ,"system-dirs" : []
+ ,"system-dirs"               : []
     // Optional: A list of directories that this application should have read only access to.  Absolute paths: Ex: "/usr"
- ,"x11" : false
-    // Optional: This program displays an x11 window.
- ,"sound" : false
+ ,"x11"                       : false
+    // Optional: This program is allowed to display x11 windows.
+ ,"sound"                     : false
     // Optional: Give this program access to your soundcard?
  ,"inherit-working-directory" : true
     // Should this program be able to read-write to the directory from which it was called.
- ,"allow-network-access" : false
+ ,"allow-network-access"      : false
     // Should this program be allowed to access the internet?
 }
 ````

@@ -1,14 +1,12 @@
 {
- "description"  : "A trivial terminal emulator"
- ,"maintainer"  : "Timothy Hobbs <timothyhobbs (at) seznam dot cz>"
- ,"version"     : "271"
- ,"dependency"  : "libx11"
- ,"executable"  : "/usr/bin/xterm"
- ,"user-dirs"   : []
- ,"system-dirs" : []
- ,"x11" : true
- ,"sound" : false
+ "description"                : "A trivial terminal emulator"
+ ,"maintainer"                : "Timothy Hobbs <timothyhobbs (at) seznam dot cz>"
+ ,"last-update-time"          : "2014-02-12-12:59"
+ ,"dependency"                : "libx11"
+ ,"executable"                : "/usr/bin/xterm"
+ ,"x11"                       : true
+ ,"sound"                     : false
  ,"inherit-working-directory" : true
- ,"allow-network-access" : true
+ ,"allow-network-access"      : true
 }
 

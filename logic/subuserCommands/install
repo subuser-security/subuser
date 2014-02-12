@@ -31,6 +31,7 @@ def installProgram():
  import json
  import subuserlib.permissions
  import subuserlib.paths
+ import subuserlib.installTime
 
  print("Installing "+programName)
 
@@ -62,7 +63,7 @@ subuser run """+ programName +" $@\n"
   executableFile.close()
   subprocess.call(["chmod","+x",executablePath])
  
- subuserlib.registry.registerProgram(programName,permissions["version"])
+ subuserlib.registry.registerProgram(programName,permissions["last-update-time"])
 
 ##################################################################
 

@@ -1,14 +1,14 @@
 {
- "description"  : "The firefox web browser"
- ,"maintainer"  : "Timothy Hobbs <timothyhobbs (at) seznam dot cz>"
- ,"version"     : "26.0"
- ,"executable"  : "/usr/bin/firefox"
- ,"dependency"  : "libx11"
- ,"user-dirs"   : ["Downloads"]
- ,"system-dirs" : []
- ,"x11" : true
- ,"sound" : true
+ "description"                : "The firefox web browser"
+ ,"maintainer"                : "Timothy Hobbs <timothyhobbs (at) seznam dot cz>"
+ ,"last-update-time"          : "2014-02-12-12:59"
+ ,"executable"                : "/usr/bin/firefox"
+ ,"dependency"                : "libx11"
+ ,"user-dirs"                 : ["Downloads"]
+ ,"system-dirs"               : []
+ ,"x11"                       : true
+ ,"sound"                     : true
  ,"inherit-working-directory" : false
- ,"allow-network-access" : true
+ ,"allow-network-access"      : true
 }
 

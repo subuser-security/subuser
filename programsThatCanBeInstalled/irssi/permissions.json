@@ -1,12 +1,12 @@
 {
- "description"  : "A simple terminal based irc client"
- ,"maintainer"  : "Timothy Hobbs <timothyhobbs (at) seznam dot cz>"
- ,"version"     : "0.8.15"
- ,"executable"  : "/usr/bin/irssi"
- ,"user-dirs"   : []
- ,"system-dirs" : []
- ,"x11" : false
+ "description"                : "A simple terminal based irc client"
+ ,"maintainer"                : "Timothy Hobbs <timothyhobbs (at) seznam dot cz>"
+ ,"last-update-time"          : "2014-02-12-12:59"
+ ,"executable"                : "/usr/bin/irssi"
+ ,"user-dirs"                 : []
+ ,"system-dirs"               : []
+ ,"x11"                       : false
  ,"inherit-working-directory" : false
- ,"allow-network-access" : true
+ ,"allow-network-access"      : true
 }
 

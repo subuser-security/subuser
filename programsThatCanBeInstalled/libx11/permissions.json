@@ -1,6 +1,6 @@
 {
- "description"  : "A basic image with X11 packages"
- ,"maintainer"  : "Timothy Hobbs <timothyhobbs (at) seznam dot cz>"
- ,"version"     : "271"
+ "description"       : "A basic image with X11 packages"
+ ,"maintainer"       : "Timothy Hobbs <timothyhobbs (at) seznam dot cz>"
+ ,"last-update-time" : "2014-02-12-12:59"
 }
 
