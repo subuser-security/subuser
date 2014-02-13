@@ -1,5 +1,8 @@
 Subuser - Securing the linux desktop with Docker
 --------------------------
+Video: What is subuser?
+[![What is subuser?](http://img.youtube.com/vi/-9F8uXFcVFA/0.jpg)](http://www.youtube.com/watch?v=-9F8uXFcVFA)
+
 
 As free software developers we like to share.  We surf the web and discover new code.  We are eager to try it out.  We live out an orgy of love and trust, unafraid that some code we cloned from git might be faulty or malicious.  We live in the 60s, carefree hippies.
 
