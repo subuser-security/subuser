@@ -49,6 +49,16 @@ Installing subuser:
 
 5. Done!
 
+[**Installation video:**](http://www.youtube.com/watch?v=ahgRx5U4V7E)
+
+[![Installing subuser](http://img.youtube.com/vi/ahgRx5U4V7E/0.jpg)](http://www.youtube.com/watch?v=ahgRx5U4V7E)
+
+Using subuser:
+--------------
+
+[Video:](http://www.youtube.com/watch?v=KZrs8KngN68)
+[![Using subuser](http://img.youtube.com/vi/KZrs8KngN68/0.jpg)](http://www.youtube.com/watch?v=KZrs8KngN68)
+
 Installing a program with subuser:
 ----------------------------------
 
