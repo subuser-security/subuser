@@ -57,6 +57,7 @@ Using subuser:
 --------------
 
 [Video:](http://www.youtube.com/watch?v=KZrs8KngN68)
+
 [![Using subuser](http://img.youtube.com/vi/KZrs8KngN68/0.jpg)](http://www.youtube.com/watch?v=KZrs8KngN68)
 
 Installing a program with subuser:
