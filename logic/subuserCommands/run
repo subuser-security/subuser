@@ -8,11 +8,17 @@ import os
 import getpass
 import subuserlib.permissions
 ###############################################################
-programName = sys.argv[1]
 username = getpass.getuser()
 cwd = os.getcwd()
 home = os.path.expanduser("~")
 ###############################################################
+def printHelp():
+ print("""Run a program installed with subuser.  For example:
+$ subuser run firefox
+
+This command is useful if you want to put `~/subuser/bin` at the end of your path.  If you do that, subuser programs will not have precidence over "normally" installed programs.
+""")
+
 def getArgsToPassToProgram():
  if len(sys.argv) > 2:
   return sys.argv[2:]
@@ -35,78 +41,85 @@ def makeSystemDirVolumeArgs(systemDirs):
 def makeUserDirVolumeArgs(userDirs):
  return ["-v="+os.path.join(home,userDir)+":"+os.path.join("/userdirs/",userDir)+":rw" for userDir in userDirs]
  
+def runProgram(programName):
+ dockerImageName = "subuser-"+programName
+
+ args=getArgsToPassToProgram()
+
+ permissions = subuserlib.permissions.getPermissions(programName)
+
+ allowNetworkAccessArg = getAllowNetworkAccessArg(permissions)
+ executable = permissions["executable"]
+ setupUserAndRunPath = os.path.join("/launch","setupUserAndRun")
+ hostSubuserHome = subuserlib.paths.getProgramHomeDirOnHost(programName)
+ setupHostSubuserHome(hostSubuserHome)
+
+ dockersideScriptsPath = subuserlib.paths.getDockersideScriptsPath()
+ dockersideBinPath = "/launch"
+ dockersidePWDPath = os.path.join("/home","pwd")
+
+ try:
+  x11Enabled = permissions["x11"]
+ except KeyError:
+  x11Enabled = False
+
+ if x11Enabled:
+  x11Args = ["-e","DISPLAY=unix"+os.environ['DISPLAY'],"-v=/tmp/.X11-unix:/tmp/.X11-unix:rw"]
+ else: x11Args = []
+
+ try:
+  soundEnabled = permissions["sound"]
+ except KeyError:
+  soundEnabled = False
+
+ if soundEnabled:
+  soundArgs =  ["-v=/dev/snd:/dev/snd:rw","-lxc-conf=lxc.cgroup.devices.allow = c 116:* rwm"]
+ else:
+  soundArgs = []
+
+ try:
+  systemDirs = permissions["system-dirs"]
+  systemDirVolumeArgs = makeSystemDirVolumeArgs(systemDirs)
+ except KeyError:
+  systemDirVolumeArgs = []
+
+ def setupUserDirSymlinks(userDirs):
+  """ Create symlinks to userdirs in program's home dir. """
+  for userDir in userDirs:
+   source = os.path.join("/userdirs/",userDir)
+   destination = os.path.join(hostSubuserHome,userDir)
+   if not os.path.islink(destination):
+    os.symlink(source,destination)
+
+ try:
+  userDirs = permissions["user-dirs"]
+  setupUserDirSymlinks(userDirs)
+  userDirVolumeArgs = makeUserDirVolumeArgs(userDirs)
+ except KeyError:
+  userDirVolumeArgs = []
+
+ try:
+  inheritWorkingDirectory = permissions["inherit-working-directory"]
+ except KeyError:
+  inheritWorkingDirectory = False
+
+ if inheritWorkingDirectory:
+  workingDirectoryVolumeArg = ["-v="+cwd+":/home/pwd:rw"]
+ else:
+  workingDirectoryVolumeArg = []
+
+ volumeArgs = ["-v="+hostSubuserHome+":"+home+":rw"
+  ,"-v="+dockersideScriptsPath+":"+dockersideBinPath+":ro"] + workingDirectoryVolumeArg + systemDirVolumeArgs + userDirVolumeArgs
+
+
+ dockerCommand = ["docker","run","-i","-t","-rm",allowNetworkAccessArg]+volumeArgs+x11Args+soundArgs+[dockerImageName,setupUserAndRunPath,username,executable]+args
+
+ #print(dockerCommand)
+ subprocess.call(dockerCommand)
 ################################################################
-dockerImageName = "subuser-"+programName
 
-args=getArgsToPassToProgram()
-
-permissions = subuserlib.permissions.getPermissions(programName)
-
-allowNetworkAccessArg = getAllowNetworkAccessArg(permissions)
-executable = permissions["executable"]
-setupUserAndRunPath = os.path.join("/launch","setupUserAndRun")
-hostSubuserHome = subuserlib.paths.getProgramHomeDirOnHost(programName)
-setupHostSubuserHome(hostSubuserHome)
-
-dockersideScriptsPath = subuserlib.paths.getDockersideScriptsPath()
-dockersideBinPath = "/launch"
-dockersidePWDPath = os.path.join("/home","pwd")
-
-try:
- x11Enabled = permissions["x11"]
-except KeyError:
- x11Enabled = False
-
-if x11Enabled:
- x11Args = ["-e","DISPLAY=unix"+os.environ['DISPLAY'],"-v=/tmp/.X11-unix:/tmp/.X11-unix:rw"]
-else: x11Args = []
-
-try:
- soundEnabled = permissions["sound"]
-except KeyError:
- soundEnabled = False
-
-if soundEnabled:
- soundArgs =  ["-v=/dev/snd:/dev/snd:rw","-lxc-conf=lxc.cgroup.devices.allow = c 116:* rwm"]
+if len(sys.argv)==1 or sys.argv[1] == "--help" or sys.argv[1] == "-h" or sys.argv[1] == "help":
+ printHelp()
 else:
- soundArgs = []
-
-try:
- systemDirs = permissions["system-dirs"]
- systemDirVolumeArgs = makeSystemDirVolumeArgs(systemDirs)
-except KeyError:
- systemDirVolumeArgs = []
-
-def setupUserDirSymlinks(userDirs):
- """ Create symlinks to userdirs in program's home dir. """
- for userDir in userDirs:
-  source = os.path.join("/userdirs/",userDir)
-  destination = os.path.join(hostSubuserHome,userDir)
-  if not os.path.islink(destination):
-   os.symlink(source,destination)
-
-try:
- userDirs = permissions["user-dirs"]
- setupUserDirSymlinks(userDirs)
- userDirVolumeArgs = makeUserDirVolumeArgs(userDirs)
-except KeyError:
- userDirVolumeArgs = []
-
-try:
- inheritWorkingDirectory = permissions["inherit-working-directory"]
-except KeyError:
- inheritWorkingDirectory = False
-
-if inheritWorkingDirectory:
- workingDirectoryVolumeArg = ["-v="+cwd+":/home/pwd:rw"]
-else:
- workingDirectoryVolumeArg = []
-
-volumeArgs = ["-v="+hostSubuserHome+":"+home+":rw"
- ,"-v="+dockersideScriptsPath+":"+dockersideBinPath+":ro"] + workingDirectoryVolumeArg + systemDirVolumeArgs + userDirVolumeArgs
-
-
-dockerCommand = ["docker","run","-i","-t","-rm",allowNetworkAccessArg]+volumeArgs+x11Args+soundArgs+[dockerImageName,setupUserAndRunPath,username,executable]+args
-
-#print(dockerCommand)
-subprocess.call(dockerCommand)
+ programName = sys.argv[1]
+ runProgram(programName)

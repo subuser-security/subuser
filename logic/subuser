@@ -17,6 +17,7 @@ def printHelp():
  for command in os.listdir(subuserCommands.subuserlib.paths.getSubuserCommandsPath()):
   if isCommand(command):
    print(command)
+ print("for more info about each option use: subuser <option> -h")
 
 if len(sys.argv) < 2 or sys.argv[1] == "help" or sys.argv[1] == "--help" or sys.argv[1] == "-h":
  printHelp()
