@@ -6,8 +6,18 @@ import subprocess
 import subuserlib.registry
 import subuserlib.paths
 
+def printHelp():
+ print("""You can either list programs availiable for instalation with:
+ $ subuser list available
 
-if sys.argv[1] == "available":
+Or you can list installed programs with:
+ $ subuser list installed
+""")
+
+if len(sys.argv) == 1:
+ printHelp()
+
+elif sys.argv[1] == "available":
  availableProgramsPath = subuserlib.paths.getAvailableProgramsPath()
  subprocess.call(["ls",availableProgramsPath])
 
@@ -17,9 +27,4 @@ elif sys.argv[1] == "installed":
   print(program)
 
 else:
- print("""You can either list programs availiable for instalation with:
- $ subuser list available
-
-Or you can list installed programs with:
- $ subuser list installed
-""")
+ printHelp()
