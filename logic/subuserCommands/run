@@ -67,7 +67,7 @@ except KeyError:
  soundEnabled = False
 
 if soundEnabled:
- soundArgs =  ["-v=/dev/snd:/dev/snd:rw","-lxc-conf='lxc.cgroup.devices.allow = c 116:* rwm'"]
+ soundArgs =  ["-v=/dev/snd:/dev/snd:rw","-lxc-conf=lxc.cgroup.devices.allow = c 116:* rwm"]
 else:
  soundArgs = []
 
