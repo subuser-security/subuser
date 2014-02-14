@@ -45,6 +45,8 @@ Installing subuser:
 
 3. Add `~/subuser/bin` to your path by adding the line `PATH=$HOME/subuser/bin:$PATH` to the end of your `.bashrc` file.
 
+  - **Note**: Doing this will give `subuser` programs precedence over "normal" programs.  If you don't want this, you can add the `~/subuser/bin` directory to the END of your `$PATH` like so: `PATH=$PATH:$HOME/subuser/bin`.  Then, in order to run programs that are already installed on your computer with subuser you will have to use the `subuser run` command.
+
 4. Log out and then back in again.
 
 5. Done!
