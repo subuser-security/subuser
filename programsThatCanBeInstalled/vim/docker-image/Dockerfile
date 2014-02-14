@@ -1,2 +1,2 @@
 FROM ubuntu
-RUN apt-get install -y vim
+RUN TERM=linux apt-get install -y vim

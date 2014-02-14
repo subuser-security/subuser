@@ -1,3 +1,3 @@
 FROM ubuntu
 RUN apt-get update
-RUN apt-get install -y git
+RUN TERM=linux apt-get install -y git

@@ -1,3 +1,3 @@
 FROM subuser-libx11
 RUN apt-get update
-RUN apt-get install -y emacs
+RUN TERM=linux apt-get install -y emacs
