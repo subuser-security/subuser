@@ -61,7 +61,13 @@ subuser run """+ programName +" $@\n"
   executableFile.close()
   subuserlib.utils.subprocessCheckedCall(["chmod","+x",executablePath])
  
- subuserlib.registry.registerProgram(programName,permissions["last-update-time"])
+  try:
+   lastUpdateTime = permissions["last-update-time"]
+  except KeyError:
+   import subuserlib.installTime
+   lastUpdateTime = subuserlib.installTime.currentTimeString()
+ 
+  subuserlib.registry.registerProgram(programName,lastUpdateTime)
 
 ##################################################################
 
