@@ -27,7 +27,12 @@ def getArgsToPassToProgram():
   return []
 
 def getAllowNetworkAccessArg(permissions):
- if permissions["allow-network-access"]:
+ try:
+  allowNetworkAccess = permissions["allow-network-access"]
+ except KeyError:
+  allowNetworkAccess = False
+
+ if allowNetworkAccess:
   return "--networking=true"
  else:
   return "--networking=false"
