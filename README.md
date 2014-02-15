@@ -95,20 +95,14 @@ $ cd executable-name
 $ mkdir docker-image
 ````
 
-Create an `permissions.json` file with the following form:
+Create an `permissions.json` file.  Here is an example:
 
 ````json
 {
  "description"                : "Simple universal text editor."
  ,"maintainer"                : "Timothy Hobbs <timothyhobbs (at) seznam dot cz>"
- ,"last-update-time"          : "2014-02-12-12:59"
-    // Last known time when the program was updated.
  ,"executable"                : "/usr/bin/vim"
     // Path to executable within the docker image.
- //,"shared-home"             : "emacs"
-    // Optional: use a home dir which bellongs to some other program.  Good for sharing data between the two
- //,"dependency"              : "some-program"
-    // Optional: build some-program first so that this program's docker image can be built FROM the dependency to save space
  ,"user-dirs"                 : []
     // Optional: A list of directories in the users home directory that this application should have read-write access to.
     //These are relative paths, Ex: "Downloads" instead of "$HOME/Downloads".
@@ -121,11 +115,11 @@ Create an `permissions.json` file with the following form:
  ,"inherit-working-directory" : true
     // Should this program be able to read-write to the directory from which it was called.
  ,"allow-network-access"      : false
-    // Should this program be allowed to access the internet?
- ,"privileged"                : false
-    // Should this program be run in a privileged container?  Note: Not at all secure!
+    // Optional: Should this program be allowed to access the internet?
 }
 ````
+
+You can find a full specification for the `permissions.json` file format [here](docs/permissions-dot-json-file-format.md).
 
 **Note**: Listing every permission is not necesary.  All permissions always default to their more secure variant.
 

@@ -1,0 +1,138 @@
+The permissions.json file format
+--------------------------------
+
+A permissions.json file is a file which describes the rights or permissions of a program running within a docker container.  These permissions pertain mainly to that program's ability to interact with it's host operating system.
+
+Each permissions.json file is to be a valid [json](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf) file containing a single json object.
+
+The json object MUST have the following fields:
+-----------------------------------------
+
+ * `description`: This field describes what the program is/what it does.
+
+  Ex:
+
+  ````json
+   "description"                : "Simple universal text editor."
+  ````
+
+ * `maintainer`: This field marks who is responcible for the `permissions.json` file, and accompanying `Dockerfile`.  It does NOT mark who is responcible for the program itself.
+
+  Ex:
+  
+  ````json
+   ,"maintainer"                : "Timothy Hobbs <timothyhobbs (at) seznam dot cz>"
+  ````
+
+The json object MAY at your option contain the following additional fields:
+---------------------------------------------------------------------------
+
+ * `last-updat-time`: This field records the last time the program, or it's `Dockerfile` were known to be updated.  The purpose of this field is telling `subuser` if a program has been updated and must be re-installed.
+
+  Ex:
+
+  ````json
+   ,"last-update-time"          : "2014-02-12-12:59"
+  ````
+
+ * `executable`: This field denotes the absolute path within the Docker image where the given program's executable resides.
+
+  Ex:
+
+  ````json
+   ,"executable"                : "/usr/bin/vim"
+  ````
+
+ * `shared-home`: This field marks whether the program is to share it's home directory with another program installed by subuser.
+
+  Ex:
+
+  ````json
+   ,"shared-home"             : "emacs"
+  ````
+
+ * `dependency`: Any program may depend upon at most one other program to provide a base image for it to build off of.
+
+  Ex:
+
+  ````json
+   ,"dependency"              : "some-program"
+  ````
+
+ * `user-dirs`: A list of relative paths to user directories which are to be shared between the host and the given program. The program is given read-write access to any user directories listed.
+
+  Ex:
+
+  ````json
+   ,"user-dirs"                 : ["Downloads"]
+  ````
+
+  In this example, the program is able to access the `~/Downloads` directory on the host. 
+
+
+  **Default**: `[]`
+
+
+ * `system-dirs`: Absolute paths to system directories to be shared between the host operating system and the program.  The program is given read only access to these directories.
+
+  Ex:
+
+  ````json
+   ,"system-dirs"               : ["/etc/hosts"]
+  ````
+
+  **Default**: `[]`
+
+ * `x11`: The program is allowed to interact with the x11 server on the host.
+
+  Note: Known to be insecure!
+
+  Ex:
+
+  ````json
+   ,"x11"                       : true
+  ````
+
+  **Default**: `false`
+
+ * `sound`: The program is allowed to access the soundcard on the host.
+
+  Ex:
+
+  ````json
+   ,"sound"                       : true
+  ````
+
+  **Default**: `false`
+
+ * `inherit-working-directory`: The program is given read-write access to the host user's current working directory.
+
+  Ex:
+
+  ````json
+   ,"inherit-working-directory" : true
+  ````
+
+  **Default**: `false`
+
+ * `allow-network-access`: Should the program be allowed to access the network/internet?
+
+  Ex:
+
+  ````json
+   ,"allow-network-access"      : false
+  ````
+
+  **Default**: `false`
+
+ * `privileged`: Should the program's Docker container be run in `privileged` mode?
+
+  **Note**: Completely insecure!
+
+  Ex:
+
+  ````json
+   ,"privileged"                : false
+  ````
+
+  **Default**: `false`
