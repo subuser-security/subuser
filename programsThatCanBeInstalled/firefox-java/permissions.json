@@ -1,5 +1,5 @@
 {
- "description"                : "The firefox web browser with java support"
+ "description"                : "The firefox web browser with java support.\n Note: If you have a different version of firefox running already, you must launch firefox with the -new-instance command line argument."
  ,"maintainer"                : "Timothy Hobbs <timothyhobbs (at) seznam dot cz>"
  ,"last-update-time"          : "2014-02-15-18:15"
  ,"executable"                : "/usr/bin/firefox"
