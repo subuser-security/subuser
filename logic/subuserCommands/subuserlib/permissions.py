@@ -13,6 +13,15 @@ def getPermissions(programName):
  permissionsFile.close()
  return permissions
 
+def setPermissions(programName,permissions):
+ """ Set the permissions of a given program.
+ Warning, will mess up the formatting of the json file.
+ """
+ permissionsFilePath = paths.getPermissionsFilePath(programName)
+ permissionsFile = open(permissionsFilePath,"w")
+ json.dump(permissions,permissionsFile,indent=1, separators=(',', ': '))
+ permissionsFile.close()
+ 
 def hasExecutable(programName):
  """ Return True if the program has an executable associated with it. """
  try:

@@ -1,0 +1,26 @@
+#!/usr/bin/env python
+# This file should be compatible with both Python 2 and 3.
+# If it is not, please file a bug report.
+import sys
+import subuserlib.installTime
+import subuserlib.permissions
+import subuserlib.availablePrograms
+
+def printHelp():
+ print("""
+Mark a program as needing to be updated.  Note, that this may mess up the formatting of it's permissions.json file.
+
+Usage:
+$ subuser mark-as-needing-update program-name
+""")
+
+if (not len(sys.argv) == 2) or sys.argv[1] == "help" or sys.argv[1] == "--help" or sys.argv[1] == "-h":
+ printHelp()
+
+elif not subuserlib.availablePrograms.available(sys.argv[1]):
+ print(sys.argv[1] + " is not the name of any known program.  Cannot mark it as having an update.")
+else:
+ programName = sys.argv[1] 
+ permissions = subuserlib.permissions.getPermissions(programName)
+ permissions["last-update-time"] = subuserlib.installTime.currentTimeString()
+ subuserlib.permissions.setPermissions(programName,permissions)

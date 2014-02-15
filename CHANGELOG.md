@@ -1,6 +1,8 @@
 VERSION 0.2
 -------------
 
+* The last-update-time attribute in permissions.json is now optional.  You can easilly mark a program as needing to be updated with the command "subuser mark-as-needing-update program-name"
+
 * Can now set a container as privileged within the permissions.json file.
 
 * Added module: utils.py
