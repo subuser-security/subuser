@@ -3,6 +3,7 @@
 # If it is not, please file a bug report.
 import sys
 import os
+import subprocess
 import subuserCommands.subuserlib.utils
 import subuserCommands.subuserlib.paths
 
@@ -30,4 +31,4 @@ if not os.path.exists(commandExecutablePath):
  printHelp()
  exit()
  
-subuserCommands.subuserlib.utils.subprocessCheckedCall([commandExecutablePath]+sys.argv[2:])
+subprocess.call([commandExecutablePath]+sys.argv[2:])

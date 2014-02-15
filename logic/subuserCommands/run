@@ -5,7 +5,7 @@
 import sys
 import os
 import getpass
-import subuserlib.utils
+import subprocess
 import subuserlib.permissions
 import subuserlib.dockerImages
 ###############################################################
@@ -131,7 +131,7 @@ def runProgram(programName):
  dockerCommand = ["docker","run","-i","-t","-rm",allowNetworkAccessArg]+privilegedArg+volumeArgs+x11Args+soundArgs+[dockerImageName,setupUserAndRunPath,username,executable]+args
 
  #print(dockerCommand)
- subuserlib.utils.subprocessCheckedCall(dockerCommand)
+ subprocess.call(dockerCommand)
 ################################################################
 
 if len(sys.argv)==1 or sys.argv[1] == "--help" or sys.argv[1] == "-h" or sys.argv[1] == "help":
