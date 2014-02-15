@@ -18,9 +18,11 @@ def uninstall(programName):
   os.remove(subuserlib.paths.getExecutablePath(programName))
 
  subuserlib.registry.unregisterProgram(programName)
- print("The program has been uninstalled but it's home directory remains:")
  programHomeDir=subuserlib.paths.getProgramHomeDirOnHost(programName)
- print(programHomeDir)
+ if os.path.exists(programHomeDir):
+  print("The program has been uninstalled but it's home directory remains:")
+  print(programHomeDir)
+ print(programName+" uninstalled successfully.")
 
 #######################################################
 
