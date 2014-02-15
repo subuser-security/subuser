@@ -84,6 +84,16 @@ def runProgram(programName):
   soundArgs = []
 
  try:
+  privileged = permissions["privileged"]
+ except KeyError:
+  privileged = False
+ 
+ if privileged:
+  privilegedArg = ["-privileged"]
+ else:
+  privilegedArg = []
+
+ try:
   systemDirs = permissions["system-dirs"]
   systemDirVolumeArgs = makeSystemDirVolumeArgs(systemDirs)
  except KeyError:
@@ -118,7 +128,7 @@ def runProgram(programName):
   ,"-v="+dockersideScriptsPath+":"+dockersideBinPath+":ro"] + workingDirectoryVolumeArg + systemDirVolumeArgs + userDirVolumeArgs
 
 
- dockerCommand = ["docker","run","-i","-t","-rm",allowNetworkAccessArg]+volumeArgs+x11Args+soundArgs+[dockerImageName,setupUserAndRunPath,username,executable]+args
+ dockerCommand = ["docker","run","-i","-t","-rm",allowNetworkAccessArg]+privilegedArg+volumeArgs+x11Args+soundArgs+[dockerImageName,setupUserAndRunPath,username,executable]+args
 
  #print(dockerCommand)
  subuserlib.utils.subprocessCheckedCall(dockerCommand)

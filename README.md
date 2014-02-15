@@ -122,6 +122,8 @@ Create an `permissions.json` file with the following form:
     // Should this program be able to read-write to the directory from which it was called.
  ,"allow-network-access"      : false
     // Should this program be allowed to access the internet?
+ ,"privileged"                : false
+    // Should this program be run in a privileged container?  Note: Not at all secure!
 }
 ````
 
