@@ -2,7 +2,7 @@
 # This file should be compatible with both Python 2 and 3.
 # If it is not, please file a bug report.
 import sys
-import subprocess
+import subuserlib.utils
 import subuserlib.registry
 import subuserlib.paths
 
@@ -19,7 +19,7 @@ if len(sys.argv) == 1:
 
 elif sys.argv[1] == "available":
  availableProgramsPath = subuserlib.paths.getAvailableProgramsPath()
- subprocess.call(["ls",availableProgramsPath])
+ subuserlib.utils.subprocessCheckedCall(["ls",availableProgramsPath])
 
 elif sys.argv[1] == "installed":
  installedPrograms = subuserlib.registry.getInstalledPrograms()

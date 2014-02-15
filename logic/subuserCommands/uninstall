@@ -2,8 +2,8 @@
 # This file should be compatible with both Python 2 and 3.
 # If it is not, please file a bug report.
 import sys
-import subprocess
 import os
+import subuserlib.utils
 import subuserlib.paths
 import subuserlib.registry
 #######################################################
@@ -13,7 +13,7 @@ def printHelp():
  print("Issue the `subuser uninstall program-name` command to uninstall a program. NOTE: this operation does not remove that program's home directory.")
 
 def uninstall(programName):
- subprocess.call(["docker","rmi","subuser-"+programName])
+ subuserlib.utils.subprocessCheckedCall(["docker","rmi","subuser-"+programName])
  if os.path.exists(subuserlib.paths.getExecutablePath(programName)):
   os.remove(subuserlib.paths.getExecutablePath(programName))
 

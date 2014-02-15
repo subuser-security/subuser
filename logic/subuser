@@ -2,8 +2,8 @@
 # This file should be compatible with both Python 2 and 3.
 # If it is not, please file a bug report.
 import sys
-import subprocess
 import os
+import subuserCommands.subuserlib.utils
 import subuserCommands.subuserlib.paths
 
 def isCommand(command):
@@ -30,4 +30,4 @@ if not os.path.exists(commandExecutablePath):
  printHelp()
  exit()
  
-subprocess.call([commandExecutablePath]+sys.argv[2:])
+subuserCommands.subuserlib.utils.subprocessCheckedCall([commandExecutablePath]+sys.argv[2:])
