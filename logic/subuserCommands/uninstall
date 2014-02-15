@@ -32,4 +32,10 @@ elif not subuserlib.registry.isProgramInstalled(programName):
  print("Could not uninstall "+programName+" program is not installed.")
  printHelp()
 else:
- uninstall(programName)
+ installedDependencies = subuserlib.registry.getInstalledDependencies(programName)
+ if installedDependencies == []:
+  uninstall(programName)
+ else:
+  print("The following programs depend upon "+programName+" you must uninstall them first.")
+  for dependency in installedDependencies:
+   print(dependency)
