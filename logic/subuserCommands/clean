@@ -2,7 +2,7 @@
 # This file should be compatible with both Python 2 and 3.
 # If it is not, please file a bug report.
 import sys
-import subprocess
+import subuserlib.utils
 import subuserlib.registry
 import subuserlib.permissions
 
@@ -35,7 +35,7 @@ def performUninstalls(programsToUninstall):
   print(program)
  if raw_input("Continue [y/n]? ") == "y":
   for program in programsToUninstall:
-   subprocess.call(["subuser","uninstall",program])
+   subuserlib.utils.subprocessCheckedCall(["subuser","uninstall",program])
  
 ####################################################
 

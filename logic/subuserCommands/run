@@ -2,10 +2,10 @@
 # This file should be compatible with both Python 2 and 3.
 # If it is not, please file a bug report.
 
-import subprocess
 import sys
 import os
 import getpass
+import subuserlib.utils
 import subuserlib.permissions
 import subuserlib.dockerImages
 ###############################################################
@@ -116,7 +116,7 @@ def runProgram(programName):
  dockerCommand = ["docker","run","-i","-t","-rm",allowNetworkAccessArg]+volumeArgs+x11Args+soundArgs+[dockerImageName,setupUserAndRunPath,username,executable]+args
 
  #print(dockerCommand)
- subprocess.call(dockerCommand)
+ subuserlib.utils.subprocessCheckedCall(dockerCommand)
 ################################################################
 
 if len(sys.argv)==1 or sys.argv[1] == "--help" or sys.argv[1] == "-h" or sys.argv[1] == "help":

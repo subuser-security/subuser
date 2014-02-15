@@ -11,6 +11,7 @@
 #  Install all programs marked to be updated
 import sys
 import subprocess
+import subuserlib.utils
 import subuserlib.registry
 import subuserlib.permissions
 
@@ -60,10 +61,10 @@ def getProgramsToBeUpdated(programsWhosLastUpdateTimesChanged):
  return programsToBeUpdated
 
 def uninstall(program):
- subprocess.call(["subuser","uninstall",program])
+ subuserlib.utils.subprocessCheckedCall(["subuser","uninstall",program])
 
 def install(program):
- subprocess.call(["subuser","install",program])
+ subuserlib.utils.subprocessCheckedCall(["subuser","install",program])
 
 def uninstallProgramsToBeUpdated(programsToBeUpdated):
  programsToBeUninstalled = set(programsToBeUpdated)

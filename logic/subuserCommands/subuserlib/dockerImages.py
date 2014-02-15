@@ -3,6 +3,7 @@
 # If it is not, please file a bug report.
 import subprocess
 import availablePrograms
+import utils
 
 def askToInstallProgram(programName):
  """ Asks the user if they want to install the given program.  If they say yes, install it, if they decline exit."""
@@ -10,10 +11,10 @@ def askToInstallProgram(programName):
   print(programName+" does not exist.")
   exit()
  if raw_input(programName+" is not installed. Do you want to install it now [y/n]?") == "y":
-  subprocess.call(["subuser","install",programName])
+  utils.subprocessCheckedCall(["subuser","install",programName])
  else:
   exit()
- 
+
 
 def getImageTagOfInstalledProgram(programName):
  """ Return the tag of the docker image of an installed program. """
@@ -33,5 +34,5 @@ def getImageTagOfInstalledProgram(programName):
  if imageTag == "":
   askToInstallProgram(programName)
   imageTag = "subuser-"+programName
- 
+
  return imageTag
