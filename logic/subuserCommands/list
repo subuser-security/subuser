@@ -5,10 +5,14 @@ import sys
 import subuserlib.utils
 import subuserlib.registry
 import subuserlib.paths
+import subuserlib.permissions
+import subuserlib.availablePrograms
 
 def printHelp():
  print("""You can either list programs availiable for instalation with:
  $ subuser list available
+
+  The list available command may optionally take the `--short` argument which will print only the program's names.
 
 Or you can list installed programs with:
  $ subuser list installed
@@ -18,8 +22,22 @@ if len(sys.argv) == 1:
  printHelp()
 
 elif sys.argv[1] == "available":
- availableProgramsPath = subuserlib.paths.getAvailableProgramsPath()
- subuserlib.utils.subprocessCheckedCall(["ls",availableProgramsPath])
+ try:
+  if sys.argv[2] == "--short":
+   availableProgramsPath = subuserlib.paths.getAvailableProgramsPath()
+   subuserlib.utils.subprocessCheckedCall(["ls",availableProgramsPath])
+  else:
+   print("Argument not recognized:"+sys.argv[2])
+   printHelp()
+ except IndexError:
+  availablePrograms = subuserlib.availablePrograms.getAvailablePrograms()
+  for program in availablePrograms:
+   permissions = subuserlib.permissions.getPermissions(program)
+   print(program)
+   print("----------------")
+   print("Description: "+permissions["description"])
+   print("Maintainer: "+permissions["maintainer"])
+   print("\n")
 
 elif sys.argv[1] == "installed":
  installedPrograms = subuserlib.registry.getInstalledPrograms()
