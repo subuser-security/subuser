@@ -127,7 +127,9 @@ Create an `permissions.json` file with the following form:
 }
 ````
 
-Now create a `Dockerfile` in the `docker-image` directory with vim installed in it.
+**Note**: Listing every permission is not necesary.  All permissions always default to their more secure variant.
+
+Now create a directory called `docker-image` and add a `Dockerfile` to that directory.  This docker file shoule describe a container with vim installed in it.
 
 Updating programs:
 ------------------
