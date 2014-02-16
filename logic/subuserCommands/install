@@ -49,7 +49,7 @@ def installProgram():
  try:
   dependency = permissions["dependency"]
   if not subuserlib.registry.isProgramInstalled(dependency):
-   subuserlib.utils.subprocessCheckedCall(["subuser","install","--from-cache",dependency])
+   subuserlib.utils.subprocessCheckedCall(["subuser","install",dependency,"--from-cache"])
  except KeyError:
   pass
 
