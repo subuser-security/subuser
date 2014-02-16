@@ -67,7 +67,7 @@ subuser run """+ programName +" $@\n"
   except KeyError:
    lastUpdateTime = subuserlib.installTime.currentTimeString()
  
-  subuserlib.registry.registerProgram(programName,lastUpdateTime)
+ subuserlib.registry.registerProgram(programName,lastUpdateTime)
 
 ##################################################################
 
