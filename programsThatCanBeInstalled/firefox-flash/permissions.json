@@ -1,0 +1,15 @@
+{
+ "description": "The firefox web browser with flash support.\n Note: If you have a different version of firefox running already, you must launch firefox with the -new-instance command line argument.",
+ "sound": true,
+ "maintainer": "Timothy Hobbs <timothyhobbs (at) seznam dot cz>",
+ "executable": "/usr/bin/firefox",
+ "last-update-time": "2014-02-16-21:10",
+ "inherit-working-directory": false,
+ "dependency": "firefox",
+ "x11": true,
+ "system-dirs": [],
+ "user-dirs": [
+  "Downloads"
+ ],
+ "allow-network-access": true
+}
