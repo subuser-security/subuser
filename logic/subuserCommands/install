@@ -96,7 +96,6 @@ if not subuserlib.availablePrograms.available(programName):
  print(programName+" not available for instaliation.")
  printHelp()
  print("\nAvailable programs are: ")
- availableProgramsPath = subuserlib.paths.getAvailableProgramsPath()
- print(' '.join(sorted([program for program in os.listdir(availableProgramsPath)])))
+ print(' '.join(sorted([program for program in subuserlib.availablePrograms.getAvailablePrograms()])))
 else:
  installProgram()
