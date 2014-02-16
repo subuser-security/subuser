@@ -1,6 +1,8 @@
 VERSION 0.2
 -------------
 
+* Refactor help code and improved output
+
 * subuser list available now includes information about each program in the listing output.
 
 * The last-update-time attribute in permissions.json is now optional.  You can easilly mark a program as needing to be updated with the command "subuser mark-as-needing-update program-name"

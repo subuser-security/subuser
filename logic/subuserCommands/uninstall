@@ -6,8 +6,7 @@ import os
 import subuserlib.utils
 import subuserlib.paths
 import subuserlib.registry
-#######################################################
-programName = sys.argv[1]
+
 #######################################################
 def printHelp():
  print("Issue the `subuser uninstall program-name` command to uninstall a program. NOTE: this operation does not remove that program's home directory.")
@@ -24,13 +23,21 @@ def uninstall(programName):
   print(programHomeDir)
  print(programName+" uninstalled successfully.")
 
-#######################################################
-
-if programName == "--help" or programName == "-h":
+#################################################################################################
+if len(sys.argv) == 1 or sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.argv[1] == "--help":
  printHelp()
-elif not subuserlib.registry.isProgramInstalled(programName):
+ sys.exit()
+#################################################################################################
+
+programName = sys.argv[1]
+
+if not subuserlib.registry.isProgramInstalled(programName):
  print("Could not uninstall "+programName+" program is not installed.")
  printHelp()
+ print("\nInstalled programs are: ")
+ installedPrograms = subuserlib.registry.getInstalledPrograms()
+ for program, version in installedPrograms.iteritems():
+  print(program)
 else:
  installedDependencies = subuserlib.registry.getInstalledDependencies(programName)
  if installedDependencies == []:
