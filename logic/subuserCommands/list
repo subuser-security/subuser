@@ -13,7 +13,8 @@ def printHelp():
  $ subuser list available
 
   The list available command may optionally take the `--short` argument which will print only the program's names.
-
+  $ subuser list available --short
+  
 Or you can list installed programs with:
  $ subuser list installed
 """)
