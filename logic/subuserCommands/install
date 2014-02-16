@@ -13,11 +13,10 @@ import subuserlib.registry
 import subuserlib.installTime
 
 ######################################################
-programName = sys.argv[1]
 home = os.path.expanduser("~")
 ######################################################
 
-def showHelp():
+def printHelp():
  """
   Display a help message for the install mode of the subuser command.
  """ 
@@ -26,6 +25,7 @@ def showHelp():
 
 Options:
  --from-cache build this image using layers from the cache
+ $ subuser install vim --from-cache
  """)
 
 def installProgram():
@@ -62,30 +62,38 @@ subuser run """+ programName +" $@\n"
   executableFile.close()
   subuserlib.utils.subprocessCheckedCall(["chmod","+x",executablePath])
  
-  try:
-   lastUpdateTime = permissions["last-update-time"]
-  except KeyError:
-   lastUpdateTime = subuserlib.installTime.currentTimeString()
- 
+ try:
+  lastUpdateTime = permissions["last-update-time"]
+ except KeyError:
+  lastUpdateTime = subuserlib.installTime.currentTimeString()
+
  subuserlib.registry.registerProgram(programName,lastUpdateTime)
 
-##################################################################
+#################################################################################################
+if len(sys.argv) == 1 or sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.argv[1] == "--help":
+ printHelp()
+ sys.exit()
+#################################################################################################
 
-# Should we print a help message
-if sys.argv[1] == "help" or sys.argv[1] == "--help" or sys.argv[1] == "-h":
- showHelp()
- exit()
+programName = sys.argv[1]
 
 # Are we to use layers from the cache when building the docker image
 fromCache = False
-if sys.argv[1] == "--from-cache":
- fromCache = True
- programName = sys.argv[2]
+if len(sys.argv) > 2: 
+ if sys.argv[2] == "--from-cache":
+  fromCache = True
+ else:
+  print("Wrong command: see\n")
+  printHelp()
+  sys.exit()
 
 # Does the program the user wan't installed exist?
 if not subuserlib.availablePrograms.available(programName):
  print(programName+" not available for instaliation.")
- showHelp()
+ printHelp()
+ print("\nAvailable programs are: ")
+ availableProgramsPath = subuserlib.paths.getAvailableProgramsPath()
+ print(' '.join(sorted([program for program in os.listdir(availableProgramsPath)])))
 else:
  installProgram()
 

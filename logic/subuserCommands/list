@@ -20,10 +20,13 @@ Or you can list installed programs with:
  $ subuser list installed
 """)
 
-if len(sys.argv) == 1:
+#################################################################################################
+if len(sys.argv) == 1 or sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.argv[1] == "--help":
  printHelp()
+ sys.exit()
+#################################################################################################
 
-elif sys.argv[1] == "available":
+if sys.argv[1] == "available":
  try:
   if sys.argv[2] == "--short":
    availableProgramsPath = subuserlib.paths.getAvailableProgramsPath()
