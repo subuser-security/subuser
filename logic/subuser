@@ -7,16 +7,11 @@ import subprocess
 import subuserCommands.subuserlib.utils
 import subuserCommands.subuserlib.paths
 
-def isCommand(command):
- if command == "__init__.py": return False
- if command == "__init__.pyc": return False
- if command == "subdirlib": return False
- return True
+isNotCommand = ["__init__.py", "__init__.pyc", "subdirlib"]
 
 def printHelp():
  print("You can use one of the following commands:")
- for command in os.listdir(subuserCommands.subuserlib.paths.getSubuserCommandsPath()):
-  if isCommand(command):
+ for command in [command for command in os.listdir(subuserCommands.subuserlib.paths.getSubuserCommandsPath()) if command not in isNotCommand]:
    print(command)
  print("for more info about each option use: subuser <option> -h")
 
