@@ -10,6 +10,7 @@ import subuserlib.paths
 import subuserlib.installTime
 import subuserlib.availablePrograms
 import subuserlib.registry
+import subuserlib.installTime
 
 ######################################################
 programName = sys.argv[1]
@@ -64,7 +65,6 @@ subuser run """+ programName +" $@\n"
   try:
    lastUpdateTime = permissions["last-update-time"]
   except KeyError:
-   import subuserlib.installTime
    lastUpdateTime = subuserlib.installTime.currentTimeString()
  
   subuserlib.registry.registerProgram(programName,lastUpdateTime)
