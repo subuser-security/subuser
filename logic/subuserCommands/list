@@ -2,6 +2,7 @@
 # This file should be compatible with both Python 2 and 3.
 # If it is not, please file a bug report.
 import sys
+import os
 import subuserlib.utils
 import subuserlib.registry
 import subuserlib.paths
@@ -10,8 +11,8 @@ import subuserlib.availablePrograms
 
 def printHelp():
  print("""You can either list programs availiable for instalation with:
- $ subuser list available
-
+ $ subuser list available 
+ 
   The list available command may optionally take the `--short` argument which will print only the program's names.
   $ subuser list available --short
   
@@ -26,7 +27,7 @@ elif sys.argv[1] == "available":
  try:
   if sys.argv[2] == "--short":
    availableProgramsPath = subuserlib.paths.getAvailableProgramsPath()
-   subuserlib.utils.subprocessCheckedCall(["ls",availableProgramsPath])
+   print(' '.join(sorted([program for program in os.listdir(availableProgramsPath)])))
   else:
    print("Argument not recognized:"+sys.argv[2])
    printHelp()
