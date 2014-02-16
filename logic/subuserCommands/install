@@ -28,6 +28,16 @@ Options:
  --from-cache build this image using layers from the cache
  """)
 
+def installExecutable():
+ redirect="""#!/bin/bash
+subuser run """+ programName +" $@\n"
+ executablePath=subuserlib.paths.getExecutablePath(programName)
+ executableFile = open(executablePath,'w')
+ executableFile.write(redirect)
+ executableFile.close()
+ subuserlib.utils.subprocessCheckedCall(["chmod","+x",executablePath])
+
+
 def installProgram():
  """
  Build the docker image associated with a program and create a tiny executable to add that image to your path.
@@ -54,18 +64,12 @@ def installProgram():
 
  # Create a small executable that just calls the real executable in the docker image.
  if 'executable' in permissions:
-  redirect="""#!/bin/bash
-subuser run """+ programName +" $@\n"
-  executablePath=subuserlib.paths.getExecutablePath(programName)
-  executableFile = open(executablePath,'w')
-  executableFile.write(redirect)
-  executableFile.close()
-  subuserlib.utils.subprocessCheckedCall(["chmod","+x",executablePath])
- 
-  try:
-   lastUpdateTime = permissions["last-update-time"]
-  except KeyError:
-   lastUpdateTime = subuserlib.installTime.currentTimeString()
+  installExecutable() 
+
+ try:
+  lastUpdateTime = permissions["last-update-time"]
+ except KeyError:
+  lastUpdateTime = subuserlib.installTime.currentTimeString()
  
  subuserlib.registry.registerProgram(programName,lastUpdateTime)
 
@@ -88,5 +92,3 @@ if not subuserlib.availablePrograms.available(programName):
  showHelp()
 else:
  installProgram()
-
-
