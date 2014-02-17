@@ -4,6 +4,7 @@
 import paths
 import json
 import os
+import permissions
 
 def getInstalledPrograms():
  """ Return a dictionary that maps from program name to the last update time.
@@ -48,7 +49,6 @@ def isProgramInstalled(programName):
 
 def hasInstalledDependencies(programName):
  """ Returns true if there are any program's which depend upon this program installed. """
- import permissions
  installedPrograms = getInstalledPrograms()
  for program, timeOfLastUpdate in installedPrograms.iteritems():
   try:
@@ -59,7 +59,6 @@ def hasInstalledDependencies(programName):
 
 def getInstalledDependencies(programName):
  """ Returns returns a list of any installed programs which depend upon this program. """
- import permissions
  installedPrograms = getInstalledPrograms()
  installedDependencies = []
  for program, timeOfLastUpdate in installedPrograms.iteritems():
@@ -70,3 +69,23 @@ def getInstalledDependencies(programName):
    pass
 
  return installedDependencies
+
+def getDependencyTree(programName):
+ """ Returns a dependency tree list of any available program. """
+ dependency = ""
+ programDependencyTree = [programName]
+ xpermissions = permissions.getPermissions(programName)
+ try:
+  dependency = xpermissions["dependency"]
+ except KeyError:
+  return programDependencyTree
+ 
+ while dependency:
+  if dependency:
+   programDependencyTree.append(dependency)
+   xpermissions = permissions.getPermissions(dependency)
+   try:
+    dependency = xpermissions["dependency"]
+   except KeyError:
+    return programDependencyTree
+    
