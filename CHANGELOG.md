@@ -1,6 +1,8 @@
 VERSION 0.2
 -------------
 
+* Added ability to print the dependency tree of any subuser program
+
 * Refactor help code and improved output
 
 * subuser list available now includes information about each program in the listing output.

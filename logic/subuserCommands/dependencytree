@@ -1,0 +1,27 @@
+#!/usr/bin/env python
+# This file should be compatible with both Python 2 and 3.
+# If it is not, please file a bug report.
+import sys
+import subuserlib.registry
+
+def printHelp():
+ print("""Print the dependency tree of a subuser program: 
+ $ subuser dependencytree program-name
+""")
+
+#################################################################################################
+if len(sys.argv) == 1 or sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.argv[1] == "--help":
+ printHelp()
+ sys.exit()
+#################################################################################################
+
+programName = sys.argv[1]
+
+treeString = ''
+for index, dependency in enumerate(subuserlib.registry.getDependencyTree(programName)):
+ if index > 0:
+  treeString = ''.join([treeString, '  ' * index, '|__', dependency, '\n'])
+ else:
+  treeString = ''.join([treeString, dependency, '\n'])
+  
+print treeString
