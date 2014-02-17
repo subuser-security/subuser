@@ -24,7 +24,7 @@ if len(sys.argv) == 1 or sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.arg
 programName = sys.argv[1] 
 
 if not subuserlib.availablePrograms.available(programName):
- print(programName, " is not the name of any known program.  Cannot mark it as having an update.")
+ print(programName+ " is not the name of any known program.  Cannot mark it as having an update.")
  print("\nAvailable programs are: ")
  availableProgramsPath = subuserlib.paths.getAvailableProgramsPath()
  print(' '.join(sorted([program for program in os.listdir(availableProgramsPath)])))

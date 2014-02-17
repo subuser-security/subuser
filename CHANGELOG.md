@@ -1,6 +1,16 @@
 VERSION 0.2
 -------------
 
+* Refactor some print statements
+  issue #51
+  
+* Added ability to save installed subuser programs to compressed docker image files
+  issue #50
+  
+* Implemented option to build base docker images from within subuser: 
+  for examples see: (https://github.com/docker-subuser/subuser-examples)
+  issue #24, #49, #45, #41
+  
 * Added ability to print the dependency tree of any subuser program
 
 * Refactor help code and improved output
