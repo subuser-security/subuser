@@ -5,7 +5,7 @@ VERSION 0.2
   issue #51
   
 * Implemented option to build base docker images from within subuser: 
-  for examples see: (https://github.com/docker-subuser/subuser-examples)
+  for examples see: (https://github.com/subuser-security/subuser-examples)
   issue #24, #49, #45, #41
   
 * Added ability to print the dependency tree of any subuser program
