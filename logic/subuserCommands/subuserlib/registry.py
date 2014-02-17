@@ -74,18 +74,18 @@ def getDependencyTree(programName):
  """ Returns a dependency tree list of any available program. """
  dependency = ""
  programDependencyTree = [programName]
- xpermissions = permissions.getPermissions(programName)
+ programPermissions = permissions.getPermissions(programName)
  try:
-  dependency = xpermissions["dependency"]
+  dependency = programPermissions["dependency"]
  except KeyError:
   return programDependencyTree
  
  while dependency:
   if dependency:
    programDependencyTree.append(dependency)
-   xpermissions = permissions.getPermissions(dependency)
+   programPermissions = permissions.getPermissions(dependency)
    try:
-    dependency = xpermissions["dependency"]
+    dependency = programPermissions["dependency"]
    except KeyError:
     return programDependencyTree
     
