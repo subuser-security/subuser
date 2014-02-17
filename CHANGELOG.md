@@ -1,6 +1,9 @@
 VERSION 0.2
 -------------
 
+* Added ability to save a compressed image of an installed subuser program.
+  READE the TODO part in: subuser/logic/subuserCommands/save-compressed-image
+
 * Added ability to print the dependency tree of any subuser program
 
 * Refactor help code and improved output
