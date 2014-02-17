@@ -60,3 +60,7 @@ def getSubuserCommandPath(command):
 
 def getDockersideScriptsPath():
  return os.path.join(getSubuserDir(),"logic","dockerside-scripts")
+ 
+def getAvailableProgramsSavedCompressedImagePath():
+ """ Return the path to the directory which contains saved compressed docker images of programs available for instalation. """
+ return os.path.join(getSubuserDir(),"savedCompressedProgramImages")

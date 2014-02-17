@@ -88,4 +88,3 @@ def getDependencyTree(programName):
     dependency = programPermissions["dependency"]
    except KeyError:
     return programDependencyTree
-    
