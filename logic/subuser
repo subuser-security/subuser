@@ -22,9 +22,6 @@ if len(sys.argv) < 2 or sys.argv[1] == "help" or sys.argv[1] == "--help" or sys.
 
 commandExecutablePath = subuserCommands.subuserlib.paths.getSubuserCommandPath(sys.argv[1])
 
-if not os.path.exists(subuserCommands.subuserlib.paths.getAvailableProgramsSavedCompressedImagePath()):
- os.mkdir(subuserCommands.subuserlib.paths.getAvailableProgramsSavedCompressedImagePath())
- 
 if not os.path.exists(commandExecutablePath):
  print("Command not found:"+sys.argv[1])
  printHelp()
