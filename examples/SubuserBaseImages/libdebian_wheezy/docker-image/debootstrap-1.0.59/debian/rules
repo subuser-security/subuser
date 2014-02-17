@@ -1,0 +1,38 @@
+#! /usr/bin/make -f
+
+ifeq (0,$(shell dpkg-vendor --derives-from Ubuntu; echo $$?))
+  KEYRING := ubuntu-keyring
+else
+  KEYRING := debian-archive-keyring
+endif
+
+%:
+	dh $@
+
+# need to be root to make devices, so build is done in install target
+override_dh_auto_build:
+
+override_dh_auto_install:
+	dh_auto_build
+	
+	$(MAKE) install DESTDIR=$(CURDIR)/debian/debootstrap
+	$(MAKE) install DESTDIR=$(CURDIR)/debian/debootstrap-udeb
+	
+	# remove scripts not needed by d-i
+	-rm -f debian/debootstrap-udeb/usr/share/debootstrap/scripts/potato \
+		debian/debootstrap-udeb/usr/share/debootstrap/scripts/woody \
+		debian/debootstrap-udeb/usr/share/debootstrap/scripts/sarge \
+		debian/debootstrap-udeb/usr/share/debootstrap/scripts/warty \
+		debian/debootstrap-udeb/usr/share/debootstrap/scripts/hoary \
+		debian/debootstrap-udeb/usr/share/debootstrap/scripts/breezy \
+		debian/debootstrap-udeb/usr/share/debootstrap/scripts/dapper \
+		debian/debootstrap-udeb/usr/share/debootstrap/scripts/edgy \
+		debian/debootstrap-udeb/usr/share/debootstrap/scripts/feisty \
+		debian/debootstrap-udeb/usr/share/debootstrap/scripts/*.buildd \
+		debian/debootstrap-udeb/usr/share/debootstrap/scripts/*.fakechroot \
+		debian/debootstrap-udeb/usr/share/debootstrap/scripts/stable \
+		debian/debootstrap-udeb/usr/share/debootstrap/scripts/testing \
+		debian/debootstrap-udeb/usr/share/debootstrap/scripts/unstable
+
+override_dh_gencontrol:
+	dh_gencontrol -- -Vkeyring=$(KEYRING)

@@ -1,0 +1,179 @@
+.TH DEBOOTSTRAP 8 2001-04-27 "Debian Project" "Debian GNU/Linux manual"
+.SH NAME
+debootstrap \- Bootstrap a basic Debian system
+.SH SYNOPSIS
+.B debootstrap
+.RB [ OPTION\&.\&.\&. ]
+.I SUITE TARGET
+.RI [ MIRROR
+.RI [ SCRIPT ]]
+
+.B debootstrap
+.RB [ OPTION\&.\&.\&. ]
+\-\-second\-stage
+.SH DESCRIPTION
+.B debootstrap
+bootstraps a basic Debian system of
+.I SUITE
+into
+.I TARGET
+from
+.I MIRROR
+by running
+.IR SCRIPT .
+.I MIRROR
+can be an http:// or https:// URL, a file:/// URL, or an ssh:/// URL.
+.PP
+The
+.I SUITE
+may be a release code name (eg, sid, jessie, wheezy)
+or a symbolic name (eg, unstable, testing, stable, oldstable)
+.PP
+Notice that file:/ URLs are translated to file:/// (correct scheme as
+described in RFC1738 for local filenames), and file:// will \fBnot\fR work.
+ssh://USER@HOST/PATH URLs are retrieved using
+.BR scp ;
+use of
+.B ssh\-agent
+or similar is strongly recommended.
+.PP
+\fBDebootstrap\fR can be used to install Debian in a system without using an
+installation disk but can also be used to run a different Debian flavor in a \fBchroot\fR
+environment.
+This way you can create a full (minimal) Debian installation which
+can be used for testing purposes (see the \fBEXAMPLES\fR section). 
+If you are looking for a chroot system to build packages please take a look at 
+\fBpbuilder\fR.
+.SH "OPTIONS"
+.PP
+.IP "\fB\-\-arch=ARCH\fP"
+Set the target architecture (use if dpkg isn't installed).
+See also \-\-foreign.
+.IP
+.IP "\fB\-\-include=alpha,beta\fP"
+Comma separated list of packages which will be added to download and extract
+lists.
+.IP
+.IP "\fB\-\-exclude=alpha,beta\fP"
+Comma separated list of packages which will be removed from download and
+extract lists.
+WARNING: you can and probably will exclude essential packages, be
+careful using this option.
+.IP
+.IP "\fB\-\-components=alpha,beta\fP"
+Use packages from the listed components of the archive.
+.IP
+.IP "\fB\-\-no\-resolve\-deps\fP"
+By default, debootstrap will attempt to automatically resolve any missing
+dependencies, warning if any are found.
+Note that this is not a complete dependency resolve in the sense of dpkg
+or apt, and that it is far better to specify the entire base system than
+rely on this option.
+With this option set, this behaviour is disabled.
+.IP
+.IP "\fB\-\-variant=minbase|buildd|fakechroot|scratchbox\fP"
+Name of the bootstrap script variant to use.
+Currently, the variants supported are minbase, which only includes
+essential packages and apt; buildd, which installs the build-essential
+packages into
+.IR TARGET ;
+and fakechroot, which installs the packages without root privileges.
+Finally there is variant scratchbox, which is for creating targets
+for scratchbox usage.
+The default, with no \fB\-\-variant=X\fP argument, is to create a base
+Debian installation in
+.IR TARGET .
+.IP
+.IP "\fB\-\-keyring=KEYRING\fP"
+Override the default keyring for the distribution being bootstrapped,
+and use
+.IR KEYRING
+to check signatures of retrieved Release files.
+.IP
+.IP "\fB\-\-no-check-gpg\fP"
+Disables checking gpg signatures of retrieved Release files.
+.IP
+.IP "\fB\-\-verbose\fP"
+Produce more info about downloading.
+.IP
+.IP "\fB\-\-print\-debs\fP"
+Print the packages to be installed, and exit.
+Note that a TARGET directory must be specified so debootstrap can
+download Packages files to determine which packages should be installed,
+and to resolve dependencies.
+The TARGET directory will be deleted unless \-\-keep\-debootstrap\-dir
+is specified.
+.IP
+.IP "\fB\-\-download\-only\fP"
+Download packages, but don't perform installation.
+.IP
+.IP "\fB\-\-foreign\fP"
+Do the initial unpack phase of bootstrapping only, for example if the
+target architecture does not match the host architecture.
+A copy of debootstrap sufficient for completing the bootstrap process
+will be installed as /debootstrap/debootstrap in the target filesystem.
+You can run it with the \fB\-\-second\-stage\fP option to complete the
+bootstrapping process.
+.IP
+.IP "\fB\-\-second\-stage\fP"
+Complete the bootstrapping process.
+Other arguments are generally not needed.
+.IP
+.IP "\fB\-\-second\-stage\-target=DIR\fP"
+Run second stage in a subdirectory instead of root. (can be used to create
+a foreign chroot) (requires \-\-second\-stage)
+.IP
+.IP "\fB\-\-keep\-debootstrap\-dir\fP"
+Don't delete the /debootstrap directory in the target after completing the
+installation.
+.IP
+.IP "\fB\-\-unpack\-tarball=FILE\fP"
+Acquire .debs from tarball FILE instead of downloading via http.
+.IP
+.IP "\fB\-\-make\-tarball=FILE\fP"
+Instead of bootstrapping, make a tarball (written to FILE) of the downloaded
+packages.
+The resulting tarball may be passed to a later
+.BR \-\-unpack\-tarball .
+.IP
+.IP "\fB\-\-debian\-installer\fP"
+Used for internal purposes by the debian-installer
+.IP 
+.IP "\fB\-\-extractor=TYPE\fP"
+Override automatic .deb extractor selection to
+.IR TYPE .
+Supported extractors are: dpkg-deb and ar.
+.IP
+.IP "\fB\-\-no\-check\-certificate\fP"
+Do not check certificate against certificate authorities
+.IP
+.IP "\fB\-\-certificate=FILE\fP"
+Use the client certificate stored in file (PEM)
+.IP
+.IP "\fB\-\-private\-key=FILE\fP"
+Read the private key from file
+
+.SH EXAMPLES
+.
+.PP 
+To setup a \fIwheezy\fR system:
+.PP 
+     debootstrap wheezy ./wheezy-chroot http://ftp.us.debian.org/debian
+.PP
+     debootstrap wheezy ./wheezy-chroot file:///LOCAL_MIRROR/debian
+.PP
+Full process to create a complete Debian installation of \fIsid\fR (unstable)
+in a chroot:
+.PP
+     main # debootstrap sid sid-root http://ftp.us.debian.org/debian/
+     [ ... watch it download the whole system ]
+     main # echo "proc sid-root/proc proc defaults 0 0" >> /etc/fstab
+     main # mount proc sid-root/proc -t proc
+     main # echo "sysfs sid-root/sys sysfs defaults 0 0" >> /etc/fstab
+     main # mount sysfs sid-root/sys -t sysfs
+     main # cp /etc/hosts sid-root/etc/hosts
+     main # chroot sid-root /bin/bash
+.SH AUTHOR
+.B debootstrap
+was written by Anthony Towns <ajt@debian.org>.
+This manpage was written by Matt Kraai <kraai@debian.org>.

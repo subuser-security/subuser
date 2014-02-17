@@ -1,0 +1,7 @@
+{
+ "description"       : "A libubuntu_precise (12.04) image with X11 packages"
+ ,"maintainer"                : "example <example @ no.mail>"
+ ,"last-update-time"          : "2014-02-17-13:27"
+ ,"dependency"       : "libubuntu_precise"
+}
+
