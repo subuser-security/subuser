@@ -10,7 +10,7 @@ Contributing programs to the database:
 
  * While a program may have a dependency in order to conserve space, always err on the side of reliability.  If there is a risk of a version conflict then keep your program self contained.
 
- * When using the `FROM` command, you must not build your docker-image off a user uploaded image(even a verified one) you can only build off the official docker images.
+ * When using the `FROM` command, you must not build your docker-image off a user uploaded image(even a verified one) you can only build off the official docker images or one build with subuser: see below.
 
  * When a "program" does not declare an executable(aka, its only purpose is to provide a base image from which other programs are built) that program's name should be prefixed with the string "lib"
 

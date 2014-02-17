@@ -1,0 +1,56 @@
+README for debootstrap
+======================
+
+See the manpage for (some) documentation.
+
+Running debootstrap from source
+-------------------------------
+
+You can run debootstrap from its source tree without installing it. This
+can be useful if you want a quick way to make a Debian chroot on another
+system, or if you are testing modifications to debootstrap.
+
+First, get the source. 
+
+* Either by using git
+  git clone git://git.debian.org/d-i/debootstrap.git
+
+* Or by visiting <http://packages.debian.org/source/sid/debootstrap>
+  and downloading the tar.gz file
+
+Then as root, in the debootstrap source directory:
+
+make devices.tar.gz
+export DEBOOTSTRAP_DIR=`pwd`
+debootstrap sid sid
+
+
+Future
+------
+
+  * Cross-strap support - so you can bootstrap a filesystem to the
+    point where it will successfully boot, and finish installing itself
+    without having to be running the target architecture or OS yourself.
+    This means you should be able to run 
+
+	debootstrap --arch powerpc sarge ./sarge-ppc-chroot ...
+
+    on an i386 system, boot a powerpc box with sarge-ppc-chroot as its
+    root files system, and have it "work". The cross-hurd package does
+    something similar, and should be replaced by this feature.
+
+  * There should be some (better) way of telling debootstrap what "base"
+    packages you want to install -- this varies between making a chroot,
+    doing an install, and doing a buildd. Also, some installs want
+    different base packages (to setup networking, or kernels, eg)
+
+
+NMUing
+------
+
+If there's a problem with debootstrap that you need fixed, feel free to do
+an NMU to fix it. Usual rules: try not to break anything, and mail the
+patch to the BTS. Don't worry about asking first though.
+
+However, note that debootstrap is now team maintained. Anyone in d-i can do
+a release without the bother of a NMU.

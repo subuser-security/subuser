@@ -1,0 +1,2267 @@
+debootstrap (1.0.59) unstable; urgency=medium
+
+  * Install ca-certificates as well as apt-transport-https for HTTPS
+    installations.  This makes it possible to copy certificates that were
+    built into the installer to /usr/local/share/ca-certificates/ and thus
+    have them continue to be trusted after installation.
+
+ -- Colin Watson <cjwatson@debian.org>  Thu, 13 Feb 2014 13:42:54 +0000
+
+debootstrap (1.0.58) unstable; urgency=medium
+
+  * Policy version 3.9.5: no changes required.
+  * Install apt-transport-https if installing from an HTTPS mirror
+    (LP: #1135163).  It may still be necessary to copy certificates into
+    place, but there's at least a reasonable chance that somebody installing
+    from HTTPS may want to keep using it, and we have to install
+    apt-transport-https at this point otherwise they won't be able to do
+    that end-to-end.
+
+ -- Colin Watson <cjwatson@debian.org>  Tue, 11 Feb 2014 17:46:41 +0000
+
+debootstrap (1.0.57) unstable; urgency=medium
+
+  * pkgdetails_perl: Only interpret percentages following whitespace, to
+    cope with GNU wget outputting the local file name (which may contain "%"
+    due to URL-encoding) after it finishes the download (LP: #1172101).
+
+ -- Colin Watson <cjwatson@debian.org>  Fri, 07 Feb 2014 16:12:23 +0000
+
+debootstrap (1.0.56) unstable; urgency=low
+
+  [ Tollef Fog Heen ]
+  * Install base-passwd and base-files in two calls rather than one to
+    avoid problems with home-built media with different ordering in
+    Packages.  Thanks to Jo Shields for pointing this out and providing
+    the workaround.  Closes: #601670.  LP: #1001131.
+
+  [ Joey Hess ]
+  * When deboostrapping Debian, and the debian-archive-keyring is not
+    available, switch the default mirror to a https url. This way at
+    least the CA level of security is available even for users who
+    have no way to check gpg keys in the WoT. The https mirror is
+    currently https://mirrors.kernel.org/debian.
+  * Avoid writing https urls into sources.list, as apt does not support https.
+
+ -- Christian Perrier <bubulle@debian.org>  Mon, 30 Dec 2013 08:00:41 +0100
+
+debootstrap (1.0.55) unstable; urgency=low
+
+  [ Matthias Klose ]
+  * Add (Ubuntu) trusty as a symlink to gutsy.
+
+ -- Christian Perrier <bubulle@debian.org>  Tue, 22 Oct 2013 13:43:23 +0200
+
+debootstrap (1.0.53) unstable; urgency=low
+
+  [ Dmitrijs Ledkovs ]
+  * Set debian source format to '3.0 (native)'.
+  * Bump debhelper compat level to 9.
+  * Set Vcs-* to canonical format.
+
+  [ Christian Perrier ]
+  * Update Standards to 3.9.4 (checked)
+
+ -- Christian Perrier <bubulle@debian.org>  Sun, 14 Jul 2013 13:06:33 +0200
+
+debootstrap (1.0.52) unstable; urgency=low
+
+  * scripts/gutsy: Make the fake initctl pass through "initctl version"
+    calls, used by such things as invoke-rc.d to figure out whether it's
+    running under Upstart (LP: #1182540).
+  * scripts/sid, scripts/gutsy: Add a policy-rc.d, matching that in
+    debian-installer-utils.  This is the primary way to disable daemon
+    startup.
+
+ -- Colin Watson <cjwatson@debian.org>  Wed, 22 May 2013 16:55:59 +0100
+
+debootstrap (1.0.51) unstable; urgency=low
+
+  [ Scott Kitterman ]
+  * Add (Ubuntu) saucy as a symlink to gutsy (closes: #706989).
+
+  [ Colin Watson ]
+  * Clarify location of pkgdetails.c in error message (closes: #708771).
+  * Resolve mount point symlinks relative to the target chroot before
+    unmounting them (closes: #702861, #703037, #704744).
+
+ -- Colin Watson <cjwatson@debian.org>  Sat, 18 May 2013 23:18:08 +0100
+
+debootstrap (1.0.50) unstable; urgency=low
+
+  [ Hector Oron ]
+  * Report package version information on package retrieve and validation.
+    Closes: #697675
+
+ -- Christian Perrier <bubulle@debian.org>  Fri, 17 May 2013 13:34:34 +0200
+
+debootstrap (1.0.49) unstable; urgency=medium
+
+  * Add support for jessie. Closes: #706788
+
+ -- Joey Hess <joeyh@debian.org>  Sat, 04 May 2013 23:37:52 -0400
+
+debootstrap (1.0.48) unstable; urgency=low
+
+  * Team upload
+
+  [ Julien Cristau ]
+  * Disable InRelease support.  gpgv won't give us back the signed data, and
+    full gpg is not available inside d-i (closes: #703889).
+  * Move extract_release_components to after signature verification.
+    Suggested by Ansgar Burchardt.
+
+ -- Didier Raboud <odyx@debian.org>  Thu, 04 Apr 2013 16:17:57 +0200
+
+debootstrap (1.0.47) unstable; urgency=low
+
+  * Team upload
+  * Properly decrypt the InRelease file when downloading from an archive
+    where InRelease is used. This longstanding bug was masked by former
+    APT behaviour and was revealed only with recent APT versions
+    Closes: #703146
+    Thanks to Michael Vogt for the analysis and patch
+  * Add a dependency on gpg because of the above change.
+
+ -- Christian Perrier <bubulle@debian.org>  Wed, 20 Mar 2013 21:34:29 +0100
+
+debootstrap (1.0.46) unstable; urgency=low
+
+  * Team upload.
+  * Use `which` to find out sh only if /bin/sh does not exist.
+
+ -- Samuel Thibault <sthibault@debian.org>  Thu, 27 Dec 2012 15:47:16 +0100
+
+debootstrap (1.0.45) unstable; urgency=low
+
+  [ Joey Hess ]
+  * Better support use on Android by not hardcoding /bin/sh
+    in a test file that's created, and instead putting in the
+    actual path to sh. Closes: #694310 Thanks, Shawn Landden
+
+ -- Christian Perrier <bubulle@debian.org>  Sat, 22 Dec 2012 12:56:32 +0100
+
+debootstrap (1.0.44) unstable; urgency=low
+
+  * Remove double quotes to fix for loop on GNU/kFreeBSD, thanks to
+    Oleg Ginzburg (Closes: #693718).
+
+ -- Cyril Brulebois <kibi@debian.org>  Tue, 20 Nov 2012 23:55:53 +0100
+
+debootstrap (1.0.43) unstable; urgency=low
+
+  [ Joey Hess ]
+  * Fix "arc" typo. Closes: #686680
+
+  [ Colin Watson ]
+  * Add (Ubuntu) raring as a symlink to gutsy.
+
+  [ Christian Perrier ]
+  * Add myself to Uploaders and drop Anthony Towns who is no
+    longer active in debootstrap maintenance for a few years. Thanks
+    for your work, Anthony.
+  * Bump Standards to 3.9.3 (checked)
+  * Replace XC-Package-Type by Package-Type in debian/control
+
+ -- Christian Perrier <bubulle@debian.org>  Sat, 27 Oct 2012 12:46:46 +0200
+
+debootstrap (1.0.42) unstable; urgency=low
+
+  * Downgrade the absence of an InRelease file from a warning to an info
+    message.  For now, debootstrap can cope fine without, and it's possible
+    there are Debian mirrors that don't have InRelease; Ubuntu doesn't quite
+    have InRelease support yet either (LP: #1017398).
+
+ -- Colin Watson <cjwatson@debian.org>  Tue, 03 Jul 2012 15:34:57 +0100
+
+debootstrap (1.0.41) unstable; urgency=low
+
+  [ Mehdi Dogguy ]
+  * Add support for InRelease files (Closes: #638682)
+
+ -- Joey Hess <joeyh@debian.org>  Thu, 21 Jun 2012 13:16:22 -0400
+
+debootstrap (1.0.40) unstable; urgency=low
+
+  [ Joey Hess ]
+  * When installation or configuration of a package fails, output a message
+    that points the user to the log file. Attempt to grep out the first 
+    package that dpkg failed on and show its name too. Closes: #472704
+
+  [ Colin Watson ]
+  * Add (Ubuntu) quantal as a symlink to gutsy.
+
+ -- Colin Watson <cjwatson@debian.org>  Thu, 26 Apr 2012 17:44:44 +0100
+
+debootstrap (1.0.39) unstable; urgency=low
+
+  * Retry corrupted downloads rather than carrying on almost regardless.
+    Patch mostly due to Michael Gilbert, rearranged somewhat by me (closes:
+    #618920).
+  * Stop at the end of the retrieval phase if any packages failed to
+    download.
+
+ -- Colin Watson <cjwatson@debian.org>  Tue, 13 Mar 2012 17:21:13 +0000
+
+debootstrap (1.0.38) unstable; urgency=low
+
+  [ Joey Hess ]
+  * Improve error message when a decompressor is not available, 
+    to indicate which package has been built with bzip today.
+    Closes: #644719
+
+  [ Otavio Salvador ]
+  * Fix --print-debs support when using --foreign param. Closes:
+    #551837.
+
+  [ Colin Watson ]
+  * pkgdetails_perl: Use the last of a sequence of stanzas for the same
+    package name, rather than the first (closes: #649319).
+
+ -- Colin Watson <cjwatson@debian.org>  Mon, 21 Nov 2011 13:20:53 +0000
+
+debootstrap (1.0.37) unstable; urgency=low
+
+  * Add (Ubuntu) precise as a symlink to gutsy.
+
+ -- Colin Watson <cjwatson@debian.org>  Wed, 05 Oct 2011 21:58:37 +0100
+
+debootstrap (1.0.36) unstable; urgency=low
+
+  * Guess host OS based on uname for non-Debian systems. Closes: #637363
+  * Clarify "target" in usage message.
+  * Fix support for running debootstrap on a FreeBSD host to create a kFreeBSD
+    chroot or jail. Thanks, Arno Toell.
+  * Search PATH for programs, rather than checking hardcoded locations.
+  * Support using md5 and shaN programs, as found on FreeBSD, in addition
+    to md5sum and shaNsum.
+  * When FreeBSD (not kfreebsd) is the host, don't chroot to mount special
+    filesystems.
+  * When debootstrapping on FreeBSD, warn if necessary modules are not
+    loaded. Thanks, Arno Toell.
+  * Workaround for umount bug #634107, which broke pbuilder and "debootstrap ."
+    Closes: #631087
+
+ -- Joey Hess <joeyh@debian.org>  Sun, 21 Aug 2011 18:39:26 -0400
+
+debootstrap (1.0.35) unstable; urgency=low
+
+  [ Robert Millan ]
+  * Don't build devices.tar.gz if building on GNU/kFreeBSD (closes:
+    #637297).
+  * Don't use --arch when we specifically care about the host architecture
+    (closes: #637298).
+
+ -- Colin Watson <cjwatson@debian.org>  Wed, 10 Aug 2011 13:04:41 +0100
+
+debootstrap (1.0.34) unstable; urgency=low
+
+  * Add more information regarding the version and architecture in case
+    a download fails. Closes: #633625.
+  * add /usr/sbin and /sbin to PATH for fakechroot variant. Closes:
+    #588773
+  * Move setup_devices to second stage of bootstrap. Closes: #498731,
+    #531316
+
+ -- Otavio Salvador <otavio@debian.org>  Thu, 28 Jul 2011 19:13:10 +0200
+
+debootstrap (1.0.33) unstable; urgency=low
+
+  [ Joey Hess ]
+  * Mention minbase variant in --help. Closes: #632418
+  * Use md5sums for sarge, which did not consistently have sha1sums
+    everywhere. Closes: #633158
+
+  [ Colin Watson ]
+  * Improve text of error message when decompression command is not
+    available.
+
+ -- Otavio Salvador <otavio@debian.org>  Sun, 24 Jul 2011 10:33:56 +0200
+
+debootstrap (1.0.32) unstable; urgency=low
+
+  * Use md5sums for woody and potato, which only had those checksums
+    in the Packages files. Closes: #627365
+
+ -- Joey Hess <joeyh@debian.org>  Mon, 30 May 2011 13:57:46 -0400
+
+debootstrap (1.0.31) unstable; urgency=low
+
+  [ Mark Hymers ]
+  * Don't use the Build-Essential: yes field in Debian, use the
+    build-essential package. Closes: #619700.
+
+  [ Colin Watson ]
+  * If ubuntu-keyring is installed, check Release signatures against it when
+    bootstrapping Ubuntu gutsy and later.
+  * Recommend ubuntu-keyring rather than debian-archive-keyring on
+    Ubuntu-derived systems.
+
+ -- Colin Watson <cjwatson@debian.org>  Fri, 20 May 2011 09:45:48 +0100
+
+debootstrap (1.0.30) unstable; urgency=low
+
+  [ Joey Hess ]
+  * Recommend debian-archive-keyring, and if it is installed,
+    default to checking gpg signatures of the Release file against it
+    when bootstrapping sid, squeeze, wheezy, etch, and lenny.
+    Closes: #560038
+  * Add --no-check-gpg option that can be used to disable release file
+    verification. Closes: #624229
+  * Needs base-installer 1.117.
+  * Add a warning message if the keyring file is not available, and
+    --no-check-gpg is not specified.
+  * Clear all global variables used for options, so that unclean
+    environment doesn't break debootstrap. Closes: #621657
+  * Removed the --boot-floppies switch and mode. Assuming this has
+    not been used in 10 years.
+
+  [ Colin Watson ]
+  * Resolve dependencies from all requested components (LP: #740167).
+
+ -- Joey Hess <joeyh@debian.org>  Tue, 26 Apr 2011 17:10:00 -0400
+
+debootstrap (1.0.29) unstable; urgency=low
+
+  [ Joey Hess ]
+  * Support bootstrapping oldstable. (Lenny could already be bootstrapped
+    using that suite name.)
+
+  [ Colin Watson ]
+  * Add (Ubuntu) oneiric as a symlink to gutsy.
+
+ -- Colin Watson <cjwatson@debian.org>  Tue, 22 Mar 2011 10:58:49 +0000
+
+debootstrap (1.0.28) unstable; urgency=low
+
+  [ Miguel Figueiredo ]
+  * Fix for ar usage, thanks to Guillem Jover. Closes: #598729
+
+  [ Joey Hess ]
+  * Remove 5 second sleeps when debootstrap finds additional required
+    dependencies. d-i just got that much faster.
+  * Use SHA checksums. Defaulting to SHA256, and configurable by 
+    SHA_SIZE environment variable. Closes: #614315
+  * If a sha256sum program is not available, fall back to sha1sum.
+    This is to support debootstrap use on embedded systems, which are more
+    likely to have the latter.
+  * Avoid new(?) warning from dpkg about missing Maintainer field when
+    feigning install of a package.
+
+ -- Joey Hess <joeyh@debian.org>  Mon, 21 Feb 2011 20:48:46 -0400
+
+debootstrap (1.0.27) unstable; urgency=low
+
+  [ Miguel Figueiredo ]
+  * Fix bug and typo on --private-key
+    Patch by Jonathan Klee. 
+
+  [ Jeremie Koenig ]
+  * Hurd support:
+    - Use the newer setup-translators script and firmlink
+      $TARGET/{dev,servers} in setup_devices_hurd;
+    - Don't attempt to build devices.tar.gz, which is not needed.
+
+ -- Otavio Salvador <otavio@debian.org>  Mon, 07 Feb 2011 19:40:24 -0200
+
+debootstrap (1.0.26) unstable; urgency=low
+
+  [ Christian Perrier ]
+  * Consistently use tab indenting in scripts/gutsy and scripts/sid
+    Patch by Karl Goetz. Closes: #601821
+  * Fix a typo in the debootstrap script
+    Patch by Karl Goetz. Closes: #601822
+
+  [ Joey Hess ]
+  * sid: Remove old workaround for etch era coreutils/textutils md5sum
+    diversion problem. (#329394)
+
+ -- Otavio Salvador <otavio@debian.org>  Fri, 12 Nov 2010 10:07:41 -0200
+
+debootstrap (1.0.25) unstable; urgency=low
+
+  * Remove debug statement that slipped in.
+  * Add test to guard against devices.tar.gz being empty.
+  * /dev/MAKEDEV cannot be relied on (udev likes to make it a symlink to
+    true). Always use /sbin/MAKEDEV. Closes: #598080
+
+ -- Joey Hess <joeyh@debian.org>  Sun, 26 Sep 2010 13:18:31 -0400
+
+debootstrap (1.0.24) unstable; urgency=low
+
+  [ Miguel Figueiredo ]
+  * Apply patches from by Jonathan Klee and Guillaume Chauvel 
+    to add support to https (closes: #521196).
+
+  [ Colin Watson ]
+  * Add (Ubuntu) natty as a symlink to gutsy.
+
+  [ Joey Hess ]
+  * Add support for wheezy. Closes: #597461
+
+ -- Joey Hess <joeyh@debian.org>  Sun, 19 Sep 2010 21:40:00 -0400
+
+debootstrap (1.0.23) unstable; urgency=low
+
+  * Add (Ubuntu) maverick as a symlink to gutsy.
+  * Add ${misc:Depends}.
+
+ -- Colin Watson <cjwatson@debian.org>  Wed, 19 May 2010 13:35:34 +0100
+
+debootstrap (1.0.22) unstable; urgency=low
+
+  * Redo release since it ended up with testing directory in tar.gz.
+
+ -- Otavio Salvador <otavio@debian.org>  Mon, 22 Feb 2010 16:52:49 -0300
+
+debootstrap (1.0.21) unstable; urgency=low
+
+  [ Otavio Salvador ]
+  * Apply patch from Clint Adams <schizo@debian.org> to add support for
+    gz/bz2/xz data.tar (closes: #458663).
+
+  [ Guillem Jover ]
+  * Refactor deb extractors into two new functions.
+  * Use dpkg-deb if available instead of ar (closes: #557296).
+  * Add an --extractor option to override the automatic extractor selection.
+
+  [ Otavio Salvador ]
+  * Document new --extractor option in manpage.
+  * Apply patch from Vagrant Cascadian <vagrant+bugs@freegeek.org> not
+    fail if resolv.conf is a broken symlink (closes: #390647).
+
+  [ Frans Pop ]
+  * Use tab indentation in scripts/debian/sid to reduce its size (relevant
+    for Debian Installer).
+  * Add apt to base packages for the buildd variant as it is no longer marked
+    Build-Essential.
+
+  [ Otavio Salvador ]
+  * Apply patch from Andres Salomon <dilinger@collabora.co.uk> to honor
+    --components when using mirror_style 'main' (closes: #561283).
+  * Apply patch from Andres Salomon <dilinger@collabora.co.uk> to fix
+    iteration through components in download_main (closes: #561298).
+
+  [ Joey Hess ]
+  * Allow the suite to be stable, testing, or unstable when debootstrapping
+    Debian. Closes: #288109
+  * Make scripts directory in source tree look like installed directory,
+    and add a section to README explaining an easy way to run
+    debootstrap w/o installing it. Closes: #345762
+  * Convert rules file to use dh with overrides.
+  * Remove binary-basedebs target from debian/rules.
+    This target has been broken in multiple ways since 2007. While I
+    accidentially partially fixed it with the above changes, this is evidence
+    it's dead code that can be safely removed.
+
+ -- Otavio Salvador <otavio@debian.org>  Sun, 21 Feb 2010 23:11:06 -0300
+
+debootstrap (1.0.20) unstable; urgency=low
+
+  * For recent Ubuntu versions, move $TARGET/sbin/initctl aside in the same
+    way we do start-stop-daemon, so that attempts to control Upstart jobs
+    won't inadvertently affect jobs in the host system.
+  * Rename EXAMPLE section in debootstrap(8) to EXAMPLES (closes: #548458).
+
+ -- Colin Watson <cjwatson@debian.org>  Sun, 04 Oct 2009 21:23:07 +0100
+
+debootstrap (1.0.19) unstable; urgency=low
+
+  * Ignore failures from dpkg --predep-package. It exits 1 if there are no
+    suitable packages available, which isn't an error for us, but in_target
+    complains anyway, so just use in_target_nofail; the termination
+    condition is handled immediately afterwards anyway.
+
+ -- Colin Watson <cjwatson@debian.org>  Thu, 24 Sep 2009 19:57:05 +0100
+
+debootstrap (1.0.18) unstable; urgency=low
+
+  * Only use dpkg from the chroot, as there is no guarantee dpkg is 
+    available outside of the chroot (d-i installation for example).
+
+ -- Aurelien Jarno <aurel32@debian.org>  Wed, 23 Sep 2009 11:37:01 +0200
+
+debootstrap (1.0.17) unstable; urgency=low
+
+  * Remove boneheaded use of sudo left over from testing (closes: #547949).
+
+ -- Colin Watson <cjwatson@debian.org>  Tue, 22 Sep 2009 20:10:19 +0100
+
+debootstrap (1.0.16) unstable; urgency=low
+
+  [ Colin Watson ]
+  * Cope with pre-dependencies of included packages that aren't in Priority:
+    required (closes: #487908).
+  * Upgrade to debhelper v7. (Override rules get pretty hairy for this
+    package, so I haven't switched to dh(1).)
+  * Use ports.ubuntu.com as default mirror on sparc for Ubuntu hardy and
+    beyond (LP: #431145).
+  * Add (Ubuntu) lucid as a symlink to gutsy.
+
+  [ Frans Pop ]
+  * Makefile: remove unused ARCH variable.
+
+ -- Colin Watson <cjwatson@debian.org>  Mon, 21 Sep 2009 16:28:40 +0100
+
+debootstrap (1.0.15) unstable; urgency=low
+
+  * On Linux, clear out /etc/mtab on exit if it's not a symlink. Should fix
+    problems Wouter Verhelst and Martin Michlmayr are seeing with
+    initramfs-tools MODULES=dep, although it probably isn't a perfect
+    solution.
+
+ -- Colin Watson <cjwatson@debian.org>  Thu, 23 Jul 2009 16:45:00 +0100
+
+debootstrap (1.0.14) unstable; urgency=low
+
+  * Apply patch from Felix Zielcke <fzielcke@z-51.de> to use "dpkg
+    --print-architecture" to avoid deprecation warning. Closes: #531680.
+  * Reference squeeze instead of sarge in manpage. Based on a patch from
+    Geoff Simmons <gsimmons@gsimmons.org>. Closes: #534575.
+  * Apply patch from Riku Voipio <riku.voipio@iki.fi> to add support for
+    scratchbox variant. Closes: #536820.
+
+ -- Otavio Salvador <otavio@ossystems.com.br>  Wed, 22 Jul 2009 12:34:54 -0300
+
+debootstrap (1.0.13) unstable; urgency=low
+
+  [ Otavio Salvador ]
+  * Apply patch from Luca Favatella <slackydeb@gmail.com> to improve
+    coding style.
+
+  [ Colin Watson ]
+  * Add (Ubuntu) karmic as a symlink to gutsy.
+
+ -- Colin Watson <cjwatson@debian.org>  Fri, 24 Apr 2009 20:08:24 +0100
+
+debootstrap (1.0.12) unstable; urgency=low
+
+  [ Otavio Salvador ]
+  * Improve code to choose between libc packages. Thanks to Luca Favatella
+    <slackydeb@gmail.com> for first version of the patch.
+
+  [ Colin Watson ]
+  * Remove partial support for emitting translated progress messages with
+    gettext. Don't panic; d-i still has all the support necessary for this.
+    debootstrap's own support for doing this outside d-i with gettext's
+    shell bindings has been completely broken ever since it was added in
+    2003, though, and nobody has complained. Fixing it would require a big
+    pile of infrastructure and some non-trivial patches, plus arranging to
+    copy all the translations over from base-installer, and it just doesn't
+    seem worth it, so lose the cruft (LP: #188690).
+  * Export PATH, just to make sure. It isn't necessarily exported by shells
+    running from init=/bin/sh or similar, and the upstream bash maintainer
+    is unwilling to export it by default; it's easy enough to do so here
+    (LP: #320188).
+
+ -- Colin Watson <cjwatson@debian.org>  Tue, 17 Mar 2009 16:38:46 +0000
+
+debootstrap (1.0.11) unstable; urgency=low
+
+  * Add (Ubuntu) jaunty as a symlink to gutsy.
+  * Clarify that --second-stage is needed to complete the bootstrapping
+    process after --foreign.
+  * Fix --make-tarball= option (closes: #484869).
+  * Fix old Debian scripts and all Ubuntu scripts to cope with Anthony's
+    change in 1.0.8 to make --second-stage not bother recalculating required
+    and base.
+  * Rename 'repeat' to 'repeatn', since 'repeat' is a reserved word in zsh;
+    although strictly speaking this seems like an incompatibility in zsh
+    when linked to /bin/sh (closes: #340058).
+  * Fix --unpack-tarball= option (thanks, Torsten Landschoff; closes:
+    #500759).
+  * Fix handling of relative DEBOOTSTRAP_DIR (thanks, Mikhail Gusarov;
+    closes: #503460).
+  * Cope with ancient versions of chroot(8) that don't call chdir() (thanks,
+    Patrik Arvhult; closes: #350635).
+  * Recommend gnupg for --keyring option (thanks, Robert Millan; closes:
+    #467571).
+  * Note that you can't --include packages with non-required Pre-Depends
+    (see #487908).
+  * Mention /sys in EXAMPLE section of manual page, and use "defaults"
+    rather than "none" as the mount options for /proc (thanks, Raúl Sánchez
+    Siles; closes: #410787).
+  * Add /dev/console to devices.tar.gz (after all, MAKEDEV's 'consoleonly'
+    was added for boot-floppies in the first place; see
+    https://lists.ubuntu.com/archives/ubuntu-devel/2009-January/027230.html).
+  * Add support for squeeze (closes: #513488).
+
+ -- Colin Watson <cjwatson@debian.org>  Wed, 18 Feb 2009 23:46:12 +0000
+
+debootstrap (1.0.10) unstable; urgency=low
+
+  [ Joey Hess ]
+  * Avoid "broken pipe" errors in bootstrap.log from the the smallyes function.
+    The errors themselves are inherent to how the function is used, so just
+    suppress them. Closes: #480560.
+
+  [ Frans Pop ]
+  * Do not cache Release and Release.gpg files. Closes: #488424.
+  * Abort if a Packages file failed to verify.
+  * Update standards version to 3.8.0; no other changes needed.
+
+ -- Frans Pop <fjp@debian.org>  Wed, 02 Jul 2008 17:44:25 +0200
+
+debootstrap (1.0.9) unstable; urgency=low
+
+  [ Frans Pop ]
+  * Error out on unrecognized options to avoid invalid options to be
+    recognized as arguments.
+
+  [ Colin Watson ]
+  * Use 'chown 0:0' in all scripts rather than deprecated 'chown 0.0'
+    (thanks, Evan Klitzke).
+  * Add (Ubuntu) intrepid as a symlink to gutsy.
+
+ -- Colin Watson <cjwatson@debian.org>  Tue, 29 Apr 2008 19:36:19 +0100
+
+debootstrap (1.0.8) unstable; urgency=low
+
+  [ Frans Pop ]
+  * Change Priority for the udeb to extra in line with overrides file.
+
+  [ Colin Watson ]
+  * Partially revert r50134; there are people who depend on being able to
+    use the "upstream" Makefile on non-Debian systems. Create necessary
+    directories in the Makefile rather than relying on dh_installdirs to do
+    it (LP: #172645).
+  * Use ftp.us.debian.org rather than ftp.debian.org
+    (http://lists.debian.org/debian-devel-announce/2007/12/msg00002.html).
+
+  [ Anthony Towns ]
+  * Add minbase variant for the sid script that only install apt (and
+    its dependencies) instead of all of base. (Closes: Bug#351912,
+    Bug#452654)
+  * Make --second-stage not bother recalculating required and base as
+    it's not needed.
+  * Make --arch and other arguments accept both "--arch i386" and
+    "--arch=i386" forms of specifying a parameter to avoid the
+    inconsistency.
+
+  [ Stephen R. Marenka ]
+  * Allow installation of etch-m68k. (Closes: Bug#458965)
+
+  [ Colin Watson ]
+  * Add minbase variant for Ubuntu gutsy/hardy; see Anthony's change above.
+  * Minor manual page formatting improvements.
+
+ -- Colin Watson <cjwatson@debian.org>  Tue, 15 Jan 2008 11:19:34 +0000
+
+debootstrap (1.0.7) unstable; urgency=low
+
+  * No longer include full devices tarball in udeb.
+  * Also try 'udpkg --print-architecture' when determining the target
+    architecture.
+  * Utility pkgdetails moved from debootstrap-udeb to bootstrap-base so that
+    the udeb can become 'Architecture: all'.
+  * Change /usr/lib/debootstrap to /usr/share/debootstrap. Closes: #430615.
+  * Use tab indentation in debootstrap and functions saving 3kB (relevant for
+    Debian Installer).
+  * Fix various inconsistencies in build scripts.
+  * Fix dpkg-genchanges warning 'missing Priority for source files'.
+  * Update Standards-Version to 3.7.2. No changes needed.
+  * Changes in udeb require base-installer 1.85.
+
+ -- Frans Pop <fjp@debian.org>  Wed, 14 Nov 2007 12:15:45 +0100
+
+debootstrap (1.0.6) unstable; urgency=low
+
+  * Ensure that the target directory exists in check_sane_mount.
+  * Don't ignore 'make clean' errors. (The Makefile is always present.)
+
+ -- Colin Watson <cjwatson@debian.org>  Sun, 21 Oct 2007 10:50:59 +0100
+
+debootstrap (1.0.5) unstable; urgency=low
+
+  [ Colin Watson ]
+  * Don't rely on GNU sed's s///I extension (closes: #350583).
+
+  [ Joey Hess ]
+  * Skip the noexec/nodev test when running --print-debs or other operations
+    that do not involve building systems.
+
+ -- Joey Hess <joeyh@debian.org>  Sat, 20 Oct 2007 23:10:34 -0400
+
+debootstrap (1.0.4) unstable; urgency=low
+
+  [ Neil Williams ]
+  * Add --second-stage-target option that allows embedded to test for
+    installations in a chroot on the device (closes: #445157).
+
+  [ Colin Watson ]
+  * Add (Ubuntu) hardy as a symlink to gutsy.
+  * Unmount /lib/init/rw on exit (closes: #391604).
+  * Cope if uncompressed Packages is missing from Release (closes: #402380).
+  * Don't rely on XSI test(1) extensions.
+  * Add support for ssh:/// URLs (thanks, Steffen Joeris; closes: #434893).
+  * Fix Ubuntu hoary and breezy scripts to unmount /dev etc. on exit
+    (closes: #327708).
+  * Emit an error if we cannot create working devices or executables on the
+    target (based on work by Bastian Kleineidam; closes: #233798).
+
+ -- Colin Watson <cjwatson@debian.org>  Fri, 19 Oct 2007 14:57:37 +0100
+
+debootstrap (1.0.3) unstable; urgency=low
+
+  * Ignore errors when unmounting filesystems, to avoid stopping at the
+    first one with problems.
+
+ -- Colin Watson <cjwatson@debian.org>  Tue, 21 Aug 2007 12:32:37 +0100
+
+debootstrap (1.0.2) unstable; urgency=low
+
+  [ Joey Hess ]
+  * Document --components in man page.
+  * Update man page, as packages listed in --include should now be auto
+    dep-resolved by default.
+
+  [ Colin Watson ]
+  * Extensive quoting fixes, allowing installation to a target containing
+    spaces (closes: #387673).
+  * scripts/debian/sid: Handle libc0.3 on hurd-i386 (thanks, Michael Banck;
+    closes: #314304).
+  * functions: Stub out /proc setup and add device setup for the Hurd
+    (thanks, Michael Banck; closes: #314311).
+  * Add --version option (closes: #294484).
+
+  [ Otavio Salvador ]
+  * Fix bunzip2 path. Thanks Martín Ferrari <martin.ferrari@gmail.com> by
+    the patch (closes: #436218).
+
+ -- Otavio Salvador <otavio@debian.org>  Tue, 07 Aug 2007 20:12:55 -0300
+
+debootstrap (1.0.1) unstable; urgency=low
+
+  * scripts/ubuntu/gutsy: Determine buildd variant dynamically using
+    Build-Essential: yes.
+  * scripts/ubuntu/gutsy.fakechroot: Remove devmapper postinst hack, no
+    longer needed.
+  * scripts/ubuntu/*.fakechroot: Merge into the corresponding main scripts
+    as variants.
+
+ -- Colin Watson <cjwatson@debian.org>  Fri, 20 Jul 2007 11:55:22 +0100
+
+debootstrap (1.0.0) unstable; urgency=low
+
+  [ Anthony Towns ]
+  * Make debootstrap team maintained under the d-i banner.
+  * Add Joey, Frans and Junichi as uploaders, remove JHM (not in the
+    d-i group).
+  * Make pkgdetails.c not need C99 extensions. (Closes: Bug#398977)
+  * Fix am_doing_phase implementation in debootstrap script. Thanks to
+    Tero Janka for spotting the problem and the fix. (Closes: Bug#409881)
+
+  [ Joey Hess ]
+  * Drop support for sarge from the udeb.
+  * Update README.Debian:
+    - One todo item is done. (I think cross-strap is too, but unsure.)
+    - Reword NMU policy to note that it's team-maintained now.
+  * ACK my prior NMU. Closes: #418600
+  * If /dev/MAKEDEV DNE, as on certain s390 machines, use /sbin/MAKEDEV.
+    Closes: #420908
+    Note that /dev/MAKEDEV is still the correct location, and is still tried
+    first so that building works on all FHS systems, as noted in #190239.
+
+  [ Colin Watson ]
+  * Add support for Ubuntu dapper (Closes: #342838), edgy, feisty, and
+    gutsy. Exclude everything but gutsy from the udeb.
+  * Fix "deboostrap" typo in debootstrap(8) (thanks, Adam Conrad).
+  * Fix "htp" typo in temporary /etc/apt/sources.list.
+  * Drop support for woody from the udeb too.
+  * When removing $TARGET/debootstrap, debootstrap.log is still open as
+    stdout/stderr and needs to remain so, but after unlinking it some NFS
+    servers implement this by a temporary file in the same directory, which
+    makes it impossible to rmdir that directory. Moving it instead works
+    around the problem (thanks, Steven McCoy;
+    https://launchpad.net/bugs/65003).
+  * Fix formatting error in debootstrap(8) (.R is not a macro).
+  * Reorganise scripts into scripts/debian/ and scripts/ubuntu/ directories
+    in the source tree to declutter the top level.
+  * Add default_mirror function; reorganise the debootstrap script a little
+    so that it works. Set the default mirror for Ubuntu suites to
+    http://archive.ubuntu.com/ubuntu, and the default mirror for Debian
+    etch/lenny/sid architectures other than amd64 and i386 to
+    http://ftp.us.debian.org/debian (per ajt; see bug #363049).
+  * Add devices created by fd to devices-std.tar.gz, so that
+    /dev/std{in,out,err} is available conveniently in chroots with /proc and
+    /dev/pts mounted (thanks, Matthias Klose).
+  * Document --keyring and --make-tarball. (Closes: #368988)
+  * Update Ubuntu mirrors: warty/hoary/breezy => old-releases.ubuntu.com,
+    unsupported architectures => ports.ubuntu.com.
+  * Add myself to Uploaders.
+  * Bump to 1.0.0. Nobody uses debootstrap in production, do they?
+
+  [ Joey Hess ]
+  * Remove the extended package description (aka bloat) from the udeb.
+
+ -- Colin Watson <cjwatson@debian.org>  Sat, 23 Jun 2007 02:19:27 +0100
+
+debootstrap (0.3.3.3) unstable; urgency=low
+
+  * NMU
+  * Add support for lenny.
+
+ -- Joey Hess <joeyh@debian.org>  Tue, 10 Apr 2007 15:24:15 -0400
+
+debootstrap (0.3.3.2) unstable; urgency=low
+
+  * NMU with maintainer approval
+  * Remove --force-auto-select option for 'sid' script as it is no longer
+    supported by dpkg. Closes: #409527.
+
+ -- Frans Pop <fjp@debian.org>  Fri, 16 Feb 2007 20:43:36 +0100
+
+debootstrap (0.3.3.1) unstable; urgency=low
+
+  * NMU with maintainer approval
+  * functions/get_debs: build list of available packages from all specified
+    sources; this allows debootstrap to also use e.g. custom versions of base
+    packages from a source of local packages included on an installation CD.
+    Closes: #398762.
+
+ -- Frans Pop <fjp@debian.org>  Thu, 16 Nov 2006 05:30:43 +0100
+
+debootstrap (0.3.3) unstable; urgency=low
+
+  * Include kFreeBSD and fakechroot support from 0.3.2.1 and 0.3.2.2 NMUs,
+    thanks to Otavio Salvador and Piotr Roszatycki. (Closes: Bug#319100,
+    Bug#328446, Bug#204652, Bug#315044, Bug#Bug#319799)
+
+  * Require target to be specified in all cases; document usage of target
+    for --print-debs. (Closes: Bug#335922, Bug#337230)
+
+  * Use ln -sf when symlinking awk for woody and sarge. (Closes: Bug#299048)
+
+ -- Anthony Towns <aj@azure.humbug.org.au>  Sun,  6 Nov 2005 04:12:39 +1000
+
+debootstrap (0.3.2.2) unstable; urgency=low
+
+  * NMU
+  * Added relicensed fakechroot variant. Closes: #204652.
+
+ -- Piotr Roszatycki <dexter@debian.org>  Sat, 29 Oct 2005 11:29:00 +0200
+
+debootstrap (0.3.2.1) unstable; urgency=low
+
+  * NMU with maintainer approval
+  * Applied patch from Robert Millan <rmh@aybabtu.com> to add support to
+    Debian GNU/kFreeBSD. Closes: #319799
+
+ -- Otavio Salvador <otavio@debian.org>  Fri, 28 Oct 2005 16:14:57 -0200
+
+debootstrap (0.3.2) unstable; urgency=low
+
+  * Revert fakechroot NMUs (0.3.1.1, 0.3.1.3, 0.3.1.7) due to incompatible
+    license requirements (GPL) (Reopens: Bug#204652)
+
+  * Changes from 0.3.1.2 NMU, thanks to Joey Hess: (Closes: Bug#314810)
+    + Fix incorrect use of "$@" in local. Closes: #314157, #314547
+    + Fix fd redirection in download progress code. See #314373
+    + Remove md5sums file from udeb. Closes: #314378
+    + Fix debian-installer mode warning code. Closes: #314340
+
+  * Changes from 0.3.1.4 NMU, thanks to Joey Hess:
+    + Wrap eval statement in exit_function in parens, working around
+      bug #315444 in busybox sh. Closes: #314373
+
+  * Changes from 0.3.1.5 NMU, thanks to Anibal Monsalve Salazar:
+    + Fixed "--variant=buildd option does not work" for pbuilder,
+      closes: #314858. Patch by Matt Kraai <kraai@ftbfs.org>.
+
+  * Changes from 0.3.1.6 NMU, thanks to Joey Hess:
+    + Patch from Colin to redirect status messages to stderr when running
+      --print-debs. Closes: #315875
+    + Restore logging to stderr in debian-installer mode. Closes: #314160
+
+  * Changes from 0.3.1.8 NMU, thanks to Petter Reinholdtsen:
+    + [functions] Mount /sys if it exist and is supported by the kernel.
+      Patch from Cajus Pollmeier, Colin Watson and Ubuntu. (Closes: #289105)
+    + [debootstrap] Document --resolve-deps in usage info. (Closes: #328161)
+    + [etch] Replace libsigc++-1.2-5c102 with libsigc++-1.2-5c2. (Closes: #334506)
+    + [etch] Remove pppoe from base, and only install
+      ipchains on m68k.  Patch from Sven Luther. (Closes: #239390)
+    + [sarge] Remove duplicate entries for m68k and amd64.  Patch from
+      Frans Pop. (Workaround for bug #319777)
+    + [etch] Add support for ppc64.  The patch for 'sid' did no longer
+      apply.  Patch from Andreas Jochens. (Closes: #313353)
+    + [sarge,etch,sid] Set DEBCONF_NONINTERACTIVE_SEEN=true during build, to
+      avoid questions during upgrade. (Closes: #238301)
+    + Add script for breezy.  Patch from Colin Watson. (Closes: #315940)
+
+  * Changes from 0.3.1.9 NMU, thanks to Joey Hess:
+    + Replace the etch script with a copy of the sid script, which pulls in
+      gnupg, so the installed etch system has a usable apt. Closes: #334521
+
+  * Create /dev/ptmx in minimal devices tarball. (Closes: Bug#317072)
+
+  * Don't create empty available files, since old dpkg and new kernels can't
+    deal with them. (Closes: Bug#308169, Bug#329468)
+
+  * Bump Standards-Version. Bump debhelper compatability level to 4.
+  * Cleanup debian/rules, thanks to Joey Hess. (Closes: Bug#314863)
+
+  * Emit error message if no pkgdetails is available. (Closes: Bug#326831)
+
+  * Turn on --resolve-deps by default. Add --no-resolve-deps as an option.
+    Combined with the previous changes to make the etch script dynamically
+    determine base, this should resolve all the "can't install <foo>"
+    bugs. (Closes: Bug#280210, Bug#308361, Bug#318281, Bug#323362,
+    Bug#318254, Bug#313292, Bug#334683, Bug#248578, Bug#289635)
+
+  * md5sum doesn't exist when coreutils is unpacked but not configured;
+    cp it across so it's available for --second-stage. (Closes: Bug#329394)
+
+  * Catch failures in "dpkg --status-fd" (Closes: Bug#317447, Bug#323661)
+
+  * Make "without" work right for duplicates (Closes: Bug#316884,
+    Bug#319777)
+
+  * Simplify and correct file descriptor handling and debootstrap.log
+    behaviour.
+
+  * Delete $TARGET with --print-debs and --make-tarball. (Closes: Bug#328369)
+
+  * Add a --make-tarball option. (Closes: Bug#152845)
+
+  * Create a default sources.list for apt. (Closes: Bug#283234, Bug#315225)
+
+  * Update manpage to talk about woody instead of sarge. (Closes: Bug#315862)
+
+  * Use partial/ directory when downloading. (Closes: Bug#109176)
+
+ -- Anthony Towns <aj@azure.humbug.org.au>  Sun, 23 Oct 2005 14:49:08 +1000
+
+debootstrap (0.3.1) unstable; urgency=low
+
+  * sid script updated:
+    - Determine base dynamically (Priority: required for required packages,
+      Priority: important for base packages, Build-Essential: yes for buildd
+      variant base). (Closes: Bug#88984, Bug#193134)
+    - Use fine grained dpkg progress display, thanks again to Colin Watson.
+      (Closes: Bug#229314, Bug#231109, Bug#244563)
+
+  * dpkg output (etc) goes to /var/log/bootstrap.log in the target, rather
+    than stdout. This is probably difficult for frontends to capture
+    at present.
+
+  * Parsing of Packages file sped up. (Yay!)
+
+  * debootstrap.deb now arch: all (Closes: Bug#122465, Bug#131552)
+    - perl implementation of pkgdetails used by preference
+    - devices.tar.gz reduced to minimal set of devices; frontends should
+      setup udev or supply their own devices or similar in future
+    - /usr/lib/debootstrap/arch not shipped
+    - none of the above applies to udebs yet; though the devices.tar.gz
+      change will eventually
+
+  * Support for verifying based on Release.gpg files (--keyring). Thanks
+    to Colin Watson. (Closes: Bug#313383)
+
+ -- Anthony Towns <aj@azure.humbug.org.au>  Tue, 14 Jun 2005 00:22:55 +1000
+
+debootstrap (0.3.0) unstable; urgency=low
+
+  * The Gernot Heiser release, dedicated to everyone who drinks enough to
+    lose their better judgement, and those of us who didn't have any in
+    the first place.
+
+  * Major update. New features:
+    + Use $TARGET/debootstrap directory for state info
+      (--keep-debootstrap-dir)
+    + Support for cross-strapping (--foreign / --second-stage)
+      (Closes: Bug#202529)
+    + Support for resolving dependencies (--resolve-deps)
+    + Support for Debian etch, and Ubuntu warty and hoary (Closes: Bug#312417)
+    + Support for handling variants within the main suite script
+    + Support for other versions of base packages in /v/c/apt/archives
+    + Initial support for fine-grained dpkg progress display, thanks to
+      Colin Watson (currently only for warty and hoary)
+    + Initial support for determining base system dynamically.
+    + No longer display "debootstrap.invalid" when working with
+      Release/Packages files. (Closes: Bug#241795, Bug#256255)
+    + Ignores failures for on_exit cleanup commands. (Closes: Bug#253387,
+      Bug#253468, Bug#308774)
+    + Early reporting of unavailable packages.
+    + More efficient parsing of Packages files.
+    + Generalised additions and exclusions. (Closes: Bug#191793)
+    + Handles symlinked configuration files in /etc a little better.
+      (Closes: Bug#161987, Bug#252907, Bug#272257)
+
+  * Dropped support for slink.
+
+  * Use ln -fs for mawk/awk link. (Closes: Bug#248398, Bug#258524)
+
+  * Dropped mail-transport-agent, and hence mailx and at from sid/etch base.
+    (Closes: Bug#168473)
+  * Dropped ipchains for i386 (Closes: Bug#266119)
+  * Other minor changes to meet dependencies, also. (Closes: Bug#312701)
+
+  * Minor manpage fixes. (Closes: Bug#285777)
+  * Add check for specifying no components (CloseS: Bug#283810)
+
+  * Include 0.2.45 NMUs, thanks to Steve Langasek.
+    (Closes: Bug#295571, Bug#283752, Bug#278158)
+
+ -- Anthony Towns <aj@azure.humbug.org.au>  Sun, 12 Jun 2005 23:49:58 +1000
+
+debootstrap (0.2.45-0.2) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * [sarge, sid] Replace libparted1.6-0 with libparted1.6-12 for ia64,
+    to keep up with the ABI changes for that package. (Closes: #295571)
+  * [sarge, sid] include pciutils on hppa as well, per request of the
+    hppa folks. (Closes: #283752)
+
+ -- Steve Langasek <vorlon@debian.org>  Fri, 25 Feb 2005 22:23:30 -0800
+
+debootstrap (0.2.45-0.1) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * [sarge, sid] Drop libgnutls10 and libgcrypt7, since they are no
+    longer needed by exim4. (Closes: #278158).
+
+ -- Steve Langasek <vorlon@debian.org>  Thu, 20 Jan 2005 21:20:22 -0800
+
+debootstrap (0.2.45) unstable; urgency=high
+
+  * Acknowledge NMUs. (Closes: #270135)
+  * [woody.buildd] Corrected ia64 special cases. Patch by Brett Johnson
+    <brett@hp.com>. (Closes: #271894)
+
+ -- J.H.M. Dassen (Ray) <jdassen@debian.org>  Sat, 18 Sep 2004 13:49:23 +0200
+
+debootstrap (0.2.44.2) unstable; urgency=low
+
+  * NMU again, this time using the makedev in unstable instead of the
+    experimental so devices.tar.gz isn't empty on ia64...  oops... /o\
+
+ -- Bdale Garbee <bdale@gag.com>  Tue, 14 Sep 2004 20:03:56 -0600
+
+debootstrap (0.2.44.1) unstable; urgency=low
+
+  * NMU to resolve d-i inability to install sid on ia64
+  * add pciutils to the base package list for ia64, to avoid having to regress
+    efibootmgr in unstable, closes: #270315, #268490
+
+ -- Bdale Garbee <bdale@gag.com>  Mon, 13 Sep 2004 15:11:11 -0500
+
+debootstrap (0.2.44) unstable; urgency=high
+
+  * [sarge] Removed "gcc-3.0-base" and "libstdc++3" for HPPA as they have been
+    removed from sarge as well on that arch. (Closes: #268917)
+
+ -- J.H.M. Dassen (Ray) <jdassen@debian.org>  Mon, 30 Aug 2004 08:53:30 +0200
+
+debootstrap (0.2.43) unstable; urgency=high
+
+  * [sarge] Added back libgnutls10 in order not to break d-i testing.
+    (Closes: #268578, #268663).
+
+ -- J.H.M. Dassen (Ray) <jdassen@debian.org>  Sun, 29 Aug 2004 09:08:48 +0200
+
+debootstrap (0.2.42) unstable; urgency=high
+
+  * Acknowledge NMUs. (Closes: #262137, #262165, #262178, #262375)
+  * [sarge] Switch to libgnutls11 so exim4 can switch. (Closes: #268325) 
+  * [sid] Removed "gcc-3.0-base" and "libstdc++3" for HPPA as they have been
+    removed from sid. (Closes: #268049)
+  * [Makefile] Make the regular video devices on all archs. (Closes: #265081)
+  * [Makefile,debootstrap] Switched away from deprecated chown syntax;
+    switched away from XSIisms '-a' and '-o'. (Closes: #256098)
+  * [debootstrap.8] Use '\-' rather than '-' in options. (Closes: #263955)
+    Confirmed that the "exlude" typo has already been fixed. (Closes: #254108)
+    Applied patch by Javier Fernández-Sanguino Peña <jfs@computer.org>
+    for "file" URL documentation and a more complete example. (Closes: #226662)
+
+ -- J.H.M. Dassen (Ray) <jdassen@debian.org>  Fri, 27 Aug 2004 15:40:02 +0200
+
+debootstrap (0.2.41-0.2) unstable; urgency=low
+
+  * Non-maintainer upload
+  * [sarge, sid] Add missing libgcrypt11 to base, needed by libgnutls11
+    in sid and needed in sarge for opencdk8 to be rebuilt against it
+    (closes: #262375, #262178).
+
+ -- Steve Langasek <vorlon@debian.org>  Fri, 30 Jul 2004 20:26:57 -0700
+
+debootstrap (0.2.41-0.1) unstable; urgency=low
+
+  * Non-maintainer upload with consent of JHM.
+  * Pull libfribidi0 back out of base, it's opportunistically installed
+    by d-i now for the locales that need it (closes: #262137).
+  * Re-add bootloaders on ia64, sparc, mips, hppa, and m68k to base,
+    because debian-installer isn't ready for this change (closes: #262165).
+
+ -- Steve Langasek <vorlon@debian.org>  Thu, 29 Jul 2004 14:14:33 -0700
+
+debootstrap (0.2.41) unstable; urgency=high
+
+  * High urgency upload as per tbm's request.
+  * [sarge, sid] No longer install setserial, as it causes problems on some
+    systems (e.g. #212646) and there is a consensus it is no longer needed in
+    a base environment.
+  * [sarge, sid] Removed aboot, aboot-base, elilo, efibootmgr, silo, dvhtool,
+    delo, palo, vmelilo. As per the consensus reached in the thread starting 
+    with http://lists.debian.org/debian-boot/2004/04/msg00634.html, the
+    installation of boot loaders is now debian-installer's responsibility.
+    (Closes: #247906)
+  * [sarge, sid] Added libfribidi0 to base to make debconf localisation into
+    right to left languages possible. (Closes: #253229)
+  * [sarge.buildd] Drop libdb4.0 for libdb4.2 as needed by perl.
+  * [sid] Added libgnutls11 as libgnutls10 is being phased out.
+  * [Makefile] Include /dev/ida on ia64. (Closes: #258055)
+
+ -- J.H.M. Dassen (Ray) <jdassen@debian.org>  Thu, 29 Jul 2004 20:37:37 +0200
+
+debootstrap (0.2.40) unstable; urgency=medium
+
+  * [woody.buildd] Ensure the on_exit umounting of /dev/pts doesn't mess up
+    an otherwise OK exit status. (Closes: #260699)
+  * Acknowledge NMUs. (Closes: #258350, #260253)
+
+ -- J.H.M. Dassen (Ray) <jdassen@debian.org>  Thu, 22 Jul 2004 21:53:20 +0200
+
+debootstrap (0.2.39.2) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * [sarge, sid] Drop quik from powerpc, as debian-installer handles this
+    now (closes: #260253).
+
+ -- Colin Watson <cjwatson@debian.org>  Thu, 22 Jul 2004 16:56:19 +0100
+
+debootstrap (0.2.39.1) unstable; urgency=low
+
+  * NMU
+  * add passwd to sid.buildd,sarge.buildd as bash depends on them
+
+ -- Junichi Uekawa <dancer@debian.org>  Fri,  9 Jul 2004 09:07:28 +0900
+
+debootstrap (0.2.39) unstable; urgency=medium
+
+  * [sarge,sid] Dropped libdb2. Thanks Matt Zimmerman. (Closes: #250813)
+  * [sarge,sid] Dropped libident. Thanks LaMont Jones. (Closes: #251320)
+  * [sarge,sid] Dropped slang1. Thanks LaMont Jones. (Closes: #251328)
+  * [woody.buildd] Install libperl5.6. Thanks Rene Engelhard. (Closes: #251702)
+  * [sarge.buildd] Install libc6.1 rather than libc6 on alpha. Thanks Rene
+    Engelhard. (Closes: #251703)
+  
+  Goswin von Brederlow <brederlo@informatik.uni-tuebingen.de>
+  * Copy script for sarge to sid
+  * Add handling for amd64 to sarge/sid scripts
+  * Dropped gcc-3.2-base. (Closes: #250836)
+
+ -- J.H.M. Dassen (Ray) <jdassen@debian.org>  Sat,  5 Jun 2004 10:02:50 +0200
+
+debootstrap (0.2.38.1) unstable; urgency=low
+
+  * NMU.
+  * [sarge] Add libdb4.2 since apt-utils (0.5.25) depends on this.
+
+ -- Otavio Salvador <otavio@debian.org>  Thu, 20 May 2004 22:18:41 -0300
+
+debootstrap (0.2.38) unstable; urgency=medium
+
+  * [woody.buildd] Readd libgdbmg1 (for perl-modules).
+
+ -- J.H.M. Dassen (Ray) <jdassen@debian.org>  Fri,  7 May 2004 10:55:13 +0200
+
+debootstrap (0.2.37) unstable; urgency=medium
+
+  * [debian/control] Bumped makedev build dependency so as not to get pty
+    permissions problems. (Closes: #246709)
+  * [sid, sid.buildd] Add/switch to libdb4.2 for the new perl packages.
+  * Acknowledge NMU 0.2.36.1. (Closes: #246368)
+
+ -- J.H.M. Dassen (Ray) <jdassen@debian.org>  Tue,  4 May 2004 07:58:02 +0200
+
+debootstrap (0.2.36.1) unstable; urgency=low
+
+  * Non-maintainer upload with maintainer permission.
+  * [sarge, sid] Drop yaboot from powerpc, as debian-installer handles this
+    now (closes: #246368).
+
+ -- Colin Watson <cjwatson@debian.org>  Fri, 30 Apr 2004 00:05:02 +0100
+
+debootstrap (0.2.36) unstable; urgency=high
+
+  Joey Hess <joeyh@debian.org>:
+  * [sid, sarge] Add a subst_package function, and use it to replace libc6
+    with libc6.1 on alpha and ia64, to avoid reordering libc in the required
+    list and work around bug #238963. (Closes: #245680)
+
+ -- J.H.M. Dassen (Ray) <jdassen@debian.org>  Sun, 25 Apr 2004 18:37:42 +0200
+
+debootstrap (0.2.35) unstable; urgency=high
+
+  * [sarge, sid] Dropped syslinux. (Closes: #205379)
+  * [woody, woody.buildd] Removed libgdbmg1. (Closes: #244447)
+  * [debootstrap, functions] Sync at the end of debootstrap. (Closes: #225742)
+
+ -- J.H.M. Dassen (Ray) <jdassen@debian.org>  Thu, 22 Apr 2004 16:51:49 +0200
+
+debootstrap (0.2.34) unstable; urgency=high
+
+  * [sid] Dropped libpci1 and libpci2 as the pciutils dependency change has
+    been reverted. (Closes: #244344)
+
+ -- J.H.M. Dassen (Ray) <jdassen@debian.org>  Thu, 22 Apr 2004 08:14:28 +0200
+
+debootstrap (0.2.33) unstable; urgency=high
+
+  * [sid] Added libpci1 and libpci2 for all archs where pciutils is installed,
+    as pciutils now depends on them. (Closes: #244344)
+
+ -- J.H.M. Dassen (Ray) <jdassen@debian.org>  Sun, 18 Apr 2004 09:41:23 +0200
+
+debootstrap (0.2.32) unstable; urgency=high
+
+  * [sarge, sid] No longer try to filter out console-tools on s390. While
+    console-tools is basically useless on s390, base-config depends on it.
+    (Closes: #241727)
+
+ -- J.H.M. Dassen (Ray) <jdassen@debian.org>  Fri,  9 Apr 2004 16:26:23 +0200
+
+debootstrap (0.2.31) unstable; urgency=medium
+
+  * [sarge] Exim has changed GnuTLS dependencies. Added libgnutls10,
+    libgcrypt7, libgpg-error0, libopencdk8, libtasn1-2; dropped libgnutls7,
+    libgcrypt1, libtasn1-0.
+  * [sarge] Removed libgnutls7, libgcrypt1, libtasn1-0.
+
+ -- J.H.M. Dassen (Ray) <jdassen@debian.org>  Tue, 23 Mar 2004 22:47:28 +0100
+
+debootstrap (0.2.30) unstable; urgency=medium
+
+  * [sarge, sid] aboot needs aboot-base. (Closes: #236368, #239302)
+
+ -- J.H.M. Dassen (Ray) <jdassen@debian.org>  Mon, 22 Mar 2004 21:10:31 +0100
+
+debootstrap (0.2.29) unstable; urgency=low
+
+  * NMU with permission of maintainer.
+  * Added {woody,sarge,sid}.buildd scripts to create build chroots.
+    Closes: #236418.
+  * Added --variant=buildd option for convenient access to these scripts.
+
+ -- Daniel Schepler <schepler@debian.org>  Wed, 10 Mar 2004 02:29:27 -0800
+
+debootstrap (0.2.28) unstable; urgency=medium
+
+  * [sid] Exim has changed GnuTLS dependencies. Added libgnutls10, libgcrypt7,
+    libgpg-error0, libopencdk8, libtasn1-2; dropped libgnutls7, libgcrypt1, 
+    libtasn1-0.
+  * [sarge,sid] Dropped lilo, mbr, modconf, libdevmapper1.00 as
+    debian-installer handles the bootloader installation and modules
+    configuration. (Closes: #232667, #232672, #232673)
+
+ -- J.H.M. Dassen (Ray) <jdassen@debian.org>  Tue, 24 Feb 2004 09:57:35 +0100
+
+debootstrap (0.2.27) unstable; urgency=medium
+
+  * [sarge] Lilo now needs libdevmapper1.00; Removed libopencdk8, libgcrypt7,
+    libgpg-error0.
+
+ -- J.H.M. Dassen (Ray) <jdassen@debian.org>  Sat, 14 Feb 2004 01:19:48 +0100
+
+debootstrap (0.2.26) unstable; urgency=medium
+
+  * [sarge] Removed gcc-3.2-base. (Closes: #230697)
+  * [sid] Lilo now needs libdevmapper1.00 .
+
+ -- J.H.M. Dassen (Ray) <jdassen@debian.org>  Tue,  3 Feb 2004 08:27:54 +0100
+
+debootstrap (0.2.25) unstable; urgency=high
+
+  * [functions] Unmount proc/bus/usb, not proc/usb. (Closes: #229122)
+
+ -- J.H.M. Dassen (Ray) <jdassen@debian.org>  Fri, 30 Jan 2004 18:01:29 +0100
+
+debootstrap (0.2.24) unstable; urgency=high
+
+  * [functions, sarge, sid] Try to unmount proc/usb, dev/shm, dev/pts on exit;
+    don't fail when there's nothing to unmount.
+    (Closes: #229122, #229901, #229907)
+  * [woody] Don't fail when there's no dev/pts to unmount.
+  * [sarge, sid] Don't install pcmcia-cs as debian-installer takes care of
+    that where needed. (Closes: #221907)
+  * [sid] Removed libopencdk8, libgcrypt7, libgpg-error0.
+  * [sarge] libopencdk8 (needed for exim4-daemon-light via libgnutls7)
+    Depends: libgcrypt7, libgpg-error0. (Closes: #229989)
+
+ -- J.H.M. Dassen (Ray) <jdassen@debian.org>  Wed, 28 Jan 2004 18:48:02 +0100
+
+debootstrap (0.2.23) unstable; urgency=high
+
+  * [sarge] Dropped libopencdk4 in favour of libopencdk8 as gnutls has switched.
+
+ -- J.H.M. Dassen (Ray) <jdassen@debian.org>  Thu,  1 Jan 2004 01:30:02 +0100
+
+debootstrap (0.2.22) unstable; urgency=high
+
+  * [sid] libopencdk8 Depends: libgcrypt7, libgpg-error0.
+
+ -- J.H.M. Dassen (Ray) <jdassen@debian.org>  Wed, 31 Dec 2003 12:35:03 +0100
+
+debootstrap (0.2.21) unstable; urgency=high
+
+  * [sarge] Added coreutils' new predependencies libacl1 and libattr1; removed
+    libsasl2 as it is no longer needed.
+
+ -- J.H.M. Dassen (Ray) <jdassen@debian.org>  Sun, 28 Dec 2003 22:54:08 +0100
+
+debootstrap (0.2.20) unstable; urgency=high
+
+  * [sarge] base-config now Depends: aptitude; aptitude Depends:
+    libsigc++-1.2-5c102.
+
+ -- J.H.M. Dassen (Ray) <jdassen@debian.org>  Sun, 28 Dec 2003 15:11:31 +0100
+
+debootstrap (0.2.19) unstable; urgency=high
+
+  * [sid] base-config now Depends: aptitude; aptitude Depends:
+    libsigc++-1.2-5c102.
+
+ -- J.H.M. Dassen (Ray) <jdassen@debian.org>  Wed, 24 Dec 2003 09:03:44 +0100
+
+debootstrap (0.2.18) unstable; urgency=low
+
+  * Thanks to Steinar Gunderson and Matt Kraii for the NMU fixing some
+    d-i related problems. (Closes: Bug#220150)
+  * Acknowledge that the problems really are fixed now. (Closes:
+    Bug#213669, Bug#209273, Bug#210912)
+
+  * Fix downloading of Packages files to retry if bz2 or gz isn't available
+    on the mirror. (Closes: Bug#194592)
+
+ -- Anthony Towns <aj@azure.humbug.org.au>  Sat, 15 Nov 2003 00:13:13 +1000
+
+debootstrap (0.2.17.1) unstable; urgency=high
+
+  * NMU
+  * [sarge,sid] Display only the package name when retrieving packages.
+    (Closes: #213669, #209273)
+  * [sarge,sid] Added progress information for downloading package
+    details. (Closes: #210912)
+
+ -- Steinar H. Gunderson <sgunderson@bigfoot.com>  Mon, 10 Nov 2003 15:11:09 +0100
+
+debootstrap (0.2.17) unstable; urgency=high
+
+  * [sarge] Fixed typo: libreadlin4 -> libreadline4. (Closes: #219655)
+
+ -- J.H.M. Dassen (Ray) <jdassen@debian.org>  Sat,  8 Nov 2003 23:23:37 +0100
+
+debootstrap (0.2.16) unstable; urgency=high
+
+  * [sarge,sid] libreadline4 is required for amiga-fdisk on powerpc.
+    (Closes: #218533)
+  * [sarge,sid] Put libreadline4 in required rather than base for ia64.
+
+ -- J.H.M. Dassen (Ray) <jdassen@debian.org>  Wed,  5 Nov 2003 08:09:41 +0100
+
+debootstrap (0.2.15) unstable; urgency=high
+
+  * ia64 fixes by Richard Hirst <rhirst@linuxcare.com>: (Closes: #218533)
+  * [sarge, sid] Add libreadline4 to base for ia64 as parted needs it.
+  * [sarge, sid] Remove gcc-2.96-base from required for ia64.
+
+ -- J.H.M. Dassen (Ray) <jdassen@debian.org>  Sat,  1 Nov 2003 12:58:34 +0100
+
+debootstrap (0.2.14) unstable; urgency=high
+
+  * [sarge] Made exim4 the default MTA. (Closes: #217657)
+  * [sarge] Removed libstdc++2.10-glibc2.2, libldap2 .
+  * [sid] Dropped libopencdk4 in favour of libopencdk8 as gnutls has switched.
+
+ -- J.H.M. Dassen (Ray) <jdassen@debian.org>  Tue, 28 Oct 2003 09:56:27 +0100
+
+debootstrap (0.2.13) unstable; urgency=high
+
+  * [sarge] Added libtextwrap1 for tasksel.
+
+ -- J.H.M. Dassen (Ray) <jdassen@debian.org>  Wed, 22 Oct 2003 08:10:37 +0200
+
+debootstrap (0.2.12) unstable; urgency=high
+
+  * [sarge, sid] Add libreadline4 to required for m68k as amiga-fdisk needs
+    it. (Closes: #216617)
+
+ -- J.H.M. Dassen (Ray) <jdassen@debian.org>  Mon, 20 Oct 2003 10:05:09 +0200
+
+debootstrap (0.2.11) unstable; urgency=high
+
+  * [sid] Added libc6-sparc64 lib64gcc1 lib64ncurses5 to base for sparc.
+    (Closes: #215590)
+  * [sarge, sid] Dropped libreadline as bash no longer depends on it.
+  * [sid] Dropped libstdc++2.10-glibc2.2 and its associated special cases as
+    it is no longer needed.
+
+ -- J.H.M. Dassen (Ray) <jdassen@debian.org>  Wed, 15 Oct 2003 19:42:58 +0200
+
+debootstrap (0.2.10) unstable; urgency=high
+
+  * [sid] Fixed /usr/sbin/sendmail symlink to point to exim4. (Closes: #213734)
+
+ -- J.H.M. Dassen (Ray) <jdassen@debian.org>  Sat,  4 Oct 2003 15:47:31 +0200
+
+debootstrap (0.2.9) unstable; urgency=high
+
+  * [sarge] Added libgdbm3 for man-db.
+
+ -- J.H.M. Dassen (Ray) <jdassen@debian.org>  Thu,  2 Oct 2003 23:57:09 +0200
+
+debootstrap (0.2.8) unstable; urgency=high
+
+  * [sid] Added libtextwrap1 for tasksel; removed libsasl2 as it is no longer
+    needed.
+
+ -- J.H.M. Dassen (Ray) <jdassen@debian.org>  Thu,  2 Oct 2003 07:57:16 +0200
+
+debootstrap (0.2.7) unstable; urgency=high (fixes RC d-i bug)
+
+  * [sarge] Reinstated special-case for libperl5.8; it is still needed for
+    non-i386 until sarge has perl >= 5.8.0-20. (Closes: #213280)
+  * [debian/control] Updated Standards-Version; fixed removal of slink and
+    potato scripts from udeb.
+  * [debian/control] Updated priorities; debootstrap-udeb is required (for
+    debian-installer).
+  * [debian/rules] Fixed dpkg-distaddfile accordingly.
+
+ -- J.H.M. Dassen (Ray) <jdassen@debian.org>  Tue, 30 Sep 2003 14:31:57 +0200
+
+debootstrap (0.2.6) unstable; urgency=low
+
+  * [sarge] Added e2fslibs, libcomerr2, libss2, libuuid1 for e2fsprogs.
+
+ -- J.H.M. Dassen (Ray) <jdassen@debian.org>  Fri, 26 Sep 2003 13:50:58 +0200
+
+debootstrap (0.2.5) unstable; urgency=low
+
+  * [sid] Added libgdbm3 for man-db.
+  * [sarge, sid] Dropped special-case for libperl5.8 (Closes: #210425).
+  * [sid] Make exim4 the default MTA as it is configured through debconf.
+    (Closes: #208047)
+  * [sid] Removed libldap2 which is no longer needed.
+
+ -- J.H.M. Dassen (Ray) <jdassen@debian.org>  Sun, 21 Sep 2003 13:30:49 +0200
+
+debootstrap (0.2.4) unstable; urgency=low
+
+  * [sid] Added coreutils' new predependencies libacl1 and libattr1.
+  * [debian/README.Debian] Corrected example invocation. (Closes: #206142)
+  * [debian/README.Debian] Fixed a typo.
+
+ -- J.H.M. Dassen (Ray) <jdassen@debian.org>  Wed, 20 Aug 2003 10:28:49 +0200
+
+debootstrap (0.2.3) unstable; urgency=low
+
+  * [sarge] Add new dependencies of debconf: debconf-i18n
+    liblocale-gettext-perl libtext-wrapi18n-perl libtext-charwidth-perl.
+  * Acknowledge NMU. (Closes: #203370)
+
+ -- J.H.M. Dassen (Ray) <jdassen@debian.org>  Sat, 16 Aug 2003 20:15:40 +0200
+
+debootstrap (0.2.2-0.1) unstable; urgency=low
+
+  * NMU.
+  * Fix typo in woody script. (Closes: #203370)
+
+ -- Petter Reinholdtsen <pere@debian.org>  Tue, 29 Jul 2003 20:29:01 +0200
+
+debootstrap (0.2.2) unstable; urgency=low
+
+  * [debian/changelog] Included entries for NMUs 0.1.17.31 through .34 whose
+    changes were incorporated by aj already.
+  * [Makefile] Invoke MAKEDEV through its FHS location (noted by Matt
+    Zimmerman). (Closes: #190239)
+  * Acknowledge older NMUs whose changes have been incoporated.
+    (Closes: #135675, #161695, #191849)
+
+ -- J.H.M. Dassen (Ray) <jdassen@debian.org>  Tue, 29 Jul 2003 18:31:49 +0200
+
+debootstrap (0.2.1) unstable; urgency=low
+
+  * The Day of the Daffodils release.
+
+  * Accept NMUs up to 0.1.17.30. Thanks guys! (Closes: Bug#148377,
+    Bug#150161, Bug#150492, Bug#153962, Bug#154463, Bug#155906,
+    Bug#160879, Bug#161469, Bug#161469, Bug#161722, Bug#163860,
+    Bug#172118, Bug#176221, Bug#179504, Bug#179725, Bug#185397,
+    Bug#187893, Bug#188053, Bug#189472, Bug#189551, Bug#190108,
+    Bug#191288, Bug#193794, Bug#193806, Bug#195012, Bug#195742,
+    Bug#199333, Bug#201066)
+  * JHM added to Uploaders.
+
+  * Change the info/error/warning/progress calls to include a unique word
+    for each string, a printf format string, and any arguments to the
+    printf string.
+  * Add support for debian-installer interaction
+
+  * Add some support for l10n. Gettext is used if it's available; no
+    translations are included as of yet. This support doesn't
+    affect debian-installer, which has its own stuff for i18n, nor
+    boot-floppies. (Closes: Bug#125647)
+
+  * Some initial support for cross-bootstrapping in the sid script.
+
+  * Use dpkg --print-installation-architecture instead of
+    --print-architecture. (Closes: Bug#138526, Bug#159720)
+
+  * Add new dependencies of debconf: debconf-i18n liblocale-gettext-perl
+    libtext-wrapi18n-perl libtext-charwidth-perl. (Closes: Bug#201066)
+  * Add new dependencies of libldap2: libgnutls7 libgcrypt1 liblzo1
+    libopencdk4 libtasn1-0 zlib1g. (Closes: Bug#201663)
+  * Remove libgdbmg1. (Closes: Bug#202304)
+  * Add new dependecies of e2fsprogs: e2fslibs libcomerr2 libss2 libuuid1.
+    (Closes: Bug#203033)
+  * Add wget to base. (Closes: Bug#145635)
+  * Switch from netkit-ping to iputils-ping.
+
+  * Changed the manpage a little. (Closes: Bug#126864)
+  * Updated README.Debian.
+
+ -- Anthony Towns <aj@azure.humbug.org.au>  Tue, 29 Jul 2003 18:15:24 +1000
+
+debootstrap (0.1.17.34) unstable; urgency=medium
+
+  * [sid] Added e2fsprogs' new predependencies (e2fslibs, libcomerr2, libss2,
+    libuuid1).
+  * [sarge] Removed libgdbmg1 as it is no longer needed.
+
+ -- J.H.M. Dassen (Ray) <jdassen@debian.org>  Sun, 27 Jul 2003 09:20:49 +0200
+
+debootstrap (0.1.17.33) unstable; urgency=medium
+
+  * [sid] Removed libgdbmg1 as it is no longer needed.
+  * [sarge] libldap2 now Depends: libgnutls7, libsasl2; added those and their
+    dependencies (libgcrypt1 liblzo1 libopencdk4 libtasn1-0 zlib1g). Dropped
+    libsasl7 in favour of libsasl2.
+
+ -- J.H.M. Dassen (Ray) <jdassen@debian.org>  Mon, 21 Jul 2003 19:00:28 +0200
+
+debootstrap (0.1.17.32) unstable; urgency=medium
+
+  * [sid] libldap2 now Depends: libgnutls7; added that and its dependencies
+    (libgcrypt1 liblzo1 libopencdk4 libtasn1-0 zlib1g); dropped libssl0.9.7 .
+
+ -- J.H.M. Dassen (Ray) <jdassen@debian.org>  Thu, 17 Jul 2003 07:05:09 +0200
+
+debootstrap (0.1.17.31) unstable; urgency=medium
+
+  * [sid] Follow debconf changes. debconf now Depends: debconf-i18n |
+    debconf-english; debconf-i18n having Priority: important and
+    debconf-english having Priority: extra, so we satisfy the dependency
+    through debconf-i18n. debconf-i18n in turn pulls in three additional
+    packages: liblocale-gettext-perl, libtext-wrapi18n-perl,
+    libtext-charwidth-perl .
+
+ -- J.H.M. Dassen (Ray) <jdassen@debian.org>  Sun, 13 Jul 2003 08:52:55 +0200
+
+debootstrap (0.1.17.30) unstable; urgency=medium
+
+  * [sarge]
+    * Added sysv-rc for /usr/sbin/update-rc.d .
+    * Added initscripts to satisfy sysvinit's predependency.
+    * libparted1.6-0 has replaced libparted1.4 on ia64. (Closes: #197957)
+
+ -- J.H.M. Dassen (Ray) <jdassen@debian.org>  Mon, 30 Jun 2003 07:05:22 +0200
+
+debootstrap (0.1.17.29) unstable; urgency=medium
+
+  * [sid] libconsole has replaced console-tools-libs. (Closes: #195722)
+  * [sarge] libperl5.6 has been replaced by libperl5.8 . (Closes: #195588)
+
+ -- J.H.M. Dassen (Ray) <jdassen@debian.org>  Mon,  2 Jun 2003 00:40:54 +0200
+
+debootstrap (0.1.17.28) unstable; urgency=medium
+
+  * [sarge] libnewt0.51 has replaced libnewt0; it requires slang1a-utf8.
+
+ -- J.H.M. Dassen (Ray) <jdassen@debian.org>  Wed, 28 May 2003 07:42:14 +0200
+
+debootstrap (0.1.17.27) unstable; urgency=medium
+
+  * urgency medium to not hold up .26 with that longer as necessary
+  * [sarge] added libtext-iconv-perl (this is the second part
+    from .22) (closes: #184539)
+
+ -- Rene Engelhard <rene@debian.org>  Mon, 19 May 2003 00:08:48 +0200
+
+debootstrap (0.1.17.26) unstable; urgency=medium
+
+  * [sarge] libpcap0.7 has replaced libpcap0.
+
+ -- J.H.M. Dassen (Ray) <jdassen@debian.org>  Sun, 18 May 2003 23:23:46 +0200
+
+debootstrap (0.1.17.25) unstable; urgency=medium
+
+  * [sarge] Added libblkid1 (for e2fsprogs).
+
+ -- J.H.M. Dassen (Ray) <jdassen@debian.org>  Sun,  4 May 2003 12:44:00 +0200
+
+debootstrap (0.1.17.24) unstable; urgency=medium
+
+  * [sid] Updates for new whiptail:
+    * Replaced libnewt0 by libnewt0.51.
+    * Added slang1a-utf8.
+
+ -- J.H.M. Dassen (Ray) <jdassen@debian.org>  Tue, 29 Apr 2003 19:04:51 +0200
+
+debootstrap (0.1.17.23) unstable; urgency=medium
+
+  * [sid]
+    * Added sysv-rc for /usr/sbin/update-rc.d .
+    * Added initscripts to satisfy sysvinit's predependency.
+    * For exim, dropped libsasl7 in favour of libsasl2.
+    * Added libssl0.9.7 for libsasl2.
+
+ -- J.H.M. Dassen (Ray) <jdassen@debian.org>  Tue, 22 Apr 2003 06:56:25 +0200
+
+debootstrap (0.1.17.22) unstable; urgency=low
+
+  * [sid] added libtext-iconv-perl which is needed to display
+    localized po-debconf templates actually localized.
+    This needs a second step later for sarge but that only is possible
+    after libtext-iconv-perl 1.2-2 went into sarge.
+
+ -- Rene Engelhard <rene@debian.org>  Fri, 18 Apr 2003 16:25:17 +0200
+
+debootstrap (0.1.17.21) unstable; urgency=medium
+
+  * [sarge, sid] Added gcc-3.3-base (as it is needed for current libstdc++5).
+
+ -- J.H.M. Dassen (Ray) <jdassen@debian.org>  Fri, 18 Apr 2003 08:11:55 +0200
+
+debootstrap (0.1.17.20) unstable; urgency=medium
+
+  * [woody, sarge, sid] Add devfsd on s390 as that architecture uses devfs by
+    default. (Closes: #180252)
+  * [sarge] Removed the dummy fileutils package.
+
+ -- J.H.M. Dassen (Ray) <jdassen@debian.org>  Mon,  7 Apr 2003 19:59:42 +0200
+
+debootstrap (0.1.17.19) unstable; urgency=medium
+
+  * [sid] Added libblkid1 (for e2fsprogs).
+
+ -- J.H.M. Dassen (Ray) <jdassen@debian.org>  Sun,  6 Apr 2003 21:43:29 +0200
+
+debootstrap (0.1.17.18) unstable; urgency=medium
+
+  * [sarge] Added libgcc1, libstdc++5, gcc-3.2-base; dropped aptitude,
+    libsigc++0 .
+  * Debootstrap has depended on binutils since 0.1.17.3. (Closes: #184304)
+
+ -- J.H.M. Dassen (Ray) <jdassen@debian.org>  Wed, 19 Mar 2003 06:55:56 +0100
+
+debootstrap (0.1.17.17) unstable; urgency=medium
+
+  * NMU
+  * Really drop aptitude from the sid script, not just libsigc++0.
+
+ -- J.H.M. Dassen (Ray) <jdassen@debian.org>  Tue,  4 Feb 2003 06:49:36 +0100
+
+debootstrap (0.1.17.16) unstable; urgency=medium
+
+  * NMU
+  * Drop aptitude from the sid script (base-config 1.51 dropped its dependency
+    on it) and libsigc++0 (which was only needed for aptitude). This makes
+    "pbuilder create --distribution sid" work again. (Closes: #177221, #177998).
+
+ -- J.H.M. Dassen (Ray) <jdassen@debian.org>  Sun,  2 Feb 2003 20:41:35 +0100
+
+debootstrap (0.1.17.15) unstable; urgency=low
+
+  * NMU
+  * For gcc-transition, libgcc1 and libstdc++5 and gcc-3.2-base
+  required by groff-base, and potentially other packages compiled with
+  gcc-3.2.
+
+ -- Junichi Uekawa <dancer@debian.org>  Mon, 13 Jan 2003 15:39:55 +0900
+
+debootstrap (0.1.17.14) unstable; urgency=low
+
+  * NMU
+  * Remove debootstrap-udeb's dependency on retriever.
+
+ -- Tollef Fog Heen <tfheen@debian.org>  Sat,  7 Dec 2002 14:53:52 +0100
+
+debootstrap (0.1.17.13) unstable; urgency=low
+
+  * NMU
+  * sarge: Removed shellutils, textutils and added coreutils instead.
+    Verified that the result works for "pbuilder create --distribution sarge"
+    (Closes: #163789)
+    Fileutils is still in there for now, due to sarge's debconf versioned
+    dependency on it.
+
+ -- J.H.M. Dassen (Ray) <jdassen@debian.org>  Tue,  8 Oct 2002 23:17:47 +0200
+
+debootstrap (0.1.17.12) unstable; urgency=low
+
+  * NMU
+  * Fix shell variable quoting problem, to change $10 -> ${10}
+    (closes: #161468)
+
+ -- Junichi Uekawa <dancer@debian.org>  Sat, 21 Sep 2002 13:39:47 +0900
+
+debootstrap (0.1.17.11) unstable; urgency=low
+
+  * NMU
+  * sarge: added libdb1-compat.
+
+ -- J.H.M. Dassen (Ray) <jdassen@debian.org>  Sat, 21 Sep 2002 00:37:36 +0200
+
+debootstrap (0.1.17.10) unstable; urgency=low
+
+  * NMU
+  * sid: Removed shellutils, fileutils, and added coreutils for required
+    target (closes: #161332)
+  * sid: change libperl5.6 to libperl5.8 (closes: #158606)
+
+ -- Junichi Uekawa <dancer@debian.org>  Wed, 18 Sep 2002 21:41:36 +0900
+
+debootstrap (0.1.17.9) unstable; urgency=low
+
+  * NMU
+  * Added "libdb1-compat" to sid and verified that the resulting package is
+    usable for "pbuilder create --distribution sid".
+
+ -- J.H.M. Dassen (Ray) <jdassen@debian.org>  Sat, 14 Sep 2002 15:09:10 +0200
+
+debootstrap (0.1.17.8) unstable; urgency=low
+
+  * NMU
+  * The "it didn't change the way the installer worked" release.
+  * Makefile: create $(DESTDIR)/usr/share/man/man8 before attempting to
+    install a file to it (Closes: #139543)
+  * functions: fix race condition in smallyes() implementation; thanks to Matt
+    Zimmerman for the analysis.  "Sometimes, dpkg finishes executing before
+    smallyes runs, and it loops forever while echo fails repeatedly due to the
+    broken pipe."  To fix this race, we simply swap the loop condition and
+    body, so that if the echo fails, smallyes() exits cleanly.  I further
+    changed "true" to ":" to save the expense of an extra process for shells
+    where "true" is not a built-in.
+    (Closes: #139529)
+
+ -- Branden Robinson <branden@progeny.com>  Thu, 29 Aug 2002 12:50:08 -0500
+
+debootstrap (0.1.17.7) unstable; urgency=low
+
+  * NMU
+  * Forked "sid" target from "sarge" target, changed "libcap0" to the now
+    current "libpcap0.7" and verified that the result works with pbuilder.
+    (Closes: #156574)
+
+ -- J.H.M. Dassen (Ray) <jdassen@debian.org>  Wed, 21 Aug 2002 11:01:52 +0200
+
+debootstrap (0.1.17.6) unstable; urgency=low
+
+  * NMU
+  * add dselect to required (I found out that it is actually required
+    for pbuilder create to work) (closes: #154527)
+  * change DEBIAN_FRONTEND=Noninteractive to "noninteractive" (closes: #154794)
+  * add sh* patch from Yaegashi (closes: #155142)
+
+ -- Junichi Uekawa <dancer@debian.org>  Thu,  8 Aug 2002 19:23:04 +0900
+
+debootstrap (0.1.17.5) unstable; urgency=low
+
+  * NMU
+  * mistake in the last upload, sorry aj.
+    sid points to sarge, not woody. (closes: #149971)
+
+ -- Junichi Uekawa <dancer@debian.org>  Sat, 27 Jul 2002 17:22:05 +0900
+
+debootstrap (0.1.17.4) unstable; urgency=low
+
+  * NMU
+  * add "sarge" target (closes: #153957)
+
+ -- Junichi Uekawa <dancer@debian.org>  Tue, 23 Jul 2002 18:03:01 +0900
+
+debootstrap (0.1.17.3) unstable; urgency=low
+
+  * NMU
+  * Depend on binutils (closes: #138489)
+  * Sleep is optional (closes: #150468)
+  * POSIXify a bit more (closes: #150487)
+  * Add support for --components (closes: #116801)
+
+ -- Tollef Fog Heen <tfheen@debian.org>  Thu, 20 Jun 2002 00:13:06 +0200
+
+debootstrap (0.1.17.2) unstable; urgency=low
+
+  * NMU
+  * Make sid script not a symlink from woody script
+  * add aptitude and libsigc++0 to base for sid. (closes: #149971)
+
+ -- Junichi Uekawa <dancer@debian.org>  Sat, 15 Jun 2002 12:46:11 +0900
+
+debootstrap (0.1.17.1) unstable; urgency=low
+
+  * NMU
+  * Add udeb support (closes: #143874)
+
+ -- Tollef Fog Heen <tfheen@debian.org>  Tue, 28 May 2002 14:15:41 +0200
+
+debootstrap (0.1.17) unstable; urgency=high
+
+  * Includes changes from NMUs. Thanks to Stefan Gybas and Eduard Bloch.
+    (Closes: Bug#130764, Bug#135676, Bug#134306, Bug#133882, Bug#131768,
+    Bug#117980, Bug#133298, Bug#130668, Bug#111175, Bug#131147, Bug#95143,
+    Bug#130482)
+
+  * Don't use PIPESTATUS to work out if wget succeeded, since that's a
+    bashism and we're seriously not allowed bashisms. Duh. This should
+    help with all those "Malformed release" problems. Thanks to Phil
+    Blundell and Chris Tillman for spotting this. (Closes: Bug#136729)
+
+  * Apply patch from Matt Zimmerman to get rid of some irritating warnings
+    that can show up sometimes due to sed getting it's output stream closed
+    on it. (Closes: Bug#131478)
+
+  * Don't use "export foo=bar" on a single line since it's a bashism.
+    (Closes: Bug#138187)
+
+  * Made the "smallyes" usage independent of --boot-floppies. Too much
+    code duplication otherwise.
+
+  * Install ipchains on arches that have 2.2.x kernels by default, and
+    iptables on arches that have 2.4.x kernels by default. Some arches
+    have both. (Closes: Bug#134478)
+
+  * Don't rm malformed Release files, rename them to something obvious
+    instead so people can have a hope at seeing what's going on. (Closes:
+    Bug#131756)
+
+  * Error out on missing entries in Release files. (Closes: Bug#136886)
+
+  * Fix basedeb creation to not bother building devices tarball. (Closes:
+    Bug#137243)
+
+  * Workaround for ldconfig no longer needed, so removed. (Closes: Bug#135819)
+  * Workaround for /dev/initctl was never needed and stupid, so removed.
+
+  * Make sure devices.tar.gz is gzip -9'ed. (Closes: Bug#136687)
+
+  * Use any "main" components found in Release file, eg "main",
+    "non-US/main", "local/main". (Closes: Bug#116801)
+
+  * Add parted to base for ia64. (Closes: Bug#138246)
+
+  * Moved the "successful!" message and sleep hack for boot-floppies from
+    the woody script to the debootstrap script itself.
+
+ -- Anthony Towns <aj@azure.humbug.org.au>  Thu, 14 Mar 2002 18:28:24 +1000
+
+debootstrap (0.1.16.4) unstable; urgency=low
+
+  * NMU, needed for boot-floppies 3.0.20
+  * Added cciss and ataraid device files, closes: #135675
+  * Applied the patch from Matt Zimmermann to fix --include, closes: #134306
+  * Mail suppression fixed in previous release, closes: #133882
+
+ -- Eduard Bloch <blade@debian.org>  Sun,  3 Mar 2002 12:21:19 +0100
+
+debootstrap (0.1.16.3) unstable; urgency=low
+
+  * non-maintainer-upload
+  * require newer makedev, fixes build problems on m86k and arm
+  * unsets $TMP, $TEMP and $TMPDIR in the beginning, closes: #131768, #117980
+  * added gcc-2.96-base to ia64's required packages list, closes: #133298
+
+ -- Eduard Bloch <blade@debian.org>  Tue, 12 Feb 2002 19:30:47 +0100
+
+debootstrap (0.1.16.2) unstable; urgency=low
+
+  * non-maintainer-upload
+  * added modification suggested by Branden Robinson and Matt Kraai terminate
+    cat (now tail) better, closes: #130668
+  * provides options to install additional packages, or exclude some from the
+    list. May be needed in boot-floppies soon. Closes: #111175, #131147
+  * --verbose option, closes: #95143
+  * added additional devices to the device list, especially input and usb
+    needed for modern device drivers (Joysticks, USB, Scanners)
+  * added pppoeconf to the packages list, better choice for DSL users
+  * forced remove of dev/initctl, prevents breaking on re-installation
+
+ -- Eduard Bloch <blade@debian.org>  Mon, 28 Jan 2002 19:14:41 +0100
+
+debootstrap (0.1.16.1) unstable; urgency=high
+
+  * non-maintainer upload for boot-floppies 3.0.19
+  * Fixed list of base and required packages for s390
+  * setup_devices(): don't fail if devices.tar.gz is not present and we
+    are using devfs
+  * disable handling of /dev/initctl for boot-floppies, closes: #130482
+
+ -- Stefan Gybas <sgybas@debian.org>  Thu, 24 Jan 2002 15:17:42 +0100
+
+debootstrap (0.1.16) unstable; urgency=low
+
+  * Include NMUs 0.1.15.1 - .9, thanks to Adam di Carlo, Ethan Benson and
+    Bdale Garbee. (Closes: Bug#113265, Bug#119314, Bug#119251)
+  * Many bugs were fixed in the NMUs. Closes them properly. (Closes:
+    Bug#89673, Bug#97174, Bug#99229, Bug#105980, Bug#106062, Bug#106102,
+    Bug#106106, Bug#106134, Bug#106711, Bug#106877, Bug#107262,
+    Bug#107404, Bug#107447, Bug#109670, Bug#110312, Bug#111001,
+    Bug#111065, Bug#112778, Bug#112795, Bug#112842, Bug#113444,
+    Bug#114056, Bug#114653, Bug#115467, Bug#115481, Bug#115557,
+    Bug#115581, Bug#115699, Bug#116061, Bug#116424, Bug#119769,
+    Bug#119947, Bug#121724, Bug#123958, Bug#125954, Bug#126018,
+    Bug#126630, Bug#126799)
+
+  * Informative error for people who type `--boot-floppies' when running
+    by hand. (Closes: Bug#107548)
+  * Create dev/initctl in target, and setup a cat process to dump anything
+    sent to it to /dev/null so that if init is run in the chroot,
+    it doesn't try doing anything too clever to talk to the real
+    init. (Closes: Bug#120597)
+  * Create awk symlink since base-files insists on having it available.
+    (Closes: Bug#127934)
+
+  * Use DEBOOTSTRAP_DIR to work out where /usr/lib/debootstrap is.
+  * So, in theory, to create basedeb tarballs, you should be able to unpack
+    the source and say:
+    .
+        fakeroot debian/rules binary-basedebs SUITE=woody VERSION=3.0 \
+            MIRROR="http://ftp.debian.org/debian" ARCHES="i386 powerpc"
+    (Closes: Bug#127546)
+
+ -- Anthony Towns <aj@azure.humbug.org.au>  Sun, 20 Jan 2002 21:04:37 +1000
+
+debootstrap (0.1.15.9) unstable; urgency=high
+
+  * non-maintainer upload
+  * debian/rules: new 'basedebs' target that makes basedebs.tgz and 1.44
+    split images for base per arch
+  * functions: better return value handling during wget (wgetprogress)
+  * repeat() had a useless eval, removed, which simplifies some silly
+    quoting
+  * incorrect error message in in_target_msg(), closes: #119769
+  * debian/changelog: remove obsolete "local variables"
+  * additional progress message when validating the release file after
+    download
+  * when the downloaded release file is invalid, make sure to delete it
+    closes: #119947
+  * debian/rules: minor fixes and cosmetics
+  * upgrade wget from Recommends to Depends, closes: #126799
+  * depend on binutils, for 'ar', closes: #123958
+
+ -- Adam Di Carlo <aph@debian.org>  Fri,  4 Jan 2002 20:01:58 -0500
+
+debootstrap (0.1.15.8) unstable; urgency=high
+
+  * non-maintainer upload
+  * Fix progress bar hooks to enable proper progress on basedebs.tgz
+    installation as well as actual base installation and extraction.
+  * trap signals so cleanup is still performed.
+  * When in --boot-floppies mode echo a Success info message to stdout, so
+    it will show up on /dev/tty4, this is so users watching tty4 stop
+    being confused when things just stop at completion.
+  * Replace $TARGET/sbin/start-stop-daemon with a shell script instead of
+    /bin/true, this shell script announces that its a fake noop version so
+    users will know whats wrong if debootstrap aborts before completion.
+
+ -- Ethan Benson <erbenson@alaska.net>  Sat,  3 Nov 2001 23:14:08 -0900
+
+debootstrap (0.1.15.7) unstable; urgency=high
+
+  * non-maintainer upload
+  * when reporting errors in 'in_target', don't chop down to the first
+    50 characters
+  * woody: when in boot-floppies mode, provide more user-friendly warning
+    messages, using new 'in_target_msg' function
+  * woody: more info messages for the core/required/base package
+    installation part
+  * instead of 'ln -s' we should be using 'ln -sf'; this would prevent
+    running debootstrap twice in the same target dir; closes: #111065
+  * before mounting proc, umount it just in case; normally this shouldn't
+    be needed if on_exit is working all the time, but I find without this,
+    sometimes problems are caused
+  * woody/i386 needs psmisc for pcmcia-cs (critical bug!)
+  * --download-only mode can be run as non-root; closes: #116424
+  * tested some problems which I couldn't reproduce
+    closes: #115699
+
+ -- Adam Di Carlo <aph@debian.org>  Wed, 24 Oct 2001 16:05:39 -0400
+
+debootstrap (0.1.15.6) unstable; urgency=medium
+
+  * non-maintainer upload
+  * smaller and wiser version of smallyes(), thanks to Herbert Xu
+  * woody base includes pcmcia-cs for i386 and powerpc (closes: #114653)
+  * wget progress bar support (closes: #116061)
+
+ -- Adam Di Carlo <aph@debian.org>  Thu, 18 Oct 2001 15:14:02 -0400
+
+debootstrap (0.1.15.5) unstable; urgency=high
+
+  * From Ethan Benson:
+  * pipe yes output into dpkg runs inside install_debs() this way on_exit
+    works in --boot-floppies mode. (Closes: #112842, #115481)
+  * Add libpcap0 to base, ppp depends on it now. (Closes: #114056)
+
+  * From Adam Di Carlo:
+  * Potato installation on non-i386 was broken, need libc6
+    (closes: #112778); however, there are other ways the Potato base
+    install doesn't represent quite what Potato boot-floppies would
+    consider base
+  * apply patch from Tommi Virtanen which improves the 'smallyes'
+    function; apparently this fixes a console-tools postinst loop,
+    although I haven't seen that (closes: #115581)
+  * get rid of some line continuators in potato and woody scripts, they
+    were obscuring some problems
+
+ -- Adam Di Carlo <aph@debian.org>  Mon, 15 Oct 2001 01:56:16 -0400
+
+debootstrap (0.1.15.4) unstable; urgency=high
+
+  * more fixed for the benefits of boot-floppies
+  * add telnetd on s390; yes, it's gross, but it's needed for
+    installation, to connect from the line mode console
+    closes: #112795
+
+ -- Adam Di Carlo <aph@debian.org>  Sun, 23 Sep 2001 16:11:03 -0400
+
+debootstrap (0.1.15.3) unstable; urgency=high
+
+  * Fix deficient command line option parsing, optional arguments no
+    longer have to be declared in a specific order, for example before you
+    could not put --arch before --download-only, now you can.
+  * Add --help option and useful help output.
+  * Stop using dirname, basename, and yes, they are being removed from
+    busybox.
+  * Fix many many quoting bugs.
+  * Fix debootstrap man page (Closes: #107404, #109670)
+  * Add ftp support (Closes: #110312)
+  * Don't waste time downloading useless non-free/contrib (Closes: #89673)
+  * Path cleanup (Closes: #97174)
+  * Add pppconfig to woody base (Closes: #111001)
+  * Remove syslinux from base (Closes: #107447)
+  * Eliminate useless warning about creating exim.conf (Closes: #99229)
+  * Don't use "here documents" (they create tmp files in /tmp which could
+    be very well be full on boot-floppies).
+  * Don't use echo -n it is not portable.
+  * Set umask to 022.
+  * All patches from Ethan Benson, I am just the builder!
+    These have been tested with boot-floppies and work properly.
+
+ -- Adam Di Carlo <aph@debian.org>  Sat, 22 Sep 2001 12:30:02 -0400
+
+debootstrap (0.1.15.2) unstable; urgency=low
+
+  * quoting required in one place for the new ash (Closes: Bug#106062)
+  * s390 support (Closes: Bug#107262)
+  * remove some packages from Woody's base that aren't needed:
+    - update (not needed with modern kernels, Closes: Bug#106877)
+    - syslinux (Closes: Bug#107477)
+    - ldso (should be pulled in by libc6, Closes: Bug#106102)
+  * kinks in mipsel base worked themselves out (Closes: Bug#106711)
+
+ -- Adam Di Carlo <aph@debian.org>  Wed,  8 Aug 2001 12:04:40 -0400
+
+debootstrap (0.1.15.1) unstable; urgency=low
+
+  * add efibootmgr on ia64, as per bug 105980.
+
+ -- Bdale Garbee <bdale@gag.com>  Fri,  3 Aug 2001 14:13:23 -0600
+
+debootstrap (0.1.15) unstable; urgency=low
+
+  * Do progress indications (by bytes) for Packages downloads and .deb
+    downloads. (Closes: Bug#101886)
+  * Don't use seq. Silly busybox.
+  * Add pppoe to base. (Closes: Bug#102378)
+  * No point keeping around the "sid.is-broken" file.
+
+ -- Anthony Towns <aj@azure.humbug.org.au>  Wed, 27 Jun 2001 21:29:29 +1000
+
+debootstrap (0.1.14) unstable; urgency=low
+
+  * Make in_target_nofail kill stderr. No more "/dev/pts: not mounted" error.
+    Yay. :)
+
+  * Refactor woody, potato and slink scripts; do away with
+    woody.debs. Change the way the scripts work. (Now they define
+    functions which debootstrap calls. Much nicer)
+  * Support --download-only option.
+  * Support resuming downloads of Release and Packages files, even gzipped
+    ones.
+  * Support null: (Packages files assumed to be named for a debootstrap.invalid
+    host)
+  * Always use the deboostrap.invalid name, and use that in
+    /etc/apt/sources.list. Remove /etc/apt/sources.list after the base
+    system is build.
+  * All this should be enough to support basedeb.tgz installs on
+    debootstrap's behalf. Some more stuff would be useful, but isn't
+    immediately necessary. (Closes: Bug#102217)
+
+  * Add ia64 support and fix libc6 == libc6.1 problem. (Closes: Bug#101829)
+
+  * Be a little more careful with permissions on devs tarball. Hopefully.
+    (Closes: Bug#102308)
+
+  * Don't worry if md5sum from stdin adds a "  -" after the md5sum. Should
+    make debootstrap more usable on non-Debian Linuxes.
+
+ -- Anthony Towns <aj@azure.humbug.org.au>  Mon, 25 Jun 2001 18:38:35 +1000
+
+debootstrap (0.1.13) unstable; urgency=low
+
+  * Add symlink for sid.debs.
+  * Fix the special casing for hppa. (Closes: Bug#101604)
+  * Remove groff from base. (Closes: Bug#101173)
+  * Retry partially successful downloads a couple of times.
+    (Closes: Bug#101476)
+  * Minor wording changes wrt downloading Release file (Closes: Bug#101705)
+
+ -- Anthony Towns <aj@azure.humbug.org.au>  Thu, 21 Jun 2001 12:08:10 +1000
+
+debootstrap (0.1.12) unstable; urgency=high
+
+  * Split determination of base into a separate script to enable further
+    innovation! Come on, tell me that doesn't excite you!
+
+  * Add groff-base to base. (Closes: Bug#100112, Bug#100123)
+  * Remove libstdc++2.10 and some other hopefully unnecessary debs
+    (Closes: Bug#99708)
+
+  * Remove lilo.conf special casing. Change some warnings to info messages.
+
+ -- Anthony Towns <aj@azure.humbug.org.au>  Sun, 10 Jun 2001 01:22:12 +1000
+
+debootstrap (0.1.11) unstable; urgency=low
+
+  * Add dhcp-client to base. (Closes: Bug#100083)
+
+ -- Anthony Towns <aj@azure.humbug.org.au>  Sat,  9 Jun 2001 00:11:26 +1000
+
+debootstrap (0.1.10) unstable; urgency=low
+
+  * Don't abort build on devfs systems: the makedev we build-dep on should
+    be recent enough. (Closes: Bug#97713)
+  * Check for malformed release files. Thanks to Martin Michlmayr for the
+    patch. (Closes: Bug#97707)
+  * Use --force-confold when installing base. That is: if you want the
+    conffile from the package to be there at the end, don't create a
+    file in the first place. I'm not convinced this is right.
+    (Closes: Bug#99025)
+
+ -- Anthony Towns <aj@azure.humbug.org.au>  Mon, 28 May 2001 14:43:07 +1000
+
+debootstrap (0.1.9) unstable; urgency=low
+
+  * Abort build on devfs systems (MAKEDEV fails for no good reason)
+    (Closes: Bug#97713)
+
+  * Add support for mips and mipsel (Closes: Bug#97711)
+  * Add some support for hppa (install palo in base)
+
+  * Don't install ldso (Closes: Bug#97708)
+  * Don't install libopenldap1 or libopenldap-runtime (replaced by libldap2)
+    (Closes: Bug#98050)
+  * Do install libdb3 and libcap1.
+  * Install klogd too. (But only as part of base. Move sysklogd to base too)
+
+  * Setup a dummy lilo.conf on i386 only. (Closes: Bug#97710, Bug#98052)
+
+  * Trim a trailing / for target and url.
+
+ -- Anthony Towns <aj@azure.humbug.org.au>  Sun, 20 May 2001 13:33:34 +1000
+
+debootstrap (0.1.8) unstable; urgency=low
+
+  * Add adduser and base-config into base. base-config unfortunately depends
+    on perl instead of perl-base. (Closes: Bug#96439)
+  * Force LANG=C. Need to work out how i18n should be handled.
+  * Kludge potato install so it's noninteractive. Thanks to Colin Watson
+    for the patch. (Closes: Bug#94441)
+  * Get rid of dh_testversion.
+  * Make a sid script (just a symlink to the woody script).
+
+ -- Anthony Towns <aj@azure.humbug.org.au>  Wed,  9 May 2001 20:33:00 +1000
+
+debootstrap (0.1.7) unstable; urgency=low
+
+  * Don't worry if umounting /dev/pts fails.
+  * Add debootstrap(8) manpage, thanks to Matt Kraai. (Closes: Bug#86238)
+  * Add a blank line to the end of the faked /var/lib/dpkg/status. Spotted
+    by Richard Hirst.
+  * Added console-tools and console-data into the base system.
+  * Move /etc/exim.conf to /etc/exim/exim.conf so that sendmail doesn't
+    give errors, even if debconf tries to use it before exim is
+    configured.  Gack.
+  * Add fdutils back into base.
+
+ -- Anthony Towns <aj@azure.humbug.org.au>  Mon, 30 Apr 2001 15:49:27 +1000
+
+debootstrap (0.1.6) unstable; urgency=low
+
+  * Only create stuff in /etc if it hasn't already been created.
+
+ -- Anthony Towns <aj@azure.humbug.org.au>  Mon, 23 Apr 2001 18:02:55 +1000
+
+debootstrap (0.1.5) unstable; urgency=low
+
+  * Use "head -n X" instead of "head -X" to work with busybox.
+    (Closes: Bug#94575)
+  * Use s///I instead of s///i for case insensitivity, again for busybox.
+    (Closes: Bug#94579)
+  * Fixed typo that would have stopped debootstrap from falling back to an
+    uncompressed Packages file.
+  * Added libsasl7 and libldap2 to woody base, since woody exim now depends
+    on them.
+
+ -- Anthony Towns <aj@azure.humbug.org.au>  Sun, 22 Apr 2001 01:47:00 +1000
+
+debootstrap (0.1.4) unstable; urgency=low
+
+  * If we've got a Release file, check that the Packages files we download
+    have the right md5sums.
+  * Build-Depend on new makedev, and don't hax0r powerpc devices as much.
+    (Closes: Bug#93836)
+  * Hopefully support arm chroots. (Closes: Bug#92592) Declare it to be
+    Arch: any, and see what dies. There's a chance that nothing will. Not
+    a *big* chance, but a chance.
+  * Fiddled with the base system some more. Added apt-utils so
+    preconfiguration will work.
+  * Added permission to NMU to the README.Debian.
+  * Mention file:/ URLs in README.Debian. (Closes: Bug#87099)
+  * Add a --boot-floppies option that changes the way the I/O happens, in
+    a way that's hopefully useful for boot-floppies. See README.Debian for
+    details.
+  * Also added a bit more output.
+
+ -- Anthony Towns <aj@azure.humbug.org.au>  Mon, 26 Mar 2001 22:30:12 +1000
+
+debootstrap (0.1.3) unstable; urgency=high
+
+  * Switch from debconf-tiny to debconf, since that's what's now in
+    woody. (Using debconf-tiny probably makes the package unusable, hence
+    the urgency) Fixup perl, lilo and console-apt to cope with changes in
+    the base system in woody. Added ae, left nano and nvi.
+  * Add support for m68k, sparc and powerpc, based on Christian Steigies
+    patches and Adam Di Carlo's NMU (Closes: Bug#89883, Bug#91221)
+
+ -- Anthony Towns <aj@azure.humbug.org.au>  Sun, 25 Mar 2001 14:29:02 +1000
+
+debootstrap (0.1.2) unstable; urgency=low
+
+  * Add support for slink.
+  * Fix support for woody (no lilo, console-*, different perl)
+  * Re-download Packages files every time (Closes: Bug#88438)
+    (Should this be changed to re-download things where the md5 doesn't match?)
+
+ -- Anthony Towns <aj@azure.humbug.org.au>  Sun,  4 Mar 2001 19:42:29 +1000
+
+debootstrap (0.1.1) unstable; urgency=low
+
+  * Initial Release. (Closes: Bug#82245)
+
+  * Called it debootstrap instead of debchroot, because it's more about
+    bootstrapping a Debian environment, whether that will end up being
+    in a chroot, or as a standalone system. Blame Adam di Carlo. :)
+
+ -- Anthony Towns <ajt@debian.org>  Tue, 30 Jan 2001 10:54:45 +1000

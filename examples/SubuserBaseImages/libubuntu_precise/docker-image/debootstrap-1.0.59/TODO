@@ -1,0 +1,11 @@
+
+Features:
+  ++ second stage via chroot debootstrap/debootstrap
+  ++ debootstrap/deb file to record deb destinations/information
+
+  -- configuration file
+      -- versus command line
+      -- support for sources (vs mirrors)
+      -- faux-pinning for packages 
+
+  ++ makedev in second stage

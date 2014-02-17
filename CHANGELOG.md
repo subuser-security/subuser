@@ -1,6 +1,15 @@
 VERSION 0.2
 -------------
 
+* Implemented option to build base docker images from within subuser: 
+  see ssubuser/examples/SubuserBaseImages:
+    - firefox_libx11_libubuntu_precise
+    - libx11_libubuntu_precise
+    - libubuntu_precise
+    - libdebian_jessie
+    - libdebian_wheezy
+    - libubuntu_trusty
+
 * Added ability to print the dependency tree of any subuser program
 
 * Refactor help code and improved output
