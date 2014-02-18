@@ -178,6 +178,8 @@ Design flaws/bugs in subuser:
 See also links:
 ---------------
 
+ * [Java Web Start](http://en.wikipedia.org/wiki/Java_Web_Start)
+
  * [AppArmor](http://en.wikipedia.org/wiki/AppArmor)
 
  * [SELinux](http://en.wikipedia.org/wiki/Security-Enhanced_Linux)
