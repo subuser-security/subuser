@@ -1,0 +1,13 @@
+{
+ "description"                : "The skype telephon system."
+,"maintainer"                : "Timothy Hobbs <timothyhobbs (at) seznam dot cz>"
+ ,"executable"                : "/usr/bin/skype"
+ ,"dependency"                : "libx11"
+ ,"user-dirs"                 : []
+ ,"system-dirs"               : []
+ ,"x11"                       : true
+ ,"sound"                     : true
+ ,"inherit-working-directory" : false
+ ,"allow-network-access"      : true
+}
+
