@@ -29,3 +29,11 @@ def hasExecutable(programName):
   return True
  except KeyError:
   return False
+ 
+def hasShell(programName):
+ """ Return True if the program has an shell for interactive logon associated with it. """
+ try:
+  getPermissions(programName)["path-to-shell"]
+  return True
+ except KeyError:
+  return False
