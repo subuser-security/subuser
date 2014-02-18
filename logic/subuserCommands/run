@@ -14,10 +14,16 @@ cwd = os.getcwd()
 home = os.path.expanduser("~")
 ###############################################################
 def printHelp():
- print("""Run a program installed with subuser.  For example:
-$ subuser run firefox
+ print("""Run a program installed with subuser.  For example: subuser run firefox [optional arguments to be pass on to the program]
+$ subuser run firefox 
+$ subuser run firefox  -new-instance -safe-mode
 
 This command is useful if you want to put `~/subuser/bin` at the end of your path.  If you do that, subuser programs will not have precidence over "normally" installed programs.
+
+The 'run' command may optionally take the a special single argument: `--container` which will logon to an interactive shell (new container of a subuser program)
+  $ subuser run firefox --container
+  
+The command option '--container' is useful if you want to inspect on a shell basis the program container and is similar to the docker comand: 'docker run -i -t subuser-program-name path-to-shell'
 """)
 
 def getArgsToPassToProgram():
@@ -50,6 +56,19 @@ def makeUserDirVolumeArgs(userDirs):
 def runProgram(programName):
  dockerImageName = subuserlib.dockerImages.getImageTagOfInstalledProgram(programName)
 
+ #CHECK: interactiveContainerLogon
+ try:
+  if sys.argv[2] == "--container":
+   if subuserlib.permissions.hasShell(programName):
+    pathToShelll = subuserlib.permissions.getPermissions(programName)["path-to-shell"]
+    dockerCommand = ["docker","run","-i","-t","-rm",dockerImageName,pathToShelll]
+    subprocess.call(dockerCommand)
+   else:
+    print("<%s> has no permission to logon to shell" % programName)
+   sys.exit()
+ except IndexError:
+  pass
+  
  args=getArgsToPassToProgram()
 
  permissions = subuserlib.permissions.getPermissions(programName)
@@ -99,17 +118,14 @@ def runProgram(programName):
  except KeyError:
   systemDirVolumeArgs = []
 
- def setupUserDirSymlinks(userDirs):
-  """ Create symlinks to userdirs in program's home dir. """
+ try:
+  userDirs = permissions["user-dirs"]
+  #Create symlinks to userdirs in program's home dir.
   for userDir in userDirs:
    source = os.path.join("/userdirs/",userDir)
    destination = os.path.join(hostSubuserHome,userDir)
    if not os.path.islink(destination):
     os.symlink(source,destination)
-
- try:
-  userDirs = permissions["user-dirs"]
-  setupUserDirSymlinks(userDirs)
   userDirVolumeArgs = makeUserDirVolumeArgs(userDirs)
  except KeyError:
   userDirVolumeArgs = []

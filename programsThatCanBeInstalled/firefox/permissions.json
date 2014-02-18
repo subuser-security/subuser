@@ -10,5 +10,6 @@
  ,"sound"                     : true
  ,"inherit-working-directory" : false
  ,"allow-network-access"      : true
+ ,"path-to-shell"             : "/bin/bash"
 }
 

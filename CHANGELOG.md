@@ -1,6 +1,9 @@
 VERSION 0.2
 -------------
 
+* Implemented: logon to interactive shell with permission entry (e.g. firefox)
+  issue #55, also simplified unneeded function code: issue #56
+  
 * Refactor some print statements
   issue #51
   
