@@ -8,22 +8,22 @@ import subuserlib.permissions
 
 ####################################################
 def printHelp():
- print(""" Clean your system of uneeded images/libaries/executable-less programs.  If a libarary has no programs depending on it, uninstall that libarary.  Run this command with:
+ print(""" Clean your system of unneeded images/libaries/executable-less programs.  If a libarary has no programs depending on it, uninstall that libarary.  Run this command with:
 
 $ subuser clean
 """)
 
-def gatherUneededLibs():
- """ Returns a list of uneeded libaries. """
+def gatherUnneededLibs():
+ """ Returns a list of unneeded libaries. """
  installedPrograms = subuserlib.registry.getInstalledPrograms()
- uneededLibs = []
+ unneededLibs = []
  for program,lastUpdateTime in installedPrograms.iteritems():
   if not subuserlib.permissions.hasExecutable(program) and not subuserlib.registry.hasInstalledDependencies(program):
-   uneededLibs.append(program)
- return uneededLibs
+   unneededLibs.append(program)
+ return unneededLibs
  
-def cleanUneededLibs():
- programsToUninstall = gatherUneededLibs()
+def cleanUnneededLibs():
+ programsToUninstall = gatherUnneededLibs()
  if len(programsToUninstall) > 0:
   performUninstalls(programsToUninstall)
  else:
@@ -41,4 +41,4 @@ def performUninstalls(programsToUninstall):
 if len(sys.argv) > 1:
  printHelp()
 else:
- cleanUneededLibs() 
+ cleanUnneededLibs() 
