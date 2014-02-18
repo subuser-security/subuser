@@ -17,7 +17,7 @@ def gatherUnneededLibs():
  """ Returns a list of unneeded libaries. """
  installedPrograms = subuserlib.registry.getInstalledPrograms()
  unneededLibs = []
- for program,lastUpdateTime in installedPrograms.iteritems():
+ for program in installedPrograms.keys():
   if not subuserlib.permissions.hasExecutable(program) and not subuserlib.registry.hasInstalledDependencies(program):
    unneededLibs.append(program)
  return unneededLibs

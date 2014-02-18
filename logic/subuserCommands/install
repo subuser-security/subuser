@@ -5,6 +5,7 @@ import sys
 import os
 import stat
 import json
+import subprocess
 import subuserlib.utils
 import subuserlib.permissions
 import subuserlib.paths
@@ -126,7 +127,15 @@ def installProgram(programName, cacheArg):
  except KeyError:
   lastUpdateTime = subuserlib.installTime.currentTimeString()
  
- subuserlib.registry.registerProgram(programName,lastUpdateTime)
+
+ #get: programDockerImageID
+ dockerCommand = """(docker inspect subuser-%s | grep id | cut -d '"' -f 4)""" %  programName
+ try:
+  programImageID = subprocess.check_output([dockerCommand], shell=True).strip()
+ except Exception as err:
+  print("ERROR: getting programDockerImageID: %s" % err)
+  sys.exit()
+ subuserlib.registry.registerProgram(programName, lastUpdateTime, programImageID)
 
 #################################################################################################
 if len(sys.argv) == 1 or sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.argv[1] == "--help":
