@@ -155,4 +155,5 @@ if not subuserlib.availablePrograms.available(programName):
 else:
  #get dependencytree and install bottom->up
  for dependency in reversed(subuserlib.registry.getDependencyTree(programName)):
-  installProgram(dependency, cacheArg)
+  if not subuserlib.registry.isProgramInstalled(dependency):
+   installProgram(dependency, cacheArg)
