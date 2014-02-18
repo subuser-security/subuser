@@ -40,7 +40,7 @@ Installing subuser:
 
   ````
   $ cd
-  $ git clone http://github.com/timthelion/subuser
+  $ git clone https://github.com/subuser-security/subuser
   ````
 
 3. Add `~/subuser/bin` to your path by adding the line `PATH=$HOME/subuser/bin:$PATH` to the end of your `.bashrc` file.
