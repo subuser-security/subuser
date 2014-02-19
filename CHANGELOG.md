@@ -1,6 +1,8 @@
 VERSION 0.2
 -------------
 
+* Add the describe command
+
 * FIX: The mark-as-needing-update command messes up the order of attributes in permissions.json #32
 
 * Implemented new installed-programs.json format: issue #63

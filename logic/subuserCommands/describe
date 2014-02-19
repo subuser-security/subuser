@@ -1,0 +1,21 @@
+#!/usr/bin/env python
+# This file should be compatible with both Python 2 and 3.
+# If it is not, please file a bug report.
+import sys
+import subuserlib.describe
+
+def printHelp():
+ print("""Show basic information about a program: Whether it is installed, what it's permissions are ect.
+Ex:
+$ subuser describe firefox
+<lots of info>
+""")
+
+#################################################################################################
+if len(sys.argv) == 1 or sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.argv[1] == "--help":
+ printHelp()
+ sys.exit()
+#################################################################################################
+
+for program in sys.argv[1:]:
+ subuserlib.describe.printInfo(program,False)
