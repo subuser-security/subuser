@@ -7,7 +7,7 @@ import subuserlib.availablePrograms
 import subuserlib.registry
 import subuserlib.dockerImages
 
-def printInfo(program,permissionsOnly=False):
+def printInfo(program,showProgramStatus):
  """ Print information about a given program to standard output. """
  registry = subuserlib.registry.getRegistry()
 
@@ -18,7 +18,7 @@ def printInfo(program,permissionsOnly=False):
   print(program+":")
   print(" Description: "+permissions["description"])
   print(" Maintainer: "+permissions["maintainer"])
-  if not permissionsOnly:
+  if showProgramStatus:
    print(" Running: "+str(subuserlib.dockerImages.isProgramRunning(program)))
    if "last-update-time" in permissions.keys():
     print(" Needs update: "+str(not permissions["last-update-time"] == registry[program]["last-update-time"]))

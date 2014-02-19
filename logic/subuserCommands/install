@@ -154,7 +154,7 @@ def installProgramAndDependencies(programName, cacheArg, printProgramPermission=
  #print for the MAIN program (The user called not the dependency the permission
  if printProgramPermission:
   print(programName+" has been installed with the following permissions.")
-  subuserlib.describe.printInfo(programName,True)
+  subuserlib.describe.printInfo(programName,False)
   print("You can change this program's permissions at any time by editing it's permissions.json file.")
  
 #################################################################################################
