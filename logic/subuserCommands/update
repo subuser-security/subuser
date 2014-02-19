@@ -141,6 +141,6 @@ if sys.argv[1] == "all":
 else:
  programsToBeUpdated = sys.argv[1:]
  programsToBeUpdatedDict = installedPrograms.copy()
- for program,lastUpdateTime in programsToBeUpdatedDict.iteritems():
+ for program in programsToBeUpdatedDict.keys():
   programsToBeUpdatedDict[program] = program in programsToBeUpdated
  updateSomePrograms(programsToBeUpdatedDict)
