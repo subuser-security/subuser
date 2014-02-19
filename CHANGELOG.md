@@ -1,7 +1,7 @@
 VERSION 0.2
 -------------
 
-* Added: new command 'print-dependency-matrix' Which can take similar to 'list' the arguments: available, installed or a list of subuser-programs
+* Added: new command 'print-dependency-nodes' Which can take similar to 'list' the arguments: available, installed or a list of subuser-programs
 
 * Improved Python Files I/O code
 

@@ -6,6 +6,7 @@ import json
 import os
 import sys
 import permissions
+import subuserlib.availablePrograms
 
 def getInstalledPrograms():
  """ Return a dictionary that maps from program name to the last update time.
@@ -75,72 +76,65 @@ def getDependencyTree(programName):
  programDependencyTree = [programName]
  programPermissions = permissions.getPermissions(programName)
  dependency = programPermissions.get("dependency", None)
- if dependency:
-  while dependency:
-   if dependency:
-    programDependencyTree.append(dependency)
-    programPermissions = permissions.getPermissions(dependency)
-    dependency = programPermissions.get("dependency", None)
-    if not dependency:
-     break 
+ while dependency:
+  if not subuserlib.availablePrograms.available(dependency):
+   sys.exit(programName+" depends upon "+dependency+" however "+dependency+" does not exist.")
+  programDependencyTree.append(dependency)
+  programPermissions = permissions.getPermissions(dependency)
+  dependency = programPermissions.get("dependency", None)
  return programDependencyTree
 
-def getDependencyMatrix(subuserProgramList, useHasExecutable=False, sortLists=False):
+def getDependencyMatrix(programList, useHasExecutable=False, sortLists=False):
  """ 
- Returns a dependency matrix dictionary with some extra options 
+ Returns a programName<->dependency info dictionary.
  
  Arguments: 
- - subuserProgramList: List of available or installed (or a selected list)  of subuser-programs 
+ - programList: List of available or installed (or a selected list)  of subuser-programs 
       (getInstalledPrograms().keys(), or getAvailablePrograms(), or ["firefox", "vim"]
- - useHasExecutable: boolean: if True a additional key "has-executable" will be added to the matrix
+ - useHasExecutable: boolean: if True an additional key "has-executable" will be added to the matrix
  - sortLists: boolean: if True: required-by, depends-on  will be sorted 
  
- Matrix format: { 'programName' : { 
+ Matrix format when useHasExecutable is False:
+                { 'programName' : { 
                      "required-by" : [app1, app2],
                      "depends-on" : [app1, lib3]
                                   }
                 }   
 
- Matrix format: { 'programName' : { 
+ Matrix format when useHasExecutable is True
+                { 'programName' : { 
                      "required-by" : [app1, app2],
                      "depends-on" : [],
                      "has-executable" : True
                                   }
                 } 
                 
- NOTE: keys are always present: required-by, depends-on can be empty lists too
+ NOTE: The following keys are always present: required-by, depends-on though they may be empty lists
  """
+
+ # Create a dictionary of empty matrices.
  dependencyMatrix = {}
- for program in subuserProgramList:
+ for program in programList:
   if useHasExecutable:
-   if permissions.getPermissions(program).get("executable", None):
+   if permissions.hasExecutable(program):
     dependencyMatrix[program] = {"required-by" : [], "depends-on" : [], "has-executable" : True}
    else:
     dependencyMatrix[program] = {"required-by" : [], "depends-on" : [], "has-executable" : False}
   else:
    dependencyMatrix[program] = {"required-by" : [], "depends-on" : []}
    
- #assumption is that the correct list is passed: no point to check here if available: as often the getAvailablePrograms list is used as input
- #using a try instead
- try:
-  for programMain in dependencyMatrix.keys():
-   for program in getDependencyTree(programMain):
-    dependencyMatrix[programMain]["depends-on"].append(program)
-    if program != programMain:
-     #could be that we got a own list which does not have this included: or a broken installed-programs.json
-     if program in dependencyMatrix.keys():
-      dependencyMatrix[program]["required-by"].append(programMain)
-  
- except Exception as err:
-  print("""ERROR:  %s 
-   
-  Suggestion: maybe it is defined as a wrong dependency in a permission.json file\n""" % (err))
-  sys.exit()
-   
+ for program in dependencyMatrix.keys():
+  for dependency in getDependencyTree(program):
+   if dependency != program:
+    dependencyMatrix[program]["depends-on"].append(dependency)
+    #could be that we got a own list which does not have this included: or a broken installed-programs.json
+    if dependency in dependencyMatrix.keys():
+     dependencyMatrix[dependency]["required-by"].append(program)
+
  #sort if required
  if sortLists:
-  for programMain in dependencyMatrix.keys():
-   dependencyMatrix[programMain]["depends-on"] = sorted(dependencyMatrix[programMain]["depends-on"])
-   dependencyMatrix[programMain]["required-by"] = sorted(dependencyMatrix[programMain]["required-by"])
-  
+  for program in dependencyMatrix.keys():
+   dependencyMatrix[program]["depends-on"] = sorted(dependencyMatrix[program]["depends-on"])
+   dependencyMatrix[program]["required-by"] = sorted(dependencyMatrix[program]["required-by"])
+ 
  return dependencyMatrix
