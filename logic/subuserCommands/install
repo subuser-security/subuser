@@ -129,7 +129,7 @@ def installProgram(programName, cacheArg):
  imageID = subuserlib.dockerImages.getImageID("subuser-"+programName)
  subuserlib.registry.registerProgram(programName, lastUpdateTime, imageID)
 
-def getDependencytTreeInstallAll(programName, cacheArg, printProgramPermission=False):
+def installProgramAndDependencies(programName, cacheArg, printProgramPermission=False):
  """
  Build the dependencytree and install bottom->up
  """
@@ -152,9 +152,11 @@ def getDependencytTreeInstallAll(programName, cacheArg, printProgramPermission=F
   
  #print for the MAIN program (The user called not the dependency the permission
  if printProgramPermission:
+  print(programName+" has been installed with the following permissions.")
   print("\n\n========= PERMISSION.json for: <%s> =========\n" % programName)
   permission = subuserlib.permissions.getPermissions(programName)
   print(json.dumps(permission, indent=2))
+  print("You can change this program's permissions at any time by editing it's permissions.json file.")
  
 #################################################################################################
 if len(sys.argv) == 1 or sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.argv[1] == "--help":
@@ -182,4 +184,4 @@ if len(sys.argv) > 2:
   printHelp()
   sys.exit()
 
-getDependencytTreeInstallAll(programName, cacheArg, printProgramPermission=True)
+installProgramAndDependencies(programName, cacheArg, printProgramPermission=True)
