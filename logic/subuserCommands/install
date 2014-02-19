@@ -12,6 +12,7 @@ import subuserlib.installTime
 import subuserlib.availablePrograms
 import subuserlib.registry
 import subuserlib.installTime
+import subuserlib.dockerImages
 
 ######################################################
 home = os.path.expanduser("~")
@@ -125,7 +126,8 @@ def installProgram(programName, cacheArg):
  except KeyError:
   lastUpdateTime = subuserlib.installTime.currentTimeString()
  
- subuserlib.registry.registerProgram(programName,lastUpdateTime)
+ imageID = subuserlib.dockerImages.getImageID("subuser-"+programName)
+ subuserlib.registry.registerProgram(programName, lastUpdateTime, imageID)
 
 #################################################################################################
 if len(sys.argv) == 1 or sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.argv[1] == "--help":

@@ -6,17 +6,34 @@ import json
 import os
 import sys
 import permissions
-import subuserlib.availablePrograms
+import availablePrograms
+import dockerImages
 
 def getRegistry():
  """ Return a dictionary of the program registry: installed-programs.json
+ registered items:
+  - last-update-time
+  - image-id 
+  Still Maintaining backwards compat with format: "programName" : "last-update-time",
  """
+ programRegistry = {}
  programRegistryPath = paths.getProgramRegistryPath()
  if os.path.exists(programRegistryPath):
   with open(programRegistryPath, 'r') as file_f:
    programRegistry = json.load(file_f)
- else:
-  programRegistry = {}
+   
+ #Maintaining backwards compat: to be soon removed
+ if len(programRegistry) > 0:
+  firstProgramName = programRegistry.keys()[0]
+  if not isinstance(programRegistry[firstProgramName], dict):
+   programNewRegistry = {}
+   for programName, lastUpdateTime in programRegistry.iteritems():
+    programNewRegistry[programName] = {}
+    programNewRegistry[programName]['last-update-time'] = lastUpdateTime
+    programNewRegistry[programName]['image-id'] = dockerImages.getImageID("subuser-"+programName)
+    programRegistry = programNewRegistry
+    #save the new one here once and for all
+    setInstalledPrograms(programRegistry)
  return programRegistry
  
 def getInstalledPrograms():
@@ -25,18 +42,27 @@ def getInstalledPrograms():
  return getRegistry().keys()
 
 def setInstalledPrograms(programRegistry):
- """ Passing this file a dictionary which maps program names to last update time saves that registry to disk, overwritting the previous one.
- """
+ """ Passing this file a dictionary which maps program names to registered items writes that registry to disk, overwritting the previous one.
+ registered items:
+  - last-update-time
+  - image-id 
+  """
  programRegistryPath = paths.getProgramRegistryPath()
  with open(programRegistryPath, 'w') as file_f:
-  json.dump(programRegistry,file_f)
+  json.dump(programRegistry, file_f, indent=1, separators=(',', ': '))
 
-def registerProgram(programName,programVersion):
- """ Add a program to the registry.  If it is already in the registry, update its last update time. """
+def registerProgram(programName, lastUpdateTime, imageID):
+ """ Add a program to the registry.  If it is already in the registry, update its registered items. 
+ registered items:
+  - last-update-time
+  - image-id 
+  """
  programRegistry = getRegistry()
- programRegistry[programName]=programVersion
+ programRegistry[programName] = {}
+ programRegistry[programName]['last-update-time'] = lastUpdateTime
+ programRegistry[programName]['image-id'] = imageID
  setInstalledPrograms(programRegistry)
-
+ 
 def unregisterProgram(programName):
  """ Remove a program from the registry. """
  programRegistry = getRegistry()
@@ -80,7 +106,7 @@ def getDependencyTree(programName):
  programPermissions = permissions.getPermissions(programName)
  dependency = programPermissions.get("dependency", None)
  while dependency:
-  if not subuserlib.availablePrograms.available(dependency):
+  if not availablePrograms.available(dependency):
    sys.exit(programName+" depends upon "+dependency+" however "+dependency+" does not exist.")
   programDependencyTree.append(dependency)
   programPermissions = permissions.getPermissions(dependency)
