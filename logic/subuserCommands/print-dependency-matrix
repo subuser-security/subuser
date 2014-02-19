@@ -26,7 +26,7 @@ if len(sys.argv) == 1 or sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.arg
 if sys.argv[1] == "available":
  subuserProgramList = subuserlib.availablePrograms.getAvailablePrograms()
 elif sys.argv[1] == "installed":
- subuserProgramList = subuserlib.registry.getInstalledPrograms().keys()
+ subuserProgramList = subuserlib.registry.getRegistry().keys()
 else:
  subuserProgramList = sys.argv[1:]
 

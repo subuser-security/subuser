@@ -19,14 +19,14 @@ Options:
 
 def resetRegistry():
  """ Go through registry and unregister any program that is not actually installed. """
- registeredPrograms = subuserlib.registry.getInstalledPrograms()
+ registeredPrograms = subuserlib.registry.getRegistry()
  for program in registeredPrograms.keys():
   if not subuserlib.dockerImages.isProgramsImageInstalled(program):
    subuserlib.registry.unregisterProgram(program)
 
 def installFromRegistry(useCache):
  """ Installs all of the programs listed in installed-programs.json file. """
- programsToBeInstalled = subuserlib.registry.getInstalledPrograms()
+ programsToBeInstalled = subuserlib.registry.getRegistry()
  resetRegistry()
  for program in programsToBeInstalled.keys():
   print("\n=== Installing <%s> from installed-programs.json registry....\n" % program)

@@ -15,7 +15,7 @@ $ subuser clean
 
 def gatherUnneededLibs():
  """ Returns a list of unneeded libaries. """
- installedPrograms = subuserlib.registry.getInstalledPrograms()
+ installedPrograms = subuserlib.registry.getRegistry()
  unneededLibs = []
  for program in installedPrograms.keys():
   if not subuserlib.permissions.hasExecutable(program) and not subuserlib.registry.hasInstalledDependencies(program):
