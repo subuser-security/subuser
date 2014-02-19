@@ -56,3 +56,20 @@ def inspectImage(imageTag):
 def getImageID(imageTag):
  """ Returns the ID(as a string) of an image given that image's tag. """
  return inspectImage(imageTag)["id"]
+
+def getRunningProgramsWithNames(names):
+ """ Returns a very crude listing from docker ps. Not a real list of the names of running programs or anything. """
+ psOutput = subprocess.check_output(["docker","ps"])
+ psOutput = psOutput.split("\n")
+ psOutput = psOutput[1:]
+ def amongProgramsToBeWaitedOn(psOutputLine):
+  tags = ["subuser-"+name for name in names]
+  if psOutputLine == '': return False
+  outputLineWords = psOutputLine.split()
+  tagName = outputLineWords[1].split(':')[0]
+  return tagName in tags
+ return [psOutputLine for psOutputLine in psOutput if amongProgramsToBeWaitedOn(psOutputLine) ]
+
+def isProgramRunning(name):
+ """ Returns True if the program is currently running. """
+ return len(getRunningProgramsWithNames([name])) == 0

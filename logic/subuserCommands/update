@@ -14,6 +14,7 @@ import subprocess
 import subuserlib.utils
 import subuserlib.registry
 import subuserlib.permissions
+import subuserlib.dockerImages
 
 #####################################################################################
 dry = False # Note, dry runs go into an infinte loop at the end becasue they can never satisfy the uninstalling of dependencies.
@@ -86,19 +87,6 @@ def installProgramsToBeUpdated(programsToBeUpdated):
     install(program)
    else: print("Installing: " + program)
 
-def getRunningProgramsWithNames(names):
- """ Returns a very crude listing from docker ps.  Not a real list of the names of running programs or anything. """
- psOutput = subprocess.check_output(["docker","ps"])
- psOutput = psOutput.split("\n")
- psOutput = psOutput[1:]
- def amongProgramsToBeWaitedOn(psOutputLine):
-  tags = ["subuser-"+name for name in names]
-  if psOutputLine == '': return False
-  outputLineWords = psOutputLine.split()
-  tagName = outputLineWords[1].split(':')[0]
-  return tagName in tags
- return [psOutputLine for psOutputLine in psOutput if amongProgramsToBeWaitedOn(psOutputLine) ]
-
 def updateAllPrograms():
  programsWhosLastUpdateTimesChanged = getProgramsWhosLastUpdateTimesChanged()
  updateSomePrograms(programsWhosLastUpdateTimesChanged)
@@ -114,11 +102,11 @@ def runUpdate(programsToBeUpdated):
  print("The following programs will be updated:")
  for program in programsToBeUpdated:
   print(program)
- while not len(getRunningProgramsWithNames(programsToBeUpdated))==0:
+ while not subuserlib.dockerImages.isProgramRunning(program):
   print("PLEASE: close these programs before continuing. If there seem to be containers hanging around when the program isn't even running you might try:")
   print(" $ docker kill <container-id>")
   print("You still need to close:")
-  for runningProgram in getRunningProgramsWithNames(programsToBeUpdated):
+  for runningProgram in subuserlib.dockerImages.getRunningProgramsWithNames(programsToBeUpdated):
    print(runningProgram)
   shouldQuit = raw_input("Press enter to continue(or q to quit): ")
   if shouldQuit == 'q':
