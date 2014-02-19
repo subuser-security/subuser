@@ -144,3 +144,7 @@ else:
  for program in programsToBeUpdatedDict.keys():
   programsToBeUpdatedDict[program] = program in programsToBeUpdated
  updateSomePrograms(programsToBeUpdatedDict)
+ # Ensure that all programs which we have requested be updated are still installed after the update:
+ for program in programsToBeUpdated:
+  if not subuserlib.registry.isProgramInstalled(program):
+   subprocess.call(["subuser","install",program])
