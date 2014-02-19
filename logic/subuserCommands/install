@@ -152,8 +152,19 @@ if not subuserlib.availablePrograms.available(programName):
  printHelp()
  print("\nAvailable programs are: ")
  print(' '.join(sorted([program for program in subuserlib.availablePrograms.getAvailablePrograms()])))
+elif subuserlib.registry.isProgramInstalled(programName):
+ print(programName+" is already installed.")
 else:
  #get dependencytree and install bottom->up
- for dependency in reversed(subuserlib.registry.getDependencyTree(programName)):
+ dependencyTree = reversed(subuserlib.registry.getDependencyTree(programName))
+ programsToBeInstalled = []
+ for dependency in dependencyTree:
   if not subuserlib.registry.isProgramInstalled(dependency):
-   installProgram(dependency, cacheArg)
+   programsToBeInstalled.append(dependency)
+
+ print("The following programs will be installed.")
+ for program in programsToBeInstalled:
+  print(program)
+
+ for program in programsToBeInstalled:
+  installProgram(program, cacheArg)
