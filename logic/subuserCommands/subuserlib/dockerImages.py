@@ -4,6 +4,7 @@
 import subprocess
 import availablePrograms
 import utils
+import json
 
 def askToInstallProgram(programName):
  """ Asks the user if they want to install the given program.  If they say yes, install it, if they decline exit."""
@@ -31,7 +32,6 @@ def getImageTagOfProgram(programName):
  # It may even be desired to allow images to be installed either globaly or "locally" aka userspecific.
  return imageTag
 
-
 def getImageTagOfInstalledProgram(programName):
  """ Return the tag of the docker image of an installed program.
 If that program is not yet installed, install it.
@@ -46,3 +46,13 @@ If that program is not yet installed, install it.
 def isProgramsImageInstalled(programName):
  """ Return True if the programs image tag is installed.  False otherwise. """
  return not (getImageTagOfProgram(programName) == None)
+
+def inspectImage(imageTag):
+ """ Returns a dictionary coresponding to the json outputed by docker inspect. """
+ dockerInspectOutput = subprocess.check_output(["docker","inspect",imageTag])
+ imageInfo = json.loads(dockerInspectOutput)
+ return imageInfo[0]
+
+def getImageID(imageTag):
+ """ Returns the ID(as a string) of an image given that image's tag. """
+ return inspectImage(imageTag)["id"]
