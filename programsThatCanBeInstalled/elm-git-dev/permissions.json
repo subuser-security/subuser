@@ -1,0 +1,12 @@
+{
+ "description"                : "The elm compiler"
+ ,"maintainer"                : "Timothy Hobbs <timothyhobbs (at) seznam dot cz>"
+ ,"last-update-time"          : "2014-02-12-12:59"
+ ,"dependency"                : "libelm-platform-git-dev"
+ ,"executable"                : "/usr/bin/elm-git-dev"
+ ,"x11"                       : false
+ ,"sound"                     : false
+ ,"inherit-working-directory" : true
+ ,"allow-network-access"      : false
+}
+

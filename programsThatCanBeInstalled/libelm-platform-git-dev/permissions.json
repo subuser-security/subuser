@@ -1,0 +1,7 @@
+{
+ "description"       : "The elm-platform"
+ ,"maintainer"       : "Timothy Hobbs <timothyhobbs (at) seznam dot cz>"
+ ,"last-update-time" : "2014-02-12-12:59"
+ ,"dependency"       : "libhaskell-platform"
+}
+
