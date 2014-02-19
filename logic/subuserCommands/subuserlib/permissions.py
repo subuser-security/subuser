@@ -8,19 +8,17 @@ def getPermissions(programName):
  """ Return the permissions for the given program. """
  # read permissions.json file
  permissionsFilePath = paths.getPermissionsFilePath(programName)
- permissionsFile = open(permissionsFilePath,"r")
- permissions=json.load(permissionsFile)
- permissionsFile.close()
- return permissions
+ with open(permissionsFilePath, 'r') as file_f:
+  permissions=json.load(file_f)
+  return permissions
 
 def setPermissions(programName,permissions):
  """ Set the permissions of a given program.
  Warning, will mess up the formatting of the json file.
  """
  permissionsFilePath = paths.getPermissionsFilePath(programName)
- permissionsFile = open(permissionsFilePath,"w")
- json.dump(permissions,permissionsFile,indent=1, separators=(',', ': '))
- permissionsFile.close()
+ with open(permissionsFilePath, 'w') as file_f:
+  json.dump(permissions,file_f,indent=1, separators=(',', ': '))
  
 def hasExecutable(programName):
  """ Return True if the program has an executable associated with it. """
