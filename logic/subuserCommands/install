@@ -135,6 +135,8 @@ if len(sys.argv) == 1 or sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.arg
 #################################################################################################
 
 programName = sys.argv[1]
+# CheckFeedback: is the program in subuser available? If not exit.
+subuserlib.utils.checkExitNoneAvailableProgram(programName)
 
 # Are we to use layers from the cache when building the docker image: only for Dockerfiles build images
 cacheArg = "--no-cache=true"
@@ -146,13 +148,7 @@ if len(sys.argv) > 2:
   printHelp()
   sys.exit()
 
-# Does the program the user wan't installed exist?
-if not subuserlib.availablePrograms.available(programName):
- print(programName+" not available for instaliation.")
- printHelp()
- print("\nAvailable programs are: ")
- print(' '.join(sorted([program for program in subuserlib.availablePrograms.getAvailablePrograms()])))
-elif subuserlib.registry.isProgramInstalled(programName):
+if subuserlib.registry.isProgramInstalled(programName):
  print(programName+" is already installed.")
 else:
  #get dependencytree and install bottom->up
