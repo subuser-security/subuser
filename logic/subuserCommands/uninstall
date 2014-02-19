@@ -40,8 +40,7 @@ if not subuserlib.registry.isProgramInstalled(programName):
  print("Could not uninstall "+programName+" program is not installed.")
  printHelp()
  print("\nInstalled programs are: ")
- installedPrograms = subuserlib.registry.getInstalledPrograms()
- for program in installedPrograms:
+ for program in subuserlib.registry.getInstalledPrograms():
   print(program)
 else:
  installedDependencies = subuserlib.registry.getInstalledDependencies(programName)

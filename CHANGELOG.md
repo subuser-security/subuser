@@ -1,7 +1,7 @@
 VERSION 0.2
 -------------
 
-* Implemented: getRegistry #75
+* Refactored/Added getRegistry and getInstalledPrograms to a list like: getAvailablePrograms and added #75
 
 * Added: new command 'print-dependency-matrix' Which can take similar to 'list' the arguments: available, installed or a list of subuser-programs
 

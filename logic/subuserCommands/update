@@ -30,7 +30,7 @@ To update a specific program run:
 def getProgramsWhosLastUpdateTimesChanged():
  programsWhosLastUpdateTimesChanged = installedPrograms.copy()
  # Convert the dictionary from a program-name->last-update-time dictionary to a program-name->bool(updateTimeChanged) dictionary
- for program in installedPrograms.keys():
+ for program in installedPrograms.keys  #keep this no need to import the registry again
   programsWhosLastUpdateTimesChanged[program]=False
 
  for installedProgram, installedLastUpdateTime in installedPrograms.iteritems():
