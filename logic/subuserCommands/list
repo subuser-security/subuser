@@ -10,7 +10,7 @@ import subuserlib.permissions
 import subuserlib.availablePrograms
 
 def printHelp():
- print("""You can either list programs availiable for instalation with:
+ print("""You can either list programs available for instalation with:
  $ subuser list available 
  
   The list available command may optionally take the `--short` argument which will print only the program's names.
