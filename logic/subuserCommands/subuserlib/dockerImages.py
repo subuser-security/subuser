@@ -15,14 +15,11 @@ def askToInstallProgram(programName):
  else:
   exit()
 
-
-def getImageTagOfInstalledProgram(programName):
- """ Return the tag of the docker image of an installed program.
-If that program is not yet installed, install it.
- """
+def getImageTagOfProgram(programName):
+ """ Return the tag of a program or None, if there is no installed image for that program. """
  roughImagesList = subprocess.check_output(["docker","images"])
  imagesListLines = roughImagesList.split("\n")
- imageTag = ""
+ imageTag = None
  for line in imagesListLines:
   imageListingWords = line.split()
   if len(imageListingWords) > 1:
@@ -32,9 +29,20 @@ If that program is not yet installed, install it.
  # tagging images with the userid as so: subuser-uid-programName.
  # Once we move to the new tagging system, it will be necessary to maintain compatibility with the old one for a time.
  # It may even be desired to allow images to be installed either globaly or "locally" aka userspecific.
+ return imageTag
 
- if imageTag == "":
+
+def getImageTagOfInstalledProgram(programName):
+ """ Return the tag of the docker image of an installed program.
+If that program is not yet installed, install it.
+ """
+ imageTag = getImageTagOfProgram(programName)
+ if imageTag == None:
   askToInstallProgram(programName)
   imageTag = "subuser-"+programName
 
  return imageTag
+
+def isProgramsImageInstalled(programName):
+ """ Return True if the programs image tag is installed.  False otherwise. """
+ return not (getImageTagOfProgram(programName) == None)

@@ -4,6 +4,7 @@
 import sys
 import subuserlib.utils
 import subuserlib.registry
+import subuserlib.dockerImages
 
 ####################################################
 def printHelp():
@@ -16,11 +17,18 @@ Options:
  $ subuser install-from-registry --from-cache
  """)
 
+def resetRegistry():
+ """ Go through registry and unregister any program that is not actually installed. """
+ registeredPrograms = subuserlib.registry.getInstalledPrograms()
+ for program in registeredPrograms.keys():
+  if not subuser.dockerImages.isProgramsImageInstalled(program):
+   subuser.registry.unregisterProgram(program)
 
 def installFromRegistry(useCache):
  """ Installs all of the programs listed in installed-programs.json file. """
- installedPrograms = subuserlib.registry.getInstalledPrograms()
- for program in installedPrograms.keys():
+ programsToBeInstalled = subuserlib.registry.getInstalledPrograms()
+ resetRegistry()
+ for program in programsToBeInstalled.keys():
   print("\n=== Installing <%s> from installed-programs.json registry....\n" % program)
   if useCache:
    subuserlib.utils.subprocessCheckedCall(["subuser","install",program,"--from-cache"])
