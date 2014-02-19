@@ -54,8 +54,7 @@ def isProgramInstalled(programName):
 
 def hasInstalledDependencies(programName):
  """ Returns true if there are any program's which depend upon this program installed. """
- installedPrograms = getRegistry()
- for program in installedPrograms.keys():
+ for program in getInstalledPrograms():
   try:
    if permissions.getPermissions(program)["dependency"] == programName:
     return True
@@ -64,9 +63,8 @@ def hasInstalledDependencies(programName):
 
 def getInstalledDependencies(programName):
  """ Returns returns a list of any installed programs which depend upon this program. """
- installedPrograms = getRegistry()
  installedDependencies = []
- for program in installedPrograms.keys():
+ for program in getInstalledPrograms():
   try:
    if permissions.getPermissions(program)["dependency"] == programName:
     installedDependencies.append(program)
@@ -95,7 +93,7 @@ def getDependencyMatrix(programList, useHasExecutable=False, sortLists=False):
  
  Arguments: 
  - programList: List of available or installed (or a selected list)  of subuser-programs 
-      (getRegistry().keys(), or getAvailablePrograms(), or ["firefox", "vim"]
+      (getInstalledPrograms(), or getAvailablePrograms(), or ["firefox", "vim"]
  - useHasExecutable: boolean: if True an additional key "has-executable" will be added to the matrix
  - sortLists: boolean: if True: required-by, depends-on  will be sorted 
  
