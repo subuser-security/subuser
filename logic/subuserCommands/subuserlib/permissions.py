@@ -32,3 +32,45 @@ def hasExecutable(programName):
   return True
  except KeyError:
   return False
+
+# Getters with defaults from subuser/docs/permissions-dot-json-file-format.md
+
+def getExecutable(permissions):
+ """ Either returns the path to the program's executable or None if it is a library. """
+ return permissions.get("executable",None)
+
+def getSharedHome(permissions):
+ """ Either returns the name of the program this program shares it's home dir with or None if it doesn't share it's home dir. """
+ return permissions.get("shared-home",None)
+
+def getDependency(permissions):
+ """ Either returns the name of the program this program depends on or None if this program has no dependency. """
+ return permisssions.get("dependency",None)
+
+def getUserDirs(permissions):
+ """ Either returns the user directories this program has access to or an empty list if this program cannot access any user directories. """
+ return permissions.get("user-dirs",[])
+
+def getSystemDirs(permissions):
+ """ Either returns the system directories this program can read from or an empty list if this program cannot read from any system directories. """
+ return permissions.get("system-dirs",[])
+
+def getX11(permissions):
+ """ Can this program display X11 windows? """
+ return permissions.get("x11",False)
+
+def getSound(permissions):
+ """ Can this program access the sound-card? """
+ return permissions.get("sound",False)
+
+def getInheritWorkingDirectory(permissions):
+ """ Can this program access the directory from which it was launched? """
+ return permissions.get("inherit-working-directory",False)
+
+def getAllowNetworkAccess(permissions):
+ """ Can this program access the network? """
+ return permissions.get("allow-network-access",False)
+
+def getPrivileged(permissions):
+ """ Is this program to be run in privileged mode? """
+ return permissions.get("privileged",False)
