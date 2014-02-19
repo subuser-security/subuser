@@ -7,9 +7,9 @@ import utils
 
 def askToInstallProgram(programName):
  """ Asks the user if they want to install the given program.  If they say yes, install it, if they decline exit."""
- if not availablePrograms.available(programName):
-  print(programName+" does not exist.")
-  exit()
+ # CheckFeedback: is the program in subuser available? If not exit.
+ utils.checkExitNoneAvailableProgram(programName)
+
  if raw_input(programName+" is not installed. Do you want to install it now [y/n]?") == "y":
   utils.subprocessCheckedCall(["subuser","install",programName])
  else:

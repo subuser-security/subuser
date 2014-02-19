@@ -11,3 +11,14 @@ def subprocessCheckedCall(args, **kwargs):
   subprocess.check_call(args, **kwargs)
  except subprocess.CalledProcessError:
   sys.exit('Command failed: %s' % ' '.join(args))
+
+def checkExitNoneAvailableProgram(programName, additionalInfo=''):
+ """ check a none-available program is requested in such case give the user some helpful feedback
+ and exit.
+ """
+ if not availablePrograms.available(programName):
+  print("<%s>: not an available subuser-program." % programName)
+  print("\nAvailable subuser-programs are: ")
+  print(' '.join(sorted([program for program in availablePrograms.getAvailablePrograms()])))
+  print('\n'+additionalInfo)
+  sys.exit()
