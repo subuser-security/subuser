@@ -159,29 +159,30 @@ def installProgramAndDependencies(programName, cacheArg, printProgramPermission=
   print("You can change this program's permissions at any time by editing it's permissions.json file.")
  
 #################################################################################################
-if len(sys.argv) == 1 or sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.argv[1] == "--help":
- printHelp()
- sys.exit()
-#################################################################################################
-
-programName = sys.argv[1]
-# Can check this already here: Does the program the user want installed exist?
-if not subuserlib.availablePrograms.available(programName):
- print(programName+" not available for instaliation.")
- printHelp()
- print("\nAvailable programs are: ")
- print(' '.join(sorted([program for program in subuserlib.availablePrograms.getAvailablePrograms()])))
- sys.exit()
- 
-# Are we to use layers from the cache when building the docker image: only for Dockerfiles build images
-cacheArg = "--no-cache=true"
-if len(sys.argv) > 2: 
- if sys.argv[2] == "--from-cache":
-  cacheArg = "--no-cache=false"
- else:
-  
-  print("Wrong command: see\n")
+if __name__ == "__main__":
+ if len(sys.argv) == 1 or sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.argv[1] == "--help":
   printHelp()
   sys.exit()
+ #################################################################################################
 
-installProgramAndDependencies(programName, cacheArg, printProgramPermission=True)
+ programName = sys.argv[1]
+ # Can check this already here: Does the program the user want installed exist?
+ if not subuserlib.availablePrograms.available(programName):
+  print(programName+" not available for instaliation.")
+  printHelp()
+  print("\nAvailable programs are: ")
+  print(' '.join(sorted([program for program in subuserlib.availablePrograms.getAvailablePrograms()])))
+  sys.exit()
+  
+ # Are we to use layers from the cache when building the docker image: only for Dockerfiles build images
+ cacheArg = "--no-cache=true"
+ if len(sys.argv) > 2: 
+  if sys.argv[2] == "--from-cache":
+   cacheArg = "--no-cache=false"
+  else:
+   
+   print("Wrong command: see\n")
+   printHelp()
+   sys.exit()
+
+ installProgramAndDependencies(programName, cacheArg, printProgramPermission=True)

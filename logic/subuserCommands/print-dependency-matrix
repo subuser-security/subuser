@@ -18,26 +18,27 @@ def printHelp():
 """)
 
 #################################################################################################
-if len(sys.argv) == 1 or sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.argv[1] == "--help":
- printHelp()
- sys.exit()
-#################################################################################################
+if __name__ == "__main__":
+ if len(sys.argv) == 1 or sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.argv[1] == "--help":
+  printHelp()
+  sys.exit()
+ #################################################################################################
 
-if sys.argv[1] == "available":
- subuserProgramList = subuserlib.availablePrograms.getAvailablePrograms()
-elif sys.argv[1] == "installed":
- subuserProgramList = subuserlib.registry.getInstalledPrograms()
-else:
- subuserProgramList = sys.argv[1:]
+ if sys.argv[1] == "available":
+  subuserProgramList = subuserlib.availablePrograms.getAvailablePrograms()
+ elif sys.argv[1] == "installed":
+  subuserProgramList = subuserlib.registry.getInstalledPrograms()
+ else:
+  subuserProgramList = sys.argv[1:]
 
-dependencyMatrix = subuserlib.registry.getDependencyMatrix(subuserProgramList, useHasExecutable=False, sortLists=True)
-print("\n===== DEPENDENCY MATRIX =====\n")
-for programMain in dependencyMatrix.keys():
- print("<%s>:" % programMain)
- print("    required-by: %s" % dependencyMatrix[programMain]["required-by"])
- print("    depends-on: %s" % dependencyMatrix[programMain]["depends-on"])
+ dependencyMatrix = subuserlib.registry.getDependencyMatrix(subuserProgramList, useHasExecutable=False, sortLists=True)
+ print("\n===== DEPENDENCY MATRIX =====\n")
+ for programMain in dependencyMatrix.keys():
+  print("<%s>:" % programMain)
+  print("    required-by: %s" % dependencyMatrix[programMain]["required-by"])
+  print("    depends-on: %s" % dependencyMatrix[programMain]["depends-on"])
 
- 
- 
- 
- 
+  
+  
+  
+  

@@ -34,20 +34,21 @@ def installFromRegistry(useCache):
    subuserlib.utils.subprocessCheckedCall(["subuser","install",program])
 
 #################################################################################################
-if len(sys.argv) > 1:
- if sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.argv[1] == "--help":
-  printHelp()
-  sys.exit()
-#################################################################################################
+if __name__ == "__main__":
+ if len(sys.argv) > 1:
+  if sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.argv[1] == "--help":
+   printHelp()
+   sys.exit()
+ #################################################################################################
 
-# Are we to use layers from the cache when building the docker image: only for Dockerfiles build images
-useCache = False
-if len(sys.argv) > 1: 
- if sys.argv[1] == "--from-cache":
-  useCache = True
- else:
-  print("Wrong command: see\n")
-  printHelp()
-  sys.exit()
-  
-installFromRegistry(useCache) 
+ # Are we to use layers from the cache when building the docker image: only for Dockerfiles build images
+ useCache = False
+ if len(sys.argv) > 1: 
+  if sys.argv[1] == "--from-cache":
+   useCache = True
+  else:
+   print("Wrong command: see\n")
+   printHelp()
+   sys.exit()
+   
+ installFromRegistry(useCache) 

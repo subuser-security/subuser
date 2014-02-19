@@ -16,19 +16,20 @@ $ subuser mark-as-needing-update program-name
 """)
 
 #################################################################################################
-if len(sys.argv) == 1 or sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.argv[1] == "--help":
- printHelp()
- sys.exit()
-#################################################################################################
+if __name__ == "__main__":
+ if len(sys.argv) == 1 or sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.argv[1] == "--help":
+  printHelp()
+  sys.exit()
+ #################################################################################################
 
-programName = sys.argv[1] 
+ programName = sys.argv[1] 
 
-if not subuserlib.availablePrograms.available(programName):
- print(programName+ " is not the name of any known program.  Cannot mark it as having an update.")
- print("\nAvailable programs are: ")
- availableProgramsPath = subuserlib.paths.getAvailableProgramsPath()
- print(' '.join(sorted([program for program in os.listdir(availableProgramsPath)])))
-else:
- permissions = subuserlib.permissions.getPermissions(programName)
- permissions["last-update-time"] = subuserlib.installTime.currentTimeString()
- subuserlib.permissions.setPermissions(programName,permissions)
+ if not subuserlib.availablePrograms.available(programName):
+  print(programName+ " is not the name of any known program.  Cannot mark it as having an update.")
+  print("\nAvailable programs are: ")
+  availableProgramsPath = subuserlib.paths.getAvailableProgramsPath()
+  print(' '.join(sorted([program for program in os.listdir(availableProgramsPath)])))
+ else:
+  permissions = subuserlib.permissions.getPermissions(programName)
+  permissions["last-update-time"] = subuserlib.installTime.currentTimeString()
+  subuserlib.permissions.setPermissions(programName,permissions)

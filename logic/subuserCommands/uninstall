@@ -29,24 +29,25 @@ def uninstall(programName):
  print(programName+" uninstalled successfully.")
 
 #################################################################################################
-if len(sys.argv) == 1 or sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.argv[1] == "--help":
- printHelp()
- sys.exit()
-#################################################################################################
+if __name__ == "__main__":
+ if len(sys.argv) == 1 or sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.argv[1] == "--help":
+  printHelp()
+  sys.exit()
+ #################################################################################################
 
-programName = sys.argv[1]
+ programName = sys.argv[1]
 
-if not subuserlib.registry.isProgramInstalled(programName):
- print("Could not uninstall "+programName+" program is not installed.")
- printHelp()
- print("\nInstalled programs are: ")
- for program in subuserlib.registry.getInstalledPrograms():
-  print(program)
-else:
- installedDependencies = subuserlib.registry.getInstalledDependencies(programName)
- if installedDependencies == []:
-  uninstall(programName)
+ if not subuserlib.registry.isProgramInstalled(programName):
+  print("Could not uninstall "+programName+" program is not installed.")
+  printHelp()
+  print("\nInstalled programs are: ")
+  for program in subuserlib.registry.getInstalledPrograms():
+   print(program)
  else:
-  print("The following programs depend upon "+programName+" you must uninstall them first.")
-  for dependency in installedDependencies:
-   print(dependency)
+  installedDependencies = subuserlib.registry.getInstalledDependencies(programName)
+  if installedDependencies == []:
+   uninstall(programName)
+  else:
+   print("The following programs depend upon "+programName+" you must uninstall them first.")
+   for dependency in installedDependencies:
+    print(dependency)

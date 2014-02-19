@@ -21,32 +21,33 @@ Or you can list installed programs with:
 """)
 
 #################################################################################################
-if len(sys.argv) == 1 or sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.argv[1] == "--help":
- printHelp()
- sys.exit()
-#################################################################################################
+if __name__ == "__main__":
+ if len(sys.argv) == 1 or sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.argv[1] == "--help":
+  printHelp()
+  sys.exit()
+ #################################################################################################
 
-if sys.argv[1] == "available":
- try:
-  if sys.argv[2] == "--short":
-   availableProgramsPath = subuserlib.paths.getAvailableProgramsPath()
-   print(' '.join(sorted([program for program in os.listdir(availableProgramsPath)])))
-  else:
-   print("Argument not recognized:"+sys.argv[2])
-   printHelp()
- except IndexError:
-  availablePrograms = subuserlib.availablePrograms.getAvailablePrograms()
-  for program in availablePrograms:
-   permissions = subuserlib.permissions.getPermissions(program)
+ if sys.argv[1] == "available":
+  try:
+   if sys.argv[2] == "--short":
+    availableProgramsPath = subuserlib.paths.getAvailableProgramsPath()
+    print(' '.join(sorted([program for program in os.listdir(availableProgramsPath)])))
+   else:
+    print("Argument not recognized:"+sys.argv[2])
+    printHelp()
+  except IndexError:
+   availablePrograms = subuserlib.availablePrograms.getAvailablePrograms()
+   for program in availablePrograms:
+    permissions = subuserlib.permissions.getPermissions(program)
+    print(program)
+    print("----------------")
+    print("Description: "+permissions["description"])
+    print("Maintainer: "+permissions["maintainer"])
+    print("\n")
+
+ elif sys.argv[1] == "installed":
+  for program in subuserlib.registry.getInstalledPrograms():
    print(program)
-   print("----------------")
-   print("Description: "+permissions["description"])
-   print("Maintainer: "+permissions["maintainer"])
-   print("\n")
 
-elif sys.argv[1] == "installed":
- for program in subuserlib.registry.getInstalledPrograms():
-  print(program)
-
-else:
- printHelp()
+ else:
+  printHelp()

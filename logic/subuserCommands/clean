@@ -37,7 +37,8 @@ def performUninstalls(programsToUninstall):
    subuserlib.utils.subprocessCheckedCall(["subuser","uninstall",program])
  
 #################################################################################################
-if len(sys.argv) > 1:
- printHelp()
-else:
- cleanUnneededLibs() 
+if __name__ == "__main__":
+ if len(sys.argv) > 1:
+  printHelp()
+ else:
+  cleanUnneededLibs() 
