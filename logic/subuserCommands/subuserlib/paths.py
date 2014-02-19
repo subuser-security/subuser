@@ -3,6 +3,7 @@
 # If it is not, please file a bug report.
 import os
 import inspect
+import permissions
 
 home = os.path.expanduser("~")
 
@@ -43,12 +44,11 @@ def getProgramHomeDirOnHost(programName):
       The path to the directory as it appears on the host machine,
       and the path to the directory in the docker container.
      Return the path to the directory as it appears on the host macine. """
- import permissions
- permissions = permissions.getPermissions(programName)
- try:
-  sharedHome = permissions["shared-home"]
+ programPermissions = permissions.getPermissions(programName)
+ sharedHome = permissions.getSharedHome(programPermissions)
+ if sharedHome:
   return os.path.join(getSubuserDir(),"homes",sharedHome)
- except KeyError:
+ else:
   return os.path.join(getSubuserDir(),"homes",programName)
 
 def getSubuserCommandsPath():

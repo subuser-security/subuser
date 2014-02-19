@@ -27,12 +27,7 @@ def getArgsToPassToProgram():
   return []
 
 def getAllowNetworkAccessArg(permissions):
- try:
-  allowNetworkAccess = permissions["allow-network-access"]
- except KeyError:
-  allowNetworkAccess = False
-
- if allowNetworkAccess:
+ if subuserlib.permissions.getAllowNetworkAccess(permissions):
   return "--networking=true"
  else:
   return "--networking=false"
@@ -55,7 +50,7 @@ def runProgram(programName):
  permissions = subuserlib.permissions.getPermissions(programName)
 
  allowNetworkAccessArg = getAllowNetworkAccessArg(permissions)
- executable = permissions["executable"]
+ executable = subuserlib.permissions.getExecutable(permissions) 
  setupUserAndRunPath = os.path.join("/launch","setupUserAndRun")
  hostSubuserHome = subuserlib.paths.getProgramHomeDirOnHost(programName)
  setupHostSubuserHome(hostSubuserHome)
@@ -64,40 +59,21 @@ def runProgram(programName):
  dockersideBinPath = "/launch"
  dockersidePWDPath = os.path.join("/home","pwd")
 
- try:
-  x11Enabled = permissions["x11"]
- except KeyError:
-  x11Enabled = False
-
- if x11Enabled:
+ if subuserlib.permissions.getX11(permissions):
   x11Args = ["-e","DISPLAY=unix"+os.environ['DISPLAY'],"-v=/tmp/.X11-unix:/tmp/.X11-unix:rw"]
  else: x11Args = []
 
- try:
-  soundEnabled = permissions["sound"]
- except KeyError:
-  soundEnabled = False
-
- if soundEnabled:
+ if subuserlib.permissions.getSound(permissions):
   soundArgs =  ["-v=/dev/snd:/dev/snd:rw","-lxc-conf=lxc.cgroup.devices.allow = c 116:* rwm"]
  else:
   soundArgs = []
 
- try:
-  privileged = permissions["privileged"]
- except KeyError:
-  privileged = False
- 
- if privileged:
+ if subuserlib.permissions.getPrivileged(permissions):
   privilegedArg = ["-privileged"]
  else:
   privilegedArg = []
 
- try:
-  systemDirs = permissions["system-dirs"]
-  systemDirVolumeArgs = makeSystemDirVolumeArgs(systemDirs)
- except KeyError:
-  systemDirVolumeArgs = []
+ systemDirVolumeArgs = makeSystemDirVolumeArgs(subuserlib.permissions.getSystemDirs(permissions))
 
  def setupUserDirSymlinks(userDirs):
   """ Create symlinks to userdirs in program's home dir. """
@@ -107,26 +83,17 @@ def runProgram(programName):
    if not os.path.islink(destination):
     os.symlink(source,destination)
 
- try:
-  userDirs = permissions["user-dirs"]
-  setupUserDirSymlinks(userDirs)
-  userDirVolumeArgs = makeUserDirVolumeArgs(userDirs)
- except KeyError:
-  userDirVolumeArgs = []
+ userDirs = subuserlib.permissions.getUserDirs(permissions)
+ setupUserDirSymlinks(userDirs)
+ userDirVolumeArgs = makeUserDirVolumeArgs(userDirs)
 
- try:
-  inheritWorkingDirectory = permissions["inherit-working-directory"]
- except KeyError:
-  inheritWorkingDirectory = False
-
- if inheritWorkingDirectory:
+ if subuserlib.permissions.getInheritWorkingDirectory(permissions):
   workingDirectoryVolumeArg = ["-v="+cwd+":/home/pwd:rw"]
  else:
   workingDirectoryVolumeArg = []
 
  volumeArgs = ["-v="+hostSubuserHome+":"+home+":rw"
   ,"-v="+dockersideScriptsPath+":"+dockersideBinPath+":ro"] + workingDirectoryVolumeArg + systemDirVolumeArgs + userDirVolumeArgs
-
 
  dockerCommand = ["docker","run","-i","-t","-rm",allowNetworkAccessArg]+privilegedArg+volumeArgs+x11Args+soundArgs+[dockerImageName,setupUserAndRunPath,username,executable]+args
 
