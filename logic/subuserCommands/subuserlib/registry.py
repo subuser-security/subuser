@@ -11,9 +11,8 @@ def getInstalledPrograms():
  """
  programRegistryPath = paths.getProgramRegistryPath()
  if os.path.exists(programRegistryPath):
-  programRegistryFile = open(programRegistryPath,"r")
-  programRegistry = json.load(programRegistryFile)
-  programRegistryFile.close()
+  with open(programRegistryPath, 'r') as file_f:
+   programRegistry = json.load(file_f)
  else:
   programRegistry = {}
  return programRegistry
@@ -22,9 +21,8 @@ def setInstalledPrograms(programRegistry):
  """ Passing this file a dictionary which maps program names to last update time saves that registry to disk, overwritting the previous one.
  """
  programRegistryPath = paths.getProgramRegistryPath()
- programRegistryFile = open(programRegistryPath,"w")
- json.dump(programRegistry,programRegistryFile)
- programRegistryFile.close()
+ with open(programRegistryPath, 'w') as file_f:
+  json.dump(programRegistry,file_f)
 
 def registerProgram(programName,programVersion):
  """ Add a program to the registry.  If it is already in the registry, update its last update time. """

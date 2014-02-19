@@ -34,11 +34,10 @@ def installExecutable():
  redirect="""#!/bin/bash
 subuser run """+ programName +" $@\n"
  executablePath=subuserlib.paths.getExecutablePath(programName)
- executableFile = open(executablePath,'w')
- executableFile.write(redirect)
- executableFile.close()
- st = os.stat(executablePath)
- os.chmod(executablePath, stat.S_IMODE(st.st_mode) | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
+ with open(executablePath, 'w') as file_f:
+  file_f.write(redirect)
+  st = os.stat(executablePath)
+  os.chmod(executablePath, stat.S_IMODE(st.st_mode) | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
 
 def installFromBaseImage(programName, cacheArg):
  programDir = subuserlib.paths.getProgramSrcDir(programName)
