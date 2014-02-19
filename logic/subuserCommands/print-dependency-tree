@@ -10,18 +10,19 @@ def printHelp():
 """)
 
 #################################################################################################
-if len(sys.argv) == 1 or sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.argv[1] == "--help":
- printHelp()
- sys.exit()
-#################################################################################################
+if __name__ == "__main__":
+ if len(sys.argv) == 1 or sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.argv[1] == "--help":
+  printHelp()
+  sys.exit()
+ #################################################################################################
 
-programName = sys.argv[1]
+ programName = sys.argv[1]
 
-treeString = ''
-for index, dependency in enumerate(subuserlib.registry.getDependencyTree(programName)):
- if index > 0:
-  treeString = ''.join([treeString, '  ' * index, '|__', dependency, '\n'])
- else:
-  treeString = ''.join([treeString, dependency, '\n'])
-  
-print treeString
+ treeString = ''
+ for index, dependency in enumerate(subuserlib.registry.getDependencyTree(programName)):
+  if index > 0:
+   treeString = ''.join([treeString, '  ' * index, '|__', dependency, '\n'])
+  else:
+   treeString = ''.join([treeString, dependency, '\n'])
+   
+ print treeString

@@ -134,10 +134,11 @@ def runProgram(programName):
  subprocess.call(dockerCommand)
 
 #################################################################################################
-if len(sys.argv) == 1 or sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.argv[1] == "--help":
- printHelp()
- sys.exit()
-#################################################################################################
+if __name__ == "__main__":
+ if len(sys.argv) == 1 or sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.argv[1] == "--help":
+  printHelp()
+  sys.exit()
+ #################################################################################################
 
-programName = sys.argv[1]
-runProgram(programName)
+ programName = sys.argv[1]
+ runProgram(programName)
