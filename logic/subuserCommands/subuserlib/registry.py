@@ -50,7 +50,7 @@ def isProgramInstalled(programName):
 def hasInstalledDependencies(programName):
  """ Returns true if there are any program's which depend upon this program installed. """
  installedPrograms = getInstalledPrograms()
- for program, timeOfLastUpdate in installedPrograms.iteritems():
+ for program in installedPrograms.keys():
   try:
    if permissions.getPermissions(program)["dependency"] == programName:
     return True
@@ -61,7 +61,7 @@ def getInstalledDependencies(programName):
  """ Returns returns a list of any installed programs which depend upon this program. """
  installedPrograms = getInstalledPrograms()
  installedDependencies = []
- for program, timeOfLastUpdate in installedPrograms.iteritems():
+ for program in installedPrograms.keys():
   try:
    if permissions.getPermissions(program)["dependency"] == programName:
     installedDependencies.append(program)

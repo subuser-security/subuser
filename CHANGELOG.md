@@ -1,6 +1,8 @@
 VERSION 0.2
 -------------
 
+* Simplify some code dict.iteritems to dict.keys where applicable
+
 * Implemented install-from-registry command which installs all of the programs listed in installed-programs.json file. #23
 
 * Refactor some print statements
