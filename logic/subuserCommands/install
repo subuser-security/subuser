@@ -129,6 +129,33 @@ def installProgram(programName, cacheArg):
  imageID = subuserlib.dockerImages.getImageID("subuser-"+programName)
  subuserlib.registry.registerProgram(programName, lastUpdateTime, imageID)
 
+def getDependencytTreeInstallAll(programName, cacheArg, printProgramPermission=False):
+ """
+ Build the dependencytree and install bottom->up
+ """
+ if subuserlib.registry.isProgramInstalled(programName):
+  print(programName+" is already installed.")
+ else:
+  #get dependencytree and install bottom->up
+  dependencyTree = reversed(subuserlib.registry.getDependencyTree(programName))
+  programsToBeInstalled = []
+  for dependency in dependencyTree:
+   if not subuserlib.registry.isProgramInstalled(dependency):
+    programsToBeInstalled.append(dependency)
+
+  print("The following programs will be installed.")
+  for program in programsToBeInstalled:
+   print(program)
+
+  for program in programsToBeInstalled:
+   installProgram(program, cacheArg)
+  
+ #print for the MAIN program (The user called not the dependency the permission
+ if printProgramPermission:
+  print("\n\n========= PERMISSION.json for: <%s> =========\n" % programName)
+  permission = subuserlib.permissions.getPermissions(programName)
+  print(json.dumps(permission, indent=2))
+ 
 #################################################################################################
 if len(sys.argv) == 1 or sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.argv[1] == "--help":
  printHelp()
@@ -136,36 +163,23 @@ if len(sys.argv) == 1 or sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.arg
 #################################################################################################
 
 programName = sys.argv[1]
-
+# Can check this already here: Does the program the user want installed exist?
+if not subuserlib.availablePrograms.available(programName):
+ print(programName+" not available for instaliation.")
+ printHelp()
+ print("\nAvailable programs are: ")
+ print(' '.join(sorted([program for program in subuserlib.availablePrograms.getAvailablePrograms()])))
+ sys.exit()
+ 
 # Are we to use layers from the cache when building the docker image: only for Dockerfiles build images
 cacheArg = "--no-cache=true"
 if len(sys.argv) > 2: 
  if sys.argv[2] == "--from-cache":
   cacheArg = "--no-cache=false"
  else:
+  
   print("Wrong command: see\n")
   printHelp()
   sys.exit()
 
-# Does the program the user wan't installed exist?
-if not subuserlib.availablePrograms.available(programName):
- print(programName+" not available for instaliation.")
- printHelp()
- print("\nAvailable programs are: ")
- print(' '.join(sorted([program for program in subuserlib.availablePrograms.getAvailablePrograms()])))
-elif subuserlib.registry.isProgramInstalled(programName):
- print(programName+" is already installed.")
-else:
- #get dependencytree and install bottom->up
- dependencyTree = reversed(subuserlib.registry.getDependencyTree(programName))
- programsToBeInstalled = []
- for dependency in dependencyTree:
-  if not subuserlib.registry.isProgramInstalled(dependency):
-   programsToBeInstalled.append(dependency)
-
- print("The following programs will be installed.")
- for program in programsToBeInstalled:
-  print(program)
-
- for program in programsToBeInstalled:
-  installProgram(program, cacheArg)
+getDependencytTreeInstallAll(programName, cacheArg, printProgramPermission=True)
