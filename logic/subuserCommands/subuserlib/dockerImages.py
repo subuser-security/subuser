@@ -17,7 +17,9 @@ def askToInstallProgram(programName):
 
 
 def getImageTagOfInstalledProgram(programName):
- """ Return the tag of the docker image of an installed program. """
+ """ Return the tag of the docker image of an installed program.
+If that program is not yet installed, install it.
+ """
  roughImagesList = subprocess.check_output(["docker","images"])
  imagesListLines = roughImagesList.split("\n")
  imageTag = ""
