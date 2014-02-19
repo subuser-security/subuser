@@ -8,8 +8,8 @@ import sys
 import permissions
 import subuserlib.availablePrograms
 
-def getInstalledPrograms():
- """ Return a dictionary that maps from program name to the last update time.
+def getRegistry():
+ """ Return a dictionary of the program registry: installed-programs.json
  """
  programRegistryPath = paths.getProgramRegistryPath()
  if os.path.exists(programRegistryPath):
@@ -18,6 +18,11 @@ def getInstalledPrograms():
  else:
   programRegistry = {}
  return programRegistry
+ 
+def getInstalledPrograms():
+ """ Returns a list of installed programs. 
+ """
+ return getRegistry().keys()
 
 def setInstalledPrograms(programRegistry):
  """ Passing this file a dictionary which maps program names to last update time saves that registry to disk, overwritting the previous one.
@@ -28,19 +33,19 @@ def setInstalledPrograms(programRegistry):
 
 def registerProgram(programName,programVersion):
  """ Add a program to the registry.  If it is already in the registry, update its last update time. """
- programRegistry = getInstalledPrograms()
+ programRegistry = getRegistry()
  programRegistry[programName]=programVersion
  setInstalledPrograms(programRegistry)
 
 def unregisterProgram(programName):
  """ Remove a program from the registry. """
- programRegistry = getInstalledPrograms()
+ programRegistry = getRegistry()
  del programRegistry[programName]
  setInstalledPrograms(programRegistry)
 
 def isProgramInstalled(programName):
  """ Returns true if the program is installed. """
- installedPrograms = getInstalledPrograms()
+ installedPrograms = getRegistry()
  try:
   installedPrograms[programName]
   return True
@@ -49,7 +54,7 @@ def isProgramInstalled(programName):
 
 def hasInstalledDependencies(programName):
  """ Returns true if there are any program's which depend upon this program installed. """
- installedPrograms = getInstalledPrograms()
+ installedPrograms = getRegistry()
  for program in installedPrograms.keys():
   try:
    if permissions.getPermissions(program)["dependency"] == programName:
@@ -59,7 +64,7 @@ def hasInstalledDependencies(programName):
 
 def getInstalledDependencies(programName):
  """ Returns returns a list of any installed programs which depend upon this program. """
- installedPrograms = getInstalledPrograms()
+ installedPrograms = getRegistry()
  installedDependencies = []
  for program in installedPrograms.keys():
   try:
@@ -90,7 +95,7 @@ def getDependencyMatrix(programList, useHasExecutable=False, sortLists=False):
  
  Arguments: 
  - programList: List of available or installed (or a selected list)  of subuser-programs 
-      (getInstalledPrograms().keys(), or getAvailablePrograms(), or ["firefox", "vim"]
+      (getRegistry().keys(), or getAvailablePrograms(), or ["firefox", "vim"]
  - useHasExecutable: boolean: if True an additional key "has-executable" will be added to the matrix
  - sortLists: boolean: if True: required-by, depends-on  will be sorted 
  

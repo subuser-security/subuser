@@ -134,7 +134,7 @@ if len(sys.argv) == 1 or sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.arg
  sys.exit()
 #################################################################################################
 
-installedPrograms = subuserlib.registry.getInstalledPrograms()
+installedPrograms = subuserlib.registry.getRegistry()
 
 if sys.argv[1] == "all":
  updateAllPrograms()
