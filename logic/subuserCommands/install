@@ -13,6 +13,7 @@ import subuserlib.availablePrograms
 import subuserlib.registry
 import subuserlib.installTime
 import subuserlib.dockerImages
+import subuserlib.describe
 
 ######################################################
 home = os.path.expanduser("~")
@@ -153,9 +154,7 @@ def installProgramAndDependencies(programName, cacheArg, printProgramPermission=
  #print for the MAIN program (The user called not the dependency the permission
  if printProgramPermission:
   print(programName+" has been installed with the following permissions.")
-  print("\n\n========= PERMISSION.json for: <%s> =========\n" % programName)
-  permission = subuserlib.permissions.getPermissions(programName)
-  print(json.dumps(permission, indent=2))
+  subuserlib.describe.printInfo(programName,True)
   print("You can change this program's permissions at any time by editing it's permissions.json file.")
  
 #################################################################################################
