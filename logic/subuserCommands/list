@@ -46,7 +46,7 @@ if sys.argv[1] == "available":
 
 elif sys.argv[1] == "installed":
  installedPrograms = subuserlib.registry.getInstalledPrograms()
- for program, version in installedPrograms.iteritems():
+ for program in installedPrograms.keys():
   print(program)
 
 else:

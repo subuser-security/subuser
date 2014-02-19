@@ -1,146 +1,146 @@
-#!/usr/bin/env python
-# This file should be compatible with both Python 2 and 3.
-# If it is not, please file a bug report.
+##!/usr/bin/env python
+## This file should be compatible with both Python 2 and 3.
+## If it is not, please file a bug report.
 
-# This command updated all of the installed subuser programs.
-# It works in 4 phases:
-#  Create a dictionary of installed program-name booleans where the booleans represent whether the program needs updating
-#  Mark each program who's last-update-time has changed from it's installed last-update-time as needing to be updated
-#  Recurse on each program searching for reverse dependencies and marking those as needing updating as well.
-#  Uninstall all programs marked to be updated
-#  Install all programs marked to be updated
-import sys
-import subprocess
-import subuserlib.utils
-import subuserlib.registry
-import subuserlib.permissions
+## This command updated all of the installed subuser programs.
+## It works in 4 phases:
+##  Create a dictionary of installed program-name booleans where the booleans represent whether the program needs updating
+##  Mark each program who's last-update-time has changed from it's installed last-update-time as needing to be updated
+##  Recurse on each program searching for reverse dependencies and marking those as needing updating as well.
+##  Uninstall all programs marked to be updated
+##  Install all programs marked to be updated
+#import sys
+#import subprocess
+#import subuserlib.utils
+#import subuserlib.registry
+#import subuserlib.permissions
 
-#####################################################################################
-dry = False # Note, dry runs go into an infinte loop at the end becasue they can never satisfy the uninstalling of dependencies.
-#####################################################################################
-def printHelp():
- print("""To update all programs run:
- $ subuser update all
-You should run git pull before doing this in order to get an up-to-date program list.
+######################################################################################
+#dry = False # Note, dry runs go into an infinte loop at the end becasue they can never satisfy the uninstalling of dependencies.
+######################################################################################
+#def printHelp():
+ #print("""To update all programs run:
+ #$ subuser update all
+#You should run git pull before doing this in order to get an up-to-date program list.
 
-To update a specific program run:
- $ subuser update <program-name>
-""")
+#To update a specific program run:
+ #$ subuser update <program-name>
+#""")
 
-def getProgramsWhosLastUpdateTimesChanged():
- programsWhosLastUpdateTimesChanged = installedPrograms.copy()
- # Convert the dictionary from a program-name->last-update-time dictionary to a program-name->bool(updateTimeChanged) dictionary
- for program,lastUpdateTime in installedPrograms.iteritems():
-  programsWhosLastUpdateTimesChanged[program]=False
+#def getProgramsWhosLastUpdateTimesChanged():
+ #programsWhosLastUpdateTimesChanged = installedPrograms.copy()
+ ## Convert the dictionary from a program-name->last-update-time dictionary to a program-name->bool(updateTimeChanged) dictionary
+ #for program,lastUpdateTime in installedPrograms.iteritems():
+  #programsWhosLastUpdateTimesChanged[program]=False
 
- for installedProgram, installedLastUpdateTime in installedPrograms.iteritems():
-  if not installedLastUpdateTime == subuserlib.permissions.getPermissions(installedProgram)["last-update-time"]:
-   programsWhosLastUpdateTimesChanged[installedProgram] = True
+ #for installedProgram, installedLastUpdateTime in installedPrograms.iteritems():
+  #if not installedLastUpdateTime == subuserlib.permissions.getPermissions(installedProgram)["last-update-time"]:
+   #programsWhosLastUpdateTimesChanged[installedProgram] = True
 
- return programsWhosLastUpdateTimesChanged
+ #return programsWhosLastUpdateTimesChanged
 
-def markReverseDependenciesAsChanged(programWhosReverseDependenciesWereSearchingFor,programsToBeUpdated):
- for program,lastUpdateTime in installedPrograms.iteritems():
-  try:
-   if subuserlib.permissions.getPermissions(program)["dependency"] == programWhosReverseDependenciesWereSearchingFor:
-    programsToBeUpdated[program] = True
-    markReverseDependenciesAsChanged(program,programsToBeUpdated)
-  except KeyError:
-   pass
+#def markReverseDependenciesAsChanged(programWhosReverseDependenciesWereSearchingFor,programsToBeUpdated):
+ #for program,lastUpdateTime in installedPrograms.iteritems():
+  #try:
+   #if subuserlib.permissions.getPermissions(program)["dependency"] == programWhosReverseDependenciesWereSearchingFor:
+    #programsToBeUpdated[program] = True
+    #markReverseDependenciesAsChanged(program,programsToBeUpdated)
+  #except KeyError:
+   #pass
 
-def getProgramsToBeUpdated(programsWhosLastUpdateTimesChanged):
- """ Returns a list of programs needing to be updated. """
- programsToBeUpdatedDict = programsWhosLastUpdateTimesChanged.copy()
- for program, changed in programsWhosLastUpdateTimesChanged.iteritems():
-  if changed:
-   markReverseDependenciesAsChanged(program,programsToBeUpdatedDict)
- programsToBeUpdated = []
- for program,toBeUpdated in programsToBeUpdatedDict.iteritems():
-  if toBeUpdated:
-   programsToBeUpdated.append(program)
- return programsToBeUpdated
+#def getProgramsToBeUpdated(programsWhosLastUpdateTimesChanged):
+ #""" Returns a list of programs needing to be updated. """
+ #programsToBeUpdatedDict = programsWhosLastUpdateTimesChanged.copy()
+ #for program, changed in programsWhosLastUpdateTimesChanged.iteritems():
+  #if changed:
+   #markReverseDependenciesAsChanged(program,programsToBeUpdatedDict)
+ #programsToBeUpdated = []
+ #for program,toBeUpdated in programsToBeUpdatedDict.iteritems():
+  #if toBeUpdated:
+   #programsToBeUpdated.append(program)
+ #return programsToBeUpdated
 
-def uninstall(program):
- subuserlib.utils.subprocessCheckedCall(["subuser","uninstall",program])
+#def uninstall(program):
+ #subuserlib.utils.subprocessCheckedCall(["subuser","uninstall",program])
 
-def install(program):
- subuserlib.utils.subprocessCheckedCall(["subuser","install",program])
+#def install(program):
+ #subuserlib.utils.subprocessCheckedCall(["subuser","install",program])
 
-def uninstallProgramsToBeUpdated(programsToBeUpdated):
- programsToBeUninstalled = set(programsToBeUpdated)
+#def uninstallProgramsToBeUpdated(programsToBeUpdated):
+ #programsToBeUninstalled = set(programsToBeUpdated)
 
- uninstalledPrograms = set([])
- while not programsToBeUninstalled == uninstalledPrograms:
-  for program in programsToBeUninstalled:
-   if not subuserlib.registry.hasInstalledDependencies(program):
-    if not dry:
-     uninstall(program)
-    else:
-     print("Uninstalling: " + program)
-    uninstalledPrograms.add(program)
+ #uninstalledPrograms = set([])
+ #while not programsToBeUninstalled == uninstalledPrograms:
+  #for program in programsToBeUninstalled:
+   #if not subuserlib.registry.hasInstalledDependencies(program):
+    #if not dry:
+     #uninstall(program)
+    #else:
+     #print("Uninstalling: " + program)
+    #uninstalledPrograms.add(program)
 
-def installProgramsToBeUpdated(programsToBeUpdated):
- for program in programsToBeUpdated:
-  if subuserlib.permissions.hasExecutable(program): # Don't install libraries as these might have changed and no longer be needed.  They'll automatically get installed anyways.
-   if not dry:
-    install(program)
-   else: print("Installing: " + program)
+#def installProgramsToBeUpdated(programsToBeUpdated):
+ #for program in programsToBeUpdated:
+  #if subuserlib.permissions.hasExecutable(program): # Don't install libraries as these might have changed and no longer be needed.  They'll automatically get installed anyways.
+   #if not dry:
+    #install(program)
+   #else: print("Installing: " + program)
 
-def getRunningProgramsWithNames(names):
- """ Returns a very crude listing from docker ps.  Not a real list of the names of running programs or anything. """
- psOutput = subprocess.check_output(["docker","ps"])
- psOutput = psOutput.split("\n")
- psOutput = psOutput[1:]
- def amongProgramsToBeWaitedOn(psOutputLine):
-  tags = ["subuser-"+name for name in names]
-  if psOutputLine == '': return False
-  outputLineWords = psOutputLine.split()
-  tagName = outputLineWords[1].split(':')[0]
-  return tagName in tags
- return [psOutputLine for psOutputLine in psOutput if amongProgramsToBeWaitedOn(psOutputLine) ]
+#def getRunningProgramsWithNames(names):
+ #""" Returns a very crude listing from docker ps.  Not a real list of the names of running programs or anything. """
+ #psOutput = subprocess.check_output(["docker","ps"])
+ #psOutput = psOutput.split("\n")
+ #psOutput = psOutput[1:]
+ #def amongProgramsToBeWaitedOn(psOutputLine):
+  #tags = ["subuser-"+name for name in names]
+  #if psOutputLine == '': return False
+  #outputLineWords = psOutputLine.split()
+  #tagName = outputLineWords[1].split(':')[0]
+  #return tagName in tags
+ #return [psOutputLine for psOutputLine in psOutput if amongProgramsToBeWaitedOn(psOutputLine) ]
 
-def updateAllPrograms():
- programsWhosLastUpdateTimesChanged = getProgramsWhosLastUpdateTimesChanged()
- updateSomePrograms(programsWhosLastUpdateTimesChanged)
+#def updateAllPrograms():
+ #programsWhosLastUpdateTimesChanged = getProgramsWhosLastUpdateTimesChanged()
+ #updateSomePrograms(programsWhosLastUpdateTimesChanged)
 
-def updateSomePrograms(toBeUpdatedDict):
- programsToBeUpdated = getProgramsToBeUpdated(toBeUpdatedDict)
- if programsToBeUpdated == []:
-  print("It looks like all your subuser programs are up to date!")
- else:
-  runUpdate(programsToBeUpdated)
+#def updateSomePrograms(toBeUpdatedDict):
+ #programsToBeUpdated = getProgramsToBeUpdated(toBeUpdatedDict)
+ #if programsToBeUpdated == []:
+  #print("It looks like all your subuser programs are up to date!")
+ #else:
+  #runUpdate(programsToBeUpdated)
 
-def runUpdate(programsToBeUpdated):
- print("The following programs will be updated:")
- for program in programsToBeUpdated:
-  print(program)
- while not len(getRunningProgramsWithNames(programsToBeUpdated))==0:
-  print("PLEASE: close these programs before continuing. If there seem to be containers hanging around when the program isn't even running you might try:")
-  print(" $ docker kill <container-id>")
-  print("You still need to close:")
-  for runningProgram in getRunningProgramsWithNames(programsToBeUpdated):
-   print(runningProgram)
-  shouldQuit = raw_input("Press enter to continue(or q to quit): ")
-  if shouldQuit == 'q':
-   exit()
- choice = raw_input("Do you want to continue updating [y/n]? " )
- if choice in ["Y","y"]:
-  uninstallProgramsToBeUpdated(programsToBeUpdated) 
-  installProgramsToBeUpdated(programsToBeUpdated)
+#def runUpdate(programsToBeUpdated):
+ #print("The following programs will be updated:")
+ #for program in programsToBeUpdated:
+  #print(program)
+ #while not len(getRunningProgramsWithNames(programsToBeUpdated))==0:
+  #print("PLEASE: close these programs before continuing. If there seem to be containers hanging around when the program isn't even running you might try:")
+  #print(" $ docker kill <container-id>")
+  #print("You still need to close:")
+  #for runningProgram in getRunningProgramsWithNames(programsToBeUpdated):
+   #print(runningProgram)
+  #shouldQuit = raw_input("Press enter to continue(or q to quit): ")
+  #if shouldQuit == 'q':
+   #exit()
+ #choice = raw_input("Do you want to continue updating [y/n]? " )
+ #if choice in ["Y","y"]:
+  #uninstallProgramsToBeUpdated(programsToBeUpdated) 
+  #installProgramsToBeUpdated(programsToBeUpdated)
 
-#################################################################################################
-if len(sys.argv) == 1 or sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.argv[1] == "--help":
- printHelp()
- sys.exit()
-#################################################################################################
+##################################################################################################
+#if len(sys.argv) == 1 or sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.argv[1] == "--help":
+ #printHelp()
+ #sys.exit()
+##################################################################################################
 
-installedPrograms = subuserlib.registry.getInstalledPrograms()
+#installedPrograms = subuserlib.registry.getInstalledPrograms()
 
-if sys.argv[1] == "all":
- updateAllPrograms()
-else:
- programsToBeUpdated = sys.argv[1:]
- programsToBeUpdatedDict = installedPrograms.copy()
- for program,lastUpdateTime in programsToBeUpdatedDict.iteritems():
-  programsToBeUpdatedDict[program] = program in programsToBeUpdated
- updateSomePrograms(programsToBeUpdatedDict)
+#if sys.argv[1] == "all":
+ #updateAllPrograms()
+#else:
+ #programsToBeUpdated = sys.argv[1:]
+ #programsToBeUpdatedDict = installedPrograms.copy()
+ #for program,lastUpdateTime in programsToBeUpdatedDict.iteritems():
+  #programsToBeUpdatedDict[program] = program in programsToBeUpdated
+ #updateSomePrograms(programsToBeUpdatedDict)

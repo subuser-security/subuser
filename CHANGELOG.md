@@ -1,6 +1,8 @@
 VERSION 0.2
 -------------
 
+* Implementation of the NEW  installed-programs.json format #63 except the update command file
+
 * Implemented install-from-registry command which installs all of the programs listed in installed-programs.json file. #23
 
 * Refactor some print statements
