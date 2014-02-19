@@ -1,6 +1,8 @@
 VERSION 0.2
 -------------
 
+* Implemented new installed-programs.json format: issue #63
+
 * Refactored/Added getRegistry and getInstalledPrograms to a list like: getAvailablePrograms and added #75
 
 * Added: new command 'print-dependency-matrix' Which can take similar to 'list' the arguments: available, installed or a list of subuser-programs
