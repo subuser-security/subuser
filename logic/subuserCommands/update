@@ -30,7 +30,7 @@ To update a specific program run:
 def getProgramsWhosLastUpdateTimesChanged():
  programsWhosLastUpdateTimesChanged = installedPrograms.copy()
  # Convert the dictionary from a program-name->last-update-time dictionary to a program-name->bool(updateTimeChanged) dictionary
- for program,lastUpdateTime in installedPrograms.iteritems():
+ for program in installedPrograms.keys():
   programsWhosLastUpdateTimesChanged[program]=False
 
  for installedProgram, installedLastUpdateTime in installedPrograms.iteritems():
@@ -40,7 +40,7 @@ def getProgramsWhosLastUpdateTimesChanged():
  return programsWhosLastUpdateTimesChanged
 
 def markReverseDependenciesAsChanged(programWhosReverseDependenciesWereSearchingFor,programsToBeUpdated):
- for program,lastUpdateTime in installedPrograms.iteritems():
+ for program in installedPrograms.keys():
   try:
    if subuserlib.permissions.getPermissions(program)["dependency"] == programWhosReverseDependenciesWereSearchingFor:
     programsToBeUpdated[program] = True
