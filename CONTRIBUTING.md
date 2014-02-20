@@ -29,7 +29,7 @@ Contributing code to the repository:
 
  * Code blocks may not be stacked more than 4 levels deep.  That is a `dev` plus three `if`'s or other keyword.
 
- * Function definitions should not be more than 15 lines long.  Where this is not yet upheld in the code base, will except pull requests to remidy the fact.
+ * Avoid functions longer than 15 lines.
 
  * Use human readable names for things.
 
