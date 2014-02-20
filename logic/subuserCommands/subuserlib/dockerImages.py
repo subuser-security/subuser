@@ -110,7 +110,7 @@ def getAllRepoNameWhichStartWith(dockerImageMatrix, repoNamePrefix='subuser-'):
   """
   return [name for name in dockerImageMatrix['REPOSITORY'] if name.startswith(repoNamePrefix)]
   
-def getUniqueRowByRepTag(dockerImageMatrix, searchRepoName, searchTag):
+def getUniqueRowByRepTag(dockerImageMatrix, searchRepoName, searchTag='latest'):
   """Returns a dictionary of columns (line row): repoName, tag
   if not found: empty dictionary
   e.g.
