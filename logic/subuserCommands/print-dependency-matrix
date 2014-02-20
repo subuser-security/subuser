@@ -6,38 +6,38 @@ import subuserlib.registry
 import subuserlib.availablePrograms
 
 def printHelp():
- print("""print an extended dependency matrix: 
- OPTION: names:  program-names (also multiple): print a dependency-matrix for program names
-  $ subuser print-dependency-matrix firefox vim xterm
- 
- Option: available: print a dependency-matrix for programs available
-  $ subuser print-dependency-matrix available
- 
- Option: installed: print a dependency-matrix for programs available
-  $ subuser print-dependency-matrix installed
+  print("""print an extended dependency matrix:
+  OPTION: names:  program-names (also multiple): print a dependency-matrix for program names
+    $ subuser print-dependency-matrix firefox vim xterm
+
+  Option: available: print a dependency-matrix for programs available
+    $ subuser print-dependency-matrix available
+
+  Option: installed: print a dependency-matrix for programs available
+    $ subuser print-dependency-matrix installed
 """)
 
 #################################################################################################
 if len(sys.argv) == 1 or sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.argv[1] == "--help":
- printHelp()
- sys.exit()
+  printHelp()
+  sys.exit()
 #################################################################################################
 
 if sys.argv[1] == "available":
- subuserProgramList = subuserlib.availablePrograms.getAvailablePrograms()
+  subuserProgramList = subuserlib.availablePrograms.getAvailablePrograms()
 elif sys.argv[1] == "installed":
- subuserProgramList = subuserlib.registry.getInstalledPrograms()
+  subuserProgramList = subuserlib.registry.getInstalledPrograms()
 else:
- subuserProgramList = sys.argv[1:]
+  subuserProgramList = sys.argv[1:]
 
 dependencyMatrix = subuserlib.registry.getDependencyMatrix(subuserProgramList, useHasExecutable=False, sortLists=True)
 print("\n===== DEPENDENCY MATRIX =====\n")
 for programMain in dependencyMatrix.keys():
- print("<%s>:" % programMain)
- print("    required-by: %s" % dependencyMatrix[programMain]["required-by"])
- print("    depends-on: %s" % dependencyMatrix[programMain]["depends-on"])
+  print("<%s>:" % programMain)
+  print("    required-by: %s" % dependencyMatrix[programMain]["required-by"])
+  print("    depends-on: %s" % dependencyMatrix[programMain]["depends-on"])
 
- 
- 
- 
- 
+
+
+
+

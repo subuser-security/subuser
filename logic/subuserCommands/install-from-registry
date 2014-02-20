@@ -8,46 +8,46 @@ import subuserlib.dockerImages
 
 ####################################################
 def printHelp():
- print(""" <install-from-registry> command which installs all of the programs listed in installed-programs.json file.  Run this command with:
+  print(""" <install-from-registry> command which installs all of the programs listed in installed-programs.json file.  Run this command with:
 
 $ subuser install-from-registry
 
 Options:
- --from-cache similar to the `install` command: build images using layers from the cache if possible
- $ subuser install-from-registry --from-cache
- """)
+  --from-cache similar to the `install` command: build images using layers from the cache if possible
+  $ subuser install-from-registry --from-cache
+  """)
 
 def resetRegistry():
- """ Go through registry and unregister any program that is not actually installed. """
- for program in subuserlib.registry.getInstalledPrograms():
-  if not subuserlib.dockerImages.isProgramsImageInstalled(program):
-   subuserlib.registry.unregisterProgram(program)
+  """ Go through registry and unregister any program that is not actually installed. """
+  for program in subuserlib.registry.getInstalledPrograms():
+    if not subuserlib.dockerImages.isProgramsImageInstalled(program):
+      subuserlib.registry.unregisterProgram(program)
 
 def installFromRegistry(useCache):
- """ Installs all of the programs listed in installed-programs.json file. """
- resetRegistry()
- for program in subuserlib.registry.getInstalledPrograms():
-  print("\n=== Installing <%s> from installed-programs.json registry....\n" % program)
-  if useCache:
-   subuserlib.utils.subprocessCheckedCall(["subuser","install",program,"--from-cache"])
-  else:
-   subuserlib.utils.subprocessCheckedCall(["subuser","install",program])
+  """ Installs all of the programs listed in installed-programs.json file. """
+  resetRegistry()
+  for program in subuserlib.registry.getInstalledPrograms():
+    print("\n=== Installing <%s> from installed-programs.json registry....\n" % program)
+    if useCache:
+      subuserlib.utils.subprocessCheckedCall(["subuser","install",program,"--from-cache"])
+    else:
+      subuserlib.utils.subprocessCheckedCall(["subuser","install",program])
 
 #################################################################################################
 if len(sys.argv) > 1:
- if sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.argv[1] == "--help":
-  printHelp()
-  sys.exit()
+  if sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.argv[1] == "--help":
+    printHelp()
+    sys.exit()
 #################################################################################################
 
 # Are we to use layers from the cache when building the docker image: only for Dockerfiles build images
 useCache = False
-if len(sys.argv) > 1: 
- if sys.argv[1] == "--from-cache":
-  useCache = True
- else:
-  print("Wrong command: see\n")
-  printHelp()
-  sys.exit()
-  
-installFromRegistry(useCache) 
+if len(sys.argv) > 1:
+  if sys.argv[1] == "--from-cache":
+    useCache = True
+  else:
+    print("Wrong command: see\n")
+    printHelp()
+    sys.exit()
+
+installFromRegistry(useCache)

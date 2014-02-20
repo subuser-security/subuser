@@ -5,10 +5,10 @@ import paths
 import os
 
 def available(programName):
- """ Returns True if the program is available for instalation. """
- return os.path.exists(paths.getProgramSrcDir(programName))
+  """ Returns True if the program is available for instalation. """
+  return os.path.exists(paths.getProgramSrcDir(programName))
 
 def getAvailablePrograms():
- """ Returns a list of program's available for instalation. """
- availableProgramsPath = paths.getAvailableProgramsPath()
- return os.listdir(availableProgramsPath)
+  """ Returns a list of program's available for instalation. """
+  availableProgramsPath = paths.getAvailableProgramsPath()
+  return os.listdir(availableProgramsPath)

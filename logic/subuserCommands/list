@@ -10,43 +10,43 @@ import subuserlib.permissions
 import subuserlib.availablePrograms
 
 def printHelp():
- print("""You can either list programs available for instalation with:
- $ subuser list available 
- 
-  The list available command may optionally take the `--short` argument which will print only the program's names.
-  $ subuser list available --short
-  
+  print("""You can either list programs available for instalation with:
+  $ subuser list available
+
+    The list available command may optionally take the `--short` argument which will print only the program's names.
+    $ subuser list available --short
+
 Or you can list installed programs with:
- $ subuser list installed
+  $ subuser list installed
 """)
 
 #################################################################################################
 if len(sys.argv) == 1 or sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.argv[1] == "--help":
- printHelp()
- sys.exit()
+  printHelp()
+  sys.exit()
 #################################################################################################
 
 if sys.argv[1] == "available":
- try:
-  if sys.argv[2] == "--short":
-   availableProgramsPath = subuserlib.paths.getAvailableProgramsPath()
-   print(' '.join(sorted([program for program in os.listdir(availableProgramsPath)])))
-  else:
-   print("Argument not recognized:"+sys.argv[2])
-   printHelp()
- except IndexError:
-  availablePrograms = subuserlib.availablePrograms.getAvailablePrograms()
-  for program in availablePrograms:
-   permissions = subuserlib.permissions.getPermissions(program)
-   print(program)
-   print("----------------")
-   print("Description: "+permissions["description"])
-   print("Maintainer: "+permissions["maintainer"])
-   print("\n")
+  try:
+    if sys.argv[2] == "--short":
+      availableProgramsPath = subuserlib.paths.getAvailableProgramsPath()
+      print(' '.join(sorted([program for program in os.listdir(availableProgramsPath)])))
+    else:
+      print("Argument not recognized:"+sys.argv[2])
+      printHelp()
+  except IndexError:
+    availablePrograms = subuserlib.availablePrograms.getAvailablePrograms()
+    for program in availablePrograms:
+      permissions = subuserlib.permissions.getPermissions(program)
+      print(program)
+      print("----------------")
+      print("Description: "+permissions["description"])
+      print("Maintainer: "+permissions["maintainer"])
+      print("\n")
 
 elif sys.argv[1] == "installed":
- for program in subuserlib.registry.getInstalledPrograms():
-  print(program)
+  for program in subuserlib.registry.getInstalledPrograms():
+    print(program)
 
 else:
- printHelp()
+  printHelp()

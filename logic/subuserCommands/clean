@@ -8,36 +8,36 @@ import subuserlib.permissions
 
 ####################################################
 def printHelp():
- print(""" Clean your system of unneeded images/libaries/executable-less programs.  If a libarary has no programs depending on it, uninstall that libarary.  Run this command with:
+  print(""" Clean your system of unneeded images/libaries/executable-less programs.  If a libarary has no programs depending on it, uninstall that libarary.  Run this command with:
 
 $ subuser clean
 """)
 
 def gatherUnneededLibs():
- """ Returns a list of unneeded libaries. """
- unneededLibs = []
- for program in subuserlib.registry.getInstalledPrograms():
-  if not subuserlib.permissions.hasExecutable(program) and not subuserlib.registry.hasInstalledDependencies(program):
-   unneededLibs.append(program)
- return unneededLibs
- 
+  """ Returns a list of unneeded libaries. """
+  unneededLibs = []
+  for program in subuserlib.registry.getInstalledPrograms():
+    if not subuserlib.permissions.hasExecutable(program) and not subuserlib.registry.hasInstalledDependencies(program):
+      unneededLibs.append(program)
+  return unneededLibs
+
 def cleanUnneededLibs():
- programsToUninstall = gatherUnneededLibs()
- if len(programsToUninstall) > 0:
-  performUninstalls(programsToUninstall)
- else:
-  print("Looks like your system is already clean.")
+  programsToUninstall = gatherUnneededLibs()
+  if len(programsToUninstall) > 0:
+    performUninstalls(programsToUninstall)
+  else:
+    print("Looks like your system is already clean.")
 
 def performUninstalls(programsToUninstall):
- print("The following programs will be uninstalled:")
- for program in programsToUninstall:
-  print(program)
- if raw_input("Continue [y/n]? ") == "y":
+  print("The following programs will be uninstalled:")
   for program in programsToUninstall:
-   subuserlib.utils.subprocessCheckedCall(["subuser","uninstall",program])
- 
+    print(program)
+  if raw_input("Continue [y/n]? ") == "y":
+    for program in programsToUninstall:
+      subuserlib.utils.subprocessCheckedCall(["subuser","uninstall",program])
+
 #################################################################################################
 if len(sys.argv) > 1:
- printHelp()
+  printHelp()
 else:
- cleanUnneededLibs() 
+  cleanUnneededLibs()

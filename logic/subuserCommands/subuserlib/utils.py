@@ -5,9 +5,9 @@ import sys
 import subprocess
 
 def subprocessCheckedCall(args, **kwargs):
- """ simplify subprocess.check_call in other code
- """
- try:
-  subprocess.check_call(args, **kwargs)
- except subprocess.CalledProcessError:
-  sys.exit('Command failed: %s' % ' '.join(args))
+  """ simplify subprocess.check_call in other code
+  """
+  try:
+    subprocess.check_call(args, **kwargs)
+  except subprocess.CalledProcessError:
+    sys.exit('Command failed: %s' % ' '.join(args))

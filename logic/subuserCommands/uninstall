@@ -11,42 +11,42 @@ import subprocess
 
 #######################################################
 def printHelp():
- print("Issue the `subuser uninstall program-name` command to uninstall a program. NOTE: this operation does not remove that program's home directory.")
+  print("Issue the `subuser uninstall program-name` command to uninstall a program. NOTE: this operation does not remove that program's home directory.")
 
 def uninstall(programName):
- if subuserlib.dockerImages.isProgramsImageInstalled(programName):
-  if not subprocess.call(["docker","rmi","subuser-"+programName]) == 0:
-   if not raw_input("Once you have solved the problem either type [y] to continue, or [q] to exit.") == 'y':
-    sys.exit()
- if os.path.exists(subuserlib.paths.getExecutablePath(programName)):
-  os.remove(subuserlib.paths.getExecutablePath(programName))
+  if subuserlib.dockerImages.isProgramsImageInstalled(programName):
+    if not subprocess.call(["docker","rmi","subuser-"+programName]) == 0:
+      if not raw_input("Once you have solved the problem either type [y] to continue, or [q] to exit.") == 'y':
+        sys.exit()
+  if os.path.exists(subuserlib.paths.getExecutablePath(programName)):
+    os.remove(subuserlib.paths.getExecutablePath(programName))
 
- subuserlib.registry.unregisterProgram(programName)
- programHomeDir=subuserlib.paths.getProgramHomeDirOnHost(programName)
- if os.path.exists(programHomeDir):
-  print("The program has been uninstalled but it's home directory remains:")
-  print(programHomeDir)
- print(programName+" uninstalled successfully.")
+  subuserlib.registry.unregisterProgram(programName)
+  programHomeDir=subuserlib.paths.getProgramHomeDirOnHost(programName)
+  if os.path.exists(programHomeDir):
+    print("The program has been uninstalled but it's home directory remains:")
+    print(programHomeDir)
+  print(programName+" uninstalled successfully.")
 
 #################################################################################################
 if len(sys.argv) == 1 or sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.argv[1] == "--help":
- printHelp()
- sys.exit()
+  printHelp()
+  sys.exit()
 #################################################################################################
 
 programName = sys.argv[1]
 
 if not subuserlib.registry.isProgramInstalled(programName):
- print("Could not uninstall "+programName+" program is not installed.")
- printHelp()
- print("\nInstalled programs are: ")
- for program in subuserlib.registry.getInstalledPrograms():
-  print(program)
+  print("Could not uninstall "+programName+" program is not installed.")
+  printHelp()
+  print("\nInstalled programs are: ")
+  for program in subuserlib.registry.getInstalledPrograms():
+    print(program)
 else:
- installedDependencies = subuserlib.registry.getInstalledDependencies(programName)
- if installedDependencies == []:
-  uninstall(programName)
- else:
-  print("The following programs depend upon "+programName+" you must uninstall them first.")
-  for dependency in installedDependencies:
-   print(dependency)
+  installedDependencies = subuserlib.registry.getInstalledDependencies(programName)
+  if installedDependencies == []:
+    uninstall(programName)
+  else:
+    print("The following programs depend upon "+programName+" you must uninstall them first.")
+    for dependency in installedDependencies:
+      print(dependency)

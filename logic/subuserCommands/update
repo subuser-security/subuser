@@ -18,96 +18,96 @@ import subuserlib.dockerImages
 
 #####################################################################################
 def printHelp():
- print("""To update all programs run:
- $ subuser update all
+  print("""To update all programs run:
+  $ subuser update all
 You should run git pull before doing this in order to get an up-to-date program list.
 
 To update a specific program run:
- $ subuser update <program-name>
+  $ subuser update <program-name>
 """)
 
 def getProgramsWhosLastUpdateTimesChanged():
- """ Returns a list of progams who's last-update-time has changed since it was installed. """
- programsWhosLastUpdateTimeChanged = []
- registry = subuserlib.registry.getRegistry()
- for program, registeredInfo in registry:
-  availableLastUpdateTime = subuserlib.permissions.getPermissions(program).get("last-update-time",None)
-  installedLastUpdateTime = registeredInfo.get("last-update-time",None)
-  if not availableLastUpdateTime == installedLastUpdateTime:
-   programsWhosLastUpdateTimeChanged.append(program)
- return programsWhosLastUpdateTimeChanged
+  """ Returns a list of progams who's last-update-time has changed since it was installed. """
+  programsWhosLastUpdateTimeChanged = []
+  registry = subuserlib.registry.getRegistry()
+  for program, registeredInfo in registry:
+    availableLastUpdateTime = subuserlib.permissions.getPermissions(program).get("last-update-time",None)
+    installedLastUpdateTime = registeredInfo.get("last-update-time",None)
+    if not availableLastUpdateTime == installedLastUpdateTime:
+      programsWhosLastUpdateTimeChanged.append(program)
+  return programsWhosLastUpdateTimeChanged
 
 def uninstall(program):
- subuserlib.utils.subprocessCheckedCall(["subuser","uninstall",program])
+  subuserlib.utils.subprocessCheckedCall(["subuser","uninstall",program])
 
 def install(program):
- subuserlib.utils.subprocessCheckedCall(["subuser","install",program])
+  subuserlib.utils.subprocessCheckedCall(["subuser","install",program])
 
 def uninstallProgramsToBeUpdated(programsToBeUpdated):
- programsToBeUninstalled = set(programsToBeUpdated)
+  programsToBeUninstalled = set(programsToBeUpdated)
 
- uninstalledPrograms = set([])
- while not programsToBeUninstalled == uninstalledPrograms:
-  for program in programsToBeUninstalled:
-   if not subuserlib.registry.hasInstalledDependencies(program):
-    uninstall(program)
-    uninstalledPrograms.add(program)
+  uninstalledPrograms = set([])
+  while not programsToBeUninstalled == uninstalledPrograms:
+    for program in programsToBeUninstalled:
+      if not subuserlib.registry.hasInstalledDependencies(program):
+        uninstall(program)
+        uninstalledPrograms.add(program)
 
 def installProgramsToBeUpdated(programsToBeUpdated):
- for program in programsToBeUpdated:
-  if subuserlib.permissions.hasExecutable(program): # Don't install libraries as these might have changed and no longer be needed.  They'll automatically get installed anyways.
-   install(program)
+  for program in programsToBeUpdated:
+    if subuserlib.permissions.hasExecutable(program): # Don't install libraries as these might have changed and no longer be needed.  They'll automatically get installed anyways.
+      install(program)
 
 def runUpdate(programsToBeUpdated):
- print("The following programs will be updated:")
- for program in programsToBeUpdated:
-  print(program)
- while not subuserlib.dockerImages.areProgramsRunning(programsToBeUpdated):
-  print("PLEASE: close these programs before continuing. If there seem to be containers hanging around when the program isn't even running you might try:")
-  print(" $ docker kill <container-id>")
-  print("You still need to close:")
-  for runningProgram in subuserlib.dockerImages.getRunningProgramsWithNames(programsToBeUpdated):
-   print(runningProgram)
-  shouldQuit = raw_input("Press enter to continue(or q to quit): ")
-  if shouldQuit == 'q':
-   exit()
- choice = raw_input("Do you want to continue updating [y/n]? " )
- if choice in ["Y","y"]:
-  uninstallProgramsToBeUpdated(programsToBeUpdated) 
-  installProgramsToBeUpdated(programsToBeUpdated)
- else:
-  sys.exit()
+  print("The following programs will be updated:")
+  for program in programsToBeUpdated:
+    print(program)
+  while not subuserlib.dockerImages.areProgramsRunning(programsToBeUpdated):
+    print("PLEASE: close these programs before continuing. If there seem to be containers hanging around when the program isn't even running you might try:")
+    print(" $ docker kill <container-id>")
+    print("You still need to close:")
+    for runningProgram in subuserlib.dockerImages.getRunningProgramsWithNames(programsToBeUpdated):
+      print(runningProgram)
+    shouldQuit = raw_input("Press enter to continue(or q to quit): ")
+    if shouldQuit == 'q':
+      exit()
+  choice = raw_input("Do you want to continue updating [y/n]? " )
+  if choice in ["Y","y"]:
+    uninstallProgramsToBeUpdated(programsToBeUpdated)
+    installProgramsToBeUpdated(programsToBeUpdated)
+  else:
+    sys.exit()
 
- 
+
 def updateAllPrograms():
- programsWhosLastUpdateTimeChanged = getProgramsWhosLastUpdateTimesChanged()
- updateSomePrograms(programsWhosLastUpdateTimeChanged)
+  programsWhosLastUpdateTimeChanged = getProgramsWhosLastUpdateTimesChanged()
+  updateSomePrograms(programsWhosLastUpdateTimeChanged)
 
 def updateSomePrograms(programs):
- programsToBeUpdated = set()
- dependencyMatrix = subuserlib.registry.getDependencyMatrix(subuserlib.availablePrograms.getAvailablePrograms())
- for program in programs:
-  programsToBeUpdated.add(program)
-  for dependent in dependencyMatrix[program]["required-by"]:
-   if subuserlib.registry.isProgramInstalled(dependent):
-    programsToBeUpdated.add(dependent)
- runUpdate(list(programsToBeUpdated))
+  programsToBeUpdated = set()
+  dependencyMatrix = subuserlib.registry.getDependencyMatrix(subuserlib.availablePrograms.getAvailablePrograms())
+  for program in programs:
+    programsToBeUpdated.add(program)
+    for dependent in dependencyMatrix[program]["required-by"]:
+      if subuserlib.registry.isProgramInstalled(dependent):
+        programsToBeUpdated.add(dependent)
+  runUpdate(list(programsToBeUpdated))
 
 
 #################################################################################################
 if len(sys.argv) == 1 or sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.argv[1] == "--help":
- printHelp()
- sys.exit()
+  printHelp()
+  sys.exit()
 #################################################################################################
 
 installedPrograms = subuserlib.registry.getInstalledPrograms()
 
 if sys.argv[1] == "all":
- updateAllPrograms()
+  updateAllPrograms()
 else:
- programsToBeUpdated = sys.argv[1:]
- updateSomePrograms(programsToBeUpdated) 
- # Ensure that all programs which we have requested be updated are still installed after the update:
- for program in programsToBeUpdated:
-  if not subuserlib.registry.isProgramInstalled(program):
-   subprocess.call(["subuser","install",program])
+  programsToBeUpdated = sys.argv[1:]
+  updateSomePrograms(programsToBeUpdated)
+  # Ensure that all programs which we have requested be updated are still installed after the update:
+  for program in programsToBeUpdated:
+    if not subuserlib.registry.isProgramInstalled(program):
+      subprocess.call(["subuser","install",program])

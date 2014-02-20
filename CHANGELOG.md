@@ -1,6 +1,8 @@
 VERSION 0.2
 -------------
 
+* Refactor code indention: added module to do so: issue #86
+
 * Add the describe command
 
 * FIX: The mark-as-needing-update command messes up the order of attributes in permissions.json #32

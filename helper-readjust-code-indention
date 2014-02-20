@@ -1,0 +1,53 @@
+#!/usr/bin/env python
+# This file should be compatible with both Python 2 and 3.
+# If it is not, please file a bug report.
+import sys
+import os
+
+
+################## CONFIGURE HERE ################## 
+
+#Path to /subuser/logic folder
+ROOTDIR ="/home/subuser/logic"
+
+CurrentCodeIndention = ' '
+NewCodeIndention = '  '
+
+################## END CONFIGURE HERE ################## 
+
+
+####################################################
+def printHelp():
+ print(""" just a helper to readjust python code indention: not for general usage
+ Before using it: make a backup and configure the top part of the file: helper-readjust-code-indention
+
+$ helper-readjust-code-indention
+""")
+
+
+#################################################################################################
+if len(sys.argv) > 1:
+ printHelp()
+ sys.exit()
+
+for root, dirs, files in os.walk(ROOTDIR):
+ for anyFile in files:
+  path = os.path.join(root, anyFile)
+  print('CHANGING INDENTION FOR: <%s>' % anyFile)
+  lineList = []
+  with open(path, 'r') as file_f:
+   lineList = file_f.readlines()
+  
+  with open(path, 'w') as file_f:
+   newLine = ''
+   for line in lineList:
+    line = line.rstrip()
+    if not line:
+     newLine = ''
+    elif line.startswith(' '):
+     #leading white space
+     NumberLeadingWhiteSpace = len(line) - len(line.lstrip())
+     newLine = line[0:NumberLeadingWhiteSpace].replace(CurrentCodeIndention, NewCodeIndention) + line[NumberLeadingWhiteSpace:len(line)]
+    else:
+     newLine = line
+    file_f.write(newLine + '\n')
