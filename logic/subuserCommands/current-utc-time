@@ -5,7 +5,7 @@ import sys
 import subuserlib.installTime
 
 if len(sys.argv) == 1:
-  print(subuserlib.installTime.currentTimeString())
+    print(subuserlib.installTime.currentTimeString())
 
 else:
- print(""" Display the current time in properly formated utc.  Useful for setting the last-update-time attribute in permissions.json """)
+  print(""" Display the current time in properly formated utc.  Useful for setting the last-update-time attribute in permissions.json """)

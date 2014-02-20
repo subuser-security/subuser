@@ -23,7 +23,7 @@ Contributing code to the repository:
 
  * Before writting comments read this article: http://rhodesmill.org/brandon/2012/one-sentence-per-line/
 
- * Indent each block by a single space.
+ * Follow the projects indent style for blocks.
 
  * Tabs are forbidden.
 
