@@ -31,9 +31,9 @@ def getRegistry():
         programNewRegistry[programName] = {}
         programNewRegistry[programName]['last-update-time'] = lastUpdateTime
         programNewRegistry[programName]['image-id'] = dockerImages.getImageID("subuser-"+programName)
-        programRegistry = programNewRegistry
-        #save the new one here once and for all
-        setInstalledPrograms(programRegistry)
+      programRegistry = programNewRegistry
+      #save the new one here once and for all
+      setInstalledPrograms(programRegistry)
   return programRegistry
 
 def getInstalledPrograms():
