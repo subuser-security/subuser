@@ -78,6 +78,26 @@ def isProgramInstalled(programName):
   except KeyError:
     return False
 
+def getTextInstalledPrograms(addNewLine=False, indentSpaces=0):
+  """ Returns a text of sorted installed program names.
+  Arguments:
+   - indentSpaces: can be set for nicer output especially togehter with: addNewLine
+   - addNewLine: if True each install program name starts at a new line
+  
+  e.g.: `print(getTextInstalledPrograms(addNewLine=True, indentSpaces=3))`
+  """
+  outText = ''
+  indentionString = ''
+  if indentSpaces > 0:
+    indentionString = ' ' * indentSpaces
+    
+  if addNewLine:
+    for program in sorted(getInstalledPrograms()):
+      outText = ''.join([outText, indentionString, program, '\n'])
+  else:
+    outText = indentionString + ' '.join(sorted(getInstalledPrograms()))
+  return outText
+  
 def hasInstalledDependencies(programName):
   """ Returns true if there are any program's which depend upon this program installed. """
   for program in getInstalledPrograms():
