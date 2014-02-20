@@ -5,6 +5,7 @@ import subprocess
 import availablePrograms
 import utils
 import json
+import sys
 
 def askToInstallProgram(programName):
   """ Asks the user if they want to install the given program.  If they say yes, install it, if they decline exit."""
@@ -16,21 +17,13 @@ def askToInstallProgram(programName):
   else:
     exit()
 
-def getImageTagOfProgram(programName):
-  """ Return the tag of a program or None, if there is no installed image for that program. """
-  roughImagesList = subprocess.check_output(["docker","images"])
-  imagesListLines = roughImagesList.split("\n")
-  imageTag = None
-  for line in imagesListLines:
-    imageListingWords = line.split()
-    if len(imageListingWords) > 1:
-      if imageListingWords[0] == "subuser-"+programName:
-        imageTag = "subuser-"+programName
-  # The reason we do this complicated search mechanism is that it brings us closer to the goal of
-  # tagging images with the userid as so: subuser-uid-programName.
-  # Once we move to the new tagging system, it will be necessary to maintain compatibility with the old one for a time.
-  # It may even be desired to allow images to be installed either globaly or "locally" aka userspecific.
-  return imageTag
+def getImageTagOfProgram(programName, imageTAG='latest'):
+  """ Return the Repository Name of a program or None, if there is no installed image for that program. """
+  repoName = None
+  dockerImageMatrix = getParsedDockerImages(noTrunc=True)
+  if getUniqueRowByRepTag(dockerImageMatrix, 'subuser-'+programName, imageTAG):
+    repoName = 'subuser-'+programName
+  return repoName
 
 def getImageTagOfInstalledProgram(programName):
   """ Return the tag of the docker image of an installed program.
@@ -46,25 +39,6 @@ If that program is not yet installed, install it.
 def isProgramsImageInstalled(programName):
   """ Return True if the programs image tag is installed.  False otherwise. """
   return not (getImageTagOfProgram(programName) == None)
-  
-def getParsedDockerImages(noTrunc=False):
-  """ Parse `docker images` related output for easier access: return a dictionary of Columns Lists
-  no-trunc: if False: truncate output 
-  """
-  dockerImageMatrix = {'REPOSITORY' : [], 'TAG' : [], 'ID' : [], 'CREATED' : [], 'SIZE' : []}
-  if noTrunc:
-    roughImagesList = subprocess.check_output(["docker","images", "--no-trunc=true"])
-  else:
-    roughImagesList = subprocess.check_output(["docker","images", "--no-trunc=false"])
-
-  imagesLinesItemList = [line.split() for line in roughImagesList.split("\n") if line.split()]
-  for itemList in imagesLinesItemList[1:]:
-    dockerImageMatrix['REPOSITORY'].append(itemList[0])
-    dockerImageMatrix['TAG'].append(itemList[1])
-    dockerImageMatrix['ID'].append(itemList[2])
-    dockerImageMatrix['CREATED'].append(' '.join([itemList[3], itemList[4], itemList[5]]))
-    dockerImageMatrix['SIZE'].append(' '.join([itemList[6], itemList[7]]))
-  return dockerImageMatrix
 
 def inspectImage(imageTag):
   """ Returns a dictionary coresponding to the json outputed by docker inspect. """
@@ -96,3 +70,75 @@ def isProgramRunning(name):
 def areProgramsRunning(programs):
   """ Returns True if at least one of the listed programs is currently running. """
   return len(getRunningProgramsWithNames(programs)) > 0
+
+
+def getParsedDockerImages(noTrunc=False):
+  """ Parse `docker images` related output for easier access: return a dictionary of Columns Lists
+  no-trunc: if False: truncate output 
+  """
+  dockerImageMatrix = {'REPOSITORY' : [], 'TAG' : [], 'ID' : [], 'CREATED' : [], 'SIZE' : []}
+  if noTrunc:
+    roughImagesList = subprocess.check_output(["docker","images", "--no-trunc=true"])
+  else:
+    roughImagesList = subprocess.check_output(["docker","images", "--no-trunc=false"])
+
+  #solve the problem with white space allowed in RepoNames and Tags
+  #Columns: REPOSITORY   TAG   IMAGE ID   CREATED   VIRTUAL SIZE
+  splitPoints = {'REPOSITORY' : -1, 'TAG' : -1, 'IMAGE ID' : -1, 'CREATED' : -1, 'VIRTUAL SIZE' : -1}
+  imagesLinesList = [line for line in roughImagesList.split("\n") if line.strip()]
+  topRowNames = imagesLinesList[0]
+
+  for name in splitPoints.keys():
+    splitPoints[name] = topRowNames.find(name)
+    if splitPoints[name] == -1:
+      sys.exit("ERROR: could not parse 'docker images' output")
+      
+  for line in imagesLinesList[1:]:
+    dockerImageMatrix['REPOSITORY'].append(line[splitPoints['REPOSITORY']:splitPoints['TAG']].strip())
+    dockerImageMatrix['TAG'].append(line[splitPoints['TAG']:splitPoints['IMAGE ID']].strip())
+    dockerImageMatrix['ID'].append(line[splitPoints['IMAGE ID']:splitPoints['CREATED']].strip())
+    dockerImageMatrix['CREATED'].append(line[splitPoints['CREATED']:splitPoints['VIRTUAL SIZE']].strip())
+    dockerImageMatrix['SIZE'].append(line[splitPoints['VIRTUAL SIZE']:len(line)].strip())
+  return dockerImageMatrix
+  
+def getAllRepoNameWhichStartWith(dockerImageMatrix, repoNamePrefix='subuser-'):
+  """Returns a list of REPOSITORY names starting with repoNamePrefix
+  Arguments see: getParsedDockerImages()
+  e.g.
+  dockerImageMatrix = getParsedDockerImages(noTrunc=True)
+  print(getAllRepoNameWhichStartWith(dockerImageMatrix))
+  """
+  return [name for name in dockerImageMatrix['REPOSITORY'] if name.startswith(repoNamePrefix)]
+  
+def getUniqueRowByRepTag(dockerImageMatrix, searchRepoName, searchTag):
+  """Returns a dictionary of columns (line row): repoName, tag
+  if not found: empty dictionary
+  e.g.
+  dockerImageMatrix = getParsedDockerImages(noTrunc=True)
+  print(getUniqueRowByRepTag(dockerImageMatrix, 'subuser-vim', 'latest'))
+  
+  e.g. get ID
+  print(getUniqueRowByRepTag(dockerImageMatrix, 'subuser-vim', 'latest')['ID])
+  
+  e.g. get SIZE
+  print(getUniqueRowByRepTag(dockerImageMatrix, 'subuser-vim', 'latest')['SIZE])
+  
+  e.g. check for existence
+  if getUniqueRowByRepTag(dockerImageMatrix, 'subuser-vim', 'latest'):
+    print("Found: 'subuser-vim', 'latest)
+  else:
+    print("Could NOT Find: 'subuser-vim', 'latest)
+  """
+  dockerImageMatrixRow = {}
+  for index, (repoName, tag) in enumerate(zip(dockerImageMatrix['REPOSITORY'], dockerImageMatrix['TAG'])):
+    if repoName == searchRepoName and tag == searchTag:
+      #PS: I split this on purpose instead of a long line: can also be put on one line if you want
+      dockerImageMatrixRow = {'REPOSITORY' : dockerImageMatrix['REPOSITORY'][index], 
+                              'TAG' : dockerImageMatrix['TAG'][index],
+                              'ID' : dockerImageMatrix['ID'][index], 
+                              'CREATED' : dockerImageMatrix['CREATED'][index],
+                              'SIZE' : dockerImageMatrix['SIZE'][index]}
+      #Repo/Tag combinations are supposed to be unique
+      break
+  return dockerImageMatrixRow
+  
