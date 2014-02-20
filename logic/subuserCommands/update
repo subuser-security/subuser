@@ -2,13 +2,7 @@
 # This file should be compatible with both Python 2 and 3.
 # If it is not, please file a bug report.
 
-# This command updated all of the installed subuser programs.
-# It works in 4 phases:
-#  Create a dictionary of installed program-name booleans where the booleans represent whether the program needs updating
-#  Mark each program who's last-update-time has changed from it's installed last-update-time as needing to be updated
-#  Recurse on each program searching for reverse dependencies and marking those as needing updating as well.
-#  Uninstall all programs marked to be updated
-#  Install all programs marked to be updated
+# This command updates all or some of the installed subuser programs.
 import sys
 import subprocess
 import subuserlib.utils
