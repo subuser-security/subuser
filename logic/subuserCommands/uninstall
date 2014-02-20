@@ -16,7 +16,7 @@ def printHelp():
 def uninstall(programName):
   print("Uninstalling "+programName)
   if subuserlib.dockerImages.isProgramsImageInstalled(programName):
-    if not subprocess.call(["docker","rmi","subuser-"+programName]) == 0:
+    while not subprocess.call(["docker","rmi","subuser-"+programName]) == 0:
       if not raw_input("Once you have solved the problem either type [y] to continue, or [q] to exit.") == 'y':
         sys.exit()
   if os.path.exists(subuserlib.paths.getExecutablePath(programName)):
