@@ -27,6 +27,8 @@ The json object MUST have the following fields:
 The json object MAY at your option contain the following additional fields:
 ---------------------------------------------------------------------------
 
+**Note on optional fields**: Setting an optional field to an empty string is not a valid way of requesting it's default value.  If you want the default value, don't include the field at all.
+
  * `last-updat-time`: This field records the last time the program, or it's `Dockerfile` were known to be updated.  The purpose of this field is telling `subuser` if a program has been updated and must be re-installed.
 
   Ex:
@@ -43,6 +45,8 @@ The json object MAY at your option contain the following additional fields:
    ,"executable"                : "/usr/bin/vim"
   ````
 
+ **Default**: The program has no executable and cannot be run(but it can be depended upon, as a library).
+
  * `shared-home`: This field marks whether the program is to share it's home directory with another program installed by subuser.
 
   Ex:
@@ -51,6 +55,8 @@ The json object MAY at your option contain the following additional fields:
    ,"shared-home"             : "emacs"
   ````
 
+ **Default**: The program does not share it's home directory with any other program.
+
  * `dependency`: Any program may depend upon at most one other program to provide a base image for it to build off of.
 
   Ex:
@@ -58,6 +64,8 @@ The json object MAY at your option contain the following additional fields:
   ````json
    ,"dependency"              : "some-program"
   ````
+
+ **Default**: The program does not depend on any other program.
 
  * `user-dirs`: A list of relative paths to user directories which are to be shared between the host and the given program. The program is given read-write access to any user directories listed.
 
