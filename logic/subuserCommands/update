@@ -62,7 +62,7 @@ def runUpdate(programsToBeUpdated):
   print("The following programs will be updated:")
   for program in programsToBeUpdated:
     print(program)
-  while not subuserlib.dockerImages.areProgramsRunning(programsToBeUpdated):
+  while subuserlib.dockerImages.areProgramsRunning(programsToBeUpdated):
     print("PLEASE: close these programs before continuing. If there seem to be containers hanging around when the program isn't even running you might try:")
     print(" $ docker kill <container-id>")
     print("You still need to close:")
