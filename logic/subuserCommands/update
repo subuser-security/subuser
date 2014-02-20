@@ -17,8 +17,6 @@ import subuserlib.permissions
 import subuserlib.dockerImages
 
 #####################################################################################
-dry = False # Note, dry runs go into an infinte loop at the end becasue they can never satisfy the uninstalling of dependencies.
-#####################################################################################
 def printHelp():
  print("""To update all programs run:
  $ subuser update all
@@ -29,37 +27,15 @@ To update a specific program run:
 """)
 
 def getProgramsWhosLastUpdateTimesChanged():
- programsWhosLastUpdateTimesChanged = installedPrograms.copy()
- # Convert the dictionary from a program-name->last-update-time dictionary to a program-name->bool(updateTimeChanged) dictionary
- for program in installedPrograms.keys():
-  programsWhosLastUpdateTimesChanged[program]=False
-
- for installedProgram, installedLastUpdateTime in installedPrograms.iteritems():
-  if not installedLastUpdateTime == subuserlib.permissions.getPermissions(installedProgram)["last-update-time"]:
-   programsWhosLastUpdateTimesChanged[installedProgram] = True
-
- return programsWhosLastUpdateTimesChanged
-
-def markReverseDependenciesAsChanged(programWhosReverseDependenciesWereSearchingFor,programsToBeUpdated):
- for program in installedPrograms.keys():
-  try:
-   if subuserlib.permissions.getPermissions(program)["dependency"] == programWhosReverseDependenciesWereSearchingFor:
-    programsToBeUpdated[program] = True
-    markReverseDependenciesAsChanged(program,programsToBeUpdated)
-  except KeyError:
-   pass
-
-def getProgramsToBeUpdated(programsWhosLastUpdateTimesChanged):
- """ Returns a list of programs needing to be updated. """
- programsToBeUpdatedDict = programsWhosLastUpdateTimesChanged.copy()
- for program, changed in programsWhosLastUpdateTimesChanged.iteritems():
-  if changed:
-   markReverseDependenciesAsChanged(program,programsToBeUpdatedDict)
- programsToBeUpdated = []
- for program,toBeUpdated in programsToBeUpdatedDict.iteritems():
-  if toBeUpdated:
-   programsToBeUpdated.append(program)
- return programsToBeUpdated
+ """ Returns a list of progams who's last-update-time has changed since it was installed. """
+ programsWhosLastUpdateTimeChanged = []
+ registry = subuserlib.registry.getRegistry()
+ for program, registeredInfo in registry:
+  availableLastUpdateTime = subuserlib.permissions.getPermissions(program).get("last-update-time",None)
+  installedLastUpdateTime = registeredInfo.get("last-update-time",None)
+  if not availableLastUpdateTime == installedLastUpdateTime:
+   programsWhosLastUpdateTimeChanged.append(program)
+ return programsWhosLastUpdateTimeChanged
 
 def uninstall(program):
  subuserlib.utils.subprocessCheckedCall(["subuser","uninstall",program])
@@ -74,35 +50,19 @@ def uninstallProgramsToBeUpdated(programsToBeUpdated):
  while not programsToBeUninstalled == uninstalledPrograms:
   for program in programsToBeUninstalled:
    if not subuserlib.registry.hasInstalledDependencies(program):
-    if not dry:
-     uninstall(program)
-    else:
-     print("Uninstalling: " + program)
+    uninstall(program)
     uninstalledPrograms.add(program)
 
 def installProgramsToBeUpdated(programsToBeUpdated):
  for program in programsToBeUpdated:
   if subuserlib.permissions.hasExecutable(program): # Don't install libraries as these might have changed and no longer be needed.  They'll automatically get installed anyways.
-   if not dry:
-    install(program)
-   else: print("Installing: " + program)
-
-def updateAllPrograms():
- programsWhosLastUpdateTimesChanged = getProgramsWhosLastUpdateTimesChanged()
- updateSomePrograms(programsWhosLastUpdateTimesChanged)
-
-def updateSomePrograms(toBeUpdatedDict):
- programsToBeUpdated = getProgramsToBeUpdated(toBeUpdatedDict)
- if programsToBeUpdated == []:
-  print("It looks like all your subuser programs are up to date!")
- else:
-  runUpdate(programsToBeUpdated)
+   install(program)
 
 def runUpdate(programsToBeUpdated):
  print("The following programs will be updated:")
  for program in programsToBeUpdated:
   print(program)
- while not subuserlib.dockerImages.isProgramRunning(program):
+ while not subuserlib.dockerImages.areProgramsRunning(programsToBeUpdated):
   print("PLEASE: close these programs before continuing. If there seem to be containers hanging around when the program isn't even running you might try:")
   print(" $ docker kill <container-id>")
   print("You still need to close:")
@@ -115,6 +75,24 @@ def runUpdate(programsToBeUpdated):
  if choice in ["Y","y"]:
   uninstallProgramsToBeUpdated(programsToBeUpdated) 
   installProgramsToBeUpdated(programsToBeUpdated)
+ else:
+  sys.exit()
+
+ 
+def updateAllPrograms():
+ programsWhosLastUpdateTimeChanged = getProgramsWhosLastUpdateTimesChanged()
+ updateSomePrograms(programsWhosLastUpdateTimeChanged)
+
+def updateSomePrograms(programs):
+ programsToBeUpdated = set()
+ dependencyMatrix = subuserlib.registry.getDependencyMatrix(subuserlib.availablePrograms.getAvailablePrograms())
+ for program in programs:
+  programsToBeUpdated.add(program)
+  for dependent in dependencyMatrix[program]["required-by"]:
+   if subuserlib.registry.isProgramInstalled(dependent):
+    programsToBeUpdated.add(dependent)
+ runUpdate(list(programsToBeUpdated))
+
 
 #################################################################################################
 if len(sys.argv) == 1 or sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.argv[1] == "--help":
@@ -122,16 +100,13 @@ if len(sys.argv) == 1 or sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.arg
  sys.exit()
 #################################################################################################
 
-installedPrograms = subuserlib.registry.getRegistry()
+installedPrograms = subuserlib.registry.getInstalledPrograms()
 
 if sys.argv[1] == "all":
  updateAllPrograms()
 else:
  programsToBeUpdated = sys.argv[1:]
- programsToBeUpdatedDict = installedPrograms.copy()
- for program in programsToBeUpdatedDict.keys():
-  programsToBeUpdatedDict[program] = program in programsToBeUpdated
- updateSomePrograms(programsToBeUpdatedDict)
+ updateSomePrograms(programsToBeUpdated) 
  # Ensure that all programs which we have requested be updated are still installed after the update:
  for program in programsToBeUpdated:
   if not subuserlib.registry.isProgramInstalled(program):
