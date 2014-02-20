@@ -46,6 +46,25 @@ If that program is not yet installed, install it.
 def isProgramsImageInstalled(programName):
   """ Return True if the programs image tag is installed.  False otherwise. """
   return not (getImageTagOfProgram(programName) == None)
+  
+def getParsedDockerImages(noTrunc=False):
+  """ Parse `docker images` related output for easier access: return a dictionary of Columns Lists
+  no-trunc: if False: truncate output 
+  """
+  dockerImageMatrix = {'REPOSITORY' : [], 'TAG' : [], 'ID' : [], 'CREATED' : [], 'SIZE' : []}
+  if noTrunc:
+    roughImagesList = subprocess.check_output(["docker","images", "--no-trunc=true"])
+  else:
+    roughImagesList = subprocess.check_output(["docker","images", "--no-trunc=false"])
+
+  imagesLinesItemList = [line.split() for line in roughImagesList.split("\n") if line.split()]
+  for itemList in imagesLinesItemList[1:]:
+    dockerImageMatrix['REPOSITORY'].append(itemList[0])
+    dockerImageMatrix['TAG'].append(itemList[1])
+    dockerImageMatrix['ID'].append(itemList[2])
+    dockerImageMatrix['CREATED'].append(' '.join([itemList[3], itemList[4], itemList[5]]))
+    dockerImageMatrix['SIZE'].append(' '.join([itemList[6], itemList[7]]))
+  return dockerImageMatrix
 
 def inspectImage(imageTag):
   """ Returns a dictionary coresponding to the json outputed by docker inspect. """
