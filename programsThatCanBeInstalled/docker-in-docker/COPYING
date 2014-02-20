@@ -1,0 +1,3 @@
+The Dockerfile and wrapdocker script were taken from the following git repo:
+
+https://github.com/jpetazzo/dind
