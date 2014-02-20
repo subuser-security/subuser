@@ -144,3 +144,13 @@ The json object MAY at your option contain the following additional fields:
   ````
 
   **Default**: `false`
+
+ * `as-root`: Run the program as the root user within the container.
+
+ Ex:
+
+ ````json
+  ,"as-root"                     : true
+ ````
+
+ **Default**: `false`

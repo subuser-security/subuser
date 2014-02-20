@@ -51,9 +51,16 @@ def runProgram(programName):
 
   allowNetworkAccessArg = getAllowNetworkAccessArg(permissions)
   executable = subuserlib.permissions.getExecutable(permissions)
-  setupUserAndRunPath = os.path.join("/launch","setupUserAndRun")
+
+  if not subuserlib.permissions.getAsRoot(permissions):
+    setupUserAndRunPath = "/launch/setupUserAndRun"
+    setupUserAndRunArgs = [setupUserAndRunPath,username]
+  else:
+    setupUserAndRunArgs = ["/launch/runCommand","root"]
+
   hostSubuserHome = subuserlib.paths.getProgramHomeDirOnHost(programName)
   setupHostSubuserHome(hostSubuserHome)
+   
 
   dockersideScriptsPath = subuserlib.paths.getDockersideScriptsPath()
   dockersideBinPath = "/launch"
@@ -92,10 +99,15 @@ def runProgram(programName):
   else:
     workingDirectoryVolumeArg = []
 
-  volumeArgs = ["-v="+hostSubuserHome+":"+home+":rw"
+  if subuserlib.permissions.getAsRoot(permissions):
+    dockersideHome = "/root/"
+  else:
+    dockersideHome = home
+
+  volumeArgs = ["-v="+hostSubuserHome+":"+dockersideHome+":rw"
     ,"-v="+dockersideScriptsPath+":"+dockersideBinPath+":ro"] + workingDirectoryVolumeArg + systemDirVolumeArgs + userDirVolumeArgs
 
-  dockerCommand = ["docker","run","-i","-t","-rm",allowNetworkAccessArg]+privilegedArg+volumeArgs+x11Args+soundArgs+[dockerImageName,setupUserAndRunPath,username,executable]+args
+  dockerCommand = ["docker","run","-i","-t","-rm",allowNetworkAccessArg]+privilegedArg+volumeArgs+x11Args+soundArgs+[dockerImageName]+setupUserAndRunArgs+[executable]+args
 
   #print(dockerCommand)
   subprocess.call(dockerCommand)
