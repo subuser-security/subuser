@@ -23,9 +23,13 @@ Contributing code to the repository:
 
  * Before writting comments read this article: http://rhodesmill.org/brandon/2012/one-sentence-per-line/
 
- * Follow the projects indent style for blocks.
+ * Indentation is done with two spaces.
 
  * Tabs are forbidden.
+
+ * Code blocks may not be stacked more than 4 levels deep.  That is a `dev` plus three `if`'s or other keyword.
+
+ * Function definitions should not be more than 15 lines long.  Where this is not yet upheld in the code base, will except pull requests to remidy the fact.
 
  * Use human readable names for things.
 

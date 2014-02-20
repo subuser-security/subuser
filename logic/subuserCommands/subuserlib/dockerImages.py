@@ -72,8 +72,8 @@ def getRunningProgramsWithNames(names):
 
 def isProgramRunning(name):
   """ Returns True if the program is currently running. """
-  return len(getRunningProgramsWithNames([name])) == 0
+  return len(getRunningProgramsWithNames([name])) > 0
 
 def areProgramsRunning(programs):
   """ Returns True if at least one of the listed programs is currently running. """
-  return len(getRunningProgramsWithNames(programs)) == 0
+  return len(getRunningProgramsWithNames(programs)) > 0
