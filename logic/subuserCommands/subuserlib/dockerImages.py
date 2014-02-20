@@ -142,3 +142,29 @@ def getUniqueRowByRepTag(dockerImageMatrix, searchRepoName, searchTag='latest'):
       break
   return dockerImageMatrixRow
   
+def getSubuserDockerRepoNameTagsText(addNewLine=False, indentSpaces=0):
+  """ Returns a string representing a sorted list of subuser-program names which are actual docker images
+  Arguments:
+   - indentSpaces: can be set for nicer output especially togehter with: addNewLine
+   - addNewLine: if True each installed program's name starts at a new line
+  
+  e.g.: `print(getInstalledProgramsText(addNewLine=True, indentSpaces=3))`
+  """
+  outText = ''
+  indentionString = ''
+  if indentSpaces > 0:
+    indentionString = ' ' * indentSpaces
+    
+  dockerSubuserProgramsRepoTagList = []
+  dockerImageMatrix = getParsedDockerImages(noTrunc=True)
+  for index, name in enumerate(dockerImageMatrix['REPOSITORY']):
+    if name.startswith('subuser-'):
+      dockerSubuserProgramsRepoTagList.append('%s:%s' % (dockerImageMatrix['REPOSITORY'][index], dockerImageMatrix['TAG'][index]))
+    
+  if addNewLine:
+    for program in sorted(dockerSubuserProgramsRepoTagList):
+      outText = ''.join([outText, indentionString, program, '\n'])
+  else:
+    outText = indentionString + ' '.join(sorted(dockerSubuserProgramsRepoTagList))
+  return outText
+  
