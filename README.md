@@ -34,6 +34,12 @@ Subuser launches docker containers with [volumes](http://docs.docker.io/en/lates
 Installing subuser:
 -------------------
 
+** System Requirements **
+
+ * Docker
+
+ * Python >= 2.7
+
 1. Install [docker](http://www.docker.io/gettingstarted/#h_installation). Then [add yourself to the docker group](http://docs.docker.io/en/v0.7.3/use/basics/).
 
 2. Download this repository to your home directory:
