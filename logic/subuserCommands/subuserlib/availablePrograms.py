@@ -13,13 +13,13 @@ def getAvailablePrograms():
   availableProgramsPath = paths.getAvailableProgramsPath()
   return os.listdir(availableProgramsPath)
 
-def getTextAvailablePrograms(addNewLine=False, indentSpaces=0):
-  """ Returns a text of sorted available program names.
+def getAvailableProgramsText(addNewLine=False, indentSpaces=0):
+  """ Returns a string representing a sorted list of available program names.
   Arguments:
    - indentSpaces: can be set for nicer output especially togehter with: addNewLine
-   - addNewLine: if True each install program name starts at a new line
+   - addNewLine: if True each installed program's name starts at a new line
   
-  e.g.: `print(getTextInstalledPrograms(addNewLine=True, indentSpaces=3))`
+  e.g.: `print(getInstalledProgramsText(addNewLine=True, indentSpaces=3))`
   """
   outText = ''
   indentionString = ''
