@@ -5,6 +5,7 @@ import subprocess
 import availablePrograms
 import utils
 import json
+import docker
 
 def askToInstallProgram(programName):
   """ Asks the user if they want to install the given program.  If they say yes, install it, if they decline exit."""
@@ -18,7 +19,7 @@ def askToInstallProgram(programName):
 
 def getImageTagOfProgram(programName):
   """ Return the tag of a program or None, if there is no installed image for that program. """
-  roughImagesList = subprocess.check_output(["docker","images"])
+  roughImagesList = docker.getDockerOutput(["images"])
   imagesListLines = roughImagesList.split("\n")
   imageTag = None
   for line in imagesListLines:
@@ -53,9 +54,9 @@ def getParsedDockerImages(noTrunc=False):
   """
   dockerImageMatrix = {'REPOSITORY' : [], 'TAG' : [], 'ID' : [], 'CREATED' : [], 'SIZE' : []}
   if noTrunc:
-    roughImagesList = subprocess.check_output(["docker","images", "--no-trunc=true"])
+    roughImagesList = docker.getDockerOutput(["images", "--no-trunc=true"])
   else:
-    roughImagesList = subprocess.check_output(["docker","images", "--no-trunc=false"])
+    roughImagesList = docker.getDockerOutput(["images", "--no-trunc=false"])
 
   imagesLinesItemList = [line.split() for line in roughImagesList.split("\n") if line.split()]
   for itemList in imagesLinesItemList[1:]:
@@ -68,7 +69,7 @@ def getParsedDockerImages(noTrunc=False):
 
 def inspectImage(imageTag):
   """ Returns a dictionary coresponding to the json outputed by docker inspect. """
-  dockerInspectOutput = subprocess.check_output(["docker","inspect",imageTag])
+  dockerInspectOutput = docker.getDockerOutput(["inspect",imageTag])
   imageInfo = json.loads(dockerInspectOutput)
   return imageInfo[0]
 
@@ -78,7 +79,7 @@ def getImageID(imageTag):
 
 def getRunningProgramsWithNames(names):
   """ Returns a very crude listing from docker ps. Not a real list of the names of running programs or anything. """
-  psOutput = subprocess.check_output(["docker","ps"])
+  psOutput = docker.getDockerOutput(["ps"])
   psOutput = psOutput.split("\n")
   psOutput = psOutput[1:]
   def amongProgramsToBeWaitedOn(psOutputLine):

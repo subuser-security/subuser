@@ -14,6 +14,7 @@ import subuserlib.registry
 import subuserlib.installTime
 import subuserlib.dockerImages
 import subuserlib.describe
+import subuserlib.docker
 
 ######################################################
 home = os.path.expanduser("~")
@@ -111,7 +112,7 @@ def installProgram(programName, cacheArg):
     installFromBaseImage(programName,cacheArg)
 
   elif os.path.isfile(dockerImageDir+"/Dockerfile"):
-    subuserlib.utils.subprocessCheckedCall(["docker","build","-rm",cacheArg,"--tag=subuser-"+programName+"",dockerImageDir])
+    subuserlib.docker.runDockerAndExitIfItFails(["build","-rm",cacheArg,"--tag=subuser-"+programName+"",dockerImageDir])
 
   else:
     sys.exit("No buildfile found: need one of: 'Dockerfile' or 'MakeBaseImage.sh'. PATH: ", dockerImageDir)

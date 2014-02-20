@@ -8,6 +8,7 @@ import getpass
 import subprocess
 import subuserlib.permissions
 import subuserlib.dockerImages
+import subuserlib.docker
 ###############################################################
 username = getpass.getuser()
 cwd = os.getcwd()
@@ -107,10 +108,10 @@ def runProgram(programName):
   volumeArgs = ["-v="+hostSubuserHome+":"+dockersideHome+":rw"
     ,"-v="+dockersideScriptsPath+":"+dockersideBinPath+":ro"] + workingDirectoryVolumeArg + systemDirVolumeArgs + userDirVolumeArgs
 
-  dockerCommand = ["docker","run","-i","-t","-rm",allowNetworkAccessArg]+privilegedArg+volumeArgs+x11Args+soundArgs+[dockerImageName]+setupUserAndRunArgs+[executable]+args
+  dockerArguments = ["run","-i","-t","-rm",allowNetworkAccessArg]+privilegedArg+volumeArgs+x11Args+soundArgs+[dockerImageName]+setupUserAndRunArgs+[executable]+args
 
   #print(dockerCommand)
-  subprocess.call(dockerCommand)
+  subuserlib.docker.runDocker(dockerArguments)
 
 #################################################################################################
 if len(sys.argv) == 1 or sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.argv[1] == "--help":
