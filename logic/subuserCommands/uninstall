@@ -14,6 +14,7 @@ def printHelp():
   print("Issue the `subuser uninstall program-name` command to uninstall a program. NOTE: this operation does not remove that program's home directory.")
 
 def uninstall(programName):
+  print("Uninstalling "+programName)
   if subuserlib.dockerImages.isProgramsImageInstalled(programName):
     if not subprocess.call(["docker","rmi","subuser-"+programName]) == 0:
       if not raw_input("Once you have solved the problem either type [y] to continue, or [q] to exit.") == 'y':
