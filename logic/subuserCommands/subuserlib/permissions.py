@@ -7,14 +7,19 @@ import os
 import sys
 import collections
 
+allProgramsMustHavePermissions = "All subuser programs must have a permissions.json file as defined by the permissions.json standard: <https://github.com/subuser-security/subuser/blob/master/docs/permissions-dot-json-file-format.md>"
+
 def getPermissions(programName):
   """ Return the permissions for the given program. """
   # read permissions.json file
   permissionsFilePath = paths.getPermissionsFilePath(programName)
   if not os.path.exists(permissionsFilePath):
-    sys.exit("The permissions.json file for the program "+programName+" does not exist.  All subuser programs must have a permissions.json file as defined by the permissions.json standard: <https://github.com/subuser-security/subuser/blob/master/docs/permissions-dot-json-file-format.md>")
+    sys.exit("The permissions.json file for the program "+programName+" does not exist.  "+allProgramsMustHavePermissions)
   with open(permissionsFilePath, 'r') as file_f:
-    permissions=json.load(file_f, object_pairs_hook=collections.OrderedDict)
+    try:
+     permissions=json.load(file_f, object_pairs_hook=collections.OrderedDict)
+    except ValueError:
+     sys.exit("The permissions.json file for the program "+programName+" is not valid json.  "+allProgramsMustHavePermissions)
     return permissions
 
 def setPermissions(programName,permissions):
@@ -74,3 +79,7 @@ def getAllowNetworkAccess(permissions):
 def getPrivileged(permissions):
   """ Is this program to be run in privileged mode? """
   return permissions.get("privileged",False)
+
+def getAsRoot(permissions):
+  """ Should this program be run as the root user WITHIN it's docker container? """
+  return permissions.get("as-root",False)
