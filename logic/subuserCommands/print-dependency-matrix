@@ -10,11 +10,11 @@ def printHelp():
   OPTION: names:  program-names (also multiple): print a dependency-matrix for program names
     $ subuser print-dependency-matrix firefox vim xterm
 
-  Option: --available: print a dependency-matrix for programs available
-    $ subuser print-dependency-matrix --available
+  Option: available: print a dependency-matrix for programs available
+    $ subuser print-dependency-matrix available
 
-  Option: --installed: print a dependency-matrix for programs available
-    $ subuser print-dependency-matrix --installed
+  Option: installed: print a dependency-matrix for programs available
+    $ subuser print-dependency-matrix installed
 """)
 
 def printDependencyMatrices(programs):
@@ -31,15 +31,15 @@ if len(sys.argv) == 1 or sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.arg
   sys.exit()
 #################################################################################################
 
-commandOptionList = ['--available', '--installed']
+commandOptionList = ['available', 'installed']
 userProgramList, userOptionList = subuserlib.utils.parseCommandLineArgs(sys.argv[1:], commandOptionList)
 
   
-if '--available' in userOptionList:
+if 'available' in userOptionList:
   print("Dependency matrices for programs that are available for instalation:")
   printDependencyMatrices(subuserlib.availablePrograms.getAvailablePrograms())
 
-if '--installed' in userOptionList:
+if 'installed' in userOptionList:
   print("Dependency matrices for installed programs:")
   printDependencyMatrices(subuserlib.registry.getInstalledPrograms())
 

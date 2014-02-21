@@ -17,18 +17,16 @@ def printHelp():
   $ subuser update [program-names] [options]
   
   OPTIONS:
-  --all 
+  all 
       Updates all subuser-programs which have been marked as needing to be updated by the repo maintaner.
       You should run git pull before doing this in order to get an up-to-date program list.
 
   EXAMPLES:
-    $ subuser update --all
+    $ subuser update all
     
     # updates vim and firefox whether they are marked as needing to be updated or not.
     $ subuser update vim firefox
     
-    # updates vim and firefox and all subuser-programs which have been marked as needing updates by the repo maintaner.
-    $ subuser update vim firefox --all
 """)
 
 def getProgramsWhosLastUpdateTimesChanged():
@@ -97,10 +95,10 @@ if len(sys.argv) == 1 or sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.arg
   sys.exit()
 #################################################################################################
 
-commandOptionList = ['--all']
+commandOptionList = ['all']
 programsToBeUpdated, userOptionList = subuserlib.utils.parseCommandLineArgs(sys.argv[1:], commandOptionList)
 
-if '--all' in userOptionList:
+if 'all' in userOptionList:
   #use this in case the user specified also some program names plus --all
   programsToBeUpdated = list(set(programsToBeUpdated + getProgramsWhosLastUpdateTimesChanged())) 
 

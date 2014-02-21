@@ -11,19 +11,19 @@ import subuserlib.availablePrograms
 
 def printHelp():
   print("""List subuser-programs:
-  $ subuser list [options]
+  $ subuser list [available/installed]
   
   OPTIONS:
-  --available 
+  available 
       List all subuser-programs
-  --installed 
+  installed 
       List all subuser-programs which are already installed/registered
   --short 
       output only program names
 
   EXAMPLES:
-    $ subuser list --available --short
-    $ subuser list --installed
+    $ subuser list available --short
+    $ subuser list installed
 """)
 
 def printProgramList(programs):
@@ -41,10 +41,10 @@ if len(sys.argv) == 1 or sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.arg
   sys.exit()
 #################################################################################################
 
-commandOptionList = ['--available', '--installed', '--short']
+commandOptionList = ['available', 'installed', '--short']
 userProgramList, userOptionList = subuserlib.utils.parseCommandLineArgs(sys.argv[1:], commandOptionList)
 
-if '--available' in userOptionList:
+if 'available' in userOptionList:
   if '--short' in userOptionList:
     print(subuserlib.availablePrograms.getAvailableProgramsText(addNewLine=False, indentSpaces=3))
     sys.exit()
@@ -55,7 +55,7 @@ if '--available' in userOptionList:
     availablePrograms = subuserlib.availablePrograms.getAvailablePrograms()
     printProgramList(availablePrograms)
 
-if '--installed' in userOptionList:
+if 'installed' in userOptionList:
   if '--short' in userOptionList:
     print(subuserlib.registry.getInstalledProgramsText(addNewLine=False, indentSpaces=3))
     sys.exit()
