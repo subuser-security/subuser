@@ -29,18 +29,18 @@ def which(program):
 def checkIfDockerIsSetupProperly():
   """ Exits and displays a user friendly error message if docker is not setup correctly. """
   if not which("docker"):
-	sys.exit("""Error: Docker is not installed.
+    sys.exit("""Error: Docker is not installed.
 
 For instalation instructions see <https://www.docker.io/gettingstarted/#h_installation>""")
   if not os.path.exists("/var/run/docker.pid"):
-   sys.exit("""Error: Docker is not running.  You can launch it as root with:
+    sys.exit("""Error: Docker is not running.  You can launch it as root with:
 
 # docker -d
 """)
  
   username = getpass.getuser()
   if not username in grp.getgrnam("docker").gr_mem:
-   sys.exit("""Error: You are not a member of the docker group.
+    sys.exit("""Error: You are not a member of the docker group.
 
 To learn how to become a member of the docker group please watch this video: <http://www.youtube.com/watch?v=ahgRx5U4V7E>""")
 
