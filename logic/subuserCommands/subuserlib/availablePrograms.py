@@ -19,7 +19,7 @@ def getAvailableProgramsText(addNewLine=False, indentSpaces=0):
    - indentSpaces: can be set for nicer output especially togehter with: addNewLine
    - addNewLine: if True each installed program's name starts at a new line
   
-  e.g.: `print(getInstalledProgramsText(addNewLine=True, indentSpaces=3))`
+  e.g.: `print(getAvailableProgramsText(addNewLine=True, indentSpaces=3))`
   """
   outText = ''
   indentionString = ''
