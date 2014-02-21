@@ -3,18 +3,10 @@
 # If it is not, please file a bug report.
 import sys
 import os
-import stat
-import json
-import subuserlib.utils
-import subuserlib.permissions
-import subuserlib.paths
-import subuserlib.installTime
 import subuserlib.availablePrograms
-import subuserlib.registry
-import subuserlib.installTime
-import subuserlib.dockerImages
+import subuserlib.installCommon
+import subuserlib.utils
 import subuserlib.describe
-import subuserlib.docker
 
 ######################################################
 home = os.path.expanduser("~")
@@ -24,139 +16,13 @@ def printHelp():
   """
     Display a help message for the install mode of the subuser command.
   """
-  print("""To install a package list it's name:
-  $ subuser install vim
+  print("""To install packages list there names: 
+  $ subuser install vim firefox
 
 Options:
   --from-cache build this image using layers from the cache
   $ subuser install vim --from-cache
   """)
-
-
-def installExecutable():
-  redirect="""#!/bin/bash
-subuser run """+ programName +" $@\n"
-  executablePath=subuserlib.paths.getExecutablePath(programName)
-  with open(executablePath, 'w') as file_f:
-    file_f.write(redirect)
-    st = os.stat(executablePath)
-    os.chmod(executablePath, stat.S_IMODE(st.st_mode) | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
-
-def installFromBaseImage(programName, cacheArg):
-  programDir = subuserlib.paths.getProgramSrcDir(programName)
-  dockerImageDir = os.path.join(programDir,"docker-image")
-
-  makeBaseImageScriptPath = dockerImageDir+"/MakeBaseImage.sh"
-  #Report to user
-  while True:
-    sys.stdout.write("""\nATTENTION!!!
-
-  You have asked to install the <%s>. Doing so requires that the following shell script be run on your computer.
-  SHELL SCRIPT PATH: <%s>
-
-  - Do quit [q] or press ENTER
-  - Do you want to view the full contents of this shell script [v]?
-  - Do you want to continue? (Type "run" to run the shell script)
-
-  [v/run/q]: """ % (programName, makeBaseImageScriptPath))
-    sys.stdout.flush()
-    try:
-      userInput = sys.stdin.readline().strip()
-      if not userInput:
-        sys.exit("\nOperation aborted.  Exiting.")
-      else:
-        break
-    except KeyboardInterrupt:
-      sys.exit("\nOperation aborted.  Exiting.")
-
-  if userInput == "v":
-    with open(makeBaseImageScriptPath, 'r') as file_f:
-      print('\n===================== SCRIPT CODE =====================\n')
-      print(file_f.read())
-      print('\n===================== END SCRIPT CODE =====================\n')
-
-    while True:
-      sys.stdout.write("""SHELL SCRIPT PATH: <%s>
-
-    - Do quit [q] or press ENTER
-    - Do you want to continue? (Type "run" to run the shell script)
-
-    [run/q]: """ % (makeBaseImageScriptPath))
-      sys.stdout.flush()
-      try:
-        userInput = sys.stdin.readline().strip()
-        if userInput != "run":
-          sys.exit("\nOperation aborted.  Exiting.")
-        else:
-          break
-      except KeyboardInterrupt:
-        sys.exit("\nOperation aborted.  Exiting.")
-
-  if userInput == "run":
-    #Do the installation via SHELL SCRIPT
-    st = os.stat(makeBaseImageScriptPath)
-    os.chmod(makeBaseImageScriptPath, stat.S_IMODE(st.st_mode) | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
-    subuserlib.utils.subprocessCheckedCall([makeBaseImageScriptPath])
-
-def installProgram(programName, cacheArg):
-  """
-  Build the docker image associated with a program and create a tiny executable to add that image to your path.
-  """
-  print("Installing "+programName)
-
-  # build+tag docker image
-  programDir = subuserlib.paths.getProgramSrcDir(programName)
-  dockerImageDir = os.path.join(programDir,"docker-image")
-  # Check if we use a 'Dockerfile' or a 'MakeBaseImage.sh'
-  if os.path.isfile(dockerImageDir+"/MakeBaseImage.sh"):
-    installFromBaseImage(programName,cacheArg)
-
-  elif os.path.isfile(dockerImageDir+"/Dockerfile"):
-    subuserlib.docker.runDockerAndExitIfItFails(["build","-rm",cacheArg,"--tag=subuser-"+programName+"",dockerImageDir])
-
-  else:
-    sys.exit("No buildfile found: need one of: 'Dockerfile' or 'MakeBaseImage.sh'. PATH: ", dockerImageDir)
-
-  permissions = subuserlib.permissions.getPermissions(programName)
-
-  # Create a small executable that just calls the real executable in the docker image.
-  if 'executable' in permissions:
-    installExecutable()
-
-  try:
-    lastUpdateTime = permissions["last-update-time"]
-  except KeyError:
-    lastUpdateTime = subuserlib.installTime.currentTimeString()
-
-  imageID = subuserlib.dockerImages.getImageID("subuser-"+programName)
-  subuserlib.registry.registerProgram(programName, lastUpdateTime, imageID)
-
-def installProgramAndDependencies(programName, cacheArg, printProgramPermission=False):
-  """
-  Build the dependencytree and install bottom->up
-  """
-  if subuserlib.registry.isProgramInstalled(programName):
-    print(programName+" is already installed.")
-  else:
-    #get dependencytree and install bottom->up
-    dependencyTree = reversed(subuserlib.registry.getDependencyTree(programName))
-    programsToBeInstalled = []
-    for dependency in dependencyTree:
-      if not subuserlib.registry.isProgramInstalled(dependency):
-        programsToBeInstalled.append(dependency)
-
-    print("The following programs will be installed.")
-    for program in programsToBeInstalled:
-      print(program)
-
-    for program in programsToBeInstalled:
-      installProgram(program, cacheArg)
-
-  #print for the MAIN program (The user called not the dependency the permission
-  if printProgramPermission:
-    print(programName+" has been installed with the following permissions.")
-    subuserlib.describe.printInfo(programName,False)
-    print("You can change this program's permissions at any time by editing it's permissions.json file.")
 
 #################################################################################################
 if len(sys.argv) == 1 or sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.argv[1] == "--help":
@@ -164,24 +30,22 @@ if len(sys.argv) == 1 or sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.arg
   sys.exit()
 #################################################################################################
 
-programName = sys.argv[1]
-# Can check this already here: Does the program the user want installed exist?
-if not subuserlib.availablePrograms.available(programName):
-  print(programName+" not available for instaliation.")
-  printHelp()
-  print("\nAvailable programs are: ")
-  print(' '.join(sorted([program for program in subuserlib.availablePrograms.getAvailablePrograms()])))
-  sys.exit()
+commandOptionList = ['--from-cache']
+userProgramList, userOptionList = subuserlib.utils.parseCommandLineArgs(sys.argv[1:], commandOptionList)
 
 # Are we to use layers from the cache when building the docker image: only for Dockerfiles build images
-cacheArg = "--no-cache=true"
-if len(sys.argv) > 2:
-  if sys.argv[2] == "--from-cache":
-    cacheArg = "--no-cache=false"
-  else:
+useCache = False
+if '--from-cache' in commandOptionList:
+  useCache = True
 
-    print("Wrong command: see\n")
-    printHelp()
-    sys.exit()
+for program in userProgramList:
+  print(program)
+  subuserlib.installCommon.installProgramAndDependencies(program, useCache)
 
-installProgramAndDependencies(programName, cacheArg, printProgramPermission=True)
+#print for the MAIN program (The user called not the dependency the permission)
+print("\n============= INSTALLATION OK =============\n\n")
+for program in userProgramList:
+  #there is too much output: a user will hardly recognize the nice info provided: add some space
+  print("\n{0}: has been installed with the following permissions.".format(program))
+  subuserlib.describe.printInfo(program,False)
+  print("You can change this program's permissions at any time by editing it's permissions.json file.")
