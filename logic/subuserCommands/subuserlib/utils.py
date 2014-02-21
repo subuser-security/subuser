@@ -6,8 +6,9 @@ import subprocess
 import availablePrograms
 
 def subprocessCheckedCall(args, addToErrorInfo=''):
-  """ simplify subprocess.check_call in other code
-  e.g.
+  """ This helper function calls subprocess.check_call and runs sys.exit rather than throwing an error when the program exits with a non-zero exit code.
+
+ Usage:
   subprocessCheckedCall(["docker", "-d"], "ATTENTION: Special added info bla bla")
   """
   try:
@@ -20,8 +21,9 @@ def subprocessCheckedCall(args, addToErrorInfo=''):
     sys.exit(message)
     
 def subprocessCheckedOutput(args, addToErrorInfo=''):
-  """ simplify subprocess.check_output in other code
-  returns output or raises error
+  """ This function calls subprocess.check_output and uses sys.exit when the call fails rather than throwing an error.
+
+ Usage:
   subprocessCheckedOutput(["docker", "-d"], "ATTENTION: Special added info bla bla")
   """
   try:
@@ -33,12 +35,13 @@ def subprocessCheckedOutput(args, addToErrorInfo=''):
       message = ('''Command <{0}> failed:\n  ERROR: {1}'''.format(' '.join(args), err))
     sys.exit(message)
     
-def getUserCommandLine(argvList, commandOptionList):
-  """ ASSUMPTION: any commandline argument which is not a define option is a program name
-  To make it more useful: precheck if all program names are 'really' subuser available programs
-  
-  returns tuple (preCheckProgramNameList, userOptionList)
-  e.g:
+def parseCommandLineArgs(argvList, commandOptionList):
+  """
+This function parses a list of command line arguments.
+
+It returns a tuple (preCheckProgramNameList, userOptionList) where preCheckProgramNameList is a list of names of programs and userOptionList is a list of options that have been passed.  Simply put, anything that that you pass in the seccond argument to this function is an option, everything else is added to the preCheckProgramNameList.
+ 
+ e.g:
   userProgramList = getUserCommandLine(sys.argv[1:], [])[0]
   
   commandOptionList = ['--from-cache']
@@ -53,11 +56,4 @@ def getUserCommandLine(argvList, commandOptionList):
     else:
       preCheckProgramNameList.append(item)
 
-  for programName in preCheckProgramNameList:
-    if not availablePrograms.available(programName):
-      print("<{0}> not an available subuser-program".format(programName))
-      print("\nAvailable programs are:")
-      print(availablePrograms.getAvailableProgramsText(addNewLine=True, indentSpaces=3))
-      sys.exit()
-  
   return (preCheckProgramNameList, userOptionList)
