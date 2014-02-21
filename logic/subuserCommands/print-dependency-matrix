@@ -10,12 +10,20 @@ def printHelp():
   OPTION: names:  program-names (also multiple): print a dependency-matrix for program names
     $ subuser print-dependency-matrix firefox vim xterm
 
-  Option: available: print a dependency-matrix for programs available
-    $ subuser print-dependency-matrix available
+  Option: --available: print a dependency-matrix for programs available
+    $ subuser print-dependency-matrix --available
 
-  Option: installed: print a dependency-matrix for programs available
-    $ subuser print-dependency-matrix installed
+  Option: --installed: print a dependency-matrix for programs available
+    $ subuser print-dependency-matrix --installed
 """)
+
+def printDependencyMatrices(programs):
+  dependencyMatrix = subuserlib.registry.getDependencyMatrix(programs, useHasExecutable=False, sortLists=True)
+  print("\n===== DEPENDENCY MATRIX =====\n")
+  for programMain in dependencyMatrix.keys():
+    print("<%s>:" % programMain)
+    print("    required-by: %s" % dependencyMatrix[programMain]["required-by"])
+    print("    depends-on: %s" % dependencyMatrix[programMain]["depends-on"])
 
 #################################################################################################
 if len(sys.argv) == 1 or sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.argv[1] == "--help":
@@ -23,21 +31,18 @@ if len(sys.argv) == 1 or sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.arg
   sys.exit()
 #################################################################################################
 
-if sys.argv[1] == "available":
-  subuserProgramList = subuserlib.availablePrograms.getAvailablePrograms()
-elif sys.argv[1] == "installed":
-  subuserProgramList = subuserlib.registry.getInstalledPrograms()
-else:
-  subuserProgramList = sys.argv[1:]
+commandOptionList = ['--available', '--installed']
+userProgramList, userOptionList = subuserlib.utils.parseCommandLineArgs(sys.argv[1:], commandOptionList)
 
-dependencyMatrix = subuserlib.registry.getDependencyMatrix(subuserProgramList, useHasExecutable=False, sortLists=True)
-print("\n===== DEPENDENCY MATRIX =====\n")
-for programMain in dependencyMatrix.keys():
-  print("<%s>:" % programMain)
-  print("    required-by: %s" % dependencyMatrix[programMain]["required-by"])
-  print("    depends-on: %s" % dependencyMatrix[programMain]["depends-on"])
+  
+if '--available' in userOptionList:
+  print("Dependency matrices for programs that are available for instalation:")
+  printDependencyMatrices(subuserlib.availablePrograms.getAvailablePrograms())
 
+if '--installed' in userOptionList:
+  print("Dependency matrices for installed programs:")
+  printDependencyMatrices(subuserlib.registry.getInstalledPrograms())
 
-
-
-
+if len(userProgramList) > 0:
+ print("Interdependencies between specified programs:")
+ printDependencyMatrices(userProgramList)
