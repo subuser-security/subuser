@@ -46,7 +46,7 @@ if len(sys.argv) > 1:
   if sys.argv[1] == "--from-cache":
     useCache = True
   else:
-    print("Wrong command: see\n")
+    print("Invalid argument: see\n")
     printHelp()
     sys.exit()
 
