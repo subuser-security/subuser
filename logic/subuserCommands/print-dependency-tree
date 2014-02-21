@@ -3,10 +3,18 @@
 # If it is not, please file a bug report.
 import sys
 import subuserlib.registry
+import subuserlib.availablePrograms
 
 def printHelp():
-  print("""Print the dependency tree of a subuser programs (also multiple):
-  $ subuser dependency-tree firefox vim xterm
+  print("""print an extended dependency matrix:
+  OPTION: names:  program-names (also multiple): print a dependency-matrix for program names
+    $ subuser print-dependency-matrix firefox vim xterm
+
+  Option: --available: print a dependency-matrix for programs available
+    $ subuser print-dependency-matrix --available
+
+  Option: --installed: print a dependency-matrix for programs available
+    $ subuser print-dependency-matrix --installed
 """)
 
 #################################################################################################
@@ -15,15 +23,25 @@ if len(sys.argv) == 1 or sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.arg
   sys.exit()
 #################################################################################################
 
+commandOptionList = ['--available', '--installed']
+userProgramList, userOptionList = subuserlib.utils.getUserCommandLine(sys.argv[1:], commandOptionList)
 
-programList = sys.argv[1:]
-print("\n===== DEPENDENCY TREE =====\n")
-for programMain in programList:
-  treeString = ''
-  for index, dependency in enumerate(subuserlib.registry.getDependencyTree(programMain)):
-    if index > 0:
-      treeString = ''.join([treeString, '  ' * index, '|__', dependency, '\n'])
-    else:
-      treeString = ''.join([treeString, dependency, '\n'])
+#Check exclusive commands
+if '--available' in userOptionList and '--installed' in userOptionList:
+  print("\nEXCLUSIVE-OPTION-ERROR: you can not use these options together:")
+  exclusiveCommandOption = ["--available", "--installed"]
+  print(subuserlib.utils.getExclusiveCommandOptionText(exclusiveCommandOption, addNewLine=True, indentSpaces=3))
+  sys.exit()
+  
+if '--available' in userOptionList:
+  userProgramList = subuserlib.availablePrograms.getAvailablePrograms()
+elif '--installed' in userOptionList:
+  #use this in case the user specified also some program names plus --installed
+  userProgramList = list(set(userProgramList + subuserlib.registry.getInstalledPrograms())) 
 
-  print treeString
+dependencyMatrix = subuserlib.registry.getDependencyMatrix(userProgramList, useHasExecutable=False, sortLists=True)
+print("\n===== DEPENDENCY MATRIX =====\n")
+for programMain in dependencyMatrix.keys():
+  print("<%s>:" % programMain)
+  print("    required-by: %s" % dependencyMatrix[programMain]["required-by"])
+  print("    depends-on: %s" % dependencyMatrix[programMain]["depends-on"])
