@@ -35,7 +35,7 @@ userProgramList, userOptionList = subuserlib.utils.parseCommandLineArgs(sys.argv
 
 # Are we to use layers from the cache when building the docker image: only for Dockerfiles build images
 useCache = False
-if '--from-cache' in commandOptionList:
+if '--from-cache' in userOptionList:
   useCache = True
 
 for program in userProgramList:
