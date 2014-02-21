@@ -1,6 +1,10 @@
 VERSION 0.2
 -------------
 
+* Refactor/improved install code: allow multiple programs: issue #8
+
+* Split: install to command and common function files: issue #84#issuecomment-35587683
+
 * Refactor code indention: added module to do so: issue #86
 
 * Add the describe command
