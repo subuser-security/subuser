@@ -18,16 +18,16 @@ def printHelp():
   
   OPTIONS:
   --all 
-      Updates all subuser-programs whose Last Update Time Changed
+      Updates all subuser-programs which have been marked as needing to be updated by the repo maintaner.
       You should run git pull before doing this in order to get an up-to-date program list.
 
   EXAMPLES:
     $ subuser update --all
     
-    # updates in any case vim firefox
+    # updates vim and firefox whether they are marked as needing to be updated or not.
     $ subuser update vim firefox
     
-    # updates in any case vim firefox and all subuser-programs whose Last Update Time Changed
+    # updates vim and firefox and all subuser-programs which have been marked as needing updates by the repo maintaner.
     $ subuser update vim firefox --all
 """)
 
@@ -58,7 +58,7 @@ def uninstallProgramsToBeUpdated(programsToBeUpdated):
 def installProgramsToBeUpdated(programsToBeUpdated):
   for program in programsToBeUpdated:
     if subuserlib.permissions.hasExecutable(program): # Don't install libraries as these might have changed and no longer be needed.  They'll automatically get installed anyways.
-      subuserlib.installCommon.installProgramAndDependencies(program, cacheArg="--no-cache=true")
+      subuserlib.installCommon.installProgramAndDependencies(program, False)
 
 def runUpdate(programsToBeUpdated):
   print("The following programs will be updated:")
@@ -98,18 +98,18 @@ if len(sys.argv) == 1 or sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.arg
 #################################################################################################
 
 commandOptionList = ['--all']
-userProgramList, userOptionList = subuserlib.utils.getUserCommandLine(sys.argv[1:], commandOptionList)
+programsToBeUpdated, userOptionList = subuserlib.utils.parseCommandLineArgs(sys.argv[1:], commandOptionList)
 
 if '--all' in userOptionList:
   #use this in case the user specified also some program names plus --all
-  userProgramList = list(set(userProgramList + getProgramsWhosLastUpdateTimesChanged())) 
+  programsToBeUpdated = list(set(programsToBeUpdated + getProgramsWhosLastUpdateTimesChanged())) 
 
 #Check if there is anything to do
-if userProgramList:
-  updateSomePrograms(userProgramList)
+if len(programsToBeUpdated) > 0:
+  updateSomePrograms(programsToBeUpdated)
   # Ensure that all programs which we have requested be updated are still installed after the update:
-  for program in userProgramList:
+  for program in programsToBeUpdated:
     if not subuserlib.registry.isProgramInstalled(program):
-      subuserlib.installCommon.installProgramAndDependencies(program, cacheArg="--no-cache=true")
+      subuserlib.installCommon.installProgramAndDependencies(program, False)
 else:
   print("\nThere is nothing to be updated")
