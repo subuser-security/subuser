@@ -9,15 +9,26 @@ import subuserlib.utils
 import subuserlib.registry
 import subuserlib.permissions
 import subuserlib.dockerImages
+import subuserlib.installCommon
 
 #####################################################################################
 def printHelp():
-  print("""To update all programs run:
-  $ subuser update all
-You should run git pull before doing this in order to get an up-to-date program list.
+  print("""Update subuser-programs:
+  $ subuser update [program-names] [options]
+  
+  OPTIONS:
+  --all 
+      Updates all subuser-programs whose Last Update Time Changed
+      You should run git pull before doing this in order to get an up-to-date program list.
 
-To update a specific program run:
-  $ subuser update <program-name>
+  EXAMPLES:
+    $ subuser update --all
+    
+    # updates in any case vim firefox
+    $ subuser update vim firefox
+    
+    # updates in any case vim firefox and all subuser-programs whose Last Update Time Changed
+    $ subuser update vim firefox --all
 """)
 
 def getProgramsWhosLastUpdateTimesChanged():
@@ -34,9 +45,6 @@ def getProgramsWhosLastUpdateTimesChanged():
 def uninstall(program):
   subuserlib.utils.subprocessCheckedCall(["subuser","uninstall",program])
 
-def install(program):
-  subuserlib.utils.subprocessCheckedCall(["subuser","install",program])
-
 def uninstallProgramsToBeUpdated(programsToBeUpdated):
   programsToBeUninstalled = set(programsToBeUpdated)
 
@@ -50,7 +58,7 @@ def uninstallProgramsToBeUpdated(programsToBeUpdated):
 def installProgramsToBeUpdated(programsToBeUpdated):
   for program in programsToBeUpdated:
     if subuserlib.permissions.hasExecutable(program): # Don't install libraries as these might have changed and no longer be needed.  They'll automatically get installed anyways.
-      install(program)
+      subuserlib.installCommon.installProgramAndDependencies(program, cacheArg="--no-cache=true")
 
 def runUpdate(programsToBeUpdated):
   print("The following programs will be updated:")
@@ -72,11 +80,6 @@ def runUpdate(programsToBeUpdated):
   else:
     sys.exit()
 
-
-def updateAllPrograms():
-  programsWhosLastUpdateTimeChanged = getProgramsWhosLastUpdateTimesChanged()
-  updateSomePrograms(programsWhosLastUpdateTimeChanged)
-
 def updateSomePrograms(programs):
   programsToBeUpdated = set()
   dependencyMatrix = subuserlib.registry.getDependencyMatrix(subuserlib.availablePrograms.getAvailablePrograms())
@@ -94,14 +97,19 @@ if len(sys.argv) == 1 or sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.arg
   sys.exit()
 #################################################################################################
 
-installedPrograms = subuserlib.registry.getInstalledPrograms()
+commandOptionList = ['--all']
+userProgramList, userOptionList = subuserlib.utils.getUserCommandLine(sys.argv[1:], commandOptionList)
 
-if sys.argv[1] == "all":
-  updateAllPrograms()
-else:
-  programsToBeUpdated = sys.argv[1:]
-  updateSomePrograms(programsToBeUpdated)
+if '--all' in userOptionList:
+  #use this in case the user specified also some program names plus --all
+  userProgramList = list(set(userProgramList + getProgramsWhosLastUpdateTimesChanged())) 
+
+#Check if there is anything to do
+if userProgramList:
+  updateSomePrograms(userProgramList)
   # Ensure that all programs which we have requested be updated are still installed after the update:
-  for program in programsToBeUpdated:
+  for program in userProgramList:
     if not subuserlib.registry.isProgramInstalled(program):
-      subprocess.call(["subuser","install",program])
+      subuserlib.installCommon.installProgramAndDependencies(program, cacheArg="--no-cache=true")
+else:
+  print("\nThere is nothing to be updated")
