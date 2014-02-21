@@ -26,6 +26,15 @@ def printHelp():
     $ subuser list --installed
 """)
 
+def printProgramList(programs):
+  for program in programs:
+    permissions = subuserlib.permissions.getPermissions(program)
+    print(program)
+    print("----------------")
+    print("Description: "+permissions["description"])
+    print("Maintainer: "+permissions["maintainer"])
+    print("\n")
+
 #################################################################################################
 if len(sys.argv) == 1 or sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.argv[1] == "--help":
   printHelp()
@@ -33,44 +42,26 @@ if len(sys.argv) == 1 or sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.arg
 #################################################################################################
 
 commandOptionList = ['--available', '--installed', '--short']
-userProgramList, userOptionList = subuserlib.utils.getUserCommandLine(sys.argv[1:], commandOptionList, allowOnlyOptions=True)
-
-#ERROR if user specifies any programs
-if userProgramList:
-  printHelp()
-  sys.exit()
-  
-#Check exclusive commands
-if '--available' in userOptionList and '--installed' in userOptionList:
-  print("\nEXCLUSIVE-OPTION-ERROR: you can not use these options together:")
-  exclusiveCommandOption = ["--available", "--installed"]
-  print(subuserlib.utils.getExclusiveCommandOptionText(exclusiveCommandOption, addNewLine=True, indentSpaces=3))
-  sys.exit()
-
+userProgramList, userOptionList = subuserlib.utils.parseCommandLineArgs(sys.argv[1:], commandOptionList)
 
 if '--available' in userOptionList:
   if '--short' in userOptionList:
     print(subuserlib.availablePrograms.getAvailableProgramsText(addNewLine=False, indentSpaces=3))
+    sys.exit()
   else:
+    print("#########################################")
+    print("Available programs:")
+    print("#########################################")
     availablePrograms = subuserlib.availablePrograms.getAvailablePrograms()
-    for program in availablePrograms:
-      permissions = subuserlib.permissions.getPermissions(program)
-      print(program)
-      print("----------------")
-      print("Description: "+permissions["description"])
-      print("Maintainer: "+permissions["maintainer"])
-      print("\n")
-elif '--installed' in userOptionList:
-  #use this in case the user specified also some program names plus --installed
-  userProgramList = list(set(userProgramList + subuserlib.registry.getInstalledPrograms())) 
+    printProgramList(availablePrograms)
+
+if '--installed' in userOptionList:
   if '--short' in userOptionList:
     print(subuserlib.registry.getInstalledProgramsText(addNewLine=False, indentSpaces=3))
+    sys.exit()
   else:
-    installedePrograms = subuserlib.registry.getInstalledPrograms()
-    for program in installedePrograms:
-      permissions = subuserlib.permissions.getPermissions(program)
-      print(program)
-      print("----------------")
-      print("Description: "+permissions["description"])
-      print("Maintainer: "+permissions["maintainer"])
-      print("\n")
+    print("#########################################")
+    print("Installed programs:")
+    print("#########################################")
+    installedPrograms = subuserlib.registry.getInstalledPrograms()
+    printProgramList(installedPrograms)
