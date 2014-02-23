@@ -51,13 +51,6 @@ def getProgramHomeDirOnHost(programName):
   else:
     return os.path.join(getSubuserDir(),"homes",programName)
 
-def getSubuserCommandsPath():
-  """ Return the path to the directory where the individual subuser command executables are stored. """
-  return os.path.join(getSubuserDir(),"logic","subuserCommands")
-
-def getSubuserCommandPath(command):
-  return os.path.join(getSubuserCommandsPath(),command)
-
 def getDockersideScriptsPath():
   return os.path.join(getSubuserDir(),"logic","dockerside-scripts")
 

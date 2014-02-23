@@ -4,22 +4,19 @@
 import sys
 import os
 import subprocess
-import subuserCommands.subuserlib.paths
-
-isNotCommand = ["__init__.py", "__init__.pyc", "subuserlib"]
+import subuserCommands.subuserlib.commands
 
 def printHelp():
   print("You can use one of the following commands:")
-  for command in os.listdir(subuserCommands.subuserlib.paths.getSubuserCommandsPath()):
-    if command not in isNotCommand:
-      print(command)
+  for command in subuserCommands.subuserlib.commands.getSubuserCommands():
+    print(command)
   print("for more info about each option use: subuser <option> -h")
 
 if len(sys.argv) < 2 or sys.argv[1] == "help" or sys.argv[1] == "--help" or sys.argv[1] == "-h":
   printHelp()
   exit()
 
-commandExecutablePath = subuserCommands.subuserlib.paths.getSubuserCommandPath(sys.argv[1])
+commandExecutablePath = subuserCommands.subuserlib.commands.getSubuserCommandPath(sys.argv[1])
 
 if not os.path.exists(commandExecutablePath):
   print("Command not found:"+sys.argv[1])

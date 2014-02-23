@@ -7,28 +7,11 @@ import getpass
 import grp
 import subprocess
 import subprocessExtras
-
-# Taken from: http://stackoverflow.com/questions/377017/test-if-executable-exists-in-python
-def which(program):
-  def is_exe(fpath):
-    return os.path.isfile(fpath) and os.access(fpath, os.X_OK)
-
-  fpath, fname = os.path.split(program)
-  if fpath:
-    if is_exe(program):
-      return program
-  else:
-    for path in os.environ["PATH"].split(os.pathsep):
-      path = path.strip('"')
-      exe_file = os.path.join(path, program)
-      if is_exe(exe_file):
-        return exe_file
-
-  return None
+import executablePath
 
 def checkIfDockerIsSetupProperly():
   """ Exits and displays a user friendly error message if docker is not setup correctly. """
-  if not which("docker"):
+  if not executablePath.which("docker"):
     sys.exit("""Error: Docker is not installed.
 
 For instalation instructions see <https://www.docker.io/gettingstarted/#h_installation>""")
