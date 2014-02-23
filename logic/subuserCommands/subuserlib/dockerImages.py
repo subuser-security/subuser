@@ -2,8 +2,8 @@
 # This file should be compatible with both Python 2 and 3.
 # If it is not, please file a bug report.
 import subprocess
+import subprocessExtras
 import availablePrograms
-import utils
 import json
 import docker
 import sys
@@ -14,7 +14,7 @@ def askToInstallProgram(programName):
     print(programName+" does not exist.")
     exit()
   if raw_input(programName+" is not installed. Do you want to install it now [y/n]?") == "y":
-    utils.subprocessCheckedCall(["subuser","install",programName])
+    subprocessExtras.subprocessCheckedCall(["subuser","install",programName])
   else:
     exit()
 

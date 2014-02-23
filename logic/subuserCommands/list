@@ -3,11 +3,11 @@
 # If it is not, please file a bug report.
 import sys
 import os
-import subuserlib.utils
 import subuserlib.registry
 import subuserlib.paths
 import subuserlib.permissions
 import subuserlib.availablePrograms
+import subuserlib.commandLineArguments
 
 def printHelp():
   print("""List subuser-programs:
@@ -42,7 +42,7 @@ if len(sys.argv) == 1 or sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.arg
 #################################################################################################
 
 commandOptionList = ['available', 'installed', '--short']
-userProgramList, userOptionList = subuserlib.utils.parseCommandLineArgs(sys.argv[1:], commandOptionList)
+userProgramList, userOptionList = subuserlib.commandLineArguments.parseCommandLineArgs(sys.argv[1:], commandOptionList)
 
 if 'available' in userOptionList:
   if '--short' in userOptionList:

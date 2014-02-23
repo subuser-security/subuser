@@ -2,9 +2,9 @@
 # This file should be compatible with both Python 2 and 3.
 # If it is not, please file a bug report.
 import sys
-import subuserlib.utils
 import subuserlib.registry
 import subuserlib.dockerImages
+import subuserlib.subprocessExtras
 
 ####################################################
 def printHelp():
@@ -29,9 +29,9 @@ def installFromRegistry(useCache):
   for program in subuserlib.registry.getInstalledPrograms():
     print("\n=== Installing <%s> from installed-programs.json registry....\n" % program)
     if useCache:
-      subuserlib.utils.subprocessCheckedCall(["subuser","install",program,"--from-cache"])
+      subuserlib.subprocessExtras.subprocessCheckedCall(["subuser","install",program,"--from-cache"])
     else:
-      subuserlib.utils.subprocessCheckedCall(["subuser","install",program])
+      subuserlib.subprocessExtras.subprocessCheckedCall(["subuser","install",program])
 
 #################################################################################################
 if len(sys.argv) > 1:

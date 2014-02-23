@@ -4,7 +4,6 @@
 import sys
 import os
 import subprocess
-import subuserCommands.subuserlib.utils
 import subuserCommands.subuserlib.paths
 
 isNotCommand = ["__init__.py", "__init__.pyc", "subuserlib"]

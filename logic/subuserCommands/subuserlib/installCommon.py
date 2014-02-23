@@ -4,13 +4,13 @@
 import sys
 import os
 import stat
-import utils
 import permissions
 import paths
 import installTime
 import registry
 import dockerImages
 import docker
+import subprocessExtras
 
 def installExecutable(programName):
   redirect="""#!/bin/bash\nsubuser run {0} $@\n""".format(programName)
@@ -71,7 +71,7 @@ def installFromBaseImage(programName):
     #Do the installation via SHELL SCRIPT
     st = os.stat(makeBaseImageScriptPath)
     os.chmod(makeBaseImageScriptPath, stat.S_IMODE(st.st_mode) | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
-    utils.subprocessCheckedCall([makeBaseImageScriptPath])
+    subprocessExtras.subprocessCheckedCall([makeBaseImageScriptPath])
 
 
 def installProgram(programName, useCache):

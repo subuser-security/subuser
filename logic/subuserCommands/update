@@ -5,11 +5,12 @@
 # This command updates all or some of the installed subuser programs.
 import sys
 import subprocess
-import subuserlib.utils
 import subuserlib.registry
 import subuserlib.permissions
 import subuserlib.dockerImages
 import subuserlib.installCommon
+import subuserlib.subprocessExtras
+import subuserlib.commandLineArguments
 
 #####################################################################################
 def printHelp():
@@ -41,7 +42,7 @@ def getProgramsWhosLastUpdateTimesChanged():
   return programsWhosLastUpdateTimeChanged
 
 def uninstall(program):
-  subuserlib.utils.subprocessCheckedCall(["subuser","uninstall",program])
+  subuserlib.subprocessExtras.subprocessCheckedCall(["subuser","uninstall",program])
 
 def uninstallProgramsToBeUpdated(programsToBeUpdated):
   programsToBeUninstalled = set(programsToBeUpdated)
@@ -96,7 +97,7 @@ if len(sys.argv) == 1 or sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.arg
 #################################################################################################
 
 commandOptionList = ['all']
-programsToBeUpdated, userOptionList = subuserlib.utils.parseCommandLineArgs(sys.argv[1:], commandOptionList)
+programsToBeUpdated, userOptionList = subuserlib.commandLineArguments.parseCommandLineArgs(sys.argv[1:], commandOptionList)
 
 if 'all' in userOptionList:
   #use this in case the user specified also some program names plus --all

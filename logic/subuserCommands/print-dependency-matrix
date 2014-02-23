@@ -4,6 +4,7 @@
 import sys
 import subuserlib.registry
 import subuserlib.availablePrograms
+import subuserlib.utils
 
 def printHelp():
   print("""print an extended dependency matrix:
@@ -32,7 +33,7 @@ if len(sys.argv) == 1 or sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.arg
 #################################################################################################
 
 commandOptionList = ['available', 'installed']
-userProgramList, userOptionList = subuserlib.utils.parseCommandLineArgs(sys.argv[1:], commandOptionList)
+userProgramList, userOptionList = subuserlib.commandLineArguments.parseCommandLineArgs(sys.argv[1:], commandOptionList)
 
   
 if 'available' in userOptionList:

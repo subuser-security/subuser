@@ -5,8 +5,8 @@ import sys
 import os
 import subuserlib.availablePrograms
 import subuserlib.installCommon
-import subuserlib.utils
 import subuserlib.describe
+import subuserlib.commandLineArguments
 
 ######################################################
 home = os.path.expanduser("~")
@@ -31,7 +31,7 @@ if len(sys.argv) == 1 or sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.arg
 #################################################################################################
 
 commandOptionList = ['--from-cache']
-userProgramList, userOptionList = subuserlib.utils.parseCommandLineArgs(sys.argv[1:], commandOptionList)
+userProgramList, userOptionList = subuserlib.commandLineArguments.parseCommandLineArgs(sys.argv[1:], commandOptionList)
 
 # Are we to use layers from the cache when building the docker image: only for Dockerfiles build images
 useCache = False

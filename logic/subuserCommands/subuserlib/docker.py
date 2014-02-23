@@ -2,11 +2,11 @@
 # This file should be compatible with both Python 2 and 3.
 # If it is not, please file a bug report.
 import sys
-import subprocess
 import os
 import getpass
 import grp
-import utils
+import subprocess
+import subprocessExtras
 
 # Taken from: http://stackoverflow.com/questions/377017/test-if-executable-exists-in-python
 def which(program):
@@ -58,4 +58,4 @@ def getDockerOutput(args):
 def runDockerAndExitIfItFails(args):
   """ Run docker with the given command line arguments.  If the command returns a non-zero exit code, exit with an error message. """
   checkIfDockerIsSetupProperly()
-  utils.subprocessCheckedCall(["docker"]+args)
+  subprocessExtras.subprocessCheckedCall(["docker"]+args)

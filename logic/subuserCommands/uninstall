@@ -3,7 +3,6 @@
 # If it is not, please file a bug report.
 import sys
 import os
-import subuserlib.utils
 import subuserlib.paths
 import subuserlib.registry
 import subuserlib.dockerImages

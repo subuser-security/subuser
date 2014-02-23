@@ -3,7 +3,6 @@
 # If it is not, please file a bug report.
 import sys
 import subprocess
-import availablePrograms
 
 def subprocessCheckedCall(args, addToErrorInfo=''):
   """ This helper function calls subprocess.check_call and runs sys.exit rather than throwing an error when the program exits with a non-zero exit code.
@@ -34,26 +33,3 @@ def subprocessCheckedOutput(args, addToErrorInfo=''):
     else:
       message = ('''Command <{0}> failed:\n  ERROR: {1}'''.format(' '.join(args), err))
     sys.exit(message)
-    
-def parseCommandLineArgs(argvList, commandOptionList):
-  """
-This function parses a list of command line arguments.
-
-It returns a tuple (preCheckProgramNameList, userOptionList) where preCheckProgramNameList is a list of names of programs and userOptionList is a list of options that have been passed.  Simply put, anything that that you pass in the seccond argument to this function is an option, everything else is added to the preCheckProgramNameList.
- 
- e.g:
-  userProgramList = parseCommandLineArgs(sys.argv[1:], [])[0]
-  
-  commandOptionList = ['--from-cache']
-  userProgramList, userOptionList = parseCommandLineArgs(sys.argv[1:], commandOptionList)
-  """
-  preCheckProgramNameList = []
-  userOptionList = []
-  
-  for item in argvList:
-    if item in commandOptionList:
-      userOptionList.append(item)
-    else:
-      preCheckProgramNameList.append(item)
-
-  return (preCheckProgramNameList, userOptionList)
