@@ -36,7 +36,9 @@ def printInfo(program,showProgramStatus):
       print(" Can read from the following system directories: "+str(subuserlib.permissions.getSystemDirs(permissions)))
     if subuserlib.permissions.getX11(permissions):
       print(" Can display X11 windows.")
-    if subuserlib.permissions.getSound(permissions):
+    if subuserlib.permissions.getGraphicsCard(permissions):
+      print(" Can access your graphics-card directly for OpenGL tasks.")
+    if subuserlib.permissions.getSoundCard(permissions):
       print(" Has access to your soundcard, can play sounds/record sound.")
     if subuserlib.permissions.getInheritWorkingDirectory(permissions):
       print(" Can access the directory from which it was launched.")

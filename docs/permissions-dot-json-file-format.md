@@ -103,25 +103,29 @@ The json object MAY at your option contain the following additional fields:
 
   **Default**: `false`
 
- * `gpu`: The program is allowed to access the GPU directly(OpenGL).
+ * `graphics-card`: The program is allowed to access the graphics-card directly(OpenGL).
 
   Ex:
 
   ````json
-   ,"gpu"                       : true
+   ,"graphics-card"                       : true
   ````
 
   **Default**: `false`
 
- * `sound`: The program is allowed to access the soundcard on the host.
+ * `sound-card`:  The program is allowed to access the soundcard on the host.
+
+Warning: This means, not only can the program play sounds, but it may listen to your microphone too!
 
   Ex:
 
   ````json
-   ,"sound"                       : true
+   ,"sound-card"                : true
   ````
 
   **Default**: `false`
+
+ * `sound`: Depricated, see `sound-card`.
 
  * `inherit-working-directory`: The program is given read-write access to the host user's current working directory.
 

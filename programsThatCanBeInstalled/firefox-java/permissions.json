@@ -7,7 +7,7 @@
  ,"user-dirs"                 : ["Downloads"]
  ,"system-dirs"               : []
  ,"x11"                       : true
- ,"sound"                     : true
+ ,"sound-card"                : true
  ,"inherit-working-directory" : false
  ,"allow-network-access"      : true
 }

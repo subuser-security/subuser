@@ -118,7 +118,7 @@ Create an `permissions.json` file.  Here is an example:
     // Optional: A list of directories that this application should have read only access to.  Absolute paths: Ex: "/usr"
  ,"x11"                       : false
     // Optional: This program is allowed to display x11 windows.
- ,"sound"                     : false
+ ,"sound-card"                : false
     // Optional: Give this program access to your soundcard?
  ,"inherit-working-directory" : true
     // Should this program be able to read-write to the directory from which it was called.

@@ -64,13 +64,16 @@ def getX11(permissions):
   """ Can this program display X11 windows? """
   return permissions.get("x11",False)
 
-def getGPU(permissions):
+def getGraphicsCard(permissions):
   """ Is this program allowed to access the GPU directly(AKA, do OpenGL stuff). """
-  return permissions.get("gpu",False)
+  return permissions.get("graphics-card",False)
 
-def getSound(permissions):
+def getSoundCard(permissions):
   """ Can this program access the sound-card? """
-  return permissions.get("sound",False)
+  sound = permissions.get("sound-card",False)
+  if not sound:
+    sound = permissions.get("sound",False) # TODO depricate sound
+  return sound
 
 def getInheritWorkingDirectory(permissions):
   """ Can this program access the directory from which it was launched? """
