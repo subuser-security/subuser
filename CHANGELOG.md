@@ -1,6 +1,8 @@
 VERSION 0.2
 -------------
 
+* OpenGL support
+
 * Refactor/improved install code: allow multiple programs to be installed with one command: issue #8
 
 * Split: install to command and common function files: issue #84#issuecomment-35587683
