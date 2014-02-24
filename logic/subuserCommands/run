@@ -125,6 +125,12 @@ def getX11Args(permissions):
   else:
     return []
 
+def getGPUArgs(permissions):
+  if subuserlib.permissions.getGPU(permissions):
+    return  ["-v=/dev/dri:/dev/dri:rw","-lxc-conf=lxc.cgroup.devices.allow = c 226:* rwm"]
+  else:
+    return []
+
 def getSoundArgs(permissions):
   if subuserlib.permissions.getSound(permissions):
     return  ["-v=/dev/snd:/dev/snd:rw","-lxc-conf=lxc.cgroup.devices.allow = c 116:* rwm"]
@@ -145,10 +151,11 @@ def runProgram(programName):
   executable = subuserlib.permissions.getExecutable(permissions)
   setupUserAndRunArgs = getSetupUserAndRunArgs(permissions)
   x11Args = getX11Args(permissions)
+  gpuArgs = getGPUArgs(permissions)
   soundArgs = getSoundArgs(permissions)
   privilegedArg = getPrivilegedArg(permissions)
   (volumeArgs,cleanUpVolumes) = getAndSetupVolumes(programName,permissions)
-  dockerArguments = ["run","-i","-t","-rm",allowNetworkAccessArg]+privilegedArg+volumeArgs+x11Args+soundArgs+[dockerImageName]+setupUserAndRunArgs+[executable]+programArgs
+  dockerArguments = ["run","-i","-t","-rm",allowNetworkAccessArg]+privilegedArg+volumeArgs+x11Args+gpuArgs+soundArgs+[dockerImageName]+setupUserAndRunArgs+[executable]+programArgs
 
   #print(dockerCommand)
   subuserlib.docker.runDocker(dockerArguments)

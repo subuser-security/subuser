@@ -103,6 +103,16 @@ The json object MAY at your option contain the following additional fields:
 
   **Default**: `false`
 
+ * `gpu`: The program is allowed to access the GPU directly(OpenGL).
+
+  Ex:
+
+  ````json
+   ,"gpu"                       : true
+  ````
+
+  **Default**: `false`
+
  * `sound`: The program is allowed to access the soundcard on the host.
 
   Ex:

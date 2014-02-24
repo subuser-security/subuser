@@ -64,6 +64,10 @@ def getX11(permissions):
   """ Can this program display X11 windows? """
   return permissions.get("x11",False)
 
+def getGPU(permissions):
+  """ Is this program allowed to access the GPU directly(AKA, do OpenGL stuff). """
+  return permissions.get("gpu",False)
+
 def getSound(permissions):
   """ Can this program access the sound-card? """
   return permissions.get("sound",False)
