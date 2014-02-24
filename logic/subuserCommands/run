@@ -137,6 +137,16 @@ def getSoundCardArgs(permissions):
   else:
     return []
 
+def getWebcamArgs(permissions):
+  if subuserlib.permissions.getWebcam(permissions):
+    cameraVolumes = []
+    for device in os.listdir("/dev/"):
+      if device.startswith("video"):
+        cameraVolumes.append("-v=/dev/"+device+":/dev/"+device+":rw")
+    return  cameraVolumes+["-lxc-conf=lxc.cgroup.devices.allow = c 81:* rwm"]
+  else:
+    return []
+
 def getPrivilegedArg(permissions):
   if subuserlib.permissions.getPrivileged(permissions):
     return ["-privileged"]
@@ -153,9 +163,10 @@ def runProgram(programName):
   x11Args = getX11Args(permissions)
   graphicsCardArgs = getGraphicsCardArgs(permissions)
   soundCardArgs = getSoundCardArgs(permissions)
+  webcamArgs = getWebcamArgs(permissions)
   privilegedArg = getPrivilegedArg(permissions)
   (volumeArgs,cleanUpVolumes) = getAndSetupVolumes(programName,permissions)
-  dockerArguments = ["run","-i","-t","-rm",allowNetworkAccessArg]+privilegedArg+volumeArgs+x11Args+graphicsCardArgs+soundCardArgs+[dockerImageName]+setupUserAndRunArgs+[executable]+programArgs
+  dockerArguments = ["run","-i","-t","-rm",allowNetworkAccessArg]+privilegedArg+volumeArgs+x11Args+graphicsCardArgs+soundCardArgs+webcamArgs+[dockerImageName]+setupUserAndRunArgs+[executable]+programArgs
 
   #print(dockerCommand)
   subuserlib.docker.runDocker(dockerArguments)

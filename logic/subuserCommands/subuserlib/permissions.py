@@ -75,6 +75,10 @@ def getSoundCard(permissions):
     sound = permissions.get("sound",False) # TODO depricate sound
   return sound
 
+def getWebcam(permissions):
+  """ Can this program access the computer's webcam? """
+  return permissions.get("webcam",False)
+
 def getInheritWorkingDirectory(permissions):
   """ Can this program access the directory from which it was launched? """
   return permissions.get("inherit-working-directory",False)

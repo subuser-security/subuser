@@ -7,6 +7,7 @@
  ,"system-dirs"               : []
  ,"x11"                       : true
  ,"sound-card"                : true
+ ,"webcam"                    : true
  ,"inherit-working-directory" : false
  ,"allow-network-access"      : true
 }

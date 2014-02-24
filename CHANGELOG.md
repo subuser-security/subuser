@@ -1,6 +1,8 @@
 VERSION 0.2
 -------------
 
+* Webcam support
+
 * OpenGL support
 
 * Refactor/improved install code: allow multiple programs to be installed with one command: issue #8

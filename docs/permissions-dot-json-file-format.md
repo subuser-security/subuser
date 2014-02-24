@@ -127,6 +127,16 @@ Warning: This means, not only can the program play sounds, but it may listen to 
 
  * `sound`: Depricated, see `sound-card`.
 
+ * `webcam`: The program is allowed to access the computer's webcam/USB webcams.
+
+  Ex:
+
+  ````json
+   ,"webcam"                     : true
+  ````
+
+  **Default**: `false`
+
  * `inherit-working-directory`: The program is given read-write access to the host user's current working directory.
 
   Ex:
