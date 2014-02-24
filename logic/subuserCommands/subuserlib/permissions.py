@@ -76,10 +76,14 @@ def getAllowNetworkAccess(permissions):
   """ Can this program access the network? """
   return permissions.get("allow-network-access",False)
 
-def getPrivileged(permissions):
-  """ Is this program to be run in privileged mode? """
-  return permissions.get("privileged",False)
+def getStatefulHome(permissions):
+  """ Should the state of this program's home directory be saved? """
+  return permissions.get("stateful-home",True)
 
 def getAsRoot(permissions):
   """ Should this program be run as the root user WITHIN it's docker container? """
   return permissions.get("as-root",False)
+
+def getPrivileged(permissions):
+  """ Is this program to be run in privileged mode? """
+  return permissions.get("privileged",False)

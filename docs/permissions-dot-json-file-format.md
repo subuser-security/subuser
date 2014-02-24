@@ -133,6 +133,24 @@ The json object MAY at your option contain the following additional fields:
 
   **Default**: `false`
 
+ * `stateful-home`: Changes that the program makes to it's home directory should be saved to a special subuser-homes directory.
+
+  ````json
+   ,"stateful-home"             : false
+  ````
+
+  **Default**: `true`
+
+ * `as-root`: Run the program as the root user within the container.
+
+ Ex:
+
+ ````json
+  ,"as-root"                     : true
+ ````
+
+ **Default**: `false`
+
  * `privileged`: Should the program's Docker container be run in `privileged` mode?
 
   **Note**: Completely insecure!
@@ -144,13 +162,3 @@ The json object MAY at your option contain the following additional fields:
   ````
 
   **Default**: `false`
-
- * `as-root`: Run the program as the root user within the container.
-
- Ex:
-
- ````json
-  ,"as-root"                     : true
- ````
-
- **Default**: `false`

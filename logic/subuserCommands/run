@@ -6,6 +6,8 @@ import sys
 import os
 import getpass
 import subprocess
+import tempfile
+
 import subuserlib.permissions
 import subuserlib.dockerImages
 import subuserlib.docker
@@ -59,7 +61,11 @@ def runProgram(programName):
   else:
     setupUserAndRunArgs = ["/launch/runCommand","root"]
 
-  hostSubuserHome = subuserlib.paths.getProgramHomeDirOnHost(programName)
+  if subuserlib.permissions.getStatefulHome(permissions):
+    hostSubuserHome = subuserlib.paths.getProgramHomeDirOnHost(programName)
+  else:
+    hostSubuserHome = tempfile.mkdtemp(prefix="subuser-"+programName)
+
   setupHostSubuserHome(hostSubuserHome)
    
 
@@ -112,6 +118,9 @@ def runProgram(programName):
 
   #print(dockerCommand)
   subuserlib.docker.runDocker(dockerArguments)
+
+  if not subuserlib.permissions.getStatefulHome(permissions):
+    subprocess.call(["rm","-rf",hostSubuserHome])
 
 #################################################################################################
 if len(sys.argv) == 1 or sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.argv[1] == "--help":
