@@ -39,56 +39,21 @@ def setupHostSubuserHome(home):
   if not os.path.exists(home):
     os.makedirs(home)
 
-def makeSystemDirVolumeArgs(systemDirs):
-  return ["-v="+systemDir+":"+systemDir+":ro" for systemDir in systemDirs]
-
-def makeUserDirVolumeArgs(userDirs):
-  return ["-v="+os.path.join(home,userDir)+":"+os.path.join("/userdirs/",userDir)+":rw" for userDir in userDirs]
-
-def runProgram(programName):
-  dockerImageName = subuserlib.dockerImages.getImageTagOfInstalledProgram(programName)
-
-  args=getArgsToPassToProgram()
-
-  permissions = subuserlib.permissions.getPermissions(programName)
-
-  allowNetworkAccessArg = getAllowNetworkAccessArg(permissions)
-  executable = subuserlib.permissions.getExecutable(permissions)
-
-  if not subuserlib.permissions.getAsRoot(permissions):
-    setupUserAndRunPath = "/launch/setupUserAndRun"
-    setupUserAndRunArgs = [setupUserAndRunPath,username]
-  else:
-    setupUserAndRunArgs = ["/launch/runCommand","root"]
-
+def getAndSetupHostSubuserHome(programName,permissions):
   if subuserlib.permissions.getStatefulHome(permissions):
     hostSubuserHome = subuserlib.paths.getProgramHomeDirOnHost(programName)
   else:
     hostSubuserHome = tempfile.mkdtemp(prefix="subuser-"+programName)
 
   setupHostSubuserHome(hostSubuserHome)
-   
+  return hostSubuserHome
+ 
+def makeSystemDirVolumeArgs(systemDirs):
+  return ["-v="+systemDir+":"+systemDir+":ro" for systemDir in systemDirs]
 
-  dockersideScriptsPath = subuserlib.paths.getDockersideScriptsPath()
-  dockersideBinPath = "/launch"
-  dockersidePWDPath = os.path.join("/home","pwd")
-
-  if subuserlib.permissions.getX11(permissions):
-    x11Args = ["-e","DISPLAY=unix"+os.environ['DISPLAY'],"-v=/tmp/.X11-unix:/tmp/.X11-unix:rw"]
-  else: x11Args = []
-
-  if subuserlib.permissions.getSound(permissions):
-    soundArgs =  ["-v=/dev/snd:/dev/snd:rw","-lxc-conf=lxc.cgroup.devices.allow = c 116:* rwm"]
-  else:
-    soundArgs = []
-
-  if subuserlib.permissions.getPrivileged(permissions):
-    privilegedArg = ["-privileged"]
-  else:
-    privilegedArg = []
-
-  systemDirVolumeArgs = makeSystemDirVolumeArgs(subuserlib.permissions.getSystemDirs(permissions))
-
+def getAndSetupUserDirVolumes(permissions,hostSubuserHome):
+  """ Sets up the user directories to be shared between the host user and the subuser-program.
+Returns volume arguments to be passed to docker run"""
   def setupUserDirSymlinks(userDirs):
     """ Create symlinks to userdirs in program's home dir. """
     for userDir in userDirs:
@@ -100,27 +65,95 @@ def runProgram(programName):
   userDirs = subuserlib.permissions.getUserDirs(permissions)
   setupUserDirSymlinks(userDirs)
   userDirVolumeArgs = makeUserDirVolumeArgs(userDirs)
+  return userDirVolumeArgs
 
+def makeUserDirVolumeArgs(userDirs):
+  return ["-v="+os.path.join(home,userDir)+":"+os.path.join("/userdirs/",userDir)+":rw" for userDir in userDirs]
+
+def getSetupUserAndRunArgs(permissions):
+  if not subuserlib.permissions.getAsRoot(permissions):
+    setupUserAndRunPath = "/launch/setupUserAndRun"
+    return [setupUserAndRunPath,username]
+  else:
+    return ["/launch/runCommand","root"]
+
+def getWorkingDirectoryVolumeArg(permissions):
   if subuserlib.permissions.getInheritWorkingDirectory(permissions):
-    workingDirectoryVolumeArg = ["-v="+cwd+":/home/pwd:rw"]
+    return ["-v="+cwd+":/home/pwd:rw"]
   else:
-    workingDirectoryVolumeArg = []
+    return []
 
+def getDockersideHome(permissions):
   if subuserlib.permissions.getAsRoot(permissions):
-    dockersideHome = "/root/"
+    return "/root/"
   else:
-    dockersideHome = home
+    return home
+
+def getAndSetupVolumes(programName,permissions):
+  """ 
+Sets up the volumes which will be shared between the host and the subuser program.
+
+Returns a list of volume mounting arguments to be passed to docker run.
+"""
+
+  hostSubuserHome = getAndSetupHostSubuserHome(programName,permissions) 
+
+  dockersideScriptsPath = subuserlib.paths.getDockersideScriptsPath()
+  dockersideBinPath = "/launch"
+  dockersidePWDPath = os.path.join("/home","pwd")
+
+  systemDirVolumeArgs = makeSystemDirVolumeArgs(subuserlib.permissions.getSystemDirs(permissions))
+
+  userDirVolumeArgs = getAndSetupUserDirVolumes(permissions,hostSubuserHome)
+
+  workingDirectoryVolumeArg = getWorkingDirectoryVolumeArg(permissions)
+
+  dockersideHome = getDockersideHome(permissions)
 
   volumeArgs = ["-v="+hostSubuserHome+":"+dockersideHome+":rw"
     ,"-v="+dockersideScriptsPath+":"+dockersideBinPath+":ro"] + workingDirectoryVolumeArg + systemDirVolumeArgs + userDirVolumeArgs
 
-  dockerArguments = ["run","-i","-t","-rm",allowNetworkAccessArg]+privilegedArg+volumeArgs+x11Args+soundArgs+[dockerImageName]+setupUserAndRunArgs+[executable]+args
+  def cleanUpVolumes():
+    if not subuserlib.permissions.getStatefulHome(permissions):
+      subprocess.call(["rm","-rf",hostSubuserHome])
+
+  return (volumeArgs,cleanUpVolumes)
+
+def getX11Args(permissions):
+  if subuserlib.permissions.getX11(permissions):
+    return ["-e","DISPLAY=unix"+os.environ['DISPLAY'],"-v=/tmp/.X11-unix:/tmp/.X11-unix:rw"]
+  else:
+    return []
+
+def getSoundArgs(permissions):
+  if subuserlib.permissions.getSound(permissions):
+    return  ["-v=/dev/snd:/dev/snd:rw","-lxc-conf=lxc.cgroup.devices.allow = c 116:* rwm"]
+  else:
+    return []
+
+def getPrivilegedArg(permissions):
+  if subuserlib.permissions.getPrivileged(permissions):
+    return ["-privileged"]
+  else:
+    return []
+
+def runProgram(programName):
+  dockerImageName = subuserlib.dockerImages.getImageTagOfInstalledProgram(programName)
+  permissions = subuserlib.permissions.getPermissions(programName)
+  programArgs=getArgsToPassToProgram()
+  allowNetworkAccessArg = getAllowNetworkAccessArg(permissions)
+  executable = subuserlib.permissions.getExecutable(permissions)
+  setupUserAndRunArgs = getSetupUserAndRunArgs(permissions)
+  x11Args = getX11Args(permissions)
+  soundArgs = getSoundArgs(permissions)
+  privilegedArg = getPrivilegedArg(permissions)
+  (volumeArgs,cleanUpVolumes) = getAndSetupVolumes(programName,permissions)
+  dockerArguments = ["run","-i","-t","-rm",allowNetworkAccessArg]+privilegedArg+volumeArgs+x11Args+soundArgs+[dockerImageName]+setupUserAndRunArgs+[executable]+programArgs
 
   #print(dockerCommand)
   subuserlib.docker.runDocker(dockerArguments)
 
-  if not subuserlib.permissions.getStatefulHome(permissions):
-    subprocess.call(["rm","-rf",hostSubuserHome])
+  cleanUpVolumes()
 
 #################################################################################################
 if len(sys.argv) == 1 or sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.argv[1] == "--help":
