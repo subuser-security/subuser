@@ -1,6 +1,8 @@
 VERSION 0.2
 -------------
 
+* Add dry-run command
+
 * Rename MakeBaseImage.sh to BuildImage.sh
 
 * Webcam support

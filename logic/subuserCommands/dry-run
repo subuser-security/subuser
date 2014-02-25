@@ -7,10 +7,9 @@ import subuserlib.run
 
 ##############################################################
 def printHelp():
-  print("""Run a program installed with subuser.  For example:
-$ subuser run firefox
+  print("""Display the command which would be issued to launch docker if you were to run this program.  For example:
+$ subuser dry-run firefox
 
-This command is useful if you want to put `~/subuser/bin` at the end of your path.  If you do that, subuser programs will not have precidence over "normally" installed programs.
 """)
 
 def getArgsToPassToProgram():
@@ -26,4 +25,4 @@ if len(sys.argv) == 1 or sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.arg
 #################################################################################################
 
 programName = sys.argv[1]
-subuserlib.run.runProgram(programName,getArgsToPassToProgram())
+subuserlib.run.runProgram(programName,getArgsToPassToProgram(),dry=True)
