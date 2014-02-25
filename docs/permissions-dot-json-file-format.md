@@ -29,7 +29,7 @@ The json object MAY at your option contain the following additional fields:
 
 **Note on optional fields**: Setting an optional field to an empty string is not a valid way of requesting it's default value.  If you want the default value, don't include the field at all.
 
- * `last-updat-time`: This field records the last time the program, or it's `Dockerfile` were known to be updated.  The purpose of this field is telling `subuser` if a program has been updated and must be re-installed.
+ * `last-update-time`: This field records the last time the program, or it's `Dockerfile` were known to be updated.  The purpose of this field is telling `subuser` if a program has been updated and must be re-installed.
 
   Ex:
 
