@@ -54,8 +54,8 @@ def getProgramHomeDirOnHost(programName):
 def getDockersideScriptsPath():
   return os.path.join(getSubuserDir(),"logic","dockerside-scripts")
 
-def getMakeBaseImageScriptPath(programName):
+def getBuildImageScriptPath(programName):
   """
-  Get path to the MakeBaseImage.sh. From the program docker-image directory.
+  Get path to the BuildImage.sh. From the program docker-image directory.
   """
-  return os.path.join(getProgramSrcDir(programName), "docker-image", 'MakeBaseImage.sh')
+  return os.path.join(getProgramSrcDir(programName), "docker-image", 'BuildImage.sh')
