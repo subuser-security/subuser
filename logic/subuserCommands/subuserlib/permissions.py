@@ -17,9 +17,9 @@ def getPermissions(programName):
     sys.exit("The permissions.json file for the program "+programName+" does not exist.  "+allProgramsMustHavePermissions)
   with open(permissionsFilePath, 'r') as file_f:
     try:
-     permissions=json.load(file_f, object_pairs_hook=collections.OrderedDict)
+      permissions=json.load(file_f, object_pairs_hook=collections.OrderedDict)
     except ValueError:
-     sys.exit("The permissions.json file for the program "+programName+" is not valid json.  "+allProgramsMustHavePermissions)
+      sys.exit("The permissions.json file for the program "+programName+" is not valid json.  "+allProgramsMustHavePermissions)
     return permissions
 
 def setPermissions(programName,permissions):
