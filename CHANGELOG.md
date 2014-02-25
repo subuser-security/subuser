@@ -1,7 +1,7 @@
 VERSION 0.2
 -------------
 
-* Refactor MakeBaseImage.sh to BuildImage.sh
+* Rename MakeBaseImage.sh to BuildImage.sh
 
 * Webcam support
 
