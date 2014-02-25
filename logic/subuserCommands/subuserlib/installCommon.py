@@ -21,7 +21,7 @@ def installExecutable(programName):
     os.chmod(executablePath, stat.S_IMODE(st.st_mode) | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
 
 def installFromBaseImage(programName):
-  makeBaseImageScriptPath = paths.getMakeBaseImageScriptPath(programName)
+  buildImageScriptPath = paths.getBuildImageScriptPath(programName)
   #Report to user
   while True:
     sys.stdout.write("""\nATTENTION!!!
@@ -33,7 +33,7 @@ def installFromBaseImage(programName):
   - Do you want to view the full contents of this shell script [v]?
   - Do you want to continue? (Type "run" to run the shell script)
 
-  [v/run/q]: """.format(programName, paths.getMakeBaseImageScriptPath(programName)))
+  [v/run/q]: """.format(programName, paths.getBuildImageScriptPath(programName)))
     sys.stdout.flush()
     try:
       userInput = sys.stdin.readline().strip()
@@ -45,7 +45,7 @@ def installFromBaseImage(programName):
       sys.exit("\nOperation aborted.  Exiting.")
 
   if userInput == "v":
-    with open(makeBaseImageScriptPath, 'r') as file_f:
+    with open(buildImageScriptPath, 'r') as file_f:
       print('\n===================== SCRIPT CODE =====================\n')
       print(file_f.read())
       print('\n===================== END SCRIPT CODE =====================\n')
@@ -56,7 +56,7 @@ def installFromBaseImage(programName):
     - Do quit [q] or press ENTER
     - Do you want to continue? (Type "run" to run the shell script)
 
-    [run/q]: """.format(makeBaseImageScriptPath))
+    [run/q]: """.format(buildImageScriptPath))
       sys.stdout.flush()
       try:
         userInput = sys.stdin.readline().strip()
@@ -69,9 +69,9 @@ def installFromBaseImage(programName):
 
   if userInput == "run":
     #Do the installation via SHELL SCRIPT
-    st = os.stat(makeBaseImageScriptPath)
-    os.chmod(makeBaseImageScriptPath, stat.S_IMODE(st.st_mode) | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
-    subprocessExtras.subprocessCheckedCall([makeBaseImageScriptPath])
+    st = os.stat(buildImageScriptPath)
+    os.chmod(buildImageScriptPath, stat.S_IMODE(st.st_mode) | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
+    subprocessExtras.subprocessCheckedCall([buildImageScriptPath])
 
 
 def installProgram(programName, useCache):
@@ -82,8 +82,8 @@ def installProgram(programName, useCache):
 
   dockerImageDir = os.path.join(paths.getProgramSrcDir(programName), "docker-image")
   _DockerfilePath = os.path.join(dockerImageDir, 'Dockerfile')
-  # Check if we use a 'Dockerfile' or a 'MakeBaseImage.sh'
-  if os.path.isfile(paths.getMakeBaseImageScriptPath(programName)):
+  # Check if we use a 'Dockerfile' or a 'BuildImage.sh'
+  if os.path.isfile(paths.getBuildImageScriptPath(programName)):
     installFromBaseImage(programName, cacheArg)
   elif os.path.isfile(_DockerfilePath):
     if useCache:
@@ -92,7 +92,7 @@ def installProgram(programName, useCache):
       cacheArg = "--no-cache=true"
     docker.runDockerAndExitIfItFails(["build","-rm",cacheArg,"--tag=subuser-"+programName+"",dockerImageDir])
   else:
-    sys.exit("No buildfile found: need one of: 'Dockerfile' or 'MakeBaseImage.sh'. PATH: {0}".format(dockerImageDir))
+    sys.exit("No buildfile found: need one of: 'Dockerfile' or 'BuildImage.sh'. PATH: {0}".format(dockerImageDir))
 
   _permissions = permissions.getPermissions(programName)
 
