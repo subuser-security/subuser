@@ -40,6 +40,10 @@ def hasExecutable(programName):
 
 # Getters with defaults from subuser/docs/permissions-dot-json-file-format.md
 
+def getLastUpdateTime(permissions):
+  """ Returns the last-update-time of the program in the repo.  This basically works like a version number but is less semantic. """
+  return permissions.get("last-update-time",None)
+
 def getExecutable(permissions):
   """ Either returns the path to the program's executable or None if it is a library. """
   return permissions.get("executable",None)
