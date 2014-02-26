@@ -81,6 +81,6 @@ def needsUpdate(program):
   programsToCheck.append(program)
   for programToCheck in programsToCheck:
     myPermissions = permissions.getPermissions(programToCheck)
-    if not permissions.getLastUpdateTime(myPermissions) == _registry[programToCheck]["last-update-time"]:
+    if not permissions.getLastUpdateTime(myPermissions) == _registry[programToCheck]["last-update-time"] and not permissions.getLastUpdateTime(myPermissions) == None:
       return True
   return False
