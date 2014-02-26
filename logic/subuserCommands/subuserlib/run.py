@@ -164,6 +164,13 @@ Please note: This is for testing purposes only, and this command is not guarante
   print("docker '"+"' '".join(dockerArgs)+"'")
 
 def runProgram(programName,programArgs,dry=False):
+  if subuserlib.update.needsUpdate(programName):
+   print("""This program needs to be updated.  You can do so with:
+
+$ subuser update
+
+Trying to run anyways:
+""")
   (dockerArgs,cleanUpVolumes) = getDockerArguments(programName,programArgs,dry)
   if not dry:
    subuserlib.docker.runDocker(dockerArgs)

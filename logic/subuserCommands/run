@@ -4,6 +4,7 @@
 
 import sys
 import subuserlib.run
+import subuserlib.update
 
 ##############################################################
 def printHelp():
