@@ -107,17 +107,17 @@ def hasInstalledDependencies(programName):
     except KeyError:
       pass
 
-def getInstalledDependencies(programName):
+def getInstalledDependents(programName):
   """ Returns returns a list of any installed programs which depend upon this program. """
-  installedDependencies = []
+  installedDependents = []
   for program in getInstalledPrograms():
     try:
       if permissions.getPermissions(program)["dependency"] == programName:
-        installedDependencies.append(program)
+        installedDependents.append(program)
     except KeyError:
       pass
 
-  return installedDependencies
+  return installedDependents
 
 def getDependencyTree(programName):
   """ Returns a dependency tree list of any available program. """
