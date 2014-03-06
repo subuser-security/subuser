@@ -35,7 +35,7 @@ programsToBeUpdated, userOptionList = subuserlib.commandLineArguments.parseComma
 
 if 'all' in userOptionList:
   #use this in case the user specified also some program names plus --all
-  programsToBeUpdated = list(set(programsToBeUpdated + getProgramsWhosLastUpdateTimesChanged())) 
+  programsToBeUpdated = list(set(programsToBeUpdated + subuserlib.update.getProgramsWhosLastUpdateTimesChanged())) 
 
 #Check if there is anything to do
 if len(programsToBeUpdated) > 0:
