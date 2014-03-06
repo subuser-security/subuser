@@ -13,7 +13,7 @@ def getPermissions(programName):
   """ Return the permissions for the given program. """
   # read permissions.json file
   permissionsFilePath = paths.getPermissionsFilePath(programName)
-  if not os.path.exists(permissionsFilePath):
+  if permissionsFilePath == None:
     sys.exit("The permissions.json file for the program "+programName+" does not exist.  "+allProgramsMustHavePermissions)
   with open(permissionsFilePath, 'r') as file_f:
     try:
