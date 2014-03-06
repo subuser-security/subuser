@@ -47,6 +47,13 @@ def runUpdate(programsToBeUpdated):
   print("The following programs will be updated:")
   for program in programsToBeUpdated:
     print(program)
+  choice = raw_input("Do you want to continue updating [y/n]? " )
+  if choice in ["Y","y"]:
+    uninstallProgramsToBeUpdated(programsToBeUpdated)
+    installProgramsToBeUpdated(programsToBeUpdated)
+  else:
+    sys.exit()
+
   while dockerImages.areProgramsRunning(programsToBeUpdated):
     print("PLEASE: close these programs before continuing. If there seem to be containers hanging around when the program isn't even running you might try:")
     print(" $ docker kill <container-id>")
@@ -56,12 +63,6 @@ def runUpdate(programsToBeUpdated):
     shouldQuit = raw_input("Press enter to continue(or q to quit): ")
     if shouldQuit == 'q':
       exit()
-  choice = raw_input("Do you want to continue updating [y/n]? " )
-  if choice in ["Y","y"]:
-    uninstallProgramsToBeUpdated(programsToBeUpdated)
-    installProgramsToBeUpdated(programsToBeUpdated)
-  else:
-    sys.exit()
 
 def updateSomePrograms(programs):
   programsToBeUpdated = set()
