@@ -20,8 +20,8 @@ def installExecutable(programName):
     st = os.stat(executablePath)
     os.chmod(executablePath, stat.S_IMODE(st.st_mode) | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
 
-def installFromBaseImage(programName):
-  buildImageScriptPath = paths.getBuildImageScriptPath(programName)
+def installFromBaseImage(programName,programSrcDir):
+  buildImageScriptPath = paths.getBuildImageScriptPath(programSrcDir)
   #Report to user
   while True:
     sys.stdout.write("""\nATTENTION!!!
@@ -33,7 +33,7 @@ def installFromBaseImage(programName):
   - Do you want to view the full contents of this shell script [v]?
   - Do you want to continue? (Type "run" to run the shell script)
 
-  [v/run/q]: """.format(programName, paths.getBuildImageScriptPath(programName)))
+  [v/run/q]: """.format(programName, buildImageScriptPath))
     sys.stdout.flush()
     try:
       userInput = sys.stdin.readline().strip()
@@ -73,26 +73,28 @@ def installFromBaseImage(programName):
     os.chmod(buildImageScriptPath, stat.S_IMODE(st.st_mode) | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
     subprocessExtras.subprocessCheckedCall([buildImageScriptPath])
 
+def installFromDockerfile(programName, useCache):
+  if useCache:
+    cacheArg = "--no-cache=false"
+  else:
+    cacheArg = "--no-cache=true"
+  docker.runDockerAndExitIfItFails(["build","-rm",cacheArg,"--tag=subuser-"+programName+"",dockerImageDir])
+
 
 def installProgram(programName, useCache):
   """
   Build the docker image associated with a program and create a tiny executable to add that image to your path.
   """
   print("Installing {0} ...".format(programName))
-
-  dockerImageDir = os.path.join(paths.getProgramSrcDir(programName), "docker-image")
-  _DockerfilePath = os.path.join(dockerImageDir, 'Dockerfile')
+  programSrcDir = paths.getProgramSrcDir(programName)
+  _DockerfilePath = paths.getDockerfilePath(programSrcDir)
   # Check if we use a 'Dockerfile' or a 'BuildImage.sh'
-  if os.path.isfile(paths.getBuildImageScriptPath(programName)):
-    installFromBaseImage(programName, cacheArg)
+  if os.path.isfile(paths.getBuildImageScriptPath(programSrcDir)):
+    installFromBaseImage(programName,programSrcDir)
   elif os.path.isfile(_DockerfilePath):
-    if useCache:
-      cacheArg = "--no-cache=false"
-    else:
-      cacheArg = "--no-cache=true"
-    docker.runDockerAndExitIfItFails(["build","-rm",cacheArg,"--tag=subuser-"+programName+"",dockerImageDir])
+    installFromDockerfile(programName,programSrcDir,useCache)
   else:
-    sys.exit("No buildfile found: need one of: 'Dockerfile' or 'BuildImage.sh'. PATH: {0}".format(dockerImageDir))
+    sys.exit("No buildfile found: There needs to be a 'Dockerfile' or a 'BuildImage.sh' in the docker-image directory.")
 
   _permissions = permissions.getPermissions(programName)
 

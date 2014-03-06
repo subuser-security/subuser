@@ -6,12 +6,15 @@ import os
 
 def available(programName):
   """ Returns True if the program is available for instalation. """
-  return os.path.exists(paths.getProgramSrcDir(programName))
+  return not paths.getProgramSrcDir(programName) == None
 
 def getAvailablePrograms():
   """ Returns a list of program's available for instalation. """
-  availableProgramsPath = paths.getAvailableProgramsPath()
-  return os.listdir(availableProgramsPath)
+  repoPaths = paths.getRepoPaths()
+  availablePrograms = []
+  for path in repoPaths:
+    availablePrograms += os.listdir(path)
+  return availablePrograms
 
 def getAvailableProgramsText(addNewLine=False, indentSpaces=0):
   """ Returns a string representing a sorted list of available program names.

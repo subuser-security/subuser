@@ -1,0 +1,6 @@
+{
+  "bin-dir" : "$SUBUSERDIR/bin",
+  "installed-programs.json" : "$SUBUSERDIR/installed-programs.json",
+  "user-set-permissions-dir" : "$SUBUSERDIR/permissions/",
+  "program-home-dirs-dir" : "$SUBUSERDIR/homes/"
+}

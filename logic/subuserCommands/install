@@ -8,10 +8,6 @@ import subuserlib.installCommon
 import subuserlib.describe
 import subuserlib.commandLineArguments
 
-######################################################
-home = os.path.expanduser("~")
-######################################################
-
 def printHelp():
   """
     Display a help message for the install mode of the subuser command.
