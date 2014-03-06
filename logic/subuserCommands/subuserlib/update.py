@@ -17,8 +17,8 @@ import availablePrograms
 def getProgramsWhosLastUpdateTimesChanged():
   """ Returns a list of progams who's last-update-time has changed since it was installed. """
   programsWhosLastUpdateTimeChanged = []
-  registry = registry.getRegistry()
-  for program, registeredInfo in registry.iteritems():
+  _registry = registry.getRegistry()
+  for program, registeredInfo in _registry.iteritems():
     availableLastUpdateTime = permissions.getPermissions(program).get("last-update-time",None)
     installedLastUpdateTime = registeredInfo.get("last-update-time",None)
     if not availableLastUpdateTime == installedLastUpdateTime and not availableLastUpdateTime == None:
