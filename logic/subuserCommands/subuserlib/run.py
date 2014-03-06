@@ -11,6 +11,7 @@ import tempfile
 import subuserlib.permissions
 import subuserlib.dockerImages
 import subuserlib.docker
+import subuserlib.update
 ###############################################################
 username = getpass.getuser()
 cwd = os.getcwd()
