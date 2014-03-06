@@ -18,11 +18,11 @@ cwd = os.getcwd()
 home = os.path.expanduser("~")
 ###############################################################
 
-def getAllowNetworkAccessArg(permissions):
+def getAllowNetworkAccessArgs(permissions):
   if subuserlib.permissions.getAllowNetworkAccess(permissions):
-    return "--networking=true"
+    return ["--networking=true","-dns=8.8.8.8"] # TODO depricate this once the docker folks fix the dns bugs
   else:
-    return "--networking=false"
+    return ["--networking=false"]
 
 def setupHostSubuserHome(home):
   if not os.path.exists(home):
@@ -146,7 +146,7 @@ def getPrivilegedArg(permissions):
 def getDockerArguments(programName,programArgs,dry):
   dockerImageName = subuserlib.dockerImages.getImageTagOfInstalledProgram(programName)
   permissions = subuserlib.permissions.getPermissions(programName)
-  allowNetworkAccessArg = getAllowNetworkAccessArg(permissions)
+  allowNetworkAccessArgs = getAllowNetworkAccessArgs(permissions)
   executable = subuserlib.permissions.getExecutable(permissions)
   setupUserAndRunArgs = getSetupUserAndRunArgs(permissions)
   x11Args = getX11Args(permissions)
@@ -155,7 +155,7 @@ def getDockerArguments(programName,programArgs,dry):
   webcamArgs = getWebcamArgs(permissions)
   privilegedArg = getPrivilegedArg(permissions)
   (volumeArgs,cleanUpVolumes) = getAndSetupVolumes(programName,permissions,dry)
-  dockerArgs = ["run","-i","-t","-rm",allowNetworkAccessArg]+privilegedArg+volumeArgs+x11Args+graphicsCardArgs+soundCardArgs+webcamArgs+[dockerImageName]+setupUserAndRunArgs+[executable]+programArgs
+  dockerArgs = ["run","-i","-t","-rm"]+allowNetworkAccessArgs+privilegedArg+volumeArgs+x11Args+graphicsCardArgs+soundCardArgs+webcamArgs+[dockerImageName]+setupUserAndRunArgs+[executable]+programArgs
   return (dockerArgs,cleanUpVolumes)
 
 def showDockerCommand(dockerArgs):
