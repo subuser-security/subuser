@@ -73,11 +73,12 @@ def installFromBaseImage(programName,programSrcDir):
     os.chmod(buildImageScriptPath, stat.S_IMODE(st.st_mode) | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
     subprocessExtras.subprocessCheckedCall([buildImageScriptPath])
 
-def installFromDockerfile(programName, useCache):
+def installFromDockerfile(programName, programSrcDir, useCache):
   if useCache:
     cacheArg = "--no-cache=false"
   else:
     cacheArg = "--no-cache=true"
+  dockerImageDir = os.path.join(programSrcDir,"docker-image")
   docker.runDockerAndExitIfItFails(["build","-rm",cacheArg,"--tag=subuser-"+programName+"",dockerImageDir])
 
 
