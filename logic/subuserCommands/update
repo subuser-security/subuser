@@ -39,7 +39,7 @@ if 'all' in userOptionList:
 
 #Check if there is anything to do
 if len(programsToBeUpdated) > 0:
-  updateSomePrograms(programsToBeUpdated)
+  subuserlib.update.updateSomePrograms(programsToBeUpdated)
   # Ensure that all programs which we have requested be updated are still installed after the update:
   for program in programsToBeUpdated:
     if not subuserlib.registry.isProgramInstalled(program):
