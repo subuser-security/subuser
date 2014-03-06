@@ -46,7 +46,7 @@ def getExecutablePath(progName):
   """
   Get the path to the executable that we will be installing.
   """
-  return os.path.join(config.getConfig()["bin"],progName)
+  return os.path.join(config.getConfig()["bin-dir"],progName)
 
 def getPermissionsFilePath(programName):
   """ Return the path to the given programs permissions file.
