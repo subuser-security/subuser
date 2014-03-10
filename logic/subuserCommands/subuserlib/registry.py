@@ -1,6 +1,12 @@
 #!/usr/bin/env python
 # This file should be compatible with both Python 2 and 3.
 # If it is not, please file a bug report.
+"""
+This module provides tools for reading and writting the installed-programs.json file which holds a registry of all installed subuser programs.
+
+To read more about the installed-programs.json file format see docs/installed-programs-dot-json-file-format.md
+
+"""
 import paths
 import json
 import os
@@ -11,10 +17,13 @@ import dockerImages
 
 def getRegistry():
   """ Return a dictionary of the program registry: installed-programs.json
-  registered items:
+  registered attributes:
     - last-update-time
     - image-id
-    Still Maintaining backwards compat with format: "programName" : "last-update-time",
+    - installed-from
+
+See docs/installed-programs-dot-json-file-format.md
+
   """
   programRegistry = {}
   programRegistryPath = paths.getProgramRegistryPath()
