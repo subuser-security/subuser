@@ -35,12 +35,12 @@ See docs/installed-programs-dot-json-file-format.md
   if len(programRegistry) > 0:
     firstProgramName = programRegistry.keys()[0]
     if not isinstance(programRegistry[firstProgramName], dict):
-      programNewRegistry = {}
+      newProgramRegistry = {}
       for programName, lastUpdateTime in programRegistry.iteritems():
-        programNewRegistry[programName] = {}
-        programNewRegistry[programName]['last-update-time'] = lastUpdateTime
-        programNewRegistry[programName]['image-id'] = dockerImages.getImageID("subuser-"+programName)
-      programRegistry = programNewRegistry
+        newProgramRegistry[programName] = {}
+        newProgramRegistry[programName]['last-update-time'] = lastUpdateTime
+        newProgramRegistry[programName]['image-id'] = dockerImages.getImageID("subuser-"+programName)
+      programRegistry = newProgramRegistry
       #save the new one here once and for all
       setInstalledPrograms(programRegistry)
   return programRegistry
