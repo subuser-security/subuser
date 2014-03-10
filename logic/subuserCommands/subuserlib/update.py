@@ -8,7 +8,7 @@ import subprocess
 import registry
 import permissions
 import dockerImages
-import installCommon
+import install
 import subprocessExtras
 import commandLineArguments
 import availablePrograms
@@ -41,7 +41,7 @@ def uninstallProgramsToBeUpdated(programsToBeUpdated):
 def installProgramsToBeUpdated(programsToBeUpdated):
   for program in programsToBeUpdated:
     if permissions.hasExecutable(program): # Don't install libraries as these might have changed and no longer be needed.  They'll automatically get installed anyways.
-      installCommon.installProgramAndDependencies(program, False)
+      install.installProgramAndDependencies(program, False)
 
 def runUpdate(programsToBeUpdated):
   print("The following programs will be updated:")

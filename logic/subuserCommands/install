@@ -4,7 +4,7 @@
 import sys
 import os
 import subuserlib.availablePrograms
-import subuserlib.installCommon
+import subuserlib.install
 import subuserlib.describe
 import subuserlib.commandLineArguments
 
@@ -36,7 +36,7 @@ if '--from-cache' in userOptionList:
 
 for program in userProgramList:
   print(program)
-  subuserlib.installCommon.installProgramAndDependencies(program, useCache)
+  subuserlib.install.installProgramAndDependencies(program, useCache)
 
 #print for the MAIN program (The user called not the dependency the permission)
 print("\n============= INSTALLATION OK =============\n\n")
