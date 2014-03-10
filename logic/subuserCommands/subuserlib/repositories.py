@@ -8,6 +8,7 @@ import os
 import inspect
 import json
 import collections
+import sys
 
 home = os.path.expanduser("~")
 
@@ -44,8 +45,11 @@ def getRepositories():
   repositories = {}
   for _repositoryListFile in repositoryListPaths:
     with open(_repositoryListFile, 'r') as repositoryListFile:
-      _repositories = json.load(repositoryListFile, object_pairs_hook=collections.OrderedDict)
-      for identifier,repository in _repositories.iteritems():
-        _addIfUnrepresented(identifier,repository,repositories)
+      try:
+        _repositories = json.load(repositoryListFile, object_pairs_hook=collections.OrderedDict)
+        for identifier,repository in _repositories.iteritems():
+          _addIfUnrepresented(identifier,repository,repositories)
+      except ValueError:
+        sys.exit("The repositories file is invalid json.")
   expandVarsInPaths(repositories)
   return repositories
