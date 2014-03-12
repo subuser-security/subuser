@@ -20,7 +20,7 @@ home = os.path.expanduser("~")
 
 def getAllowNetworkAccessArgs(permissions):
   if subuserlib.permissions.getAllowNetworkAccess(permissions):
-    return ["--networking=true","-dns=8.8.8.8"] # TODO depricate this once the docker folks fix the dns bugs
+    return ["--networking=true","--dns=8.8.8.8"] # TODO depricate this once the docker folks fix the dns bugs
   else:
     return ["--networking=false"]
 
@@ -155,7 +155,7 @@ def getDockerArguments(programName,programArgs,dry):
   webcamArgs = getWebcamArgs(permissions)
   privilegedArg = getPrivilegedArg(permissions)
   (volumeArgs,cleanUpVolumes) = getAndSetupVolumes(programName,permissions,dry)
-  dockerArgs = ["run","-i","-t","-rm"]+allowNetworkAccessArgs+privilegedArg+volumeArgs+x11Args+graphicsCardArgs+soundCardArgs+webcamArgs+[dockerImageName]+setupUserAndRunArgs+[executable]+programArgs
+  dockerArgs = ["run","-i","-t","--rm"]+allowNetworkAccessArgs+privilegedArg+volumeArgs+x11Args+graphicsCardArgs+soundCardArgs+webcamArgs+[dockerImageName]+setupUserAndRunArgs+[executable]+programArgs
   return (dockerArgs,cleanUpVolumes)
 
 def showDockerCommand(dockerArgs):
