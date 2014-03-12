@@ -36,7 +36,7 @@ Installing subuser:
 
 **System Requirements**
 
- * Docker
+ * Docker(The latest version)
 
  * Python >= 2.7
 
