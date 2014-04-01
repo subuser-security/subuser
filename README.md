@@ -166,6 +166,10 @@ To remove any settings and configuration files:
 $ rm -r ~/subuser/homes/vim
 ````
 
+Support:
+--------
+You can contact us on the [subuser mailing list](https://groups.google.com/forum/#!forum/subuser).
+
 Design flaws/bugs in subuser:
 ------------------------
 
