@@ -29,15 +29,23 @@ def cleanUnneededLibs():
     print("Looks like your system is already clean.")
 
 def performUninstalls(programsToUninstall):
+  # Display the programs that will be uninstalled.
   print("The following programs will be uninstalled:")
   for program in programsToUninstall:
     print(program)
+  # Ask the user if they want to continue.
   if raw_input("Continue [y/n]? ") == "y":
+    # Preform the uninstallation.
     for program in programsToUninstall:
       subuserlib.subprocessExtras.subprocessCheckedCall(["subuser","uninstall",program])
 
 #################################################################################################
-if len(sys.argv) > 1:
+
+# This command takes no arguments.
+# If the user passed it one or more arguments,
+# They cleary don't know what they're doing,
+# and need to see the help message.
+if len(sys.argv) > 1: 
   printHelp()
 else:
   cleanUnneededLibs()
