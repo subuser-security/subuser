@@ -10,6 +10,7 @@ def printHelp():
   print("""Display the command which would be issued to launch docker if you were to run this program.  For example:
 $ subuser dry-run firefox
 
+Please note, this is only a rough approximation for debugging purposes and there is no guarantee that the command displayed here would actually work.
 """)
 
 def getArgsToPassToProgram():
