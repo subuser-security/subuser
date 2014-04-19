@@ -21,8 +21,8 @@ def askToInstallProgram(programName):
 def getImageTagOfProgram(programName, imageTAG='latest'):
   """ Return the Repository Name of a program or None, if there is no installed image for that program. """
   repoName = None
-  dockerImageMatrix = getParsedDockerImages(noTrunc=True)
-  if getUniqueRowByRepTag(dockerImageMatrix, 'subuser-'+programName, imageTAG):
+  dockerImageTable = getParsedDockerImages(noTrunc=True)
+  if getUniqueRowByRepTag(dockerImageTable, 'subuser-'+programName, imageTAG):
     repoName = 'subuser-'+programName
   return repoName
 
@@ -77,7 +77,7 @@ def getParsedDockerImages(noTrunc=False):
   """ Parse `docker images` related output for easier access: return a dictionary of Columns Lists
   no-trunc: if False: truncate output 
   """
-  dockerImageMatrix = {'REPOSITORY' : [], 'TAG' : [], 'ID' : [], 'CREATED' : [], 'SIZE' : []}
+  dockerImageTable = {'REPOSITORY' : [], 'TAG' : [], 'ID' : [], 'CREATED' : [], 'SIZE' : []}
   if noTrunc:
     roughImagesList = docker.getDockerOutput(["images", "--no-trunc=true"])
   else:
@@ -95,53 +95,53 @@ def getParsedDockerImages(noTrunc=False):
       sys.exit("ERROR: could not parse 'docker images' output")
       
   for line in imagesLinesList[1:]:
-    dockerImageMatrix['REPOSITORY'].append(line[splitPoints['REPOSITORY']:splitPoints['TAG']].strip())
-    dockerImageMatrix['TAG'].append(line[splitPoints['TAG']:splitPoints['IMAGE ID']].strip())
-    dockerImageMatrix['ID'].append(line[splitPoints['IMAGE ID']:splitPoints['CREATED']].strip())
-    dockerImageMatrix['CREATED'].append(line[splitPoints['CREATED']:splitPoints['VIRTUAL SIZE']].strip())
-    dockerImageMatrix['SIZE'].append(line[splitPoints['VIRTUAL SIZE']:len(line)].strip())
-  return dockerImageMatrix
+    dockerImageTable['REPOSITORY'].append(line[splitPoints['REPOSITORY']:splitPoints['TAG']].strip())
+    dockerImageTable['TAG'].append(line[splitPoints['TAG']:splitPoints['IMAGE ID']].strip())
+    dockerImageTable['ID'].append(line[splitPoints['IMAGE ID']:splitPoints['CREATED']].strip())
+    dockerImageTable['CREATED'].append(line[splitPoints['CREATED']:splitPoints['VIRTUAL SIZE']].strip())
+    dockerImageTable['SIZE'].append(line[splitPoints['VIRTUAL SIZE']:len(line)].strip())
+  return dockerImageTable
   
-def getAllRepoNameWhichStartWith(dockerImageMatrix, repoNamePrefix='subuser-'):
+def getAllRepoNameWhichStartWith(dockerImageTable, repoNamePrefix='subuser-'):
   """Returns a list of REPOSITORY names starting with repoNamePrefix
   Arguments see: getParsedDockerImages()
   e.g.
-  dockerImageMatrix = getParsedDockerImages(noTrunc=True)
-  print(getAllRepoNameWhichStartWith(dockerImageMatrix))
+  dockerImageTable = getParsedDockerImages(noTrunc=True)
+  print(getAllRepoNameWhichStartWith(dockerImageTable))
   """
-  return [name for name in dockerImageMatrix['REPOSITORY'] if name.startswith(repoNamePrefix)]
+  return [name for name in dockerImageTable['REPOSITORY'] if name.startswith(repoNamePrefix)]
   
-def getUniqueRowByRepTag(dockerImageMatrix, searchRepoName, searchTag='latest'):
+def getUniqueRowByRepTag(dockerImageTable, searchRepoName, searchTag='latest'):
   """Returns a dictionary of columns (line row): repoName, tag
   if not found: empty dictionary
   e.g.
-  dockerImageMatrix = getParsedDockerImages(noTrunc=True)
-  print(getUniqueRowByRepTag(dockerImageMatrix, 'subuser-vim', 'latest'))
+  dockerImageTable = getParsedDockerImages(noTrunc=True)
+  print(getUniqueRowByRepTag(dockerImageTable, 'subuser-vim', 'latest'))
   
   e.g. get ID
-  print(getUniqueRowByRepTag(dockerImageMatrix, 'subuser-vim', 'latest')['ID])
+  print(getUniqueRowByRepTag(dockerImageTable, 'subuser-vim', 'latest')['ID])
   
   e.g. get SIZE
-  print(getUniqueRowByRepTag(dockerImageMatrix, 'subuser-vim', 'latest')['SIZE])
+  print(getUniqueRowByRepTag(dockerImageTable, 'subuser-vim', 'latest')['SIZE])
   
   e.g. check for existence
-  if getUniqueRowByRepTag(dockerImageMatrix, 'subuser-vim', 'latest'):
+  if getUniqueRowByRepTag(dockerImageTable, 'subuser-vim', 'latest'):
     print("Found: 'subuser-vim', 'latest)
   else:
     print("Could NOT Find: 'subuser-vim', 'latest)
   """
-  dockerImageMatrixRow = {}
-  for index, (repoName, tag) in enumerate(zip(dockerImageMatrix['REPOSITORY'], dockerImageMatrix['TAG'])):
+  dockerImageTableRow = {}
+  for index, (repoName, tag) in enumerate(zip(dockerImageTable['REPOSITORY'], dockerImageTable['TAG'])):
     if repoName == searchRepoName and tag == searchTag:
       #PS: I split this on purpose instead of a long line: can also be put on one line if you want
-      dockerImageMatrixRow = {'REPOSITORY' : dockerImageMatrix['REPOSITORY'][index], 
-                              'TAG' : dockerImageMatrix['TAG'][index],
-                              'ID' : dockerImageMatrix['ID'][index], 
-                              'CREATED' : dockerImageMatrix['CREATED'][index],
-                              'SIZE' : dockerImageMatrix['SIZE'][index]}
+      dockerImageTableRow = {'REPOSITORY' : dockerImageTable['REPOSITORY'][index], 
+                              'TAG' : dockerImageTable['TAG'][index],
+                              'ID' : dockerImageTable['ID'][index], 
+                              'CREATED' : dockerImageTable['CREATED'][index],
+                              'SIZE' : dockerImageTable['SIZE'][index]}
       #Repo/Tag combinations are supposed to be unique
       break
-  return dockerImageMatrixRow
+  return dockerImageTableRow
   
 def getSubuserDockerRepoNameTagsText(addNewLine=False, indentSpaces=0):
   """ Returns a string representing a sorted list of subuser-program names which are actual docker images
@@ -157,10 +157,10 @@ def getSubuserDockerRepoNameTagsText(addNewLine=False, indentSpaces=0):
     indentionString = ' ' * indentSpaces
     
   dockerSubuserProgramsRepoTagList = []
-  dockerImageMatrix = getParsedDockerImages(noTrunc=True)
-  for index, name in enumerate(dockerImageMatrix['REPOSITORY']):
+  dockerImageTable = getParsedDockerImages(noTrunc=True)
+  for index, name in enumerate(dockerImageTable['REPOSITORY']):
     if name.startswith('subuser-'):
-      dockerSubuserProgramsRepoTagList.append('%s:%s' % (dockerImageMatrix['REPOSITORY'][index], dockerImageMatrix['TAG'][index]))
+      dockerSubuserProgramsRepoTagList.append('%s:%s' % (dockerImageTable['REPOSITORY'][index], dockerImageTable['TAG'][index]))
     
   if addNewLine:
     for program in sorted(dockerSubuserProgramsRepoTagList):
