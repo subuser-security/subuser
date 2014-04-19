@@ -14,17 +14,12 @@ $ subuser dry-run firefox
 Please note, this is only a rough approximation for debugging purposes and there is no guarantee that the command displayed here would actually work.
 """)
 
-def getArgsToPassToProgram():
-  if len(sys.argv) > 2:
-    return sys.argv[2:]
-  else:
-    return []
-
 #################################################################################################
+
 if len(sys.argv) == 1 or {"help","-h","--help"} & set(sys.argv):
   printHelp()
   sys.exit()
-#################################################################################################
 
 programName = sys.argv[1]
-subuserlib.run.runProgram(programName,getArgsToPassToProgram(),dry=True)
+argsToPassToProgram = sys.argv[2:]
+subuserlib.run.runProgram(programName,argsToPassToProgram,dry=True)
