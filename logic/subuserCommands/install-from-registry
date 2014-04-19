@@ -4,12 +4,14 @@
 
 import sys,optparse
 
-import subuserlib.registry,subuserlib.dockerImages,subuserlib.subprocessExtras,subuserlib.commandLineArguments
+import subuserlib.registry,subuserlib.dockerImages,subuserlib.install,subuserlib.subprocessExtras,subuserlib.commandLineArguments
 
 ####################################################
 def parseCliArgs():
   usage = "usage: subuser %prog [options]"
   description = """ Install all of the programs that were installed on a previous system, given that you backed up the installed-programs.json file.
+
+Your installed-programs.js file must be in the right place.  It should probably be in ~/subuser/.  If you have a ~/.subuser/config.json file, or an /etc/subuser/config.json file, then you should look in these files to find out where installed-programs.json should reside.
 
 """
   parser = optparse.OptionParser(usage=usage,description=description,formatter=subuserlib.commandLineArguments.HelpFormatterThatDoesntReformatDescription())
@@ -25,13 +27,11 @@ def resetRegistry():
 
 def installFromRegistry(useCache):
   """ Installs all of the programs listed in installed-programs.json file. """
+  programsThatAreSupposedToBeInstalled = subuserlib.registry.getInstalledPrograms()
   resetRegistry()
-  for program in subuserlib.registry.getInstalledPrograms():
-    print("\n=== Installing <%s> from installed-programs.json registry....\n" % program)
-    if useCache:
-      subuserlib.subprocessExtras.subprocessCheckedCall(["subuser","install",program,"--from-cache"])
-    else:
-      subuserlib.subprocessExtras.subprocessCheckedCall(["subuser","install",program])
+  for program in programsThatAreSupposedToBeInstalled:
+    print("\n=== Installing "+program+" from installed-programs.json registry....\n")
+    subuserlib.install.installProgramAndDependencies(program, useCache)
 
 #################################################################################################
 
