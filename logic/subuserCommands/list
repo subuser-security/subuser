@@ -7,7 +7,7 @@ import subuserlib.registry,subuserlib.paths,subuserlib.permissions,subuserlib.av
 
 def parseCliArgs():
   usage = "usage: subuser %prog WHAT_TO_LIST [options]"
-  description = """List subuser-programs.  You can use this command to list programs that are:
+  description = """   List subuser-programs.  You can use this command to list programs that are:
 
   available 
       List all subuser-programs
