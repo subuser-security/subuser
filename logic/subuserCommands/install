@@ -24,10 +24,8 @@ for program in userProgramList:
   print(program)
   subuserlib.install.installProgramAndDependencies(program, options.useCache)
 
-#print for the MAIN program ()
-print("\n============= INSTALLATION OK =============\n\n")
+print("\n============= INSTALLATION SUCCESSFULL =============\n\n")
 for program in userProgramList:
-  #there is too much output: a user will hardly recognize the usefull information provided: add some space
-  print("\n{0}: has been installed with the following permissions.".format(program))
+  print("\n"+program+": has been installed with the following permissions.")
   subuserlib.describe.printInfo(program,False)
   print("You can change this program's permissions at any time by editing it's permissions.json file.")
