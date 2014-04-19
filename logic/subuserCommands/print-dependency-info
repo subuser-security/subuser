@@ -1,0 +1,46 @@
+#!/usr/bin/env python
+# This file should be compatible with both Python 2 and 3.
+# If it is not, please file a bug report.
+import optparse,sys
+
+import subuserlib.registry,subuserlib.availablePrograms,subuserlib.commandLineArguments,subuserlib.printDependencyInfo
+
+def parseCliArgs():
+  usage = "usage: subuser %prog PROGRAM_NAME(s) SETS_OF_PROGRAMS"
+  description = """Prints information about how the listed programs relate to eachother:
+
+Example:
+
+    $ subuser print-dependency-info firefox vim xterm
+
+There are also several predefined sets of programs which can be used:
+  available - programs available for instalation
+    $ subuser print-dependency-info available
+
+  installed - programs that have been installed
+    $ subuser print-dependency-info installed
+"""
+  parser = optparse.OptionParser(usage=usage,description=description,formatter=subuserlib.commandLineArguments.HelpFormatterThatDoesntReformatDescription())
+  parser.add_option("--format",dest="format",help="Print dependency information in the given format.  You can choose from: table, tree, or json.",default='table',type="string")
+  return parser.parse_args()
+
+#################################################################################################
+
+(options,args) = parseCliArgs()
+
+if len(args) == 0:
+  sys.exit("No programs specified.  Issue this command with -h to view help.")
+
+if 'available' in args:
+  print("Dependency info for programs that are available for instalation:")
+  subuserlib.printDependencyInfo.printDependencyInfo(subuserlib.availablePrograms.getAvailablePrograms(),format=options.format)
+
+if 'installed' in args:
+  print("Dependency tables for installed programs:")
+  subuserlib.printDependencyInfo.printDependencyInfo(subuserlib.registry.getInstalledPrograms(),format=options.format)
+
+userProgramList = list(set(args).difference({'installed','available'}))
+
+if len(userProgramList) > 0:
+ print("Interdependencies between specified programs:")
+ subuserlib.printDependencyInfo.printDependencyInfo(userProgramList,format=options.format)

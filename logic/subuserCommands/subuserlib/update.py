@@ -67,10 +67,10 @@ def runUpdate(programsToBeUpdated):
 
 def updateSomePrograms(programs):
   programsToBeUpdated = set()
-  dependencyMatrix = registry.getDependencyMatrix(availablePrograms.getAvailablePrograms())
+  dependencyTable = registry.getDependencyTable(availablePrograms.getAvailablePrograms())
   for program in programs:
     programsToBeUpdated.add(program)
-    for dependent in dependencyMatrix[program]["required-by"]:
+    for dependent in dependencyTable[program]["required-by"]:
       if registry.isProgramInstalled(dependent):
         programsToBeUpdated.add(dependent)
   runUpdate(list(programsToBeUpdated))
@@ -78,8 +78,8 @@ def updateSomePrograms(programs):
 def needsUpdate(program):
   """ Returns true if the program or any of it's dependencies need to be updated. """
   _registry = registry.getRegistry()
-  dependencyMatrix = registry.getDependencyMatrix(availablePrograms.getAvailablePrograms())
-  programsToCheck = dependencyMatrix[program]["depends-on"]
+  dependencyTable = registry.getDependencyTable(availablePrograms.getAvailablePrograms())
+  programsToCheck = dependencyTable[program]["depends-on"]
   programsToCheck.append(program)
   for programToCheck in programsToCheck:
     myPermissions = permissions.getPermissions(programToCheck)

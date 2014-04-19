@@ -142,43 +142,43 @@ def getDependencyTree(programName):
     dependency = programPermissions.get("dependency", None)
   return programDependencyTree
 
-def _createEmptyDependencyMatrix(programList,useHasExecutable):
-  dependencyMatrix = {}
+def _createEmptyDependencyTable(programList,useHasExecutable):
+  dependencyTable = {}
   for program in programList:
     if useHasExecutable:
       if permissions.hasExecutable(program):
-        dependencyMatrix[program] = {"required-by" : [], "depends-on" : [], "has-executable" : True}
+        dependencyTable[program] = {"required-by" : [], "depends-on" : [], "has-executable" : True}
       else:
-        dependencyMatrix[program] = {"required-by" : [], "depends-on" : [], "has-executable" : False}
+        dependencyTable[program] = {"required-by" : [], "depends-on" : [], "has-executable" : False}
     else:
-      dependencyMatrix[program] = {"required-by" : [], "depends-on" : []}
-  return dependencyMatrix
+      dependencyTable[program] = {"required-by" : [], "depends-on" : []}
+  return dependencyTable
 
 
-def _sortFieldsInDependencyMatrix(dependencyMatrix):
-  for program in dependencyMatrix.keys():
-    dependencyMatrix[program]["depends-on"] = sorted(dependencyMatrix[program]["depends-on"])
-    dependencyMatrix[program]["required-by"] = sorted(dependencyMatrix[program]["required-by"])
+def _sortFieldsInDependencyTable(dependencyTable):
+  for program in dependencyTable.keys():
+    dependencyTable[program]["depends-on"] = sorted(dependencyTable[program]["depends-on"])
+    dependencyTable[program]["required-by"] = sorted(dependencyTable[program]["required-by"])
 
 
-def getDependencyMatrix(programList, useHasExecutable=False, sortLists=False):
+def getDependencyTable(programList, useHasExecutable=False, sortLists=False):
   """
   Returns a programName<->dependency info dictionary.
 
   Arguments:
   - programList: List of available or installed (or a selected list)  of subuser-programs
             (getInstalledPrograms(), or getAvailablePrograms(), or ["firefox", "vim"]
-  - useHasExecutable: boolean: if True an additional key "has-executable" will be added to the matrix
+  - useHasExecutable: boolean: if True an additional key "has-executable" will be added to the table
   - sortLists: boolean: if True: required-by, depends-on  will be sorted
 
-  Matrix format when useHasExecutable is False:
+  Table format when useHasExecutable is False:
                                 { 'programName' : {
                                           "required-by" : [app1, app2],
                                           "depends-on" : [app1, lib3]
                                                                     }
                                 }
 
-  Matrix format when useHasExecutable is True
+  Table format when useHasExecutable is True
                                 { 'programName' : {
                                           "required-by" : [app1, app2],
                                           "depends-on" : [],
@@ -190,19 +190,19 @@ def getDependencyMatrix(programList, useHasExecutable=False, sortLists=False):
   """
 
   # Create a dictionary of empty matrices.
-  dependencyMatrix = _createEmptyDependencyMatrix(programList,useHasExecutable)
+  dependencyTable = _createEmptyDependencyTable(programList,useHasExecutable)
 
   def markAsRequiredBy(program):
     """ Add this program to the "required-by" field of any program that depends upon it. """
-    if dependency in dependencyMatrix.keys():
-      dependencyMatrix[dependency]["required-by"].append(program)
+    if dependency in dependencyTable.keys():
+      dependencyTable[dependency]["required-by"].append(program)
 
-  for program in dependencyMatrix.keys():
+  for program in dependencyTable.keys():
     for dependency in getDependencyTree(program):
       if dependency != program:
-        dependencyMatrix[program]["depends-on"].append(dependency)
+        dependencyTable[program]["depends-on"].append(dependency)
         markAsRequiredBy(program)
   #sort if required
   if sortLists:
-    _sortFieldsInDependencyMatrix(dependencyMatrix)
-  return dependencyMatrix
+    _sortFieldsInDependencyTable(dependencyTable)
+  return dependencyTable
