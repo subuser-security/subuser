@@ -3,11 +3,7 @@
 # If it is not, please file a bug report.
 import sys,os,optparse
 
-import subuserlib.registry
-import subuserlib.paths
-import subuserlib.permissions
-import subuserlib.availablePrograms
-import subuserlib.commandLineArguments
+import subuserlib.registry,subuserlib.paths,subuserlib.permissions,subuserlib.availablePrograms,subuserlib.commandLineArguments
 
 def parseCliArgs():
   usage = "usage: subuser %prog WHAT_TO_LIST [options]"

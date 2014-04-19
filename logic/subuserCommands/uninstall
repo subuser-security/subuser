@@ -2,9 +2,8 @@
 # This file should be compatible with both Python 2 and 3.
 # If it is not, please file a bug report.
 import optparse,sys
-import subuserlib.uninstall
-import subuserlib.registry
-import subuserlib.commandLineArguments
+
+import subuserlib.uninstall,subuserlib.registry,subuserlib.commandLineArguments
 
 #######################################################
 def parseCliArgs():

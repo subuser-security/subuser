@@ -3,10 +3,10 @@
 # If it is not, please file a bug report.
 
 # This command updates all or some of the installed subuser programs.
+
 import sys,optparse
-import subprocess
-import subuserlib.update
-import subuserlib.install
+
+import subprocess,subuserlib.update,subuserlib.install
 
 import subuserlib.commandLineArguments
 

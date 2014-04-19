@@ -1,12 +1,9 @@
 #!/usr/bin/env python
 # This file should be compatible with both Python 2 and 3.
 # If it is not, please file a bug report.
-import sys
-import optparse
-import subuserlib.registry
-import subuserlib.permissions
-import subuserlib.subprocessExtras
-import subuserlib.commandLineArguments
+import sys,optparse
+
+import subuserlib.registry,subuserlib.permissions,subuserlib.subprocessExtras,subuserlib.commandLineArguments
 
 ####################################################
 def parseCliArgs():

@@ -3,8 +3,8 @@
 # If it is not, please file a bug report.
 
 import sys
-import subuserlib.run
-import subuserlib.update
+
+import subuserlib.run,subuserlib.update
 
 ##############################################################
 def printHelp():

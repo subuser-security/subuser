@@ -2,8 +2,8 @@
 # This file should be compatible with both Python 2 and 3.
 # If it is not, please file a bug report.
 import optparse
-import subuserlib.describe
-import subuserlib.commandLineArguments
+
+import subuserlib.describe,subuserlib.commandLineArguments
 
 def parseCliArgs():
   usage = "usage: subuser %prog PROGRAM_NAME(s)"
