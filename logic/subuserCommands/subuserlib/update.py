@@ -8,6 +8,7 @@ import subprocess
 import registry
 import permissions
 import dockerImages
+import uninstall
 import install
 import subprocessExtras
 import commandLineArguments
@@ -26,7 +27,7 @@ def getProgramsWhosLastUpdateTimesChanged():
   return programsWhosLastUpdateTimeChanged
 
 def uninstall(program):
-  subprocessExtras.subprocessCheckedCall(["subuser","uninstall",program])
+  uninstall.uninstall(program)
 
 def uninstallProgramsToBeUpdated(programsToBeUpdated):
   programsToBeUninstalled = set(programsToBeUpdated)

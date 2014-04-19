@@ -1,53 +1,53 @@
 #!/usr/bin/env python
 # This file should be compatible with both Python 2 and 3.
 # If it is not, please file a bug report.
-import sys
-import os
-import subuserlib.paths
+import optparse,sys
+import subuserlib.uninstall
 import subuserlib.registry
-import subuserlib.dockerImages
-import subprocess
-import subuserlib.docker
+import subuserlib.commandLineArguments
 
 #######################################################
-def printHelp():
-  print("Issue the `subuser uninstall program-name` command to uninstall a program. NOTE: this operation does not remove that program's home directory.")
+def parseCliArgs():
+  usage = "usage: subuser %prog PROGRAM_NAME(s)"
+  description = """Uninstall subuser programs.
 
-def uninstall(programName):
-  print("Uninstalling "+programName)
-  if subuserlib.dockerImages.isProgramsImageInstalled(programName):
-    while not subuserlib.docker.runDocker(["rmi","subuser-"+programName]) == 0:
-      if not raw_input("Once you have solved the problem either type [y] to continue, or [q] to exit: ") == 'y':
-        sys.exit()
-  if os.path.exists(subuserlib.paths.getExecutablePath(programName)):
-    os.remove(subuserlib.paths.getExecutablePath(programName))
+NOTE: this operation does not remove that program's home directory.
 
-  subuserlib.registry.unregisterProgram(programName)
-  programHomeDir=subuserlib.paths.getProgramHomeDirOnHost(programName)
-  if os.path.exists(programHomeDir):
-    print("The program has been uninstalled but it's home directory remains:")
-    print(programHomeDir)
-  print(programName+" uninstalled successfully.")
+"""
+  parser = optparse.OptionParser(usage=usage,description=description,formatter=subuserlib.commandLineArguments.HelpFormatterThatDoesntReformatDescription())
+  return parser.parse_args()
 
-#################################################################################################
-if len(sys.argv) == 1 or sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.argv[1] == "--help":
-  printHelp()
-  sys.exit()
-#################################################################################################
+def checkInstalled(programName):
+  if not subuserlib.registry.isProgramInstalled(programName):
+    print("Could not uninstall "+programName+" program is not installed.")
+    print("\nInstalled programs are: ")
+    for program in subuserlib.registry.getInstalledPrograms():
+      print(program)
+    sys.exit("For help, call this command with the -h option.")
 
-programName = sys.argv[1]
-
-if not subuserlib.registry.isProgramInstalled(programName):
-  print("Could not uninstall "+programName+" program is not installed.")
-  printHelp()
-  print("\nInstalled programs are: ")
-  for program in subuserlib.registry.getInstalledPrograms():
-    print(program)
-else:
+def ensureProgramHasNoInstalledDependents(programName):
   installedDependents = subuserlib.registry.getInstalledDependents(programName)
-  if installedDependents == []:
-    uninstall(programName)
-  else:
+  if not installedDependents == []:
     print("The following programs depend upon "+programName+" you must uninstall them first.")
     for dependent in installedDependents:
       print(dependent)
+    sys.exit("To view a help message, issue this command with the -h option.")
+
+################################################################################
+
+options,programsToUninstall = parseCliArgs()
+
+if len(programsToUninstall) == 0:
+  sys.exit("You didn't specify any programs to uninstall.  For help issue this command with the -h option.")
+
+for programName in programsToUninstall:
+  checkInstalled(programName)
+  ensureProgramHasNoInstalledDependents(programName)
+
+print("The following programs will be uninstalled.")
+for programName in programsToUninstall:
+ print(programName)
+
+if raw_input("Do you want to continue[y/N]").lower()=="y":
+  for programName in programsToUninstall:
+    subuserlib.uninstall.uninstall(programName)

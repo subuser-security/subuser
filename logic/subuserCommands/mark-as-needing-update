@@ -1,34 +1,24 @@
 #!/usr/bin/env python
 # This file should be compatible with both Python 2 and 3.
 # If it is not, please file a bug report.
-import sys
+import optparse
 import subuserlib.installTime
-import subuserlib.permissions
-import subuserlib.availablePrograms
-import subuserlib.paths
+import subuserlib.commandLineArguments
 
-def printHelp():
-  print("""
+def parseCliArgs():
+  usage = "usage: subuser %prog PROGRAM_NAME(s)"
+  description = """
 Mark a program as needing to be updated.  Note, that this may mess up the formatting of it's permissions.json file.
 
 Usage:
 $ subuser mark-as-needing-update program-name
-""")
+"""
+  parser=optparse.OptionParser(usage=usage,description=description,formatter=subuserlib.commandLineArguments.HelpFormatterThatDoesntReformatDescription())
+  return parser.parse_args()
 
 #################################################################################################
-if len(sys.argv) == 1 or sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.argv[1] == "--help":
-  printHelp()
-  sys.exit()
-#################################################################################################
 
-programName = sys.argv[1]
+options,programNames = parseCliArgs()
 
-if not subuserlib.availablePrograms.available(programName):
-  print(programName+ " is not the name of any known program.  Cannot mark it as having an update.")
-  print("\nAvailable programs are: ")
-  availableProgramsPath = subuserlib.paths.getAvailableProgramsPath()
-  print(' '.join(sorted([program for program in os.listdir(availableProgramsPath)])))
-else:
-  permissions = subuserlib.permissions.getPermissions(programName)
-  permissions["last-update-time"] = subuserlib.installTime.currentTimeString()
-  subuserlib.permissions.setPermissions(programName,permissions)
+for program in programNames:
+  subuserlib.installTime.markProgramAsNeedingUpdate(program)

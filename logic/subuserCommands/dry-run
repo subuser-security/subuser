@@ -20,7 +20,7 @@ def getArgsToPassToProgram():
     return []
 
 #################################################################################################
-if len(sys.argv) == 1 or sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.argv[1] == "--help":
+if len(sys.argv) == 1 or {"help","-h","--help"} & set(sys.argv):
   printHelp()
   sys.exit()
 #################################################################################################

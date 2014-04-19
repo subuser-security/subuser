@@ -1,21 +1,21 @@
 #!/usr/bin/env python
 # This file should be compatible with both Python 2 and 3.
 # If it is not, please file a bug report.
-import sys
+import optparse
 import subuserlib.describe
+import subuserlib.commandLineArguments
 
-def printHelp():
-  print("""Show basic information about a program: Whether it is installed, what it's permissions are ect.
+def parseCliArgs():
+  usage = "usage: subuser %prog PROGRAM_NAME(s)"
+  description = """Show basic information about a program: Whether it is installed, what it's permissions are ect.
 Ex:
 $ subuser describe firefox
 <lots of info>
-""")
+"""
+  parser = optparse.OptionParser(usage=usage,description=description,formatter=subuserlib.commandLineArguments.HelpFormatterThatDoesntReformatDescription())
+  return parser.parse_args()
 
-#################################################################################################
-if len(sys.argv) == 1 or {"help","-h","--help"} & set(sys.argv[]):
-  printHelp()
-  sys.exit()
-#################################################################################################
+(options,args) = parseCliArgs()
 
-for program in sys.argv[1:]:
+for program in args:
   subuserlib.describe.printInfo(program,True)

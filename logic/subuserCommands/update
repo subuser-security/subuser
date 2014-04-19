@@ -3,47 +3,56 @@
 # If it is not, please file a bug report.
 
 # This command updates all or some of the installed subuser programs.
-import sys
+import sys,optparse
 import subprocess
 import subuserlib.update
 import subuserlib.install
+
+import subuserlib.commandLineArguments
+
+
 #####################################################################################
-def printHelp():
-  print("""Update subuser-programs:
-  $ subuser update [program-names] [options]
-  
-  OPTIONS:
+
+def parseCliArgs():
+  usage = "usage: subuser %prog [options] PROGRAM_NAME(s)"
+  description = """Update subuser-programs.
+
+Note: You can either pass a list of program names, or you can pass the argument `all`:
+
   all 
-      Updates all subuser-programs which have been marked as needing to be updated by the repo maintaner.
+      Updates all subuser-programs which have been marked as out of date.
       You should run git pull before doing this in order to get an up-to-date program list.
 
-  EXAMPLES:
+  EXAMPLE:
     $ subuser update all
-    
-    # updates vim and firefox whether they are marked as needing to be updated or not.
+ 
+Explicitly listing programs at the command line, force reinstalls the program, whether it is marked as being out of date or not.
+
+EXAMPLE:
+
     $ subuser update vim firefox
-    
-""")
 
-#################################################################################################
-if len(sys.argv) == 1 or sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.argv[1] == "--help":
-  printHelp()
-  sys.exit()
+Reinstalls vim and firefox.
+"""
+  parser=optparse.OptionParser(usage=usage,description=description,formatter=subuserlib.commandLineArguments.HelpFormatterThatDoesntReformatDescription())
+  return parser.parse_args()
 #################################################################################################
 
-commandOptionList = ['all']
-programsToBeUpdated, userOptionList = subuserlib.commandLineArguments.parseCommandLineArgs(sys.argv[1:], commandOptionList)
+options,args = parseCliArgs()
 
-if 'all' in userOptionList:
-  #use this in case the user specified also some program names plus --all
-  programsToBeUpdated = list(set(programsToBeUpdated + subuserlib.update.getProgramsWhosLastUpdateTimesChanged())) 
+if ["all"] == args:
+  programsToBeUpdated = list(set(programsToBeUpdated + subuserlib.update.getProgramsWhosLastUpdateTimesChanged()))
+  userSpecifiedPrograms = []
+else:
+  programsToBeUpdated = args
+  userSpecifiedPrograms = args
 
 #Check if there is anything to do
 if len(programsToBeUpdated) > 0:
   subuserlib.update.updateSomePrograms(programsToBeUpdated)
   # Ensure that all programs which we have requested be updated are still installed after the update:
-  for program in programsToBeUpdated:
+  for program in userSpecifiedPrograms:
     if not subuserlib.registry.isProgramInstalled(program):
       subuserlib.install.installProgramAndDependencies(program, False)
 else:
-  print("\nThere is nothing to be updated")
+  sys.exit("""You need to specify a list of programs to be updated, or pass 'all' to update all programs.  For more info issue this command with the -h argument.""")

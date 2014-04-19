@@ -1,30 +1,30 @@
 #!/usr/bin/env python
 # This file should be compatible with both Python 2 and 3.
 # If it is not, please file a bug report.
-import sys
-import os
+import sys,os,optparse
+
 import subuserlib.registry
 import subuserlib.paths
 import subuserlib.permissions
 import subuserlib.availablePrograms
 import subuserlib.commandLineArguments
 
-def printHelp():
-  print("""List subuser-programs:
-  $ subuser list [available/installed]
-  
-  OPTIONS:
+def parseCliArgs():
+  usage = "usage: subuser %prog WHAT_TO_LIST [options]"
+  description = """List subuser-programs.  You can use this command to list programs that are:
+
   available 
       List all subuser-programs
   installed 
       List all subuser-programs which are already installed/registered
-  --short 
-      output only program names
 
   EXAMPLES:
     $ subuser list available --short
     $ subuser list installed
-""")
+"""
+  parser=optparse.OptionParser(usage=usage,description=description,formatter=subuserlib.commandLineArguments.HelpFormatterThatDoesntReformatDescription())
+  parser.add_option("--short",dest="short",action="store_true",default=False,help="Only display the names of the programs to be listed, and no other information.")
+  return parser.parse_args()
 
 def printProgramList(programs):
   for program in programs:
@@ -36,16 +36,14 @@ def printProgramList(programs):
     print("\n")
 
 #################################################################################################
-if len(sys.argv) == 1 or sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.argv[1] == "--help":
-  printHelp()
-  sys.exit()
-#################################################################################################
 
-commandOptionList = ['available', 'installed', '--short']
-userProgramList, userOptionList = subuserlib.commandLineArguments.parseCommandLineArgs(sys.argv[1:], commandOptionList)
+options,args = parseCliArgs()
 
-if 'available' in userOptionList:
-  if '--short' in userOptionList:
+if len(args)==0:
+  sys.exit("Nothing to list. Issue this command with the -h argument for help.")
+
+if 'available' in args:
+  if options.short:
     print(subuserlib.availablePrograms.getAvailableProgramsText(addNewLine=False, indentSpaces=3))
     sys.exit()
   else:
@@ -55,8 +53,8 @@ if 'available' in userOptionList:
     availablePrograms = subuserlib.availablePrograms.getAvailablePrograms()
     printProgramList(availablePrograms)
 
-if 'installed' in userOptionList:
-  if '--short' in userOptionList:
+if 'installed' in args:
+  if options.short:
     print(subuserlib.registry.getInstalledProgramsText(addNewLine=False, indentSpaces=3))
     sys.exit()
   else:

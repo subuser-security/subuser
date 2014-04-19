@@ -2,16 +2,19 @@
 # This file should be compatible with both Python 2 and 3.
 # If it is not, please file a bug report.
 import sys
+import optparse
 import subuserlib.registry
 import subuserlib.permissions
 import subuserlib.subprocessExtras
+import subuserlib.commandLineArguments
 
 ####################################################
-def printHelp():
-  print(""" Clean your system of unneeded images/libaries/executable-less programs.  If a libarary has no programs depending on it, uninstall that libarary.  Run this command with:
-
-$ subuser clean
-""")
+def parseCliArgs():
+  usage = "usage: subuser %prog"
+  description = """ Clean your system of unneeded images/libaries/executable-less programs.  If a libarary has no programs depending on it, uninstall that libarary.
+"""
+  parser = optparse.OptionParser(usage=usage,description=description,formatter=subuserlib.commandLineArguments.HelpFormatterThatDoesntReformatDescription())
+  return parser.parse_args()
 
 def gatherUnneededLibs():
   """ Returns a list of unneeded libaries. """
@@ -41,11 +44,5 @@ def performUninstalls(programsToUninstall):
 
 #################################################################################################
 
-# This command takes no arguments.
-# If the user passed it one or more arguments,
-# They cleary don't know what they're doing,
-# and need to see the help message.
-if len(sys.argv) > 1: 
-  printHelp()
-else:
-  cleanUnneededLibs()
+parseCliArgs()
+cleanUnneededLibs()

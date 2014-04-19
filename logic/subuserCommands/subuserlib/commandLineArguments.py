@@ -1,27 +1,33 @@
 #!/usr/bin/env python
 # This file should be compatible with both Python 2 and 3.
 # If it is not, please file a bug report.
-import availablePrograms
 
-def parseCommandLineArgs(argvList, commandOptionList):
+import optparse
+
+def advancedInstallOptionsGroup(parser):
+  """  These are advanced instalation options shared by several commands, install, update ect. """
+
+  advancedOptions = optparse.OptionGroup(parser,"Advanced Options")
+  advancedOptions.add_option("--from-cache",action="store_true",default=False,dest="useCache",help="""Use the layer cache while building the program's image.  This is dangerous and therefore dissabled by default.  The layer cache caches certain commands used to build layers.  Since some commands such as "apt-get update" should not be cached we turn this option off by default.""")
+  return advancedOptions
+
+class HelpFormatterThatDoesntReformatDescription (optparse.HelpFormatter):
+  """Format help with indented section bodies but don't reformat the description.
   """
-This function parses a list of command line arguments.
 
-It returns a tuple (preCheckProgramNameList, userOptionList) where preCheckProgramNameList is a list of names of programs and userOptionList is a list of options that have been passed.  Simply put, anything that that you pass in the seccond argument to this function is an option, everything else is added to the preCheckProgramNameList.
- 
- e.g:
-  userProgramList = parseCommandLineArgs(sys.argv[1:], [])[0]
-  
-  commandOptionList = ['--from-cache']
-  userProgramList, userOptionList = parseCommandLineArgs(sys.argv[1:], commandOptionList)
-  """
-  preCheckProgramNameList = []
-  userOptionList = []
-  
-  for item in argvList:
-    if item in commandOptionList:
-      userOptionList.append(item)
-    else:
-      preCheckProgramNameList.append(item)
+  def __init__(self,
+               indent_increment=2,
+               max_help_position=24,
+               width=None,
+               short_first=1):
+      optparse.HelpFormatter.__init__(
+          self, indent_increment, max_help_position, width, short_first)
 
-  return (preCheckProgramNameList, userOptionList)
+  def format_usage(self, usage):
+      return optparse._("Usage: %s\n") % usage
+
+  def format_heading(self, heading):
+      return "%*s%s:\n" % (self.current_indent, "", heading)
+
+  def format_description(self, description):
+    return description
