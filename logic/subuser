@@ -18,9 +18,9 @@ if len(sys.argv) < 2 or sys.argv[1] == "help" or sys.argv[1] == "--help" or sys.
 
 commandExecutablePath = subuserCommands.subuserlib.commands.getSubuserCommandPath(sys.argv[1])
 
-if not os.path.exists(commandExecutablePath):
-  print("Command not found:"+sys.argv[1])
+if not commandExecutablePath:
+  print("Command not found: "+sys.argv[1])
   printHelp()
-  exit()
+  sys.exit(1)
 
 subprocess.call([commandExecutablePath]+sys.argv[2:])
