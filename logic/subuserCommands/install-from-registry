@@ -20,10 +20,23 @@ Your installed-programs.js file must be in the right place.  It should probably 
   parser.add_option_group(advancedInstallOptions)
   return parser.parse_args()
 
+def findOutWhatShouldBeInstalledButIsnt(programsThatAreSupposedToBeInstalled):
+  toInstall=[]
+  for program in programsThatAreSupposedToBeInstalled:
+    if not subuserlib.dockerImages.isProgramsImageInstalled(program):
+      toInstall.append(program)
+  return toInstall
+
 def installFromRegistry(useCache):
   """ Installs all of the programs listed in installed-programs.json file. """
   programsThatAreSupposedToBeInstalled = subuserlib.registry.getInstalledPrograms()
-  for program in programsThatAreSupposedToBeInstalled:
+  programsToInstall = findOutWhatShouldBeInstalledButIsnt(programsThatAreSupposedToBeInstalled)
+  print("The following programs will be installed.")
+  for program in programsToInstall:
+    print(program)
+  if not raw_input("Continue? [y/N]").lower()=="y":
+    sys.exit()
+  for program in programsToInstall:
     print("\n=== Installing "+program+" from installed-programs.json registry....\n")
     subuserlib.install.installProgramAndDependencies(program, useCache)
 
