@@ -110,14 +110,14 @@ def installProgramAndDependencies(programName, useCache):
   """
   Build the dependencytree and install bottom->up
   """
-  if registry.isProgramInstalled(programName):
+  if dockerImages.isProgramsImageInstalled(programName):
     print("<{0}> is already installed.".format(programName))
   else:
     #get dependencytree and install bottom->up
     dependencyTree = reversed(registry.getDependencyTree(programName))
     programsToBeInstalled = []
     for dependency in dependencyTree:
-      if not registry.isProgramInstalled(dependency):
+      if not dockerImages.isProgramsImageInstalled(dependency):
         programsToBeInstalled.append(dependency)
 
     print("The following programs will be installed.")
