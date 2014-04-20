@@ -3,16 +3,11 @@
 # If it is not, please file a bug report.
 
 # This command updates all or some of the installed subuser programs.
-import sys
-import subprocess
-import registry
-import permissions
-import dockerImages
-import uninstall
-import install
-import subprocessExtras
-import commandLineArguments
-import availablePrograms
+
+#external imports
+import sys,subprocess
+#internal imports
+import registry,permissions,dockerImages,uninstall,install,subprocessExtras,commandLineArguments,availablePrograms
 
 #####################################################################################
 def getProgramsWhosLastUpdateTimesChanged():

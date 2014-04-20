@@ -4,11 +4,10 @@
 
 # TODO, refactor by putting helper functions for both repositories.py and configs.py in one place.
 
-import os
-import inspect
-import json
-import collections
-import sys
+#external imports
+import os,inspect,json,collections,sys
+#internal imports
+#import ...
 
 home = os.path.expanduser("~")
 

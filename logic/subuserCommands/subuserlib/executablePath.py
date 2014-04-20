@@ -1,7 +1,11 @@
 #!/usr/bin/env python
 # This file should be compatible with both Python 2 and 3.
 # If it is not, please file a bug report.
+
+#external imports
 import os
+#internal imports
+#import ...
 
 def isExecutable(fpath):
   """ Returns true if the given filepath points to an executable file. """

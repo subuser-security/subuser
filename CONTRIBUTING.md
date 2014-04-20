@@ -23,6 +23,8 @@ Contributing code to the repository:
 
  * Before writting comments read this article: http://rhodesmill.org/brandon/2012/one-sentence-per-line/
 
+ * Imports should be grouped into two groups.  The first group is for external imports, like importing modules from the standard library.  The seccond group is for subuser specific modules.  You can see how I do it by looking at one of the existing modules.
+
  * Indentation is done with two spaces.
 
  * Tabs are forbidden.

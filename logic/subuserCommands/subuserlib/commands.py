@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 # This file should be compatible with both Python 2 and 3.
 # If it is not, please file a bug report.
+
+#external imports
 import os
-import paths
-import executablePath
+#internal imports
+import executablePath,paths
 
 def _getSubuserCommandsPath():
   """ Return the path to the directory where the individual built-in subuser command executables are stored. """

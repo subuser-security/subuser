@@ -2,16 +2,11 @@
 # This file should be compatible with both Python 2 and 3.
 # If it is not, please file a bug report.
 
-import sys
-import os
-import getpass
-import subprocess
-import tempfile
+#external imports
+import sys,os,getpass,subprocess,tempfile
+#internal imports
+import subuserlib.permissions,subuserlib.dockerImages,subuserlib.docker,subuserlib.update
 
-import subuserlib.permissions
-import subuserlib.dockerImages
-import subuserlib.docker
-import subuserlib.update
 ###############################################################
 username = getpass.getuser()
 cwd = os.getcwd()

@@ -1,16 +1,11 @@
 #!/usr/bin/env python
 # This file should be compatible with both Python 2 and 3.
 # If it is not, please file a bug report.
-import sys
-import os
-import stat
-import permissions
-import paths
-import installTime
-import registry
-import dockerImages
-import docker
-import subprocessExtras
+
+#external imports
+import sys,os,stat
+#internal imports
+import permissions,paths,installTime,registry,dockerImages,docker,subprocessExtras
 
 def installExecutable(programName):
   redirect="""#!/bin/bash\nsubuser run {0} $@\n""".format(programName)

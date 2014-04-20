@@ -1,12 +1,11 @@
 #!/usr/bin/env python
 # This file should be compatible with both Python 2 and 3.
 # If it is not, please file a bug report.
-import sys,os,subprocess
 
-import paths
-import registry
-import dockerImages
-import docker
+#external imports
+import sys,os,subprocess
+#internal imports
+import paths,registry,dockerImages,docker
 
 def uninstall(programName):
   print("Uninstalling "+programName)

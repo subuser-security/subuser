@@ -2,10 +2,10 @@
 # This file should be compatible with both Python 2 and 3.
 # If it is not, please file a bug report.
 
-import subuserlib.permissions
-import subuserlib.availablePrograms
-import subuserlib.registry
-import subuserlib.dockerImages
+#external imports
+#import ...
+#internal imports
+import subuserlib.permissions,subuserlib.availablePrograms,subuserlib.registry,subuserlib.dockerImages
 
 def printInfo(program,showProgramStatus):
   """ Print information about a given program to standard output. """

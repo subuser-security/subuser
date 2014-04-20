@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # This file should be compatible with both Python 2 and 3.
 # If it is not, please file a bug report.
+
+#external imports
+import json,os,sys,collections
+#internal imports
 import paths
-import json
-import os
-import sys
-import collections
 
 allProgramsMustHavePermissions = "All subuser programs must have a permissions.json file as defined by the permissions.json standard: <https://github.com/subuser-security/subuser/blob/master/docs/permissions-dot-json-file-format.md>"
 

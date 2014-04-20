@@ -1,13 +1,11 @@
 #!/usr/bin/env python
 # This file should be compatible with both Python 2 and 3.
 # If it is not, please file a bug report.
-import sys
-import os
-import getpass
-import grp
-import subprocess
-import subprocessExtras
-import executablePath
+
+#external imports
+import sys,os,getpass,grp,subprocess
+#internal imports
+import subprocessExtras,executablePath
 
 def checkIfDockerIsSetupProperly():
   """ Exits and displays a user friendly error message if docker is not setup correctly. """

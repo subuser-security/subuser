@@ -1,12 +1,11 @@
 #!/usr/bin/env python
 # This file should be compatible with both Python 2 and 3.
 # If it is not, please file a bug report.
-import subprocess
-import subprocessExtras
-import availablePrograms
-import json
-import docker
-import sys
+
+#external imports
+import subprocess,json,sys
+#internal imports
+import subprocessExtras,availablePrograms,docker
 
 def askToInstallProgram(programName):
   """ Asks the user if they want to install the given program.  If they say yes, install it, if they decline exit."""

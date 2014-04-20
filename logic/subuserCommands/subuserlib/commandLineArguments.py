@@ -2,7 +2,10 @@
 # This file should be compatible with both Python 2 and 3.
 # If it is not, please file a bug report.
 
+#external imports
 import optparse
+#internal imports
+#import ...
 
 def advancedInstallOptionsGroup(parser):
   """  These are advanced instalation options shared by several commands, install, update ect. """
