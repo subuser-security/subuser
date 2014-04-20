@@ -1,6 +1,8 @@
 Contributing
 ------------
 
+Changes should be submitted in the form of a pull request.  If you do not have a github account, pull requests may be sent to the [my email](timothyhobbs@seznam.cz)
+
 There is no need to sign a contributor agreement.  All changes bellong to you and you agree to provide them to the world under the conditions of the LGPLv3 or later license agreement.
 
 Contributing programs to the database:
