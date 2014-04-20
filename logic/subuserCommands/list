@@ -40,7 +40,7 @@ if len(args)==0:
 
 if 'available' in args:
   if options.short:
-    print(subuserlib.availablePrograms.getAvailableProgramsText(addNewLine=False, indentSpaces=0))
+    print(' '.join(subuserlib.availablePrograms.getAvailablePrograms()))
     sys.exit()
   else:
     print("#########################################")
@@ -51,7 +51,7 @@ if 'available' in args:
 
 if 'installed' in args:
   if options.short:
-    print(subuserlib.registry.getInstalledProgramsText(addNewLine=False, indentSpaces=0))
+    print(' '.join(subuserlib.registry.getInstalledPrograms()))
     sys.exit()
   else:
     print("#########################################")
