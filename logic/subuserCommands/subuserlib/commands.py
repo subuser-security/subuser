@@ -7,16 +7,12 @@ import os
 #internal imports
 import executablePath,paths
 
-nonCommands = ["__init__.py", "__init__.pyc", "subuserlib"]
+nonCommands = {"__init__.py", "__init__.pyc", "subuserlib"}
 
 def getBuiltInSubuserCommands():
   """ Get a list of the names of the built in subuser commands. """
-  _builtIns = os.listdir(paths.getSubuserCommandsDir())
-  builtIns  = []
-  for builtIn in _builtIns:
-   if not builtIn in nonCommands:
-    builtIns.append(builtIn)
-  return builtIns
+  apparentCommandsSet = set( os.listdir(paths.getSubuserCommandsDir()))
+  return list(apparentCommandsSet.difference(nonCommands))
 
 def getExternalSubuserCommands():
   """ Return the list of "external" subuser commands.  These are not built in commands but rather stand alone executables which appear in the user's $PATH and who's names start with "subuser-" """
