@@ -36,7 +36,7 @@ def getSubuserCommands():
   return getBuiltInSubuserCommands() + getExternalSubuserCommands()
 
 def getSubuserCommandPath(command):
-  builtInCommandPath = os.path.join(_getSubuserCommandsPath(),command)
+  builtInCommandPath = os.path.join(paths.getSubuserCommandsDir(),command)
   if os.path.exists(builtInCommandPath):
     return builtInCommandPath
   else:
