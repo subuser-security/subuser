@@ -7,15 +7,11 @@ import os
 #internal imports
 import executablePath,paths
 
-def _getSubuserCommandsPath():
-  """ Return the path to the directory where the individual built-in subuser command executables are stored. """
-  return os.path.join(paths.getSubuserDir(),"logic","subuserCommands")
-
 nonCommands = ["__init__.py", "__init__.pyc", "subuserlib"]
 
 def getBuiltInSubuserCommands():
   """ Get a list of the names of the built in subuser commands. """
-  _builtIns = os.listdir(_getSubuserCommandsPath())
+  _builtIns = os.listdir(paths.getSubuserCommandsDir())
   builtIns  = []
   for builtIn in _builtIns:
    if not builtIn in nonCommands:

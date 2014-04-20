@@ -92,3 +92,7 @@ def getDockerfilePath(programSrcDir):
   Get path to the Dockerfile From the program's docker-image directory.
   """
   return os.path.join(programSrcDir,"docker-image","Dockerfile")
+
+def getSubuserCommandsDir():
+  """ Return the path to the directory where the individual built-in subuser command executables are stored. """
+  return os.path.join(getSubuserDir(),"logic","subuserCommands")
