@@ -19,17 +19,18 @@ def getExternalSubuserCommands():
 
   def isPathToSubuserCommand(path):
     directory, executableName = os.path.split(path)
-    return executableName[:8] == "subuser-"
+    return executableName.startswith("subuser-")
 
-  externalCommandPaths = executablePath.queryPath(isPathToSubuserCommand)
+  externalCommandPaths = executablePath.queryPATH(isPathToSubuserCommand)
+
   externalCommands = []
-
+  subuserPrefixLength=len("subuser-")
   for externalCommandPath in externalCommandPaths: 
     commandDir, executableName = os.path.split(externalCommandPath)
-    commandName = executableName[8:]
+    commandName = executableName[subuserPrefixLength:]
     externalCommands.append(commandName)
-
-  return externalCommands
+  
+  return list(set(externalCommands)) # remove duplicate entries
 
 def getSubuserCommands():
   """ Returns a list of commands that may be called by the user. """

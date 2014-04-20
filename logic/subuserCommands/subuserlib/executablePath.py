@@ -28,8 +28,10 @@ def which(program):
    
   return None
 
-def queryPath(test):
-  """ Given a function which takes an absoulte filepath and returns true if the string is what was being searched for, return a list of full paths to matched files. """
+def queryPATH(test):
+  """ Search the PATH for an executable.
+
+Given a function which takes an absoulte filepath and returns True when the filepath matches the query, return a list of full paths to matched files. """
   matches = []
   def appendIfMatches(exeFile):
     if isExecutable(exeFile):
