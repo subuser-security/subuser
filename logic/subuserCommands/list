@@ -3,7 +3,7 @@
 # If it is not, please file a bug report.
 import sys,os,optparse
 
-import subuserlib.registry,subuserlib.paths,subuserlib.permissions,subuserlib.availablePrograms,subuserlib.commandLineArguments
+import subuserlib.registry,subuserlib.paths,subuserlib.permissions,subuserlib.availablePrograms,subuserlib.commandLineArguments,subuserlib.dockerImages
 
 def parseCliArgs():
   usage = "usage: subuser %prog WHAT_TO_LIST [options]"
@@ -13,6 +13,9 @@ def parseCliArgs():
       List all subuser-programs
   installed 
       List all subuser-programs which are already installed/registered
+
+  running
+       List all running subuser programs
 
   EXAMPLES:
     $ subuser list available --short
@@ -31,6 +34,16 @@ def printProgramList(programs):
     print("Maintainer: "+permissions["maintainer"])
     print("\n")
 
+def listPrograms(programsToList,groupName):
+  if options.short:
+    print(' '.join(programsToList))
+    sys.exit()
+  else:
+    print("#########################################")
+    print(groupName+" programs:")
+    print("#########################################")
+    printProgramList(programsToList)
+
 #################################################################################################
 
 options,args = parseCliArgs()
@@ -39,23 +52,10 @@ if len(args)==0:
   sys.exit("Nothing to list. Issue this command with the -h argument for help.")
 
 if 'available' in args:
-  if options.short:
-    print(' '.join(subuserlib.availablePrograms.getAvailablePrograms()))
-    sys.exit()
-  else:
-    print("#########################################")
-    print("Available programs:")
-    print("#########################################")
-    availablePrograms = subuserlib.availablePrograms.getAvailablePrograms()
-    printProgramList(availablePrograms)
+  listPrograms(subuserlib.registry.getAvailablePrograms(),"Available")
 
 if 'installed' in args:
-  if options.short:
-    print(' '.join(subuserlib.registry.getInstalledPrograms()))
-    sys.exit()
-  else:
-    print("#########################################")
-    print("Installed programs:")
-    print("#########################################")
-    installedPrograms = subuserlib.registry.getInstalledPrograms()
-    printProgramList(installedPrograms)
+  listPrograms(subuserlib.registry.getInstalledPrograms(),"Installed")
+
+if 'running' in args:
+  listPrograms(subuserlib.dockerImages.getRunningSubuserPrograms(),"Running")
