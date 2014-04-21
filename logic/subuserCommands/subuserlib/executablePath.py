@@ -22,7 +22,7 @@ def which(program):
     def matchesProgram(path):
       fpath,fname = os.path.split(path)
       return program == fname
-    programMatches = queryPath(matchesProgram)
+    programMatches = queryPATH(matchesProgram)
     if len(programMatches) > 0:
       return programMatches[0]
    
