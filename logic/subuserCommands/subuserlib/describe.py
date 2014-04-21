@@ -5,7 +5,7 @@
 #external imports
 #import ...
 #internal imports
-import subuserlib.permissions,subuserlib.availablePrograms,subuserlib.registry,subuserlib.dockerImages
+import subuserlib.permissions,subuserlib.availablePrograms,subuserlib.registry,subuserlib.dockerImages,subuserlib.dockerPs
 
 def printInfo(program,showProgramStatus):
   """ Print information about a given program to standard output. """
@@ -25,7 +25,7 @@ def printInfo(program,showProgramStatus):
   else:
     print(" Installed: True")
     if showProgramStatus:
-      print(" Running: "+str(subuserlib.dockerImages.isProgramRunning(program)))
+      print(" Running: "+str(subuserlib.dockerPs.isProgramRunning(program)))
       if "last-update-time" in permissions.keys():
         print(" Needs update: "+str(not permissions["last-update-time"] == registry[program]["last-update-time"]))
 

@@ -49,23 +49,3 @@ def getContainerImageTag(containerID):
   inspectOutput = docker.getDockerOutput(["inspect",containerID])
   containerInfo = json.loads(inspectOutput)
   return containerInfo[0]["Config"]["Image"]
-
-def getRunningSubuserPrograms():
-  """ Returns a list of the currently running subuser programs. """
-  psOutput = docker.getDockerOutput(["ps","-q"])
-  runningContainerIDs = filter(len,psOutput.split("\n")) #We filter out emty strings
-  runningSubuserPrograms = set()
-  for container in runningContainerIDs:
-    containerImageTag = getContainerImageTag(container)
-    subuserPrefix = "subuser-"
-    if containerImageTag.startswith(subuserPrefix):
-      runningSubuserPrograms.add(containerImageTag[len(subuserPrefix):])
-  return list(runningSubuserPrograms)
-
-def isProgramRunning(name):
-  """ Returns True if the program is currently running. """
-  return name in getRunningSubuserPrograms()
-
-def areProgramsRunning(programs):
-  """ Returns True if at least one of the listed programs is currently running. """
-  return not (set(getRunningSubuserPrograms())&set(programs)) == set()

@@ -50,12 +50,12 @@ def runUpdate(programsToBeUpdated):
   else:
     sys.exit()
 
-  while dockerImages.areProgramsRunning(programsToBeUpdated):
+  while dockerPs.areProgramsRunning(programsToBeUpdated):
     print("PLEASE: close these programs before continuing. If there seem to be containers hanging around when the program isn't even running you might try:")
     print(" $ docker kill <container-id>")
     print("You still need to close:")
     for program in programsToBeUpdated:
-      if dockerImages.isProgramRunning(program):
+      if dockerPs.isProgramRunning(program):
         print(program)
     shouldQuit = raw_input("Press enter to continue(or q to quit): ")
     if shouldQuit == 'q':
