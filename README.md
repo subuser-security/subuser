@@ -190,6 +190,8 @@ Design flaws/bugs in subuser:
 See also links:
 ---------------
 
+ * [Qubes OS](http://qubes-os.org/trac)
+
  * [Java Web Start](http://en.wikipedia.org/wiki/Java_Web_Start)
 
  * [AppArmor](http://en.wikipedia.org/wiki/AppArmor)
