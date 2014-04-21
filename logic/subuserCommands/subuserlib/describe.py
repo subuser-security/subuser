@@ -29,11 +29,10 @@ def printInfo(program,showProgramStatus):
     if subuserlib.permissions.getSharedHome(permissions):
       print(" Shares it's home directory with: "+subuserlib.permissions.getSharedHome(permissions))
     # TODO print dependencies.
-    # TODO actually prety print the user-dirs and system-dirs lists.
     if not subuserlib.permissions.getUserDirs(permissions)==[]:
-      print(" Has access to the following user directories: "+str(subuserlib.permissions.getUserDirs(permissions)))
+      print(" Has access to the following user directories: '~/"+"' '~/".join(subuserlib.permissions.getUserDirs(permissions))+"'")
     if not subuserlib.permissions.getSystemDirs(permissions)==[]:
-      print(" Can read from the following system directories: "+str(subuserlib.permissions.getSystemDirs(permissions)))
+      print(" Can read from the following system directories: '"+"' '".join(subuserlib.permissions.getSystemDirs(permissions))+"'")
     if subuserlib.permissions.getX11(permissions):
       print(" Can display X11 windows.")
     if subuserlib.permissions.getGraphicsCard(permissions):
