@@ -74,7 +74,7 @@ def installFromDockerfile(programName, programSrcDir, useCache):
   else:
     cacheArg = "--no-cache=true"
   dockerImageDir = os.path.join(programSrcDir,"docker-image")
-  docker.runDockerAndExitIfItFails(["build","-rm",cacheArg,"--tag=subuser-"+programName+"",dockerImageDir])
+  docker.runDockerAndExitIfItFails(["build","--rm",cacheArg,"--tag=subuser-"+programName+"",dockerImageDir])
 
 
 def installProgram(programName, useCache):
