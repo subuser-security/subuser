@@ -54,8 +54,9 @@ def runUpdate(programsToBeUpdated):
     print("PLEASE: close these programs before continuing. If there seem to be containers hanging around when the program isn't even running you might try:")
     print(" $ docker kill <container-id>")
     print("You still need to close:")
-    for runningProgram in dockerImages.getRunningProgramsWithNames(programsToBeUpdated):
-      print(runningProgram)
+    for program in programsToBeUpdated:
+      if dockerImages.isProgramRunning(program):
+        print(program)
     shouldQuit = raw_input("Press enter to continue(or q to quit): ")
     if shouldQuit == 'q':
       exit()
