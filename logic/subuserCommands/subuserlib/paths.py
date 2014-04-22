@@ -24,8 +24,7 @@ def getRepoPaths():
       repoPaths.append(info["path"])
     return repoPaths
   except KeyError:
-    print("Looking up repo-paths failed. Your repositories.json file is invalid.")
-    sys.exit(1)
+    sys.exit("Looking up repo-paths failed. Your repositories.json file is invalid.")
 
 def getProgramSrcDir(programName):
   """
@@ -54,12 +53,11 @@ Returns None if no permission file is found.
   if os.path.exists(userPermissionsPath):
     return userPermissionsPath
   else:
-    repoPaths = getRepoPaths()
-    for repoPath in repoPaths:
-      permissionsPath = os.path.join(repoPath,programName,"permissions.json")
-      if os.path.exists(permissionsPath):
-        return permissionsPath
-  return None
+    sourceDir = getProgramSrcDir(programName)
+    if not sourceDir == None:
+      return os.path.join(sourceDir,"permissions.json")
+    else:
+      return None
 
 def getProgramRegistryPath():
   """ Return the path to the list of installed programs json file. """
