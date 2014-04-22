@@ -17,8 +17,7 @@ def markProgramAsNeedingUpdate(programName):
   if not availablePrograms.available(programName):
     print(programName+ " is not the name of any known program.  Cannot mark it as having an update.")
     print("\nAvailable programs are: ")
-    availableProgramsPath = paths.getAvailableProgramsPath()
-    print(' '.join(sorted([program for program in os.listdir(availableProgramsPath)])))
+    print(' '.join(availablePrograms.getAvailablePrograms()))
   else:
     permissions_ = permissions.getPermissions(programName)
     permissions_["last-update-time"] = currentTimeString()
