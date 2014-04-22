@@ -8,7 +8,12 @@ import sys,os,stat
 import permissions,paths,installTime,registry,dockerImages,docker,subprocessExtras
 
 def installExecutable(programName):
-  redirect="""#!/bin/bash\nsubuser run {0} $@\n""".format(programName)
+  """
+Install a trivial executable script into the PATH which launches the subser program.
+  """
+  redirect="""#!/bin/bash
+subuser run """+programName+""" $@
+"""
   executablePath=paths.getExecutablePath(programName)
   with open(executablePath, 'w') as file_f:
     file_f.write(redirect)
@@ -16,57 +21,39 @@ def installExecutable(programName):
     os.chmod(executablePath, stat.S_IMODE(st.st_mode) | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
 
 def installFromBaseImage(programName,programSrcDir):
+  """
+Build a docker base image using a script and then install that base image.
+  """
   buildImageScriptPath = paths.getBuildImageScriptPath(programSrcDir)
-  #Report to user
-  while True:
-    sys.stdout.write("""\nATTENTION!!!
+  print("""\nATTENTION!
 
-  You have asked to install the <{0}>. Doing so requires that the following shell script be run on your computer.
-  SHELL SCRIPT PATH: <{1}>
+  Installing <"""+programName+"""> requires that the following shell script be run on your computer: <"""+buildImageScriptPath+"""> If you do not trust this shell script do not run it as it may be faulty or malicious!
 
-  - Do quit [q] or press ENTER
   - Do you want to view the full contents of this shell script [v]?
   - Do you want to continue? (Type "run" to run the shell script)
+  - To quit, press [q].
 
-  [v/run/q]: """.format(programName, buildImageScriptPath))
-    sys.stdout.flush()
-    try:
-      userInput = sys.stdin.readline().strip()
-      if not userInput:
-        sys.exit("\nOperation aborted.  Exiting.")
-      else:
-        break
-    except KeyboardInterrupt:
-      sys.exit("\nOperation aborted.  Exiting.")
+  [v/run/Q]: """)
+  try:
+    userInput = sys.stdin.readline().strip()
+  except KeyboardInterrupt:
+    sys.exit("\nOperation aborted.  Exiting.")
 
   if userInput == "v":
+    print('\n===================== SCRIPT CODE =====================\n')
     with open(buildImageScriptPath, 'r') as file_f:
-      print('\n===================== SCRIPT CODE =====================\n')
       print(file_f.read())
-      print('\n===================== END SCRIPT CODE =====================\n')
-
-    while True:
-      sys.stdout.write("""SHELL SCRIPT PATH: <{0}>
-
-    - Do quit [q] or press ENTER
-    - Do you want to continue? (Type "run" to run the shell script)
-
-    [run/q]: """.format(buildImageScriptPath))
-      sys.stdout.flush()
-      try:
-        userInput = sys.stdin.readline().strip()
-        if userInput != "run":
-          sys.exit("\nOperation aborted.  Exiting.")
-        else:
-          break
-      except KeyboardInterrupt:
-        sys.exit("\nOperation aborted.  Exiting.")
-
+    print('\n===================== END SCRIPT CODE =====================\n')
+    return installFromBaseImage(programName,programSrcDir)
+  
   if userInput == "run":
-    #Do the installation via SHELL SCRIPT
+    #Do the installation via SCRIPT
     st = os.stat(buildImageScriptPath)
     os.chmod(buildImageScriptPath, stat.S_IMODE(st.st_mode) | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
     subprocessExtras.subprocessCheckedCall([buildImageScriptPath])
+    return
+
+  sys.exit("Will not run install script.  Nothing to do.  Exiting.")
 
 def installFromDockerfile(programName, programSrcDir, useCache):
   if useCache:
@@ -76,12 +63,11 @@ def installFromDockerfile(programName, programSrcDir, useCache):
   dockerImageDir = os.path.join(programSrcDir,"docker-image")
   docker.runDockerAndExitIfItFails(["build","--rm",cacheArg,"--tag=subuser-"+programName+"",dockerImageDir])
 
-
 def installProgram(programName, useCache):
   """
   Build the docker image associated with a program and create a tiny executable to add that image to your path.
   """
-  print("Installing {0} ...".format(programName))
+  print("Installing "+programName+" ...")
   programSrcDir = paths.getProgramSrcDir(programName)
   _DockerfilePath = paths.getDockerfilePath(programSrcDir)
   # Check if we use a 'Dockerfile' or a 'BuildImage.sh'
@@ -103,7 +89,7 @@ def installProgram(programName, useCache):
   except KeyError:
     lastUpdateTime = installTime.currentTimeString()
 
-  imageID = dockerImages.getImageID("subuser-{0}".format(programName))
+  imageID = dockerImages.getImageID("subuser-"+programName)
   registry.registerProgram(programName, lastUpdateTime, imageID)
 
 def installProgramAndDependencies(programName, useCache):
@@ -111,7 +97,7 @@ def installProgramAndDependencies(programName, useCache):
   Build the dependencytree and install bottom->up
   """
   if dockerImages.isProgramsImageInstalled(programName):
-    print("<{0}> is already installed.".format(programName))
+    print(programName+" is already installed.")
   else:
     #get dependencytree and install bottom->up
     dependencyTree = reversed(registry.getDependencyTree(programName))
