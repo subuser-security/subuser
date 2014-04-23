@@ -21,9 +21,6 @@ def getProgramsWhosLastUpdateTimesChanged():
       programsWhosLastUpdateTimeChanged.append(program)
   return programsWhosLastUpdateTimeChanged
 
-def uninstall(program):
-  uninstall.uninstall(program)
-
 def uninstallProgramsToBeUpdated(programsToBeUpdated):
   programsToBeUninstalled = set(programsToBeUpdated)
 
@@ -31,7 +28,7 @@ def uninstallProgramsToBeUpdated(programsToBeUpdated):
   while not programsToBeUninstalled == uninstalledPrograms:
     for program in programsToBeUninstalled:
       if not registry.hasInstalledDependencies(program):
-        uninstall(program)
+        uninstall.uninstall(program)
         uninstalledPrograms.add(program)
 
 def installProgramsToBeUpdated(programsToBeUpdated):
