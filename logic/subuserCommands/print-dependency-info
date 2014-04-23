@@ -14,7 +14,7 @@ Example:
     $ subuser print-dependency-info firefox vim xterm
 
 There are also several predefined sets of programs which can be used:
-  available - programs available for instalation
+  available - programs available for installation
     $ subuser print-dependency-info available
 
   installed - programs that have been installed
