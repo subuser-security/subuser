@@ -112,13 +112,13 @@ def getX11Args(permissions):
 
 def getGraphicsCardArgs(permissions):
   if subuserlib.permissions.getGraphicsCard(permissions):
-    return  ["-v=/dev/dri:/dev/dri:rw","-lxc-conf=lxc.cgroup.devices.allow = c 226:* rwm"]
+    return  ["-v=/dev/dri:/dev/dri:rw","--lxc-conf=lxc.cgroup.devices.allow = c 226:* rwm"]
   else:
     return []
 
 def getSoundCardArgs(permissions):
   if subuserlib.permissions.getSoundCard(permissions):
-    return  ["-v=/dev/snd:/dev/snd:rw","-lxc-conf=lxc.cgroup.devices.allow = c 116:* rwm"]
+    return  ["-v=/dev/snd:/dev/snd:rw","--lxc-conf=lxc.cgroup.devices.allow = c 116:* rwm"]
   else:
     return []
 
@@ -128,13 +128,13 @@ def getWebcamArgs(permissions):
     for device in os.listdir("/dev/"):
       if device.startswith("video"):
         cameraVolumes.append("-v=/dev/"+device+":/dev/"+device+":rw")
-    return  cameraVolumes+["-lxc-conf=lxc.cgroup.devices.allow = c 81:* rwm"]
+    return  cameraVolumes+["--lxc-conf=lxc.cgroup.devices.allow = c 81:* rwm"]
   else:
     return []
 
 def getPrivilegedArg(permissions):
   if subuserlib.permissions.getPrivileged(permissions):
-    return ["-privileged"]
+    return ["--privileged"]
   else:
     return []
 
