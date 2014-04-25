@@ -16,7 +16,7 @@ The json object MUST have the following fields:
    "description"                : "Simple universal text editor."
   ````
 
- * `maintainer`: This field marks who is responcible for the `permissions.json` file, and accompanying `Dockerfile`.  It does NOT mark who is responcible for the program itself.
+ * `maintainer`: This field marks who is responsible for the `permissions.json` file, and accompanying `Dockerfile`.  It does NOT mark who is responsible for the program itself.
 
   Ex:
   
