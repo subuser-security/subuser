@@ -10,7 +10,7 @@ import subuserlib.registry,subuserlib.permissions,subuserlib.subprocessExtras,su
 ####################################################
 def parseCliArgs():
   usage = "usage: subuser %prog"
-  description = """ Clean your system of unneeded images/libaries/executable-less programs.  If a libarary has no programs depending on it, uninstall that libarary.
+  description = """ Clean your system of unneeded images/libraries/executable-less programs.  If a libarary has no programs depending on it, uninstall that libarary.
 """
   parser = optparse.OptionParser(usage=usage,description=description,formatter=subuserlib.commandLineArguments.HelpFormatterThatDoesntReformatDescription())
   return parser.parse_args()
