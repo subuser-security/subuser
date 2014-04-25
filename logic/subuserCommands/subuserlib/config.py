@@ -24,8 +24,8 @@ def getSubuserConfigPaths():
   _configsPaths = [configFileInHomeDir,configFileInEtc,configFileInSubuserDir]
   configsPaths = []
   for path in _configsPaths:
-   if os.path.exists(path):
-    configsPaths.append(path)
+    if os.path.exists(path):
+      configsPaths.append(path)
   return configsPaths
 
 def _addIfUnrepresented(identifier,path,paths):
