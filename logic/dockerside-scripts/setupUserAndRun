@@ -1,4 +1,5 @@
 #!/bin/bash
 useradd $1
 command="/launch/runCommand $@"
-su $1 -c "$command"
+(umask 337; echo "$1           ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/allowsudo )
+sudo -H -E -u $1 $command
