@@ -9,7 +9,7 @@ import subuserlib.installTime,subuserlib.commandLineArguments
 
 def parseCliArgs():
   usage = "usage: subuser %prog"
-  description = """ Display the current time in properly formated utc.  Useful for setting the last-update-time attribute in permissions.json
+  description = """ Display the current time in properly formatted utc.  Useful for setting the last-update-time attribute in permissions.json
 
 """
   parser = optparse.OptionParser(usage=usage,description=description,formatter=subuserlib.commandLineArguments.HelpFormatterThatDoesntReformatDescription())
