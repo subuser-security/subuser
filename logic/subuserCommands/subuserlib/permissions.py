@@ -93,7 +93,7 @@ def getAllowNetworkAccess(permissions):
 
 def getStatefulHome(permissions):
   """ Should the state of this program's home directory be saved? """
-  return permissions.get("stateful-home",True)
+  return permissions.get("stateful-home",False)
 
 def getAsRoot(permissions):
   """ Should this program be run as the root user WITHIN it's docker container? """
