@@ -54,7 +54,7 @@ if len(args)==0:
   sys.exit("Nothing to list. Issue this command with the -h argument for help.")
 
 if 'available' in args:
-  listPrograms(subuserlib.registry.getAvailablePrograms(),"Available")
+  listPrograms(subuserlib.availablePrograms.getAvailablePrograms(),"Available")
 
 if 'installed' in args:
   listPrograms(subuserlib.registry.getInstalledPrograms(),"Installed")

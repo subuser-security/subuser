@@ -12,7 +12,7 @@ def available(programName):
   return not paths.getProgramSrcDir(programName) == None
 
 def getAvailablePrograms():
-  """ Returns a list of program's available for instalation. """
+  """ Returns a list of program's available for installation. """
   repoPaths = paths.getRepoPaths()
   availablePrograms = []
   for path in repoPaths:
