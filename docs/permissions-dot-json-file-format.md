@@ -163,7 +163,7 @@ Warning: This means, not only can the program play sounds, but it may listen to 
    ,"stateful-home"             : false
   ````
 
-  **Default**: `true`
+  **Default**: `false`
 
  * `as-root`: Run the program as the root user within the container.
 
