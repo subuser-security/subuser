@@ -12,7 +12,7 @@ def checkIfDockerIsSetupProperly():
   if not executablePath.which("docker"):
     sys.exit("""Error: Docker is not installed.
 
-For instalation instructions see <https://www.docker.io/gettingstarted/#h_installation>""")
+For installation instructions see <https://www.docker.io/gettingstarted/#h_installation>""")
   if not os.path.exists("/var/run/docker.pid"):
     sys.exit("""Error: Docker is not running.  You can launch it as root with:
 
