@@ -7,10 +7,13 @@ import sys,os,getpass,grp,subprocess
 #internal imports
 import subprocessExtras,executablePath
 
-def checkIfDockerIsSetupProperly():
-  """ Exits and displays a user friendly error message if docker is not setup correctly. """
-  if not executablePath.which("docker"):
-    sys.exit("""Error: Docker is not installed.
+def getDockerExecutable():
+  """ Return the name of the docker executable. Exits and displays a user friendly error message if docker is not setup correctly. """
+  if executablePath.which("docker-io"): # Docker is called docker-io on debian.
+    return "docker-io"
+  if executablePath.which("docker"):
+    return "docker"
+  sys.exit("""Error: Docker is not installed.
 
 For instalation instructions see <https://www.docker.io/gettingstarted/#h_installation>""")
   if not os.path.exists("/var/run/docker.pid"):
@@ -28,15 +31,12 @@ To learn how to become a member of the docker group please watch this video: <ht
 
 def runDocker(args):
   """ Run docker with the given command line arguments. """
-  checkIfDockerIsSetupProperly()
-  return subprocess.call(["docker"]+args)
+  return subprocess.call([getDockerExecutable()]+args)
 
 def getDockerOutput(args):
   """ Run docker with the given command line arguments and return it's output. """
-  checkIfDockerIsSetupProperly()
-  return subprocess.check_output(["docker"]+args)
+  return subprocess.check_output([getDockerExecutable()]+args)
 
 def runDockerAndExitIfItFails(args):
   """ Run docker with the given command line arguments.  If the command returns a non-zero exit code, exit with an error message. """
-  checkIfDockerIsSetupProperly()
-  subprocessExtras.subprocessCheckedCall(["docker"]+args)
+  subprocessExtras.subprocessCheckedCall([getDockerExecutable()]+args)
