@@ -9,8 +9,8 @@ import subprocessExtras,executablePath
 
 def getDockerExecutable():
   """ Return the name of the docker executable. Exits and displays a user friendly error message if docker is not setup correctly. """
-  if executablePath.which("docker-io"): # Docker is called docker-io on debian.
-    return "docker-io"
+  if executablePath.which("docker.io"): # Docker is called docker.io on debian.
+    return "docker.io"
   if executablePath.which("docker"):
     return "docker"
   sys.exit("""Error: Docker is not installed.
