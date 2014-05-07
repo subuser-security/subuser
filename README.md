@@ -194,6 +194,8 @@ See also links:
 
  * [Java Web Start](http://en.wikipedia.org/wiki/Java_Web_Start)
 
+ * [The sub-identity toolkit](https://www3.nd.edu/~ccl/software/subid/)
+
  * [AppArmor](http://en.wikipedia.org/wiki/AppArmor)
 
  * [SELinux](http://en.wikipedia.org/wiki/Security-Enhanced_Linux)
