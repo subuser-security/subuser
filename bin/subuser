@@ -3,6 +3,6 @@
 # If it is not, please file a bug report.
 import subprocess, os, inspect,sys
 
-subuserDir = os.path.dirname(os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))))
+subuserDir = os.path.dirname(os.path.dirname(os.path.realpath(inspect.getfile(inspect.currentframe()))))
 
 subprocess.call([os.path.join(subuserDir,"logic","subuser")]+sys.argv[1:])
