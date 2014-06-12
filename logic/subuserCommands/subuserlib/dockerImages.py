@@ -41,7 +41,7 @@ def getImageID(imageTag):
   """ Returns the ID(as a string) of an image given that image's lable. If no image has the given lable, return None."""
   imageInfo = inspectImage(imageTag)
   if imageInfo:
-    return imageInfo["id"]
+    return imageInfo["Id"]
   else:
     return None
 
