@@ -107,29 +107,41 @@ Create an `permissions.json` file.  Here is an example:
 
 ````json
 {
- "description"                : "Simple universal text editor."
- ,"maintainer"                : "Timothy Hobbs <timothyhobbs (at) seznam dot cz>"
- ,"executable"                : "/usr/bin/vim"
-    // Path to executable within the docker image.
- ,"user-dirs"                 : []
-    // Optional: A list of directories in the users home directory that this application should have read-write access to.
-    //These are relative paths, Ex: "Downloads" instead of "$HOME/Downloads".
- ,"system-dirs"               : []
-    // Optional: A list of directories that this application should have read only access to.  Absolute paths: Ex: "/usr"
- ,"x11"                       : false
-    // Optional: This program is allowed to display x11 windows.
- ,"sound-card"                : false
-    // Optional: Give this program access to your soundcard?
- ,"inherit-working-directory" : true
-    // Should this program be able to read-write to the directory from which it was called.
- ,"allow-network-access"      : false
-    // Optional: Should this program be allowed to access the internet?
+    "description"                : "Simple universal text editor."
+    ,"maintainer"                : "Timothy Hobbs <timothyhobbs (at) seznam dot cz>"
+  // Path to executable within the docker image.
+    ,"executable"                : "/usr/bin/vim"
+  // A list of directories that the program should have Read/Write access to.
+  // Paths are relative paths, Ex: "Downloads" instead of "$HOME/Downloads".
+  // Default: []
+    ,"user-dirs"                 : [ 'Downloads', 'Documents' ]
+  // A list of directories that the program should have read only access to.  Absolute paths: Ex: "/usr"
+  // Default: []
+    ,"system-dirs"               : [ '/sys' ]
+  // Allowed the program to display x11 windows.
+  // Default: false
+    ,"x11"                       : true
+  // Allow the program access to your sound playing and recording.
+  // Default: false
+    ,"sound-card"                : true
+  // Allow the program access to Read/Write access to the directory from which it was initialized.
+  // Default: false
+    ,"inherit-working-directory" : true
+  // Allow the program access to the internet.
+  // Default: false
+    ,"allow-network-access"      : true
 }
 ````
 
 You can find a full specification for the `permissions.json` file format [here](docs/permissions-dot-json-file-format.md).
 
-**Note**: Listing every permission is not necesary.  All permissions always default to their more secure variant.
+**Note**: Listing every permission is not necesary.
+
+To set the last-update-time, run the command:
+
+````
+subuser mark-as-needing-update <program-name>
+````
 
 Now create a directory called `docker-image` and add a `Dockerfile` to that directory.  This docker file shoule describe a container with vim installed in it.
 
