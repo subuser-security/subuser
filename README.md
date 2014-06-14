@@ -111,6 +111,8 @@ Create an `permissions.json` file.  Here is an example:
   ,"maintainer"                : "Timothy Hobbs <timothyhobbs (at) seznam dot cz>"
   // Path to executable within the docker image.
   ,"executable"                : "/usr/bin/vim"
+  // Optionally create the program by basing it on another subuser-<program>.
+  ,"dependency"                : "firefox"    // Default: ""
   // A list of directories the program should have Read/Write access to.
   // Paths are relative to your home. Ex: "Downloads" will access "$HOME/Downloads".
   ,"user-dirs"                 : [ 'Downloads', 'Documents' ]  // Default: []
