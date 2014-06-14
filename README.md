@@ -107,29 +107,33 @@ Create an `permissions.json` file.  Here is an example:
 
 ````json
 {
-    "description"                : "Simple universal text editor."
-    ,"maintainer"                : "Timothy Hobbs <timothyhobbs (at) seznam dot cz>"
+  "description"                : "Simple universal text editor."
+  ,"maintainer"                : "Timothy Hobbs <timothyhobbs (at) seznam dot cz>"
+  
   // Path to executable within the docker image.
-    ,"executable"                : "/usr/bin/vim"
-  // A list of directories that the program should have Read/Write access to.
-  // Paths are relative paths, Ex: "Downloads" instead of "$HOME/Downloads".
-  // Default: []
-    ,"user-dirs"                 : [ 'Downloads', 'Documents' ]
-  // A list of directories that the program should have read only access to.  Absolute paths: Ex: "/usr"
-  // Default: []
-    ,"system-dirs"               : [ '/sys' ]
+  ,"executable"                : "/usr/bin/vim"
+  
+  // A list of directories the program should have Read/Write access to.
+  // Paths are relative to your home. Ex: "Downloads" will access "$HOME/Downloads".
+  ,"user-dirs"                 : [ 'Downloads', 'Documents' ]  // Default: []
+  
+  // A list of directories the program should have read only access to.  Absolute paths: Ex: "/usr"
+  ,"system-dirs"               : [ '/sys' ]  // Default: []
+  
   // Allowed the program to display x11 windows.
-  // Default: false
-    ,"x11"                       : true
+  ,"x11"                       : true        // Default: false
+  
   // Allow the program access to your sound playing and recording.
   // Default: false
-    ,"sound-card"                : true
+  ,"sound-card"                : true
+  
   // Allow the program access to Read/Write access to the directory from which it was initialized.
   // Default: false
-    ,"inherit-working-directory" : true
+  ,"inherit-working-directory" : true
+  
   // Allow the program access to the internet.
   // Default: false
-    ,"allow-network-access"      : true
+  ,"allow-network-access"      : true
 }
 ````
 
