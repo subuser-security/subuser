@@ -24,7 +24,7 @@ $ vim README.md
 
 Subuser turns a docker container into a normal program.  But this program is not fully privilaged.  It can only access the directory from which it was called, [not my entire home dir](http://xkcd.com/1200/).  The end goal of the project is to assign each application on your system a specific set of permissions, just like in Android.
 
-Subuser is just Docker in a pretty skirt:
+Subuser is just a Docker wrapper:
 ----------------------------------------
 
 Subuser is meant to be easilly installed and in and of itself technically insignificant.  It is *just* a wrapper around docker, nothing more.
