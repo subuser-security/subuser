@@ -92,6 +92,14 @@ def installProgram(programName, useCache):
   imageID = dockerImages.getImageID("subuser-"+programName)
   registry.registerProgram(programName, lastUpdateTime, imageID)
 
+def getUniqueNameForProgram(sourceRepo,sourceName):
+  """ It is possible that a programs name is not unique.  That is, another program in another repo may exist with the same name. Generate a unique name for each program, either by asking the user to enter a new name for the program or(in the case of libraries) by concatinating the program name with the name of the repo in which it resides.
+
+  At the same time, ensure that the program will not unexpectedly interfere with any programs already in the PATH, by prompting the user if they want to rename the program in the case that the program has the same name as a program already in the PATH.
+
+  """
+  
+
 def installProgramAndDependencies(programName, useCache):
   """
   Build the dependencytree and install bottom->up

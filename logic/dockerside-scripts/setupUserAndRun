@@ -1,4 +1,5 @@
 #!/bin/bash
 useradd $1
+/launch/setup-symlinks
 command="/launch/runCommand $@"
 su $1 -c "$command"

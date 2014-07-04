@@ -16,12 +16,8 @@ import paths,permissions,availablePrograms,dockerImages
 
 def getRegistry():
   """ Return a dictionary of the program registry: installed-programs.json
-  registered attributes:
-    - last-update-time
-    - image-id
-    - installed-from
 
-See docs/installed-programs-dot-json-file-format.md
+See docs/installed-programs-dot-json-file-format.md for the registered attributes.
 
   """
   programRegistry = {}
@@ -30,18 +26,17 @@ See docs/installed-programs-dot-json-file-format.md
     with open(programRegistryPath, 'r') as file_f:
       programRegistry = json.load(file_f)
 
-  #Maintaining backwards compat: to be soon removed
-  if len(programRegistry) > 0:
-    firstProgramName = programRegistry.keys()[0]
-    if not isinstance(programRegistry[firstProgramName], dict):
-      newProgramRegistry = {}
-      for programName, lastUpdateTime in programRegistry.iteritems():
-        newProgramRegistry[programName] = {}
-        newProgramRegistry[programName]['last-update-time'] = lastUpdateTime
-        newProgramRegistry[programName]['image-id'] = dockerImages.getImageID("subuser-"+programName)
-      programRegistry = newProgramRegistry
-      #save the new one here once and for all
-      setInstalledPrograms(programRegistry)
+  #Maintain backwards compatability.  TODO, remove this code after a reasonable interval.
+  updateNeeded = False
+  for program in programRegistry.keys():
+    if not "source-repo" in programRegistry[program]:
+      programRegistry[program]["source-repo"] = "default"
+      updateNeeded = True
+    if not "source-name" in programRegistry[program]:
+      programRegistry[program]["source-name"] = program
+      updateNeeded = True
+  if updateNeeded: #save the new one here once and for all
+    setInstalledPrograms(programRegistry)
   return programRegistry
 
 def getInstalledPrograms():
@@ -51,24 +46,24 @@ def getInstalledPrograms():
 
 def setInstalledPrograms(programRegistry):
   """ Passing this file a dictionary which maps program names to registered items writes that registry to disk, overwritting the previous one.
-  registered items:
-    - last-update-time
-    - image-id
+
+See docs/installed-programs-dot-json-file-format.md for the registered attributes.
     """
   programRegistryPath = paths.getProgramRegistryPath()
   with open(programRegistryPath, 'w') as file_f:
     json.dump(programRegistry, file_f, indent=1, separators=(',', ': '))
 
-def registerProgram(programName, lastUpdateTime, imageID):
+def registerProgram(programName, lastUpdateTime, imageID,sourceRepo, sourceName):
   """ Add a program to the registry.  If it is already in the registry, update its registered items.
-  registered items:
-    - last-update-time
-    - image-id
+
+See docs/installed-programs-dot-json-file-format.md for the registered attributes.
     """
   programRegistry = getRegistry()
   programRegistry[programName] = {}
   programRegistry[programName]['last-update-time'] = lastUpdateTime
   programRegistry[programName]['image-id'] = imageID
+  programRegistry[programName]['source-repo'] = sourceRepo
+  programRegistry[programName]['source-name'] = sourceName
   setInstalledPrograms(programRegistry)
 
 def unregisterProgram(programName):

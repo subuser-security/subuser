@@ -28,8 +28,8 @@ def isProgramsImageInstalled(program):
   """ Return True if the programs image tag is installed.  False otherwise. """
   return not (getImageID("subuser-"+program) == None)
 
-def inspectImage(imageTag):
-  """ Returns a dictionary coresponding to the json outputed by docker inspect. """
+def inspectImage(imageTagOrId):
+  """ Returns a dictionary coresponding to the json outputed by docker inspect or None if the image does not exist. """
   try:
     dockerInspectOutput = docker.getDockerOutput(["inspect",imageTag])
   except subprocess.CalledProcessError:
@@ -45,7 +45,17 @@ def getImageID(imageTag):
   else:
     return None
 
-def getContainerImageTag(containerID):
+def getContainerInfo(containerID):
   inspectOutput = docker.getDockerOutput(["inspect",containerID])
-  containerInfo = json.loads(inspectOutput)
+  return json.loads(inspectOutput)
+
+def getContainerImageTag(containerID):
+  containerInfo = getContainerInfo(containerID)
   return containerInfo[0]["Config"]["Image"]
+
+def getContainerImageID(containerID):
+  containerInfo = getContainerInfo(containerID)
+  return containerInfo[0]["Image"]
+
+def removeImage(imageID):
+  docker.runDocker(["rm",imageID])

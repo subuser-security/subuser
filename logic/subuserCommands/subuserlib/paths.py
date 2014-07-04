@@ -94,3 +94,4 @@ def getDockerfilePath(programSrcDir):
 def getSubuserCommandsDir():
   """ Return the path to the directory where the individual built-in subuser command executables are stored. """
   return os.path.join(getSubuserDir(),"logic","subuserCommands")
+

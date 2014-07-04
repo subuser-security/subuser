@@ -5,171 +5,70 @@
 #external imports
 import sys,os,getpass,subprocess,tempfile
 #internal imports
-import subuserlib.permissions,subuserlib.dockerImages,subuserlib.docker,subuserlib.update
+import subuserlib.subprocessExtras
 
-###############################################################
-username = getpass.getuser()
-cwd = os.getcwd()
-home = os.path.expanduser("~")
-###############################################################
+def getRecursiveDirectoryContents(directory):
+  files = []
+  for (directory,_,fileList) in os.walk(directory):
+    for file in fileList:
+      files.append(os.path.join(directory,file))
+  return files
 
-def getAllowNetworkAccessArgs(permissions):
-  if subuserlib.permissions.getAllowNetworkAccess(permissions):
-    return ["--networking=true","--dns=8.8.8.8"] # TODO depricate this once the docker folks fix the dns bugs
+def getBasicFlags(subuserToRun):
+  return [
+    "-i",
+    "-t",
+    "--rm",
+    "-v="+subuserToRun.getSetupSymlinksScriptPathOnHost()+":/launch/setup-symlinks",
+    "-v="+subuserlib.paths.getDockersideScriptsPath()+":/launch/:ro"]
+
+def getPermissionFlagDict(subuserToRun):
+  """
+  This is a dictionary mapping permissions to functions which when given the permission's values return docker run flags. 
+  """
+  return {
+   "allow-network-access" : lambda p: ["--net=bridge"] if p else ["--net=none"],
+   "system-dirs" : lambda systemDirs: ["-v="+systemDir+":"+systemDir+":ro" for systemDir in systemDirs],
+   "user-dirs" : lambda userDirs : ["-v="+os.path.join(subuserToRun.getUser().homeDir,userDir)+":"+os.path.join("/userdirs/",userDir)+":rw" for userDir in userDirs],
+   "inherit-working-directory" : lambda p: ["-v="+cwd+":/pwd:rw"] if p else [],
+   "stateful-home" : lambda p : ["-v="+subuserToRun.getHomeDirOnHost()+":"+subuserToRun.getDockersideHome()+":rw"] if p else [],
+   "x11" : lambda p: ["-e","DISPLAY=unix"+os.environ['DISPLAY'],"-v=/tmp/.X11-unix:/tmp/.X11-unix:rw"] if p else [],
+   "graphics-card" : lambda p: ["--device=/dev/dri/"+device for device in os.listdir("/dev/dri")] if p else [],
+   "sound-card" : lambda p: ["--device="+device for device in getRecursiveDirectoryContents("/dev/snd")] if p else [],
+   "webcam" : lambda p: ["--device=/dev/"+device for device in os.listdir("/dev/") if device.startswith("video")] if p else [],
+   "privileged" : lambda p: ["--privileged"] if p else []
+   }
+
+def getCommand(subuserToRun, programArgs):
+  flags = getBasicFlags(subuserToRun)
+  permissionFlagDict = getPermissionFlagDict(subuserToRun)
+  permissions = subuserToRun.getPermissions()
+  for permission, flagGenerator in permissionFlagDict.iteritems():
+    flags.extend(flagGenerator(permissions[permission]))
+
+  if not subuserToRun.getPermissions()["as-root"]:
+    setupUserAndRunArgs = ["/launch/setupUserAndRun",subuserToRun.getUser().name]
   else:
-    return ["--networking=false"]
+    setupUserAndRunArgs ["/launch/runCommand","root"]
 
-def setupHostSubuserHome(home):
-  if not os.path.exists(home):
-    os.makedirs(home)
+  return ["run"]+flags+[subuserToRun.getProgramSource().getImage().getImageID()]+setupUserAndRunArgs+[subuserToRun.getPermissions()["executable"]]+programArgs
 
-def getAndSetupHostSubuserHome(programName,permissions):
-  if subuserlib.permissions.getStatefulHome(permissions):
-    hostSubuserHome = subuserlib.paths.getProgramHomeDirOnHost(programName)
-  else:
-    hostSubuserHome = tempfile.mkdtemp(prefix="subuser-"+programName)
+def getPrettyCommand(subuserToRun,programArgs):
+  """
+  Get a command for pretty printing for use with dry-run.
+  """
+  command = getCommand(subuserToRun,programArgs)
+  return "docker '"+"' '".join(command)+"'"
 
-  setupHostSubuserHome(hostSubuserHome)
-  return hostSubuserHome
- 
-def makeSystemDirVolumeArgs(systemDirs):
-  return ["-v="+systemDir+":"+systemDir+":ro" for systemDir in systemDirs]
+def run(subuserToRun,programArgs):
+  def createSetupSymlinksScript():
+    userDirs = subuserToRun.getPermissions()["user-dirs"]
+    os.makedirs(dirname(subuserToRun.getSetupSymlinksScriptPathOnHost()))
+    with open(subuserToRun.getSetupSymlinksScriptPathOnHost(),"w") as symlinkScrpt:
+      symlinksScript.write("#!/bin/sh\n")
+      symlinksScript.write("ln -s "+"/pwd/ "+self.getDockersideHome()+"/CurrentDirectoryOnHost")
+      for userDir in userDirs:
+        symlinksScript.write("ln -s /userdirs/"+userdir+" "+subuserToRun.getDockersideHomeDir()+"/"+userdir+"\n")
 
-def getAndSetupUserDirVolumes(permissions,hostSubuserHome,dry):
-  """ Sets up the user directories to be shared between the host user and the subuser-program.
-Returns volume arguments to be passed to docker run"""
-  def setupUserDirSymlinks(userDirs):
-    """ Create symlinks to userdirs in program's home dir. """
-    for userDir in userDirs:
-      source = os.path.join("/userdirs/",userDir)
-      destination = os.path.join(hostSubuserHome,userDir)
-      if not os.path.islink(destination):
-        os.symlink(source,destination)
-
-  userDirs = subuserlib.permissions.getUserDirs(permissions)
-  if not dry:
-    setupUserDirSymlinks(userDirs)
-  userDirVolumeArgs = makeUserDirVolumeArgs(userDirs)
-  return userDirVolumeArgs
-
-def makeUserDirVolumeArgs(userDirs):
-  return ["-v="+os.path.join(home,userDir)+":"+os.path.join("/userdirs/",userDir)+":rw" for userDir in userDirs]
-
-def getSetupUserAndRunArgs(permissions):
-  if not subuserlib.permissions.getAsRoot(permissions):
-    setupUserAndRunPath = "/launch/setupUserAndRun"
-    return [setupUserAndRunPath,username]
-  else:
-    return ["/launch/runCommand","root"]
-
-def getWorkingDirectoryVolumeArg(permissions):
-  if subuserlib.permissions.getInheritWorkingDirectory(permissions):
-    return ["-v="+cwd+":/home/pwd:rw"]
-  else:
-    return []
-
-def getDockersideHome(permissions):
-  if subuserlib.permissions.getAsRoot(permissions):
-    return "/root/"
-  else:
-    return home
-
-def getAndSetupVolumes(programName,permissions,dry):
-  """ 
-Sets up the volumes which will be shared between the host and the subuser program.
-
-Returns a list of volume mounting arguments to be passed to docker run.
-"""
-
-  hostSubuserHome = getAndSetupHostSubuserHome(programName,permissions) 
-
-  dockersideScriptsPath = subuserlib.paths.getDockersideScriptsPath()
-  dockersideBinPath = "/launch"
-  dockersidePWDPath = os.path.join("/home","pwd")
-
-  systemDirVolumeArgs = makeSystemDirVolumeArgs(subuserlib.permissions.getSystemDirs(permissions))
-
-  userDirVolumeArgs = getAndSetupUserDirVolumes(permissions,hostSubuserHome,dry)
-
-  workingDirectoryVolumeArg = getWorkingDirectoryVolumeArg(permissions)
-
-  dockersideHome = getDockersideHome(permissions)
-
-  volumeArgs = ["-v="+hostSubuserHome+":"+dockersideHome+":rw"
-    ,"-v="+dockersideScriptsPath+":"+dockersideBinPath+":ro"] + workingDirectoryVolumeArg + systemDirVolumeArgs + userDirVolumeArgs
-
-  def cleanUpVolumes():
-    if not subuserlib.permissions.getStatefulHome(permissions):
-      subprocess.call(["rm","-rf",hostSubuserHome])
-
-  return (volumeArgs,cleanUpVolumes)
-
-def getX11Args(permissions):
-  if subuserlib.permissions.getX11(permissions):
-    return ["-e","DISPLAY=unix"+os.environ['DISPLAY'],"-v=/tmp/.X11-unix:/tmp/.X11-unix:rw"]
-  else:
-    return []
-
-def getGraphicsCardArgs(permissions):
-  if subuserlib.permissions.getGraphicsCard(permissions):
-    return  ["-v=/dev/dri:/dev/dri:rw","--lxc-conf=lxc.cgroup.devices.allow = c 226:* rwm"]
-  else:
-    return []
-
-def getSoundCardArgs(permissions):
-  if subuserlib.permissions.getSoundCard(permissions):
-    return  ["-v=/dev/snd:/dev/snd:rw","--lxc-conf=lxc.cgroup.devices.allow = c 116:* rwm"]
-  else:
-    return []
-
-def getWebcamArgs(permissions):
-  if subuserlib.permissions.getWebcam(permissions):
-    cameraVolumes = []
-    for device in os.listdir("/dev/"):
-      if device.startswith("video"):
-        cameraVolumes.append("-v=/dev/"+device+":/dev/"+device+":rw")
-    return  cameraVolumes+["--lxc-conf=lxc.cgroup.devices.allow = c 81:* rwm"]
-  else:
-    return []
-
-def getPrivilegedArg(permissions):
-  if subuserlib.permissions.getPrivileged(permissions):
-    return ["--privileged"]
-  else:
-    return []
-
-def getDockerArguments(programName,programArgs,dry):
-  dockerImageName = subuserlib.dockerImages.getImageTagOfInstalledProgram(programName)
-  permissions = subuserlib.permissions.getPermissions(programName)
-  allowNetworkAccessArgs = getAllowNetworkAccessArgs(permissions)
-  executable = subuserlib.permissions.getExecutable(permissions)
-  setupUserAndRunArgs = getSetupUserAndRunArgs(permissions)
-  x11Args = getX11Args(permissions)
-  graphicsCardArgs = getGraphicsCardArgs(permissions)
-  soundCardArgs = getSoundCardArgs(permissions)
-  webcamArgs = getWebcamArgs(permissions)
-  privilegedArg = getPrivilegedArg(permissions)
-  (volumeArgs,cleanUpVolumes) = getAndSetupVolumes(programName,permissions,dry)
-  dockerArgs = ["run","-i","-t","--rm"]+allowNetworkAccessArgs+privilegedArg+volumeArgs+x11Args+graphicsCardArgs+soundCardArgs+webcamArgs+[dockerImageName]+setupUserAndRunArgs+[executable]+programArgs
-  return (dockerArgs,cleanUpVolumes)
-
-def showDockerCommand(dockerArgs):
-  print("""If this wasn't a dry run, the following command would be executed.
-
-Please note: This is for testing purposes only, and this command is not guaranteed to work.""")
-  print("docker '"+"' '".join(dockerArgs)+"'")
-
-def runProgram(programName,programArgs,dry=False):
-  if subuserlib.update.needsUpdate(programName):
-   print("""This program needs to be updated.  You can do so with:
-
-$ subuser update
-
-Trying to run anyways:
-""")
-  (dockerArgs,cleanUpVolumes) = getDockerArguments(programName,programArgs,dry)
-  if not dry:
-   subuserlib.docker.runDocker(dockerArgs)
-  else:
-   showDockerCommand(dockerArgs)
-  cleanUpVolumes()
+  createSetupSymlinksScript()
+  subprocessExtras.subprocessCheckedCall(getCommand(subuserToRun,programArgs))

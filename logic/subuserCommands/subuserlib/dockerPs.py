@@ -7,22 +7,24 @@
 #internal imports
 import docker,dockerImages
 
-def getRunningSubuserPrograms():
-  """ Returns a list of the currently running subuser programs. """
+def getRunningContainerIds():
   psOutput = docker.getDockerOutput(["ps","-q"])
   runningContainerIDs = filter(len,psOutput.split("\n")) #We filter out emty strings
-  runningSubuserPrograms = set()
+  return runningContainerIDs
+
+def getRunningImages():
+  """ Returns a list of IDs of images with currently running containers. """
+  runningContainerIDs = getRunningContainerIDs()
+  runningImages = set()
   for container in runningContainerIDs:
-    containerImageTag = dockerImages.getContainerImageTag(container)
-    subuserPrefix = "subuser-"
-    if containerImageTag.startswith(subuserPrefix):
-      runningSubuserPrograms.add(containerImageTag[len(subuserPrefix):])
-  return list(runningSubuserPrograms)
+    containerImageID = dockerImages.getContainerImageID(container)
+    runningImages.add(containerImageID)
+  return list(runningImages)
 
-def isProgramRunning(name):
-  """ Returns True if the program is currently running. """
-  return name in getRunningSubuserPrograms()
+def isImageRunning(imageID):
+  """ Returns True if the image currently has a running container based on it. """
+  return name in getRunningImages()
 
-def areProgramsRunning(programs):
-  """ Returns True if at least one of the listed programs is currently running. """
-  return not (set(getRunningSubuserPrograms())&set(programs)) == set()
+def areImagesRunning(imageIDs):
+  """ Returns True if at least one of the listed images currently has a running container based on it. """
+  return not (set(getRunningImages())&set(programs)) == set()
