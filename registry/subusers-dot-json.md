@@ -15,10 +15,10 @@ This object maps subuser names to json objects which have the following attribut
    ,"source-repo"                        : "default"
   ````
 
- * `source-name`: The name of the source program on which this subuser is based.
+ * `source-program`: The name of the source program on which this subuser is based.
 
   Ex:
 
   ````json
-   ,"source-name"                        : "firefox"
+   ,"source-program"                        : "firefox"
   ````

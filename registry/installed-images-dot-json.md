@@ -18,12 +18,12 @@ image ids to json objects which have the following attributes:
 
   **Note**: If the source program's `permissions.json` file listed no `last-update-time` this will be the actual clock time at which the program was installed.
 
- * `source-name`: This is the name of the program source from which this image was built.
+ * `source-program`: This is the name of the program source from which this image was built.
 
   Ex:
 
   ````json
-   ,"source-name"                        : "firefox"
+   ,"source-program"                        : "firefox"
   ````
 
  * `source-repo`: The name of the subuser repository from which the image was built.

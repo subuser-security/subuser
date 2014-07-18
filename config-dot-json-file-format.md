@@ -23,16 +23,16 @@ The defaults settings for these properties may be found in `$SUBUSERDIR/config.j
 
  * `bin-dir`: This is the directory where subuser "executables" are to be installed.  This directory should be in the user's path.
 
-  `type`: path to directory
+  `type`: string - path to directory
 
  * `registry-dir` : This is the path to the git repository where the registry files for subusers and installed images are stored.
 
- `type`: path to git repository
+ `type`: string - path to git repository
 
- * `user-set-permissions-dir`: NOT YET IMPLEMENTED
+ * `user-set-permissions-dir`:
 
- `type`: path to directory
+ `type`: string - path to directory
 
- * `program-home-dirs-dir`: The directory where subuser is to store the home directories of each subuser program.
+ * `subuser-home-dirs-dir`: The directory where subuser is to store the home directories of each subuser program.
 
- `type`: path to directory
+ `type`: string - path to directory
