@@ -16,7 +16,7 @@ class InstalledImage(subuserlib.classes.userOwnedObject.UserOwnedObject):
     subuserlib.classes.userOwnedObject.UserOwnedObject.__init__(self,user)
     self.__imageID = imageID
     self.__lastUpdateTime = lastUpdateTime
-    self.__programSource = self.getUser().getRepositories()[sourceRepo][sourceName]
+    self.__programSource = self.getUser().getRegistry().getRepositories()[sourceRepo][sourceName]
 
   def getImageID(self):
     return self.__imageID

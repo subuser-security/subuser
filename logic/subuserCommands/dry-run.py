@@ -32,8 +32,8 @@ def dryRun(args):
   argsToPassToProgram = args[2:]
 
   user = subuserlib.classes.user.User()
-  if subuserName in user.getRegistry().subusers:
-    print(subuserlib.run.getPrettyCommand(user.getRegistry().subusers[subuserName],argsToPassToProgram))
+  if subuserName in user.getRegistry().getSubusers():
+    print(subuserlib.run.getPrettyCommand(user.getRegistry().getSubusers()[subuserName],argsToPassToProgram))
   else:
     sys.exit(subuserName + " not found.\n"+helpString)
 

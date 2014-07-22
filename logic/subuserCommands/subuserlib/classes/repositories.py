@@ -22,7 +22,7 @@ class Repositories(collections.Mapping,subuserlib.classes.userOwnedObject.UserOw
     return iter(self._getAllRepositories())
 
   def __len__(self):
-    return len(self._getAllRepositories)
+    return len(self._getAllRepositories())
 
   def __getitem__(self, key):
     return self._getAllRepositories()[key]
@@ -36,18 +36,23 @@ class Repositories(collections.Mapping,subuserlib.classes.userOwnedObject.UserOw
       repositoryDict = subuserlib.loadMultiFallbackJsonConfigFile.getConfig(paths)
       repositories = {}
       for repoName,repoAttributes in repositoryDict.iteritems():
-        repositories[repoName] = subuserlib.classes.repository.Repository(self.getUser(),name=repoName,gitOriginURI=repoAttributes["git-origin"],autoRemove=repoAttributes["auto-remove"])
+        repositories[repoName] = subuserlib.classes.repository.Repository(self.getUser(),name=repoName,gitOriginURI=repoAttributes["git-origin"])
       return repositories
 
     self.systemRepositories = loadRepositoryDict(self.systemRepositoryListPaths)
     self.userRepositories = loadRepositoryDict([self.userRepositoryListPath])
+
+  def addRepository(self,name,repository):
+    self.userRepositoryListDict[name] = repository
+
+  def removeRepository(self,name):
+    del self.userRepositoryListDict[name]
 
   def save(self):
     """ Save attributes of the installed images to disk. """
     userRepositoryListDict = {}
     for name,repository in self.userRepositories.iteritems():
       userRepositoryListDict[name]["git-origin"] = repository.getGitOriginURI()
-      userRepositoryListDict[name]["auto-remove"] = repository.getAutoRemove()
     with open(self.userRepositoryListPath, 'w') as file_f:
       json.dump(userRepositoryListDict, file_f, indent=1, separators=(',', ': '))
 

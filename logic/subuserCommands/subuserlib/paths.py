@@ -18,7 +18,7 @@ def getRepoPaths():
   Return a list of paths to the subuser repositories.
   """
   try:
-    _repositories = repositories.getRepositories()
+    _repositories = repositories.getRegistry().getRepositories()
     repoPaths = []
     for repo,info in _repositories.iteritems():
       repoPaths.append(info["path"])

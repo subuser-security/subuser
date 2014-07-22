@@ -8,13 +8,27 @@ import subprocess
 import subuserlib.classes.installedImages , subuserlib.classes.subusers, subuserlib.classes.userOwnedObject
 
 class Registry(subuserlib.classes.userOwnedObject.UserOwnedObject):
-  installedImages = None
-  subusers = None
-  
+  __installedImages = None
+  __subusers = None
+  __repositories = None
+
+  def getInstalledImages(self):
+    if not self.__installedImages:
+      self.__installedImages = subuserlib.classes.installedImages.InstalledImages(self.getUser())
+    return self.__installedImages
+
+  def getSubusers(self):
+    if not self.__subusers:
+      self.__subusers = subuserlib.classes.subusers.Subusers(self.getUser())
+    return self.__subusers
+
+  def getRepositories(self):
+    if not self.__repositories:
+      self.__repositories =      subuserlib.classes.repositories.Repositories(self.getUser())
+    return self.__repositories
+
   def __init__(self,user):
     subuserlib.classes.userOwnedObject.UserOwnedObject.__init__(self,user)
-    self.installedImages = subuserlib.classes.installedImages.InstalledImages(user)
-    self.subusers = subuserlib.classes.subusers.Subusers(user)
 
   def commit(self,message):
     """ git commit the changes to the registry files, installed-miages.json and subusers.json. """

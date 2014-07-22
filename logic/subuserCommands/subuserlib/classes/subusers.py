@@ -14,7 +14,7 @@ class Subusers(dict,subuserlib.classes.userOwnedObject.UserOwnedObject,subuserli
   >>> import subuserlib.classes.user
   >>> import subuserlib.classes.subusers
   >>> u = subuserlib.classes.user.User("root","/root/subuser/test/home")
-  >>> subusers = u.getRegistry().subusers
+  >>> subusers = u.getRegistry().getSubusers()
   >>> u.getConfig().getSubusersDotJsonPath()[-49:]
   u'subuser/test/home/.subuser/registry/subusers.json'
   >>> subusers["foo"].getName()
@@ -41,5 +41,7 @@ class Subusers(dict,subuserlib.classes.userOwnedObject.UserOwnedObject,subuserli
     else:
       serializedSubusersDict = {}
     for subuserName, subuserAttributes in serializedSubusersDict.iteritems():
-      programSource = subuserlib.classes.programSource.ProgramSource(user=user,name=subuserAttributes["source-program"],repo=self.getUser().getRepositories()[subuserAttributes["source-repo"]])
+      repo = self.getUser().getRegistry().getRepositories()[subuserAttributes["source-repo"]]
+      name = subuserAttributes["source-program"]
+      programSource = subuserlib.classes.programSource.ProgramSource(user=user,name=name,repo=repo)
       self[subuserName] = subuserlib.classes.subuser.Subuser(user,subuserName,programSource)

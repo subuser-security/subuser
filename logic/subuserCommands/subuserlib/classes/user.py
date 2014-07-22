@@ -28,7 +28,6 @@ class User(object):
   homeDir = None
   __config = None
   __registry = None
-  __repositories = None
   
   def __init__(self,name=None,homeDir=None):
     if name:
@@ -53,12 +52,3 @@ class User(object):
     if self.__registry == None:
       self.__registry = subuserlib.classes.registry.Registry(self)
     return self.__registry
-
-  def getRepositories(self):
-    if self.__repositories == None:
-      self.__repositories = subuserlib.classes.repositories.Repositories(self)
-    return self.__repositories
-
-if __name__ == "__main__":
- import doctest
- doctest.testmod()

@@ -10,9 +10,8 @@ import subuserlib.git,subuserlib.classes.userOwnedObject,subuserlib.classes.prog
 class Repository(dict,subuserlib.classes.userOwnedObject.UserOwnedObject):
   __name = None
   __gitOriginURI = None
-  __autoRemove = None
 
-  def __init__(self,user,name,gitOriginURI,autoRemove):
+  def __init__(self,user,name,gitOriginURI):
     subuserlib.classes.userOwnedObject.UserOwnedObject.__init__(self,user)
     self.__name = name
     self.__gitOriginURI = gitOriginURI
@@ -23,9 +22,6 @@ class Repository(dict,subuserlib.classes.userOwnedObject.UserOwnedObject):
 
   def getGitOriginURI(self):
     return self.__gitOriginURI
-
-  def getAutoRemove(self):
-    return self.autoRemove
 
   def getRepoPath(self):
     """ Get the path of the repo's sources on disk. """

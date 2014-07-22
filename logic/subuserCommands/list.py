@@ -57,14 +57,14 @@ def list(sysargs):
   user = subuserlib.classes.user.User()
   
   if 'available' in args:
-    for repoName,repository in user.getRepositories().iteritems():
+    for repoName,repository in user.getRegistry().getRepositories().iteritems():
       print("Programs available for instalation from the repo: " + repoName)
       for programName,programSource in repository.iteritems():
         programSource.describe()
   
   if 'subusers' in args:
     print("The following subusers are registered.")
-    for name,subuser in user.getRegistry().subusers.iteritems():
+    for name,subuser in user.getRegistry().getSubusers().iteritems():
       subuser.describe()
 
 if __name__ == "__main__":
