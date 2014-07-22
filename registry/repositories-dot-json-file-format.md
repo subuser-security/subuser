@@ -3,7 +3,7 @@ The repositories.json file format
 
 In the context of subuser, a `repositories.json` file is a file which describes where subuser programs may be installed from.
 
-The `repositories.json` files are to be arranged into a hierarchy.  Subuser will build the repository list by first looking in the file `~/.subuser/repositories.json` then adding an additional repositories found in:
+The `repositories.json` files are to be arranged into a hierarchy.  Subuser will build the repository list by first looking in the file `~/.subuser/registry/repositories.json` then adding an additional `system repositories` found in:
 
  * `/etc/subuser/repositories.json`
 
@@ -13,7 +13,15 @@ The `repositories.json` files are to be arranged into a hierarchy.  Subuser will
 
 Each repositories.json file is to be a valid [json](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf) file containing a single json object.
 
-This object is a set of key value pairs where each key is the name of a subuser repository.  Repository names must not contain the `\` character.  The value is a json object with the following properties:
+This object is a set of key value pairs where each key is the identifier of a subuser repository.
+
+Each identity can either be:
+ * string - for a named repository
+ * number - for an annonymous repository
+
+Repository names must not contain any of the following characters: `\`,`:` .
+
+The value is a json object with the following properties:
 
 Properties:
 -----------
@@ -26,22 +34,11 @@ Properties:
  "git-origin" : "$SUBUSERDIR/programsThatCanBeInstalled/"
  ````
 
- * `auto-remove`: If only one installed image was built from this repository and that image is uninstalled, remove this repository.
-
- Ex:
-
- ````
- "auto-remove" : true
- ````
-
-
-
 Example repositories.json file:
 
 ````
 {
- "default" : {"git-origin" : "https://github.com/subuser-security/subuser-default-repository.git/",
-             "auto-remove" : false}
+ "default" : {"git-origin" : "https://github.com/subuser-security/subuser-default-repository.git/"}
 }
 ````
 
