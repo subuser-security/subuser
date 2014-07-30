@@ -5,9 +5,8 @@
 #external imports
 import sys,os,subprocess
 #internal imports
-import subprocessExtras,executablePath,test
+import subprocessExtras,executablePath
 
 def runGit(args,cwd=None):
   """ Run git with the given command line arguments. """
-  if not test.testing:
-    return subprocess.POpen(["git"]+args,cwd=cwd).communicate()
+  return subprocess.POpen(["git"]+args,cwd=cwd).communicate()

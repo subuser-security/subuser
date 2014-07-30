@@ -39,7 +39,7 @@ class User(object):
       self.homeDir = homeDir
     else:
       if subuserlib.test.testing:
-        self.homeDir = "/root/subuser/test/home"
+        self.homeDir = "/home/test/"
       else:
         self.homeDir = os.path.expanduser("~") 
 
