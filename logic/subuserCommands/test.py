@@ -1,6 +1,12 @@
 #!/usr/bin/python
 import subuserlib.test
+
 subuserlib.test.testing = True
+
+import subuserlib.docker,subuserlib.basicPaths
+if subuserlib.docker.getDockerExecutable():
+  subuserlib.docker.runDockerAndExitIfItFails(["build","."],subuserlib.basicPaths.getSubuserDir())
+  exit()
 
 import doctest,sys
 

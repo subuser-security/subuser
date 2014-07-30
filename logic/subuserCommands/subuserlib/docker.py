@@ -8,12 +8,18 @@ import sys,os,getpass,grp,subprocess
 import subprocessExtras,executablePath
 
 def getDockerExecutable():
-  """ Return the name of the docker executable. Exits and displays a user friendly error message if docker is not setup correctly. """
+  """ Return the name of the docker executable or None if docker is not installed. """
   if executablePath.which("docker.io"): # Docker is called docker.io on debian.
     return "docker.io"
   if executablePath.which("docker"):
     return "docker"
-  sys.exit("""Error: Docker is not installed.
+  return None
+
+def getAndVerifyDockerExecutable():
+  """ Return the name of the docker executable. Exits and displays a user friendly error message if docker is not setup correctly. """
+  executable = getDockerExecutable()
+  if not executable:
+    sys.exit("""Error: Docker is not installed.
 
 For installation instructions see <https://www.docker.io/gettingstarted/#h_installation>""")
   if not os.path.exists("/var/run/docker.pid"):
@@ -27,16 +33,16 @@ For installation instructions see <https://www.docker.io/gettingstarted/#h_insta
     sys.exit("""Error: You are not a member of the docker group.
 
 To learn how to become a member of the docker group please watch this video: <http://www.youtube.com/watch?v=ahgRx5U4V7E>""")
-
+  return executable
 
 def runDocker(args):
   """ Run docker with the given command line arguments. """
-  return subprocess.call([getDockerExecutable()]+args)
+  return subprocess.call([getAndVerifyDockerExecutable()]+args)
 
 def getDockerOutput(args):
   """ Run docker with the given command line arguments and return it's output. """
-  return subprocess.check_output([getDockerExecutable()]+args)
+  return subprocess.check_output([getAndVerifyDockerExecutable()]+args)
 
-def runDockerAndExitIfItFails(args):
+def runDockerAndExitIfItFails(args,cwd=None):
   """ Run docker with the given command line arguments.  If the command returns a non-zero exit code, exit with an error message. """
-  subprocessExtras.subprocessCheckedCall([getDockerExecutable()]+args)
+  subprocessExtras.subprocessCheckedCall([getAndVerifyDockerExecutable()]+args,cwd=cwd)

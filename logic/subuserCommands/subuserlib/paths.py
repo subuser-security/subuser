@@ -5,13 +5,13 @@
 #external imports
 import os,sys,inspect,json
 #internal imports
-import permissions,config,repositories
+import permissions,config,repositories,basicPaths
 
-home = os.path.expanduser("~") 
+home = basicPaths.home
 
 def getSubuserDir():
   """ Get the toplevel directory for subuser. """
-  return os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))))) # BLEGH!
+  return basicPaths.getSubuserDir()
 
 def getRepoPaths():
   """

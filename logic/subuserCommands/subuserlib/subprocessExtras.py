@@ -7,15 +7,14 @@ import sys,subprocess
 #internal imports
 #import ...
 
-def subprocessCheckedCall(args, addToErrorInfo=''):
+def subprocessCheckedCall(args, addToErrorInfo='',cwd=None):
   """ This helper function calls subprocess.check_call and runs sys.exit rather than throwing an error when the program exits with a non-zero exit code.
 
  Usage:
   subprocessCheckedCall(["docker", "-d"], "ATTENTION: Special added info bla bla")
   """
-  try:
-    subprocess.check_call(args)
-  except Exception as err:
+  process = subprocess.Popen(args,cwd=cwd)
+  if not process.wait() == 0:
     if addToErrorInfo:
       message = ('''Command <{0}> failed:\n  ERROR: {1}\n    {2}'''.format(' '.join(args), err, addToErrorInfo))
     else:
