@@ -2,29 +2,31 @@
 # This file should be compatible with both Python 2 and 3.
 # If it is not, please file a bug report.
 
+#external imports
 import sys
-
-import subuserlib.run,subuserlib.update
+#internal imports
+import subuserlib.classes.user, subuserlib.run
 
 ##############################################################
-def printHelp():
-  print("""Run a program installed with subuser.  For example:
+helpString = """Run the given subuser program.  For example:
 $ subuser run firefox
 
-This command is useful if you want to put `~/subuser/bin` at the end of your path.  If you do that, subuser programs will not have precidence over "normally" installed programs.
-""")
+Will launch firefox.
+"""
 
-def getArgsToPassToProgram():
-  if len(sys.argv) > 2:
-    return sys.argv[2:]
+#################################################################################################
+
+def run(args):
+  if len(args) == 1 or {"help","-h","--help"} & set(args):
+    sys.exit(helpString)
+
+  subuserName = args[1]
+  argsToPassToProgram = args[2:]
+
+  user = subuserlib.classes.user.User()
+  if subuserName in user.getRegistry().getSubusers():
+    subuserlib.run.run(user.getRegistry().getSubusers()[subuserName],argsToPassToProgram))
   else:
-    return []
+    sys.exit(subuserName + " not found.\n"+helpString)
 
-#################################################################################################
-if len(sys.argv) == 1 or sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.argv[1] == "--help":
-  printHelp()
-  sys.exit()
-#################################################################################################
-
-programName = sys.argv[1]
-subuserlib.run.runProgram(programName,getArgsToPassToProgram())
+run(sys.argv)
