@@ -3,10 +3,10 @@
 # If it is not, please file a bug report.
 
 #external imports
-import sys,os,subprocess
+import sys,os
 #internal imports
 import subprocessExtras,executablePath
 
 def runGit(args,cwd=None):
   """ Run git with the given command line arguments. """
-  return subprocess.POpen(["git"]+args,cwd=cwd).communicate()
+  return subprocessExtras.subprocessCheckedCall(["git"]+args,cwd=cwd)

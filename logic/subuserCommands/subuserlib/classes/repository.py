@@ -25,7 +25,7 @@ class Repository(dict,subuserlib.classes.userOwnedObject.UserOwnedObject):
 
   def getRepoPath(self):
     """ Get the path of the repo's sources on disk. """
-    return os.path.join(self.getUser().homeDir,".subuser","repositories",self.getName())
+    return os.path.join(self.getUser().homeDir,".subuser","repositories",str(self.getName()))
 
   def updateSources(self):
     """ Pull(or clone) the repo's ProgramSources from git origin. """
@@ -38,6 +38,8 @@ class Repository(dict,subuserlib.classes.userOwnedObject.UserOwnedObject):
     """
      Load progam sources from disk into memory.
     """
+    if not os.path.exists(self.getRepoPath()):
+      self.updateSources()
     programNames = filter(lambda f: os.path.isdir(os.path.join(self.getRepoPath(),f)) and not f == ".git",os.listdir(self.getRepoPath()))
     for programName in programNames:
       self[programName] = (subuserlib.classes.programSource.ProgramSource(self.getUser(),self,programName))

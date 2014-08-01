@@ -7,21 +7,28 @@ import sys,subprocess
 #internal imports
 #import ...
 
-def subprocessCheckedCall(args, addToErrorInfo='',cwd=None):
+def formatErrorMessage(command,error,errorContext=None):
+  """
+  Takes a command(a list of strings), an error, and an error context, and returns a nicely formatted error message.
+  """
+  if errorContext:
+    return "Command <"+' '.join(command)+"> failed:\n  ERROR: "+errorContext+"\n"+error
+  else:
+    return "Command <"+' '.join(command)+"> failed. \nERROR: "+error
+
+def subprocessCheckedCall(args, errorContext='',cwd=None):
   """ This helper function calls subprocess.check_call and runs sys.exit rather than throwing an error when the program exits with a non-zero exit code.
 
  Usage:
   subprocessCheckedCall(["docker", "-d"], "ATTENTION: Special added info bla bla")
   """
   process = subprocess.Popen(args,cwd=cwd)
-  if not process.wait() == 0:
-    if addToErrorInfo:
-      message = ('''Command <{0}> failed:\n  ERROR: {1}\n    {2}'''.format(' '.join(args), err, addToErrorInfo))
-    else:
-      message = ('''Command <{0}> failed:\n  ERROR: {1}'''.format(' '.join(args), err))
-    sys.exit(message)
+  process.communicate()
+  err = ""
+  if not process.returncode == 0:
+    sys.exit(formatErrorMessage(args,err,errorContext=errorContext))
     
-def subprocessCheckedOutput(args, addToErrorInfo=''):
+def subprocessCheckedOutput(args, errorContext=''):
   """ This function calls subprocess.check_output and uses sys.exit when the call fails rather than throwing an error.
 
  Usage:
@@ -30,8 +37,5 @@ def subprocessCheckedOutput(args, addToErrorInfo=''):
   try:
     return subprocess.check_output(args)
   except Exception as err:
-    if addToErrorInfo:
-      message = ('''Command <{0}> failed:\n  ERROR: {1}\n    {2}'''.format(' '.join(args), err, addToErrorInfo))
-    else:
-      message = ('''Command <{0}> failed:\n  ERROR: {1}'''.format(' '.join(args), err))
+    formatErrorMessage(args,err,errorContext=errorContext)
     sys.exit(message)

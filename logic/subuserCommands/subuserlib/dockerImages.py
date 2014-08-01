@@ -5,7 +5,7 @@
 #external imports
 import subprocess,json,sys
 #internal imports
-import subprocessExtras,availablePrograms,docker
+import subprocessExtras,docker
 
 def askToInstallProgram(programName):
   """ Asks the user if they want to install the given program.  If they say yes, install it, if they decline exit."""

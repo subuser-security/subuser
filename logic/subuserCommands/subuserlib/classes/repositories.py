@@ -42,11 +42,11 @@ class Repositories(collections.Mapping,subuserlib.classes.userOwnedObject.UserOw
     self.systemRepositories = loadRepositoryDict(self.systemRepositoryListPaths)
     self.userRepositories = loadRepositoryDict([self.userRepositoryListPath])
 
-  def addRepository(self,name,repository):
-    self.userRepositoryListDict[name] = repository
+  def addRepository(self,repository):
+    self.userRepositories[repository.getName()] = repository
 
   def removeRepository(self,name):
-    del self.userRepositoryListDict[name]
+    del self.userRepositories[name]
 
   def save(self):
     """ Save attributes of the installed images to disk. """
@@ -55,6 +55,16 @@ class Repositories(collections.Mapping,subuserlib.classes.userOwnedObject.UserOw
       userRepositoryListDict[name]["git-origin"] = repository.getGitOriginURI()
     with open(self.userRepositoryListPath, 'w') as file_f:
       json.dump(userRepositoryListDict, file_f, indent=1, separators=(',', ': '))
+
+  def getNewUniqueTempRepoId(self):
+    """
+    Return a new, unique, identifier for a temporary repository.  This function is useful when creating new temporary repositories.
+    """
+    id=0
+    for _,repo in self.iteritems():
+      if repo.getName() == id:
+        id = id + 1
+    return id
 
   def __init__(self,user):
     subuserlib.classes.userOwnedObject.UserOwnedObject.__init__(self,user)

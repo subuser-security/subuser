@@ -5,7 +5,7 @@
 #external imports
 import os,sys,inspect,json
 #internal imports
-import permissions,config,repositories,basicPaths
+import permissions,basicPaths
 
 home = basicPaths.home
 
