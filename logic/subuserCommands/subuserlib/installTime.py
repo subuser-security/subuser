@@ -5,20 +5,10 @@
 #external imports
 import time
 #internal imports
-import permissions,availablePrograms,paths
+#import ...
 
 installTimeFormat = "%Y-%m-%d-%H:%M"
 
 def currentTimeString():
   """ Return the current time formatted as per spec. """
   return time.strftime(installTimeFormat ,time.gmtime(time.time()))
-
-def markProgramAsNeedingUpdate(programName):
-  if not availablePrograms.available(programName):
-    print(programName+ " is not the name of any known program.  Cannot mark it as having an update.")
-    print("\nAvailable programs are: ")
-    print(' '.join(availablePrograms.getAvailablePrograms()))
-  else:
-    permissions_ = permissions.getPermissions(programName)
-    permissions_["last-update-time"] = currentTimeString()
-    permissions.setPermissions(programName,permissions_)

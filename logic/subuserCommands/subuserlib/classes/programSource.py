@@ -10,6 +10,7 @@ import subuserlib.classes.userOwnedObject,subuserlib.classes.describable,subuser
 class ProgramSource(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.classes.describable.Describable):
   __name = None
   __repo = None
+  __permissions = None
 
   def __init__(self,user,repo,name):
     subuserlib.classes.userOwnedObject.UserOwnedObject.__init__(self,user)
@@ -50,7 +51,9 @@ class ProgramSource(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserli
     return os.path.join(self.getRepository().getRepoPath(),self.getName())
 
   def getPermissions(self):
-    return subuserlib.classes.permissions.Permissions(self.getUser(),os.path.join(self.getSourceDir(),"permissions.json"))
+    if not self.__permissions:
+      self.__permissions = subuserlib.classes.permissions.Permissions(self.getUser(),os.path.join(self.getSourceDir(),"permissions.json"))
+    return self.__permissions
 
   def describe(self):
     print(self.getName()+":")

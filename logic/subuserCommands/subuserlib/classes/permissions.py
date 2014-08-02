@@ -17,7 +17,8 @@ class Permissions(collections.OrderedDict,subuserlib.classes.userOwnedObject.Use
     self.update(subuserlib.permissions.getPermissions(path))
 
   def save(self):
-    subuserlib.permission.setPermissions(self,self.__path)
+    subuserlib.permissions.setPermissions(self,self.__path)
+
   def describe(self):
     print(" Description: "+self["description"])
     print(" Maintainer: "+self["maintainer"])

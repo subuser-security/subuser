@@ -35,6 +35,10 @@ def resolveProgramSource(user,programSourcePath,contextRepository=None):
   Throws an Index error:
     - If the repository does not exist
     - If the program is not in the repository
+
+  >>> resolveProgramSource(user,"non-existant@default")
+  Traceback (most recent call last):
+  KeyError: 'non-existant'
   """
   if not contextRepository:
     contextRepository = user.getRegistry().getRepositories()["default"]
@@ -50,11 +54,7 @@ def resolveProgramSource(user,programSourcePath,contextRepository=None):
   # "foo@https://github.com/subuser-security/some-repo.git"
   else:
     repository = getRepositoryFromURI(user,splitProgramIdentifier[1])
-
-  if programName in repository:
-    return repository[programName]
-  else:
-    return None
+  return repository[programName]
 
 def getRepositoryFromURI(user,uri):
   """

@@ -54,3 +54,4 @@ def setPermissions(permissions,permissionsFilePath):
       permissionsToSave[permission] = value
   with open(permissionsFilePath, 'w') as file_f:
     json.dump(permissionsToSave,file_f,indent=1, separators=(',', ': '))
+
