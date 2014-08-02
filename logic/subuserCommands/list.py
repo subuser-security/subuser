@@ -30,7 +30,8 @@ def list(sysargs):
   """
   List various things: program sources, subusers, ect.
 
-  >>> import list,sys
+  >>> import sys
+  >>> import list #import self
   >>> list.list([sys.argv[0]]+["list","available"])
   Programs available for instalation from the repo: default
   foo:

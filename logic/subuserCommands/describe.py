@@ -3,12 +3,12 @@
 # If it is not, please file a bug report.
 
 #external imports
-import optparse
+import optparse,sys
 #internal imports
-import subuserlib.describe,subuserlib.commandLineArguments
+import subuserlib.classes.user,subuserlib.commandLineArguments,subuserlib.resolve
 
-def parseCliArgs():
-  usage = "usage: subuser %prog [subuser|program] SUBUSER(s)/PROGRAM(s)"
+def parseCliArgs(sysargs):
+  usage = "usage: subuser %prog describe [subuser|program] SUBUSER(s)/PROGRAM(s)"
   description = """Show basic information about a subuser or program: Whether it is installed, what it's permissions are ect.
 Ex:
 $ subuser describe program firefox
@@ -16,9 +16,45 @@ $ subuser describe program firefox
 $ subuser describe program firefox
 """
   parser = optparse.OptionParser(usage=usage,description=description,formatter=subuserlib.commandLineArguments.HelpFormatterThatDoesntReformatDescription())
-  return parser.parse_args()
+  return parser.parse_args(args=sysargs[2:])
 
-(options,args) = parseCliArgs()
+def describe(sysargs):
+  """
+  Describe subusers and programs.
+  
+  >>> import describe #import self
+  >>> describe.describe([sys.argv[0]]+["describe","subuser","foo"])
+  Subuser: foo
+  ------------------
+  Progam:
+  foo:
+   Description: 
+   Maintainer: 
+   Last update time(version): 0
+   Executable: /usr/bin/foo
+  >>> describe.describe([sys.argv[0]]+["describe","program","foo"])
+  foo:
+   Description: 
+   Maintainer: 
+   Last update time(version): 0
+   Executable: /usr/bin/foo
+  >>> describe.describe([sys.argv[0]]+["describe","program","foo@default"])
+  foo:
+   Description: 
+   Maintainer: 
+   Last update time(version): 0
+   Executable: /usr/bin/foo
+  """
+  user = subuserlib.classes.user.User()
+  (options,args) = parseCliArgs(sysargs)
+  if args[0] == "program":
+    for program in args[1:]:
+      subuserlib.resolve.resolveProgramSource(user,program).describe()
+  elif args[0] == "subuser":
+    for subuser in  args[1:]:
+      user.getRegistry().getSubusers()[subuser].describe()
+  #else:
+    #parseCliArgs(["","subuser","describe","--help"])
 
-for program in args:
-  subuserlib.describe.printInfo(program,True)
+if __name__ == "__main__":
+  describe(sys.argv)

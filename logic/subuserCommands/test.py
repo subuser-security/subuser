@@ -31,7 +31,7 @@ import subuserlib.classes.user,subuserlib.classes.subuser
 # libs
 import subuserlib.resolve
 # commands
-import list
+import list,describe
 dry_run = __import__("dry-run")
 
 modules = [
@@ -43,6 +43,7 @@ modules = [
  # subuser commands
  ,dry_run
  ,list
+ ,describe
  ]
 
 for module in modules:
