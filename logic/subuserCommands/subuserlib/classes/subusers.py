@@ -41,6 +41,8 @@ class Subusers(dict,subuserlib.classes.userOwnedObject.UserOwnedObject,subuserli
     else:
       serializedSubusersDict = {}
     for subuserName, subuserAttributes in serializedSubusersDict.iteritems():
+      if not subuserAttributes["source-repo"] in self.getUser().getRegistry().getRepositories():
+        sys.exit("ERROR: Registry inconsistent. Subuser "+subuserName+" points to non-existant repository: "+subuserAttributes["source-repo"])
       repo = self.getUser().getRegistry().getRepositories()[subuserAttributes["source-repo"]]
       name = subuserAttributes["source-program"]
       programSource = subuserlib.classes.programSource.ProgramSource(user=user,name=name,repo=repo)
