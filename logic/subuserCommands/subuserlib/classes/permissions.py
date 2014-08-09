@@ -8,16 +8,16 @@ import json,os,sys,collections
 import subuserlib.classes.userOwnedObject,subuserlib.classes.fileBackedObject,subuserlib.permissions
 
 class Permissions(collections.OrderedDict,subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.classes.fileBackedObject.FileBackedObject):
-  __path = None
+  __writePath = None
 
-  def __init__(self,user,path):
+  def __init__(self,user,readPath,writePath):
     subuserlib.classes.userOwnedObject.UserOwnedObject.__init__(self,user)
     collections.OrderedDict.__init__(self)
-    self.__path = path
-    self.update(subuserlib.permissions.getPermissions(path))
+    self.__writePath = writePath
+    self.update(subuserlib.permissions.getPermissions(readPath))
 
   def save(self):
-    subuserlib.permissions.setPermissions(self,self.__path)
+    subuserlib.permissions.setPermissions(self,self.__writePath)
 
   def describe(self):
     print(" Description: "+self["description"])

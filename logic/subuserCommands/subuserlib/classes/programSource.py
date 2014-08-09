@@ -52,7 +52,8 @@ class ProgramSource(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserli
 
   def getPermissions(self):
     if not self.__permissions:
-      self.__permissions = subuserlib.classes.permissions.Permissions(self.getUser(),os.path.join(self.getSourceDir(),"permissions.json"))
+      permissionsPath=os.path.join(self.getSourceDir(),"permissions.json")
+      self.__permissions = subuserlib.classes.permissions.Permissions(self.getUser(),readPath=permissionsPath,writePath=permissionsPath)
     return self.__permissions
 
   def describe(self):

@@ -23,12 +23,13 @@ class Subuser(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.clas
     return self.__programSource
 
   def getPermissions(self):
-    permissionsDotJsonPath = os.path.join(self.getUser().getConfig().getUserSetPermissionsDir(),self.getName(),"permissions.json")
-    if not os.path.exists(permissionsDotJsonPath):
-      permissionsDotJsonPath = os.path.join(self.getProgramSource().getSourceDir(),"permissions.json")
-    if not os.path.exists(permissionsDotJsonPath):
-      permissionsDotJsonPath = None
-    return subuserlib.classes.permissions.Permissions(self.getUser(),permissionsDotJsonPath)
+    permissionsDotJsonWritePath = os.path.join(self.getUser().getConfig().getUserSetPermissionsDir(),self.getName(),"permissions.json")
+    permissionsDotJsonReadPath = permissionsDotJsonWritePath 
+    if not os.path.exists(permissionsDotJsonReadPath):
+      permissionsDotJsonReadPath = os.path.join(self.getProgramSource().getSourceDir(),"permissions.json")
+    if not os.path.exists(permissionsDotJsonReadPath):
+      permissionsDotJsonReadPath = None
+    return subuserlib.classes.permissions.Permissions(self.getUser(),readPath=permissionsDotJsonReadPath,writePath=permissionsDotJsonWritePath)
 
   def getHomeDirOnHost(self):
     """
