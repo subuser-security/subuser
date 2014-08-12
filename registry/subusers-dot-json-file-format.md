@@ -26,3 +26,14 @@ This object maps subuser names to json objects which have the following attribut
   ````
 
   type: subuser names can be any unicode string not containing the symobol `@`
+
+ * `docker-image`: The `Id` of the currently installed Docker image associated with this subuser.
+
+  Ex:
+
+  ````json
+   ,"docker-image" : "21882137"
+  ````
+
+  type: A Docker image `Id`.
+
