@@ -29,19 +29,16 @@ def verify(user):
   verifyRegistryConsistency(user)
   ensureUpToDateImagesAreInstalled(user)
   trimUnneededTempRepos(user)
-  trimUnneededInstalledImages(user)
 
 def verifyRegistryConsistency(user):
   print("Verifying registry consistency...")
   for _,subuser in user.getRegistry().getSubusers().iteritems():
     if not subuser.getProgramSource().getName() in subuser.getProgramSource().getRepository():
-      print("WARNING: "+subuser.getName()+" is no longer present in it's source repository.") #TODO, find a way to recover the old permissions.
+      print("WARNING: "+subuser.getName()+" is no longer present in it's source repository. Support for this progam may have been dropped.")
+
 
 def ensureUpToDateImagesAreInstalled(user)
   print("Checking if images need to be updated or installed...")
 
 def trimUnneededTempRepos(user)
   print("Running garbage collector on temporary repositories...")
-
-def trimUnneededInstalledImages(user)
-  print("Running garbage collector on installed images...")

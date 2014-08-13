@@ -5,7 +5,7 @@
 #external imports
 import getpass, os
 #internal imports
-import subuserlib.classes.registry, subuserlib.classes.repositories, subuserlib.classes.config, subuserlib.test
+import subuserlib.classes.registry, subuserlib.classes.repositories, subuserlib.classes.config, subuserlib.classes.installedImages, subuserlib.test
 
 class User(object):
   """
@@ -28,6 +28,7 @@ class User(object):
   homeDir = None
   __config = None
   __registry = None
+  __installedImages = None
   
   def __init__(self,name=None,homeDir=None):
     if name:
@@ -52,3 +53,8 @@ class User(object):
     if self.__registry == None:
       self.__registry = subuserlib.classes.registry.Registry(self)
     return self.__registry
+
+  def getInstalledImages(self):
+    if self.__installedImages == None:
+      self.__installedImages = subuserlib.classes.installedImages.InstalledImages(self)
+    return self.__installedImages

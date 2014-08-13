@@ -23,20 +23,6 @@ class ProgramSource(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserli
   def getRepository(self):
     return self.__repo
 
-  def getInstalledImages(self):
-    """ Get all InstalledImage s built from this ProgramSource, including out of date images. """
-    return [image for image in self.getUser().getRegistry().getInstalledImages() if image.getProgramSource().getName() == self.getName() and image.getProgramSource().getRepository().getName() == self.getRepository().getName()]
-
-  def getImage(self):
-    """ Get the most up to date InstalledImage built from this ProgramSource or None, if there are no InstalledImage s built from this ProgramSource. """
-    latestUpdateTime = ""
-    imageWithLatestUpdateTime = None
-    for image in self.getInstalledImages():
-      if image.getLastUpdateTime() > latestUpdateTime:
-        latestUpdateTime = image.getLastUpdateTime()
-        imageWithLatestUpdateTime = image
-    return imageWithLatestUpdateTime
-
   def getSubusers(self):
     """
      Get a list of subusers that were built from this ProgramSource.

@@ -45,5 +45,6 @@ class Subusers(dict,subuserlib.classes.userOwnedObject.UserOwnedObject,subuserli
         sys.exit("ERROR: Registry inconsistent. Subuser "+subuserName+" points to non-existant repository: "+subuserAttributes["source-repo"])
       repo = self.getUser().getRegistry().getRepositories()[subuserAttributes["source-repo"]]
       name = subuserAttributes["source-program"]
+      imageId = subuserAttributes["docker-image"]
       programSource = subuserlib.classes.programSource.ProgramSource(user=user,name=name,repo=repo)
-      self[subuserName] = subuserlib.classes.subuser.Subuser(user,subuserName,programSource)
+      self[subuserName] = subuserlib.classes.subuser.Subuser(user,subuserName,programSource,imageId=imageId)

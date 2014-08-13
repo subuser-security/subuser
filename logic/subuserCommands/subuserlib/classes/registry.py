@@ -5,17 +5,11 @@
 #external imports
 import subprocess
 #internal imports
-import subuserlib.classes.installedImages , subuserlib.classes.subusers, subuserlib.classes.userOwnedObject
+import subuserlib.classes.subusers, subuserlib.classes.userOwnedObject
 
 class Registry(subuserlib.classes.userOwnedObject.UserOwnedObject):
-  __installedImages = None
   __subusers = None
   __repositories = None
-
-  def getInstalledImages(self):
-    if not self.__installedImages:
-      self.__installedImages = subuserlib.classes.installedImages.InstalledImages(self.getUser())
-    return self.__installedImages
 
   def getSubusers(self):
     if not self.__subusers:

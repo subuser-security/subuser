@@ -42,7 +42,7 @@ class Config(subuserlib.classes.userOwnedObject.UserOwnedObject):
 
   def getInstalledImagesDotJsonPath(self):
     """ Get the path to the installed-images.json file where installed docker images are registered. """
-    return os.path.join(self.getRegistryPath(),"installed-images.json")
+    return os.path.join(self.getUser().homeDir,".subuser","installed-images.json")
 
   def getSubusersDotJsonPath(self):
     """ Get the path to the subusers.json file where subusers are registered. """

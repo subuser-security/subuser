@@ -7,11 +7,11 @@ import os,json,collections,sys
 #internal imports
 import subuserlib.classes.installedImage,subuserlib.classes.fileBackedObject, subuserlib.classes.userOwnedObject
 
-class InstalledImages(list,subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.classes.fileBackedObject.FileBackedObject):
+class InstalledImages(dict,subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.classes.fileBackedObject.FileBackedObject):
 
-  def reloadInstalledImagesRegistry(self):
+  def reloadInstalledImagesList(self):
     """ Reload the installed images list from disk, discarding the current in-memory version. """
-    del self[:] # Clear the old list of InstalledImage objects.
+    self.clear()
 
     installedImagesPath = self.getUser().getConfig().getInstalledImagesDotJsonPath()
     if os.path.exists(installedImagesPath):
@@ -27,10 +27,8 @@ class InstalledImages(list,subuserlib.classes.userOwnedObject.UserOwnedObject,su
       image = subuserlib.classes.installedImage.InstalledImage(
         user=self.getUser(),
         imageID=imageID,
-        lastUpdateTime=imageAttributes["last-update-time"],
-        sourceName=imageAttributes["source-program"],
-        sourceRepo=imageAttributes["source-repo"])
-      self.append(image)
+        lastUpdateTime=imageAttributes["last-update-time"])
+      self[imageID]=image
  
   def save(self):
     """ Save attributes of the installed images to disk. """
@@ -38,9 +36,7 @@ class InstalledImages(list,subuserlib.classes.userOwnedObject.UserOwnedObject,su
     installedImagesDict = {}
     for installedImage in self:
       imageAttributes = {}
-      imageAttributes["last-update-time"] = installedImage.getLastUpdateTime
-      imageAttributes["source-repo"] = installedImage.getProgramSource().getRepository().getName()
-      imageAttributes["source-program"] = installedImage.getProgramSource().getName()
+      imageAttributes["last-update-time"] = installedImage.getLastUpdateTime()
       installedImagesDict[installedImage.getImageID] = imageAttributes
 
     # Write that dictionary to disk.
@@ -50,10 +46,12 @@ class InstalledImages(list,subuserlib.classes.userOwnedObject.UserOwnedObject,su
 
   def __init__(self,user):
     subuserlib.classes.userOwnedObject.UserOwnedObject.__init__(self,user)
-    self.reloadInstalledImagesRegistry()
+    self.reloadInstalledImagesList()
 
   def unregisterNonExistantImages(self):
     """
      Go through the installed images list and unregister any images that aren't actually installed.
     """
-    filter(subuserlib.classes.installedImage.isDockerImageThere,self)
+    for imageId,image in self.iteritems():
+      if not image.isDockerImageThere():
+        del self[imageId]

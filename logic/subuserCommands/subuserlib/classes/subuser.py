@@ -10,11 +10,13 @@ import subuserlib.classes.userOwnedObject,subuserlib.classes.programSource,subus
 class Subuser(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.classes.describable.Describable):
   __name = None
   __programSource = None
+  __imageId = None
 
-  def __init__(self,user,name,programSource):
+  def __init__(self,user,name,programSource,imageId):
     subuserlib.classes.userOwnedObject.UserOwnedObject.__init__(self,user)
     self.__name = name
     self.__programSource = programSource
+    self.__imageId = imageId
 
   def getName(self):
     return self.__name
@@ -30,6 +32,12 @@ class Subuser(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.clas
     if not os.path.exists(permissionsDotJsonReadPath):
       permissionsDotJsonReadPath = None
     return subuserlib.classes.permissions.Permissions(self.getUser(),readPath=permissionsDotJsonReadPath,writePath=permissionsDotJsonWritePath)
+
+  def getImage(self):
+    """
+     Get the installed Docker image associated with this subuser.
+    """
+    return self.getUser().getInstalledImages()[self.__imageId]
 
   def getHomeDirOnHost(self):
     """
