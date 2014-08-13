@@ -29,6 +29,10 @@ The defaults settings for these properties may be found in `$SUBUSERDIR/config.j
 
  `type`: string - path to git repository
 
+ * `repositories-dir` : This is the path to the directory where subuser repositories are stored.
+
+ `type`: string - path to git repository
+
  * `user-set-permissions-dir`:
 
  `type`: string - path to directory
