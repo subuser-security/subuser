@@ -25,7 +25,7 @@ class Repository(dict,subuserlib.classes.userOwnedObject.UserOwnedObject):
 
   def getRepoPath(self):
     """ Get the path of the repo's sources on disk. """
-    return os.path.join(self.getUser().homeDir,".subuser","repositories",str(self.getName()))
+    return os.path.join(self.getUser().getConfig().getRepositoriesDir(),str(self.getName()))
 
   def updateSources(self):
     """ Pull(or clone) the repo's ProgramSources from git origin. """

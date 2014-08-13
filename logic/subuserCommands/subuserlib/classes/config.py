@@ -19,7 +19,7 @@ class Config(subuserlib.classes.userOwnedObject.UserOwnedObject):
   
   def _expandPathsInConfig(self,config):
     """ Go through a freshly loaded config file and expand any environment variables in the paths. """
-    subuserlib.loadMultiFallbackJsonConfigFile.expandPathsInDict(self.getUser().homeDir,["bin-dir","registry-dir","installed-images-list","user-set-permissions-dir","subuser-home-dirs-dir"],config)
+    subuserlib.loadMultiFallbackJsonConfigFile.expandPathsInDict(self.getUser().homeDir,["bin-dir","registry-dir","installed-images-list","user-set-permissions-dir","subuser-home-dirs-dir","repositories-dir"],config)
   
   def _loadConfig(self):
     """ Loads the subuser config: a dictionary of settings used by subuser. """
@@ -35,6 +35,10 @@ class Config(subuserlib.classes.userOwnedObject.UserOwnedObject):
   def getBinDir(self):
     """ Get the directory where the executables for subusers are to be stored. """
     return self.__config["bin-dir"]
+
+  def getRepositoriesDir(self):
+    """ Get the directory where the subuser repositories are stored. """
+    return self.__config["repositories-dir"]
 
   def getRegistryPath(self):
     """ Get the path to the user's registry where subusers and installed docker images are registered. """

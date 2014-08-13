@@ -3,5 +3,6 @@
   "registry-dir" : "$HOME/.subuser/registry",
   "user-set-permissions-dir" : "$HOME/.subuser/permissions/",
   "subuser-home-dirs-dir" : "$HOME/.subuser/homes/",
-  "installed-images-list" : "$HOME/.subuser/installed-images.json"
+  "installed-images-list" : "$HOME/.subuser/installed-images.json",
+  "repositories-dir" : "$HOME/.subuser/repositories"
 }

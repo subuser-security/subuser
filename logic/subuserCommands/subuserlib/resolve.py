@@ -20,17 +20,17 @@ def resolveProgramSource(user,programSourcePath,contextRepository=None):
   Usually, the syntax is program-name@repository-name.
 
   >>> resolveProgramSource(user,"foo@default").getName()
-  'foo'
+  u'foo'
 
   If there is no @, then we assume that the repository is the contextRepository.  The default contextRepository is the "default" repository.
 
   >>> resolveProgramSource(user,"foo").getName()
-  'foo'
+  u'foo'
 
   If the repository identifier is a URI and a repository with the same URI already exists, then the URI is resolved to the name of the existing repository. Otherwise, a temporary repository is created.
 
   >>> resolveProgramSource(user,"bar@file:///root/subuser/test/remote-test-repo").getName()
-  'bar'
+  u'bar'
 
   Throws an Index error:
     - If the repository does not exist
