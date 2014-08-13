@@ -33,6 +33,10 @@ The defaults settings for these properties may be found in `$SUBUSERDIR/config.j
 
  `type`: string - path to directory
 
+ * `installed-images-list`: path of installed-images.json file
+
+ `type`: string - path to json file
+
  * `subuser-home-dirs-dir`: The directory where subuser is to store the home directories of each subuser program.
 
  `type`: string - path to directory
