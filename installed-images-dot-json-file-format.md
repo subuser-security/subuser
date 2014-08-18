@@ -17,3 +17,25 @@ image ids to json objects which have the following attributes:
   ````
 
   **Note**: If the source program's `permissions.json` file listed no `last-update-time` this will be the actual clock time at which the program was installed.
+
+ * `source-repo`: Id of the subuser repository from which the image was installed.
+
+ Ex:
+
+ ````json
+  "source-repo" : "default"
+ ````
+
+ Or if the repository is annonymous:
+
+ ````json
+  "source-repo" : 1
+ ````
+
+ * `program-source`: Name of the progam source from which this image was built.
+
+  Ex:
+
+  ````json
+   "program-source" : "firefox"
+  ````
