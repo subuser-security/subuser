@@ -5,7 +5,7 @@
 #external imports
 import getpass, os
 #internal imports
-import subuserlib.classes.registry, subuserlib.classes.repositories, subuserlib.classes.config, subuserlib.classes.installedImages, subuserlib.test
+import subuserlib.classes.registry, subuserlib.classes.repositories, subuserlib.classes.config, subuserlib.classes.installedImages, subuserlib.classes.dockerDaemon, subuserlib.test
 
 class User(object):
   """
@@ -29,6 +29,7 @@ class User(object):
   __config = None
   __registry = None
   __installedImages = None
+  __dockerDaemon = None
   
   def __init__(self,name=None,homeDir=None):
     if name:
@@ -58,3 +59,8 @@ class User(object):
     if self.__installedImages == None:
       self.__installedImages = subuserlib.classes.installedImages.InstalledImages(self)
     return self.__installedImages
+
+  def getDockerDaemon(self):
+    if self.__dockerDaemon == None:
+      self.__dockerDaemon = subuserlib.classes.dockerDaemon.DockerDaemon(self)
+    return self.__dockerDaemon

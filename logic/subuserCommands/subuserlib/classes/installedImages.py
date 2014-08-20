@@ -27,6 +27,8 @@ class InstalledImages(dict,subuserlib.classes.userOwnedObject.UserOwnedObject,su
       image = subuserlib.classes.installedImage.InstalledImage(
         user=self.getUser(),
         imageID=imageID,
+        programSourceName=imageAttributes["program-source"],
+        sourceRepoId=imageAttributes["source-repo"], 
         lastUpdateTime=imageAttributes["last-update-time"])
       self[imageID]=image
  

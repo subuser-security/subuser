@@ -3,7 +3,7 @@
 # If it is not, please file a bug report.
 
 #external imports
-import subprocess,os
+import subprocess,os,shutil
 #internal imports
 import subuserlib.git,subuserlib.classes.userOwnedObject,subuserlib.classes.programSource,subuserlib.subprocessExtras
 
@@ -26,6 +26,12 @@ class Repository(dict,subuserlib.classes.userOwnedObject.UserOwnedObject):
   def getRepoPath(self):
     """ Get the path of the repo's sources on disk. """
     return os.path.join(self.getUser().getConfig().getRepositoriesDir(),str(self.getName()))
+
+  def removeGitRepo(self):
+    """
+     Remove the downloaded git repo associated with this repository from disk.
+    """
+    shutil.rmtree(self.getRepoPath())
 
   def updateSources(self):
     """ Pull(or clone) the repo's ProgramSources from git origin. """

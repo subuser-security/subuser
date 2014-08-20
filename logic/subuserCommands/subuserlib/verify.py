@@ -15,7 +15,7 @@ This is one of the most important modules in subuser.  This module has one funct
 #external imports
 #import ...
 #internal imports
-#import ...
+import subuserlib.install
 
 def verify(user):
    """
@@ -27,7 +27,8 @@ def verify(user):
    """
   print("Verifying subuser configuration.")
   verifyRegistryConsistency(user)
-  ensureUpToDateImagesAreInstalled(user)
+  user.getInstalledImages().unregisterNonExistantImages()
+  ensureImagesAreInstalledAndUpToDate(user)
   trimUnneededTempRepos(user)
 
 def verifyRegistryConsistency(user):
@@ -36,9 +37,19 @@ def verifyRegistryConsistency(user):
     if not subuser.getProgramSource().getName() in subuser.getProgramSource().getRepository():
       print("WARNING: "+subuser.getName()+" is no longer present in it's source repository. Support for this progam may have been dropped.")
 
-
-def ensureUpToDateImagesAreInstalled(user)
+def ensureImagesAreInstalledAndUpToDate(user):
   print("Checking if images need to be updated or installed...")
+  for _,subuser in user.getRegistry().getSubusers().iteritems():
+    subuserlib.install.ensureSubuserImageIsInstalledAndUpToDate(subuser)    
 
-def trimUnneededTempRepos(user)
+def trimUnneededTempRepos(user):
   print("Running garbage collector on temporary repositories...")
+  for repoId,repo in user.getRegistry().getRepositories().iteritems():
+    keep = False
+    if not type(repoId) is str: #If this is a temp repo.
+      for _,installedProgram in user.getInstalledPrograms().iteritems():
+        if repoId == installedProgram.getSourceRepoId():
+          keep = True
+    if not keep:
+      repo.removeGitRepo()
+      del user.getRegistry().getRepositories()[repoId]

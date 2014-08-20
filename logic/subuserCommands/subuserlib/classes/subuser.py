@@ -33,11 +33,18 @@ class Subuser(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.clas
       permissionsDotJsonReadPath = None
     return subuserlib.classes.permissions.Permissions(self.getUser(),readPath=permissionsDotJsonReadPath,writePath=permissionsDotJsonWritePath)
 
-  def getImage(self):
+  def getImageId(self):
     """
-     Get the installed Docker image associated with this subuser.
+     Get the Id of the Docker image associated with this subuser.
+     None, if the subuser has no installed image yet.
     """
-    return self.getUser().getInstalledImages()[self.__imageId]
+    return self.__imageId
+
+  def setImageId(self,imageId):
+    """
+    Set the installed image associated with this subuser.
+    """
+    self.__imageId = imageId
 
   def getHomeDirOnHost(self):
     """
@@ -65,3 +72,17 @@ class Subuser(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.clas
     print("------------------")
     print("Progam:")
     self.getProgramSource().describe()
+
+  def installExecutable(self):
+    """
+     Install a trivial executable script into the PATH which launches the subser program.
+    """
+    redirect="""#!/bin/bash
+  subuser run """+self.getName()+""" $@
+  """
+    executablePath=os.path.join(self.getUser().getConfig().getBinDir(), self.getName())
+    with open(executablePath, 'w') as file_f:
+      file_f.write(redirect)
+      st = os.stat(executablePath)
+      os.chmod(executablePath, stat.S_IMODE(st.st_mode) | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
+  

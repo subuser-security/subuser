@@ -10,14 +10,24 @@ import subuserlib.classes.userOwnedObject,subuserlib.dockerImages,subuserlib.doc
 class InstalledImage(subuserlib.classes.userOwnedObject.UserOwnedObject):
   __imageID = None
   __lastUpdateTime = None
+  __programSourceName = None
+  __sourceRepoId = None
 
-  def __init__(self,user,imageID,lastUpdateTime):
+  def __init__(self,user,imageID,programSourceName,sourceRepoId,lastUpdateTime):
     subuserlib.classes.userOwnedObject.UserOwnedObject.__init__(self,user)
     self.__imageID = imageID
     self.__lastUpdateTime = lastUpdateTime
+    self.__programSourceName = programSourceName
+    self.__sourceRepoId = sourceRepoId
 
   def getImageID(self):
     return self.__imageID
+
+  def getSourceRepoId(self):
+    return self.__sourceRepoId
+
+  def getProgramSourceName(self):
+    return self.__progamSourceName
 
   def getLastUpdateTime(self):
     return self.__lastUpdateTime

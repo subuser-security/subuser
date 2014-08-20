@@ -3,31 +3,18 @@
 # If it is not, please file a bug report.
 
 #external imports
-import sys,os,stat
+import sys,os,stat,uuid,json
 #internal imports
-import permissions,paths,installTime,registry,dockerImages,docker,subprocessExtras
+import subuserlib.classes.installedImage, subuserlib.installedImages
 
-def installExecutable(programName):
+def installFromBaseImage(programSource):
   """
-Install a trivial executable script into the PATH which launches the subser program.
+  Build a docker base image using a script and return the image's Id.
   """
-  redirect="""#!/bin/bash
-subuser run """+programName+""" $@
-"""
-  executablePath=paths.getExecutablePath(programName)
-  with open(executablePath, 'w') as file_f:
-    file_f.write(redirect)
-    st = os.stat(executablePath)
-    os.chmod(executablePath, stat.S_IMODE(st.st_mode) | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
-
-def installFromBaseImage(programName,programSrcDir):
-  """
-Build a docker base image using a script and then install that base image.
-  """
-  buildImageScriptPath = paths.getBuildImageScriptPath(programSrcDir)
+  buildImageScriptPath = os.path.join(programSource.getSourceDir(),"docker-image", "BuildImage.sh")
   print("""\nATTENTION!
 
-  Installing <"""+programName+"""> requires that the following shell script be run on your computer: <"""+buildImageScriptPath+"""> If you do not trust this shell script do not run it as it may be faulty or malicious!
+  Installing <"""+programSource.getName()+"""> requires that the following shell script be run on your computer: <"""+buildImageScriptPath+"""> If you do not trust this shell script do not run it as it may be faulty or malicious!
 
   - Do you want to view the full contents of this shell script [v]?
   - Do you want to continue? (Type "run" to run the shell script)
@@ -44,79 +31,107 @@ Build a docker base image using a script and then install that base image.
     with open(buildImageScriptPath, 'r') as file_f:
       print(file_f.read())
     print('\n===================== END SCRIPT CODE =====================\n')
-    return installFromBaseImage(programName,programSrcDir)
+    return installFromBaseImage(programSource)
   
   if userInput == "run":
-    #Do the installation via SCRIPT
+    #Build the image using the script
     st = os.stat(buildImageScriptPath)
     os.chmod(buildImageScriptPath, stat.S_IMODE(st.st_mode) | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
-    subprocessExtras.subprocessCheckedCall([buildImageScriptPath])
-    return
-
+    imageTag = "subuser-"+str(uuid.uuid4())
+    subprocessExtras.subprocessCheckedCall([buildImageScriptPath,imageTag])
+    # Return the Id of the newly created image
+    imageProperties = programSource.getUser().getDockerDaemon().getImageProperties(imageTag)
+    if imageProperites == None:
+      sys.exit("Image failed to build.  The script exited successfully, but did not result in any Docker image being imported.")
+    else:
+      return imageProperties["Id"]
   sys.exit("Will not run install script.  Nothing to do.  Exiting.")
 
-def installFromDockerfile(programName, programSrcDir, useCache):
-  if useCache:
-    cacheArg = "--no-cache=false"
-  else:
-    cacheArg = "--no-cache=true"
-  dockerImageDir = os.path.join(programSrcDir,"docker-image")
-  docker.runDockerAndExitIfItFails(["build","--rm",cacheArg,"--tag=subuser-"+programName+"",dockerImageDir])
+def installFromSubuserImagefile(programSource, useCache=False,parent=None):
+  """
+  Returns the Id of the newly installed image.
+  """
+  dockerFileContents = programSource.generateDockerfileConents(parent=parent)
+  try:
+    dockerImageDir = os.path.join(programSource.getSourceDir(),"docker-image")
+    id = programSource.getUser().getDockerDaemon().build(directoryWithDockerfile=dockerImageDir,rm=True,useCache=useCache,dockerfile=dockerFileContents)
+    return id
+  catch Exception e:
+    sys.exit(e)
 
-def installProgram(programName, useCache):
+def installProgram(programSource, useCache=False,parent=None):
   """
-  Build the docker image associated with a program and create a tiny executable to add that image to your path.
+  Install a program by building the given ProgramSource.
+  Register the newly installed image in the user's InstalledImages list.
+  Return the Id of the newly installedImage.
   """
-  print("Installing "+programName+" ...")
-  programSrcDir = paths.getProgramSrcDir(programName)
-  _DockerfilePath = paths.getDockerfilePath(programSrcDir)
-  # Check if we use a 'Dockerfile' or a 'BuildImage.sh'
-  if os.path.isfile(paths.getBuildImageScriptPath(programSrcDir)):
-    installFromBaseImage(programName,programSrcDir)
-  elif os.path.isfile(_DockerfilePath):
-    installFromDockerfile(programName,programSrcDir,useCache)
+  print("Installing "+programSource.getName()+" ...")
+  buildType = programSource.getBuildType()
+  if buildType == "Dockerfile":
+    imageId = installFromSubuserImagefile(programSource,useCache=useCache,parent=parent)
+  elif buildType == "BuildImage.sh":
+    imageId = installFromBaseImage(programSource)
   else:
     sys.exit("No buildfile found: There needs to be a 'Dockerfile' or a 'BuildImage.sh' in the docker-image directory.")
 
-  _permissions = permissions.getPermissions(programName)
-
-  # Create a small executable that just calls the real executable in the docker image.
-  if 'executable' in _permissions:
-    installExecutable(programName)
-
-  try:
-    lastUpdateTime = _permissions["last-update-time"]
-  except KeyError:
+  lastUpdateTime = programSource.getPermissions["last-update-time"]
+  if lastUpdateTime == None:
     lastUpdateTime = installTime.currentTimeString()
 
-  imageID = dockerImages.getImageID("subuser-"+programName)
-  registry.registerProgram(programName, lastUpdateTime, imageID)
+  programSource.getUser().getInstalledImages()[imageId] = subuserlib.classes.installedImage.InstalledImage(programSource.getUser(),imageId,programSource.getName(),programSource.getRepository().getName(),lastUpdateTime)
+  return imageId
 
-def getUniqueNameForProgram(sourceRepo,sourceName):
-  """ It is possible that a programs name is not unique.  That is, another program in another repo may exist with the same name. Generate a unique name for each program, either by asking the user to enter a new name for the program or(in the case of libraries) by concatinating the program name with the name of the repo in which it resides.
-
-  At the same time, ensure that the program will not unexpectedly interfere with any programs already in the PATH, by prompting the user if they want to rename the program in the case that the program has the same name as a program already in the PATH.
-
+def getProgramSourceLineage(programSource):
   """
-  
-
-def installProgramAndDependencies(programName, useCache):
+  Return the lineage of the ProgrmSource, going from its base dependency up to itself.
   """
-  Build the dependencytree and install bottom->up
-  """
-  if dockerImages.isProgramsImageInstalled(programName):
-    print(programName+" is already installed.")
+  dependency = programSource.getDependency()
+  if dependency:
+    return getProgramSourceLineage() + [programSource]
   else:
-    #get dependencytree and install bottom->up
-    dependencyTree = reversed(registry.getDependencyTree(programName))
-    programsToBeInstalled = []
-    for dependency in dependencyTree:
-      if not dockerImages.isProgramsImageInstalled(dependency):
-        programsToBeInstalled.append(dependency)
+    return []
 
-    print("The following programs will be installed.")
-    for program in programsToBeInstalled:
-      print(program)
+def installLineage(programSourceLineage,parent=None):
+  """
+  Install the lineage of program sources.
+  Return the image id of the final installed image.
+  """
+  for programSource in programSourceLineage:
+    parent = installProgram(programSource,parent=parent)
+  return parent
 
-    for program in programsToBeInstalled:
-      installProgram(program, useCache)
+def isInstalledImageUpToDate(installedImage):
+  """
+  Returns True if the installed image(including all of its dependencies, is up to date.  False otherwise.
+  """
+  installedImageSource = installedImage.getUser().getRegistry().getRepositories()[installedImage.getSourceRepoId()][installedImage.getProgramSourceName()]
+  sourceLineage = getProgramSourceLineage(installedImageSource)
+  installedImageLineage = subuserlib.installedImages.getImageLineage(installed.getUser(),installedImage.getImageId())
+  while len(sourceLineage) > 0:
+    if not len(latestInstalledImageLineage)>0:
+      subuser.setImage(installLineage(sourceLineage))
+      return
+    programSource = sourceLineage.pop(0)
+    installedImage = latestInstalledImageLineage.pop(0)
+    if not (installedImage.getProgramSourceName() == programSource.getName() and installedImage.getSourceRepoId() == programSource.getRepository().getName() and installedImage.getLastUpdateTime() == programSource.getPermisisons()["last-update-time"]):
+      return False
+  return True
+  
+def ensureSubuserImageIsInstalledAndUpToDate(subuser, useCache=False):
+  """
+  Ensure that the Docker image associated with the subuser is installed and up to date.
+  If the image is already installed, but is out of date, or it's dependencies are out of date, build it again.
+  Otherwise, do nothing.
+  """
+  # get dependency list as a list of ProgramSources
+  sourceLineage = getProgramSourceLineage(subuser.getProgramSource())
+  parent=None
+  while len(sourceLineage) > 0:
+    programSource = sourceLineage.pop(0)
+    latestInstalledImage = programSource.getLatestInstalledImage()
+    if not isInstalledImageUpToDate(latestInstalledImage):
+      subuser.setImageId(installLineage(sourceLineage,parent=parentId))
+      return
+    parentId=latestInstalledImage.getImageId()
+  subuser.setImageId(parentId)
+
