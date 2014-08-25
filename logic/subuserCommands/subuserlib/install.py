@@ -130,7 +130,9 @@ def ensureSubuserImageIsInstalledAndUpToDate(subuser, useCache=False):
     latestInstalledImage = programSource.getLatestInstalledImage()
     if not isInstalledImageUpToDate(latestInstalledImage):
       subuser.setImageId(installLineage(sourceLineage,parent=parentId))
+      subuser.getUser().getRegistry().logChange("Installed new image for subuser "+subuser.getName())
       return
     parentId=latestInstalledImage.getImageId()
   subuser.setImageId(parentId)
+  subuser.getUser().getRegistry().logChange("Installed new image for subuser "+subuser.getName())
 

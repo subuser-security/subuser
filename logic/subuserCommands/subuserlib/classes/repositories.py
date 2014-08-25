@@ -29,6 +29,7 @@ class Repositories(collections.Mapping,subuserlib.classes.userOwnedObject.UserOw
 
   def reloadRepositoryLists(self):
     """ Load the repository list from disk, discarding the current in-memory version. """
+    repositoryStates = self._loadRepositoryStates()
     def loadRepositoryDict(paths):
       """
        From a list of paths to repository lists load a single unified repository dict.
@@ -36,11 +37,24 @@ class Repositories(collections.Mapping,subuserlib.classes.userOwnedObject.UserOw
       repositoryDict = subuserlib.loadMultiFallbackJsonConfigFile.getConfig(paths)
       repositories = {}
       for repoName,repoAttributes in repositoryDict.iteritems():
-        repositories[repoName] = subuserlib.classes.repository.Repository(self.getUser(),name=repoName,gitOriginURI=repoAttributes["git-origin"])
+        if repoName in repositoryStates:
+          gitCommitHash = repositoryStates[repoName]["git-commit-hash"]
+        else:
+          gitCommitHash = "master"
+        repositories[repoName] = subuserlib.classes.repository.Repository(self.getUser(),name=repoName,gitOriginURI=repoAttributes["git-origin"],gitCommitHash)
       return repositories
 
     self.systemRepositories = loadRepositoryDict(self.systemRepositoryListPaths)
     self.userRepositories = loadRepositoryDict([self.userRepositoryListPath])
+
+  def _loadRepositoryStates(self):
+    """
+    Load the repository states from disk.
+    Return them as a dictionary object.
+    """
+    repositoryStatesDotJsonPath = os.path.join(self.getUser().getConfig().getRegistryPath(),"repository-states.json")
+    with open(repositoryStatesDotJsonPath,mode="r") as repositoryStatesDotJsonFile:
+      return json.load(repositoryStatesDotJsonFile)
 
   def addRepository(self,repository):
     self.userRepositories[repository.getName()] = repository
@@ -49,12 +63,18 @@ class Repositories(collections.Mapping,subuserlib.classes.userOwnedObject.UserOw
     del self.userRepositories[name]
 
   def save(self):
-    """ Save attributes of the installed images to disk. """
+    """ Save attributes of the repositories to disk. """
     userRepositoryListDict = {}
     for name,repository in self.userRepositories.iteritems():
       userRepositoryListDict[name]["git-origin"] = repository.getGitOriginURI()
     with open(self.userRepositoryListPath, 'w') as file_f:
       json.dump(userRepositoryListDict, file_f, indent=1, separators=(',', ': '))
+    repositoryStatesDotJsonPath = os.path.join(self.getUser().getConfig().getRegistryPath(),"repository-states.json")
+    repositoryStates = {}
+    for repoName,repository in self.iteritems():
+      repositoryStates[repoName]["git-commit-hash"] = repository.getGitCommitHash()
+    with open(repositoryStatesDotJsonPath,mode="w") as repositoryStatesDotJsonFile:
+      json.dump(repositoryStates,repositoryStatesDotJsonFile, indent=1, separators=(',', ': '))
 
   def getNewUniqueTempRepoId(self):
     """
@@ -72,3 +92,4 @@ class Repositories(collections.Mapping,subuserlib.classes.userOwnedObject.UserOw
        ,"/etc/subuser/repositories.json"] # TODO how does this work on windows?
     self.userRepositoryListPath = os.path.join(subuserlib.paths.getSubuserDir(),"repositories.json")
     self.reloadRepositoryLists()
+

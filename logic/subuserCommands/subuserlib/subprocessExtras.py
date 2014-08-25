@@ -24,10 +24,19 @@ def subprocessCheckedCall(args, errorContext='',cwd=None):
   """
   process = subprocess.Popen(args,cwd=cwd)
   process.communicate()
-  err = ""
   if not process.returncode == 0:
-    sys.exit(formatErrorMessage(args,err,errorContext=errorContext))
-    
+    sys.exit(formatErrorMessage(args,"",errorContext=errorContext))
+
+def subprocessCheckedCallCollectOutput(args,errorContext="",cwd=None):
+  """
+  Run the command and return the output to stdout as a string.
+  """
+  process = subprocess.Popen(args,stdout=subprocess.PIPE,cwd=cwd)
+  (stdout,stderr) = process.communicate()
+  if not process.returncode == 0:
+    sys.exit(formatErrorMessage(args,stderr,errorContext=errorContext))
+  return stdout
+
 def subprocessCheckedOutput(args, errorContext=''):
   """ This function calls subprocess.check_output and uses sys.exit when the call fails rather than throwing an error.
 

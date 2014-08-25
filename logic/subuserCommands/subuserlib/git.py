@@ -10,3 +10,7 @@ import subprocessExtras,executablePath
 def runGit(args,cwd=None):
   """ Run git with the given command line arguments. """
   return subprocessExtras.subprocessCheckedCall(["git"]+args,cwd=cwd)
+
+def runGitCollectOutput(args,cwd=None):
+  """ Run git with the given command line arguments and return its output. """
+  return subprocessExtras.subprocessCheckedCallCollectOutput(["git"]+args,cwd=cwd)

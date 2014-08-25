@@ -11,10 +11,11 @@ class Repository(dict,subuserlib.classes.userOwnedObject.UserOwnedObject):
   __name = None
   __gitOriginURI = None
 
-  def __init__(self,user,name,gitOriginURI):
+  def __init__(self,user,name,gitOriginURI,gitCommitHash):
     subuserlib.classes.userOwnedObject.UserOwnedObject.__init__(self,user)
     self.__name = name
     self.__gitOriginURI = gitOriginURI
+    self.checkoutGitCommit(gitCommitHash)
     self.loadProgamSources()
 
   def getName(self):
@@ -42,10 +43,19 @@ class Repository(dict,subuserlib.classes.userOwnedObject.UserOwnedObject):
 
   def loadProgamSources(self):
     """
-     Load progam sources from disk into memory.
+    Load ProgamSources from disk into memory.
     """
-    if not os.path.exists(self.getRepoPath()):
-      self.updateSources()
     programNames = filter(lambda f: os.path.isdir(os.path.join(self.getRepoPath(),f)) and not f == ".git",os.listdir(self.getRepoPath()))
     for programName in programNames:
       self[programName] = (subuserlib.classes.programSource.ProgramSource(self.getUser(),self,programName))
+
+  def checkoutGitCommit(self,gitCommitHash):
+    """
+    Checkout a given git commit.
+    """
+    if not os.path.exists(self.getRepoPath()):
+      self.updateSources()
+    subuserlib.git.runGit(["checkout",gitCommitHash],cwd=self.getRepoPath())
+
+  def getGitCommitHash(self):
+    return subuserlib.git.runGitCollectOutput(["git","show-ref","-s","HEAD"],cwd=self.getRepoPath())
