@@ -109,8 +109,7 @@ def isInstalledImageUpToDate(installedImage):
   installedImageLineage = subuserlib.installedImages.getImageLineage(installed.getUser(),installedImage.getImageId())
   while len(sourceLineage) > 0:
     if not len(latestInstalledImageLineage)>0:
-      subuser.setImage(installLineage(sourceLineage))
-      return
+      return False
     programSource = sourceLineage.pop(0)
     installedImage = latestInstalledImageLineage.pop(0)
     if not (installedImage.getProgramSourceName() == programSource.getName() and installedImage.getSourceRepoId() == programSource.getRepository().getName() and installedImage.getLastUpdateTime() == programSource.getPermisisons()["last-update-time"]):
