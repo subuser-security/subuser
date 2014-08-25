@@ -11,7 +11,7 @@ import sys
 #internal imports
 import subuserlib.classes.subuser, subuserlib.classes.repository, subuserlib.classes.programSource
 
-def resolveProgramSource(user,programSourcePath,contextRepository=None):
+def resolveProgramSource(user,programSourcePath,contextRepository=None,allowRefferingToRepositoriesByName=True):
   """
   From a program source identifier path return a ProgamSource object. 
 
@@ -50,7 +50,10 @@ def resolveProgramSource(user,programSourcePath,contextRepository=None):
     repository = contextRepository
   # "foo@bar"
   elif not ":" in splitProgramIdentifier[1]:
-    repository = user.getRegistry().getRepositories()[splitProgramIdentifier[1]]
+    if allowRefferingToRepositoriesByName or splitProgramIdentifier[1] == "default":
+      repository = user.getRegistry().getRepositories()[splitProgramIdentifier[1]]
+    else:
+      raise Exception("Error when resolving ProgramSource "+programSourcePath+". Refering to repositories by name is forbidden in this context.")
   # "foo@https://github.com/subuser-security/some-repo.git"
   else:
     repository = getRepositoryFromURI(user,splitProgramIdentifier[1])
