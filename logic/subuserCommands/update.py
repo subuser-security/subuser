@@ -4,35 +4,29 @@
 
 # This command updates all or some of the installed subuser programs.
 
-import sys,optparse
-
-import subprocess,subuserlib.update,subuserlib.install
-
-import subuserlib.commandLineArguments
+#external imports
+#import ...
+#internal imports
+import subuserlib.commandLineArguments,subuserlib.classes.user,subuserlib.verify,subuserlib.git
 
 
 #####################################################################################
 
 def parseCliArgs():
-  usage = "usage: subuser %prog [options] PROGRAM_NAME(s)"
-  description = """Update subuser-programs.
-
-Note: You can either pass a list of program names, or you can pass the argument `all`:
+  usage = "usage: subuser %prog [options]"
+  description = """Update subuser images.
 
   all 
-      Updates all subuser-programs which have been marked as out of date.
-      You should run git pull before doing this in order to get an up-to-date program list.
+      Updates all subuser images which have been marked as out of date.
 
   EXAMPLE:
     $ subuser update all
  
-Explicitly listing programs at the command line, force reinstalls the program, whether it is marked as being out of date or not.
+  log
+      Prints a log of recent updates.
 
-EXAMPLE:
-
-    $ subuser update vim firefox
-
-Reinstalls vim and firefox.
+  checkout HASH
+      Check out an old version of your subuser configuration.
 """
   parser=optparse.OptionParser(usage=usage,description=description,formatter=subuserlib.commandLineArguments.HelpFormatterThatDoesntReformatDescription())
   return parser.parse_args()
@@ -40,19 +34,23 @@ Reinstalls vim and firefox.
 
 options,args = parseCliArgs()
 
-if ["all"] == args:
-  programsToBeUpdated = list(set(programsToBeUpdated + subuserlib.update.getProgramsWhosLastUpdateTimesChanged()))
-  userSpecifiedPrograms = []
-else:
-  programsToBeUpdated = args
-  userSpecifiedPrograms = args
+user = subuserlib.classes.user.User()
 
-#Check if there is anything to do
-if len(programsToBeUpdated) > 0:
-  subuserlib.update.updateSomePrograms(programsToBeUpdated)
-  # Ensure that all programs which we have requested be updated are still installed after the update:
-  for program in userSpecifiedPrograms:
-    if not subuserlib.registry.isProgramInstalled(program):
-      subuserlib.install.installProgramAndDependencies(program, False)
+if ["all"] == args:
+  user.getRegistry().log("Updating...")
+  for _,repository in user.getRegistry().getRepositories().iteritems():
+    repository.updateSources()
+  subuserlib.verify.verify(user)
+  user.getRegistry().commit()
+elif ["log"] == args:
+  subuserlib.git.runGit(["log"],cwd=user.getConfig().getRegistryPath())
+elif ["checkout"] == args[0]:
+  user.getRegistry().logChange("Rolling back to commit: "+args[1])
+  subuserlib.git.runGit(["rm","-r","."],cwd=user.getConfig().getRegistryPath())
+  subuserlib.git.runGit(["checkout",args[1]],cwd=user.getConfig().getRegistryPath())
+  user.getRegistry().getRepositories().reloadRepositoryLists()
+  subuserlib.verify.verify(user)
+  user.getRegistry().commit()
 else:
-  sys.exit("""You need to specify a list of programs to be updated, or pass 'all' to update all programs.  For more info issue this command with the -h argument.""")
+  sys.exit(args.join(" ") + " is not a valid update subcommand. Please use subuser update -h for help.")
+
