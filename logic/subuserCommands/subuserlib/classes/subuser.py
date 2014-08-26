@@ -11,18 +11,26 @@ class Subuser(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.clas
   __name = None
   __programSource = None
   __imageId = None
+  __executableShortcutInstalled = None
 
-  def __init__(self,user,name,programSource,imageId):
+  def __init__(self,user,name,programSource,imageId,executableShortcutInstalled):
     subuserlib.classes.userOwnedObject.UserOwnedObject.__init__(self,user)
     self.__name = name
     self.__programSource = programSource
     self.__imageId = imageId
+    self.__executableShortcutInstalled = executableShortcutInstalled
 
   def getName(self):
     return self.__name
 
   def getProgramSource(self):
     return self.__programSource
+
+  def isExecutableShortcutInstalled(self):
+    return self.__executableShortcutInstalled
+
+  def setExecutableShortcutInstalled(self,installed):
+    self.__executableShortcutInstalled = installed
 
   def getPermissions(self):
     permissionsDotJsonWritePath = os.path.join(self.getUser().getConfig().getUserSetPermissionsDir(),self.getName(),"permissions.json")
@@ -73,7 +81,7 @@ class Subuser(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.clas
     print("Progam:")
     self.getProgramSource().describe()
 
-  def installExecutable(self):
+  def installExecutableShortcut(self):
     """
      Install a trivial executable script into the PATH which launches the subser program.
     """

@@ -13,7 +13,7 @@ This is one of the most important modules in subuser.  This module has one funct
 """
 
 #external imports
-#import ...
+import shutil,os
 #internal imports
 import subuserlib.install
 
@@ -30,6 +30,7 @@ def verify(user):
   user.getInstalledImages().unregisterNonExistantImages()
   ensureImagesAreInstalledAndUpToDate(user)
   trimUnneededTempRepos(user)
+  rebuildBinDir(user)
 
 def verifyRegistryConsistency(user):
   user.getRegistry().log("Verifying registry consistency...")
@@ -54,3 +55,10 @@ def trimUnneededTempRepos(user):
       user.getRegistry().logChange("Removing uneeded temporary repository: "+repo.getName())
       repo.removeGitRepo()
       del user.getRegistry().getRepositories()[repoId]
+
+def rebuildBinDir(user):
+  shutil.rmtree(user.getConfig().getBinDir())
+  os.mkdir(user.getConfig().getBinDir())
+  for _,subuser in user.getRegistry().getSubusers().iteritems():
+    if subuser.isExecutableShortcutInstalled():
+      subuser.installExecutableShortcut()
