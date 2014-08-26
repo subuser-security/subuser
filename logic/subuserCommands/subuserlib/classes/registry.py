@@ -42,7 +42,7 @@ class Registry(subuserlib.classes.userOwnedObject.UserOwnedObject):
   def commit(self):
     """ git commit the changes to the registry files, installed-miages.json and subusers.json. """
     if self.__changed:
-      subuserlib.git(["add","subusers.json","installed-programs.json"],cwd=self.getUser().config.getRegistryPath())
+      subuserlib.git(["add","subusers.json","repositories.json","repository-states.json"],cwd=self.getUser().config.getRegistryPath())
       subuserlib.git(["commit","-m",self.__changeLog],cwd=self.getUser().config.getRegistryPath())
       self.__changed = False
       self.__changeLog = ""
