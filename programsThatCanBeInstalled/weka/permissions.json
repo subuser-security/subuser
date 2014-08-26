@@ -1,0 +1,15 @@
+{
+ "description": "The WEKA machine learning system.",
+ "maintainer": "Scott Powers <spowers dot 42 (at) gmail dot com>",
+ "last-update-time": "2014-08-26-19:29",
+ "executable": "/usr/bin/weka -m 2g",
+ "dependency": "libx11",
+ "user-dirs": [
+  "data"
+ ],
+ "system-dirs": [],
+ "x11": true,
+ "sound": false,
+ "inherit-working-directory": true,
+ "allow-network-access": false
+}
