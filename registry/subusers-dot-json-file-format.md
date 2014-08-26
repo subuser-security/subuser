@@ -37,3 +37,13 @@ This object maps subuser names to json objects which have the following attribut
 
   type: A Docker image `Id`.
 
+ * `executable-shortcut-installed`: Is an executable shortcut to be installed to the subuser bin directory?
+
+  Ex:
+
+  ````json
+   ,"executable-shortcut-installed`:true
+  ````
+
+  type: boolean
+
