@@ -56,7 +56,7 @@ def installFromSubuserImagefile(programSource, useCache=False,parent=None):
     dockerImageDir = os.path.join(programSource.getSourceDir(),"docker-image")
     id = programSource.getUser().getDockerDaemon().build(directoryWithDockerfile=dockerImageDir,rm=True,useCache=useCache,dockerfile=dockerFileContents)
     return id
-  catch Exception e:
+  except Exception as e:
     sys.exit(e)
 
 def installProgram(programSource, useCache=False,parent=None):
@@ -89,7 +89,7 @@ def getProgramSourceLineage(programSource):
   if dependency:
     return getProgramSourceLineage() + [programSource]
   else:
-    return []
+    return [programSource]
 
 def installLineage(programSourceLineage,parent=None):
   """

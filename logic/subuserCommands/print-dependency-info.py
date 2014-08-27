@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 # This file should be compatible with both Python 2 and 3.
 # If it is not, please file a bug report.
+#external imports
 import optparse,sys
-
-import subuserlib.registry,subuserlib.availablePrograms,subuserlib.commandLineArguments,subuserlib.printDependencyInfo
+#internal imports
+import subuserlib.classes.user,subuserlib.resolve,subuserlib.install
 
 def parseCliArgs():
   usage = "usage: subuser %prog PROGRAM_NAME(s) SETS_OF_PROGRAMS"
@@ -11,36 +12,37 @@ def parseCliArgs():
 
 Example:
 
-    $ subuser print-dependency-info firefox vim xterm
-
-There are also several predefined sets of programs which can be used:
-  available - programs available for installation
-    $ subuser print-dependency-info available
-
-  installed - programs that have been installed
-    $ subuser print-dependency-info installed
+    $ subuser print-dependency-info foo@default
 """
   parser = optparse.OptionParser(usage=usage,description=description,formatter=subuserlib.commandLineArguments.HelpFormatterThatDoesntReformatDescription())
-  parser.add_option("--format",dest="format",help="Print dependency information in the given format.  You can choose from: table, tree, or json.",default='table',type="string")
   return parser.parse_args()
+
+def printDependencies(programSourceIds):
+ """
+ Print the dependencies of the listed progam sources.
+
+ >>> print_dependency_info = __import__("print-dependency-info")#import self
+ >>> print_dependency_info.printDependencies(["foo@default"])
+ foo@default
+ """
+ user = subuserlib.classes.user.User()
+
+ for programSourceId in programSourceIds:
+   programSource = subuserlib.resolve.resolveProgramSource(user,programSourceId)
+   indent = 0
+   for programSourceInLineage in subuserlib.install.getProgramSourceLineage(programSource):
+     displayLine = (" "*indent) + programSource.getName() + "@" + programSource.getRepository().getName()
+     print(displayLine)
+     indent = indent + 1
+  
 
 #################################################################################################
 
-(options,args) = parseCliArgs()
-
-if len(args) == 0:
-  sys.exit("No programs specified.  Issue this command with -h to view help.")
-
-if 'available' in args:
-  print("Dependency info for programs that are available for instalation:")
-  subuserlib.printDependencyInfo.printDependencyInfo(subuserlib.availablePrograms.getAvailablePrograms(),format=options.format)
-
-if 'installed' in args:
-  print("Dependency tables for installed programs:")
-  subuserlib.printDependencyInfo.printDependencyInfo(subuserlib.registry.getInstalledPrograms(),format=options.format)
-
-userProgramList = list(set(args).difference({'installed','available'}))
-
-if len(userProgramList) > 0:
- print("Interdependencies between specified programs:")
- subuserlib.printDependencyInfo.printDependencyInfo(userProgramList,format=options.format)
+if __name__ == "__main__":
+  (options,args) = parseCliArgs()
+  
+  if len(args) == 0:
+    sys.exit("No programs specified.  Issue this command with -h to view help.")
+  
+  printDependencies(args)
+   

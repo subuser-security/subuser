@@ -29,5 +29,5 @@ def getImageLineage(user,imageId):
   dockerImageLayers = getImageLineageInLayers(user,imageId)
   for dockerImageLayer in dockerImageLayers:
     if dockerImageLayer in user.getInstalledImages():
-      lineage.append(user.getInstalledImages()[dockerImageLayer]
+      lineage.append(user.getInstalledImages()[dockerImageLayer])
   return lineage

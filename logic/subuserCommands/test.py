@@ -21,6 +21,7 @@ import subuserlib.resolve
 import list,describe
 dry_run = __import__("dry-run")
 mark_as_updated = __import__("mark-as-updated")
+print_dependency_info = __import__("print-dependency-info")
 
 modules = [
  # classes
@@ -33,6 +34,7 @@ modules = [
  ,list
  ,describe
  ,mark_as_updated
+ ,print_dependency_info
  ]
 
 for module in modules:

@@ -71,4 +71,4 @@ def run(subuserToRun,programArgs):
         symlinksScript.write("ln -s /userdirs/"+userdir+" "+subuserToRun.getDockersideHomeDir()+"/"+userdir+"\n")
 
   createSetupSymlinksScript()
-  subprocessExtras.subprocessCheckedCall(getCommand(subuserToRun,programArgs))
+  subuserToRun.getUser().getDockerDaemon().execute(getCommand(subuserToRun,programArgs))
