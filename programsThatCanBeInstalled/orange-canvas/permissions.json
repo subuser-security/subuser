@@ -1,0 +1,15 @@
+{
+ "description": "The orange canvas data mining/machine learning platform",
+ "maintainer": "Scott Powers <spowers dot 42 (at) gmail dot com>",
+ "last-update-time": "2014-08-26-19:29",
+ "executable": "/usr/local/bin/orange-canvas",
+ "dependency": "libx11",
+ "user-dirs": [
+  "data"
+ ],
+ "system-dirs": [],
+ "x11": true,
+ "sound": false,
+ "inherit-working-directory": true,
+ "allow-network-access": false
+}
