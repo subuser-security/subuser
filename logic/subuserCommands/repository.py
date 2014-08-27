@@ -3,16 +3,21 @@
 # If it is not, please file a bug report.
 
 #external imports
-import sys,os,optparse
+import optparse,sys
 #internal imports
-import subuserlib.availablePrograms,subuserlib.install,subuserlib.describe,subuserlib.commandLineArguments
+import subuserlib.classes.user,subuserlib.resolve,subuserlib.classes.repository
 
 def parseCliArgs():
-  usage = "usage: subuser %prog [options] PROGRAM_NAME(s)"
-  description = """Install a set of subuser programs.  To view a list of programs that can be installed try:
+  usage = "usage: subuser %prog [options] [add|remove] NAME <URL>"
+  description = """Add or remove a new named repository.
 
-$ subuser list available
-"""
+  Example:
+  subuser repository add foo http://www.example.com/r.git
+
+  Example:
+  subuser repository remove foo
+
+  """
   parser=optparse.OptionParser(usage=usage,description=description,formatter=subuserlib.commandLineArguments.HelpFormatterThatDoesntReformatDescription())
   advancedOptions = subuserlib.commandLineArguments.advancedInstallOptionsGroup(parser)
   parser.add_option_group(advancedOptions)
@@ -20,14 +25,29 @@ $ subuser list available
 
 #################################################################################################
 
-options,userProgramList = parseCliArgs()
+options,args = parseCliArgs()
 
-for program in userProgramList:
-  print(program)
-  subuserlib.install.installProgramAndDependencies(program, options.useCache)
+action = args[0]
+user = subuserlib.classes.user.User()
 
-print("\n============= INSTALLATION SUCCESSFULL =============\n\n")
-for program in userProgramList:
-  print("\n"+program+": has been installed with the following permissions.")
-  subuserlib.describe.printInfo(program,False)
-  print("You can change this program's permissions at any time by editing it's permissions.json file.")
+if action == "add":
+  if not len(args) == 3:
+    sys.exit("Use subuser repository --help for help.")
+  
+  name = args[1]
+  url = args[2]
+  repository = getRepositoryFromURI(user,url)
+  if repository:
+    if type repository.getName() is int:
+      sys.exit("A temporary repository with this url already exists.  Cannot add.  The ability to uprade temporary repositories to named repositories is a wanted feature.  Feal free to send a quality, well thought out, pull request.")
+    else:
+      sys.exit("The repository named:" +repository.getName()+" already has this URL.  Cannot add.")
+  else:
+    repository = subuserlib.classes.repository.Repository(user,name=name,gitOriginURI=url,gitCommitHash="master")
+    user.getRegistry().getRepositories().addRepository(repository)
+    user.getRegistry().commit()
+elif action == "remove":
+  if not len(args) == 2:
+    sys.exit("Use subuser repository --help for help.")
+  name = args[1]
+  user.getRegistry().getRepositories().removeRepository(name)

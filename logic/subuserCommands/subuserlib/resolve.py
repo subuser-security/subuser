@@ -60,14 +60,24 @@ def resolveProgramSource(user,programSourcePath,contextRepository=None,allowReff
     repository = getRepositoryFromURI(user,splitProgramIdentifier[1])
   return repository[programName]
 
+def lookupRepositoryByURI(user,uri):
+  """
+  If a repository with this URI exists, return that repository.  Otherwise, return None.
+  """
+  for _,repository in user.getRegistry().getRepositories().iteritems():
+    if uri == repository.getGitOriginURI():
+      return repository
+  return None
+ 
+
 def getRepositoryFromURI(user,uri):
   """
   Either return the repository who's URI is equal to the given URI or return a new temporary repository with that URI.
   """
   #First check if a repository with this URI already exists
-  for _,repository in user.getRegistry().getRepositories().iteritems():
-    if uri == repository.getGitOriginURI():
-      return repository
+  repository = lookupRepositoryByURI(user,uri)
+  if repository:
+    return repository
   # If it doesn't, create a new repo and return it.
   newTempRepo = subuserlib.classes.repository.Repository(user=user,name=user.getRegistry().getRepositories().getNewUniqueTempRepoId(),gitOriginURI=uri,gitCommitHash="master")
   user.getRegistry().getRepositories().addRepository(newTempRepo)
