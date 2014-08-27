@@ -13,10 +13,8 @@ class Subusers(dict,subuserlib.classes.userOwnedObject.UserOwnedObject,subuserli
 
   >>> import subuserlib.classes.user
   >>> import subuserlib.classes.subusers
-  >>> u = subuserlib.classes.user.User("root","/root/subuser/test/home")
+  >>> u = subuserlib.classes.user.User()
   >>> subusers = u.getRegistry().getSubusers()
-  >>> u.getConfig().getSubusersDotJsonPath()[-49:]
-  u'subuser/test/home/.subuser/registry/subusers.json'
   >>> subusers["foo"].getName()
   u'foo'
   """

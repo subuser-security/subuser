@@ -1,3 +1,4 @@
 {"foo":{"source-repo":"default"
+       ,"executable-shortcut-installed":true
            ,"source-program":"foo"
        ,"docker-image":"1"}}

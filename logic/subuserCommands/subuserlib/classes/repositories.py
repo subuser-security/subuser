@@ -41,7 +41,7 @@ class Repositories(collections.Mapping,subuserlib.classes.userOwnedObject.UserOw
           gitCommitHash = repositoryStates[repoName]["git-commit-hash"]
         else:
           gitCommitHash = "master"
-        repositories[repoName] = subuserlib.classes.repository.Repository(self.getUser(),name=repoName,gitOriginURI=repoAttributes["git-origin"],gitCommitHash)
+        repositories[repoName] = subuserlib.classes.repository.Repository(self.getUser(),name=repoName,gitOriginURI=repoAttributes["git-origin"],gitCommitHash=gitCommitHash)
       return repositories
 
     self.systemRepositories = loadRepositoryDict(self.systemRepositoryListPaths)
@@ -53,8 +53,11 @@ class Repositories(collections.Mapping,subuserlib.classes.userOwnedObject.UserOw
     Return them as a dictionary object.
     """
     repositoryStatesDotJsonPath = os.path.join(self.getUser().getConfig().getRegistryPath(),"repository-states.json")
-    with open(repositoryStatesDotJsonPath,mode="r") as repositoryStatesDotJsonFile:
-      return json.load(repositoryStatesDotJsonFile)
+    if os.path.exists(repositoryStatesDotJsonPath):
+      with open(repositoryStatesDotJsonPath,mode="r") as repositoryStatesDotJsonFile:
+        return json.load(repositoryStatesDotJsonFile)
+    else:
+      return {}
 
   def addRepository(self,repository):
     self.userRepositories[repository.getName()] = repository

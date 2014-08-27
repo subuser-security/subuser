@@ -20,7 +20,7 @@ import subuserlib.resolve
 # commands
 import list,describe
 dry_run = __import__("dry-run")
-mark_as_needing_update = __import__("mark-as-needing-update")
+mark_as_updated = __import__("mark-as-updated")
 
 modules = [
  # classes
@@ -32,7 +32,7 @@ modules = [
  ,dry_run
  ,list
  ,describe
- ,mark_as_needing_update
+ ,mark_as_updated
  ]
 
 for module in modules:

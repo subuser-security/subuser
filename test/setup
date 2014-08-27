@@ -6,3 +6,7 @@ cd /root/subuser/test/remote-test-repo/
 git init
 git add bar/permissions.json bar/docker-image/Dockerfile
 git commit -m 'test'
+cd /home/test/.subuser/repositories/default
+git init
+git add .
+git commit -m 'test'

@@ -51,7 +51,7 @@ def getCommand(subuserToRun, programArgs):
   else:
     setupUserAndRunArgs ["/launch/runCommand","root"]
 
-  return ["run"]+flags+[subuserToRun.getImage().getImageID()]+setupUserAndRunArgs+[subuserToRun.getPermissions()["executable"]]+programArgs
+  return ["run"]+flags+[subuserToRun.getImageId()]+setupUserAndRunArgs+[subuserToRun.getPermissions()["executable"]]+programArgs
 
 def getPrettyCommand(subuserToRun,programArgs):
   """

@@ -91,7 +91,7 @@ class ProgramSource(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserli
     dockerImageDir = os.path.join(self.getSourceDir(),"docker-image")
     subuserImageFilePath = os.path.join(dockerImageDir,"SubuserImagefile")
     if os.path.isfile(subuserImageFilePath):
-      with open(mode="r",subuserImageFilePath) as subuserImageFile:
+      with open(subuserImageFilePath,mode="r") as subuserImageFile:
         return subuserImageFile.read()
     else:
       raise Exception("This ProgramSource does not build from a SubuserImagefile.")

@@ -25,7 +25,7 @@ def subprocessCheckedCall(args, errorContext='',cwd=None):
   process = subprocess.Popen(args,cwd=cwd)
   process.communicate()
   if not process.returncode == 0:
-    sys.exit(formatErrorMessage(args,"",errorContext=errorContext))
+    sys.exit(formatErrorMessage(args,"running command in dir: "+cwd,errorContext=errorContext))
 
 def subprocessCheckedCallCollectOutput(args,errorContext="",cwd=None):
   """

@@ -13,19 +13,19 @@ Mark a program as needing to be updated.  Note, that this may mess up the format
 
 EXAMPLE:
 
-$ subuser mark-as-needing-update firefox@default
+$ subuser mark-as-updated firefox@default
 """
   parser=optparse.OptionParser(usage=usage,description=description,formatter=subuserlib.commandLineArguments.HelpFormatterThatDoesntReformatDescription())
   return parser.parse_args(args=sysargs[2:])
 
 #################################################################################################
 
-def markAsNeedingUpdate(sysargs):
+def markAsUpdated(sysargs):
   """
   Mark the given programs as needing to be updated by setting their 'last-update-time' attributes to the current time.
 
-  >>> mark_as_needing_update = __import__("mark-as-needing-update")#import self
-  >>> mark_as_needing_update.markAsNeedingUpdate([sys.argv[0]]+["mark-as-needing-update","foo"])
+  >>> mark_as_updated = __import__("mark-as-updated")#import self
+  >>> mark_as_updated.markAsUpdated([sys.argv[0]]+["mark-as-updated","foo"])
 
    Here we test if the updated update time was actually saved correctly.  16 is the length of a standard formatted subuser program update time.
 
@@ -36,7 +36,7 @@ def markAsNeedingUpdate(sysargs):
 
   If the program doesn't exist, we print a user friendly error message.
 
-  >>> mark_as_needing_update.markAsNeedingUpdate([sys.argv[0]]+["mark-as-needing-update","non-existant-program"])
+  >>> mark_as_updated.markAsUpdated([sys.argv[0]]+["mark-as-updated","non-existant-program"])
   Traceback (most recent call last):
   SystemExit: Could not mark the program: non-existant-program as needing an update.  Program does not exist.
   """
@@ -52,4 +52,4 @@ def markAsNeedingUpdate(sysargs):
       sys.exit("Could not mark the program: "+programId+" as needing an update.  Program does not exist.")
 
 if __name__ == "__main__":
-  markAsNeedingUpdate(sys.argv)
+  markAsUpdated(sys.argv)
