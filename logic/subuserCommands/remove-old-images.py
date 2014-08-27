@@ -17,6 +17,8 @@ def parseCliArgs():
 
 #################################################################################################
 
+parseCliArgs()
+
 user = subuserlib.classes.user.User()
 
 for installedImageId,installedImage in user.getInstalledImages().iteritems():
