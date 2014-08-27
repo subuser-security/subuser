@@ -3,15 +3,23 @@
 # If it is not, please file a bug report.
 
 #external imports
-import sys,os,optparse
+import sys,optparse
 #internal imports
-import subuserlib.availablePrograms,subuserlib.install,subuserlib.describe,subuserlib.commandLineArguments
+import subuserlib.classes.user,subuserlib.resolve,subuserlib.classes.subuser,subuserlib.verify
 
 def parseCliArgs():
-  usage = "usage: subuser %prog [options] PROGRAM_NAME(s)"
-  description = """Install a set of subuser programs.  To view a list of programs that can be installed try:
+  usage = "usage: subuser %prog [add|remove|create-shortcut] NAME PROGRAMSOURCE"
+  description = """
 
-$ subuser list available
+Add and remove subusers.  Create shorcuts for launching subusers.
+
+$ subuser subuser add foo foo@default
+
+$ subuser subuser remove foo
+
+$ subuser subuser create-shorcut foo
+
+$ subuser subuser remove-shortcut foo
 """
   parser=optparse.OptionParser(usage=usage,description=description,formatter=subuserlib.commandLineArguments.HelpFormatterThatDoesntReformatDescription())
   advancedOptions = subuserlib.commandLineArguments.advancedInstallOptionsGroup(parser)
@@ -20,14 +28,36 @@ $ subuser list available
 
 #################################################################################################
 
-options,userProgramList = parseCliArgs()
+options,args = parseCliArgs()
 
-for program in userProgramList:
-  print(program)
-  subuserlib.install.installProgramAndDependencies(program, options.useCache)
+action = args[0]
 
-print("\n============= INSTALLATION SUCCESSFULL =============\n\n")
-for program in userProgramList:
-  print("\n"+program+": has been installed with the following permissions.")
-  subuserlib.describe.printInfo(program,False)
-  print("You can change this program's permissions at any time by editing it's permissions.json file.")
+user = subuserlib.classes.user.User()
+
+if action == "add":
+  name = args[1]
+  programSourceId = args[2]
+  programSource = subuserlib.resolve.resolveProgramSource(user,programSourceId)
+  user.getRegistry().logChange("Adding subuser "+name+" "+programSourceId)
+  user.getRegistry().getSubusers()[name] = subuserlib.classes.subuser(user,name,programSource,None,False)
+  subuserlib.verify.verify(user)
+  user.getRegistry().commit()
+elif aciton == "remove":
+  name = args[1]
+  user.getRegistry().logChange("Removing subuser "+name)
+  del user.getRegistry().getSubusers()[name]
+  subuserlib.verify.verify(user)
+  user.getRegistry().commit()
+elif action == "create-shortcut":
+  name = args[1]
+  user.getRegistry().logChange("Creating shortcut for subuser "+name)
+  user.getRegistry().getSubusers()[name].setExecutableShortcutInstalled(True) 
+  subuserlib.verify.verify(user)
+  user.getRegistry().commit()
+elif action == "remove-shortcut":
+  name = args[1]
+  user.getRegistry().logChange("Removing shortcut for subuser "+name)
+  user.getRegistry().getSubusers()[name].setExecutableShortcutInstalled(False)
+  subuserlib.verify.verify(user)
+  user.getRegistry().commit()
+  
