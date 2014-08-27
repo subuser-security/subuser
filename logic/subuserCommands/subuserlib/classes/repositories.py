@@ -60,9 +60,17 @@ class Repositories(collections.Mapping,subuserlib.classes.userOwnedObject.UserOw
       return {}
 
   def addRepository(self,repository):
+    if not type(repository.getName()) is int:
+      self.getUser().getRegistry().logChange("Adding new repository "+repository.getName())
+    else:
+      self.getUser().getRegistry().logChange("Adding new temporary repository "+repository.getGitOriginURI())
     self.userRepositories[repository.getName()] = repository
 
   def removeRepository(self,name):
+    if not type(name) is int:
+      self.getUser().getRegistry().logChange("Removing repository "+name)
+    else:
+      self.getUser().getRegistry().logChange("Removing temporary repository "+self[name].getGitOriginURI())
     del self.userRepositories[name]
 
   def save(self):

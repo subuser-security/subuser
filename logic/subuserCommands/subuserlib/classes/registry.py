@@ -11,6 +11,7 @@ class Registry(subuserlib.classes.userOwnedObject.UserOwnedObject):
   __subusers = None
   __repositories = None
   __changed = False
+  __changeLog = ""
 
   def getSubusers(self):
     if not self.__subusers:
@@ -29,7 +30,7 @@ class Registry(subuserlib.classes.userOwnedObject.UserOwnedObject):
     """
     Add a log message to the registry's change log and print it to the screen, but do not mark the registry as changed.
     """
-    self.__changeLog.append(message+"\n")
+    self.__changeLog = self.__changeLog + message+"\n"
     print(message)
 
   def logChange(self,message):
