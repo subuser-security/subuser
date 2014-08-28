@@ -118,7 +118,8 @@ def getGraphicsCardArgs(permissions):
 
 def getSoundCardArgs(permissions):
   if subuserlib.permissions.getSoundCard(permissions):
-    return  ["-v=/dev/snd:/dev/snd:rw","--lxc-conf=lxc.cgroup.devices.allow = c 116:* rwm"]
+    return  ["-v=/dev/snd:/dev/snd:rw","-lxc-conf=lxc.cgroup.devices.allow = c 116:* rwm",
+		"-v=/dev/dsp:/dev/dsp:rw","-lxc-conf=lxc.cgroup.devices.allow = c 14:* rwm"]
   else:
     return []
 

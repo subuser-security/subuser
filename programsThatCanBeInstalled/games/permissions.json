@@ -1,0 +1,13 @@
+{
+ "description"                : "A gaming platform"
+ ,"maintainer"                : "?"
+ ,"last-update-time"          : "2014-02-12-12:59"
+ ,"dependency"                : "libx11"
+ ,"executable"                : "/usr/bin/xterm"
+ ,"x11"                       : true
+ ,"sound-card"                : true
+ ,"inherit-working-directory" : true
+ ,"allow-network-access"      : true
+ ,"graphics-card"                       : true
+}
+
