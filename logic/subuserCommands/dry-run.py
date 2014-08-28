@@ -23,7 +23,7 @@ def dryRun(args):
   >>> dry_run = __import__("dry-run")
   >>> import sys
   >>> dry_run.dryRun(sys.argv+["foo"])
-  docker 'run' '-i' '-t' '--rm' '-v=/home/test/.subuser/cache/by-subuser/foo/setup-symlinks:/launch/setup-symlinks' '-v=/root/subuser/logic/dockerside-scripts:/launch/:ro' '-v=/home/test//.subuser/homes/foo:/home/test/:rw' '--net=none' '1' '/launch/setupUserAndRun' 'root' '/usr/bin/foo'
+  docker 'run' '-i' '-t' '--rm' '--workdir=/home/test/' '-v=/home/test/.subuser/homes/foo:/home/test/:rw' '--net=none' '--user=0' '1' '/usr/bin/foo'
   """
   if len(args) == 1 or {"help","-h","--help"} & set(args):
     sys.exit(helpString)

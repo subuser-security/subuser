@@ -18,9 +18,7 @@ def getBasicFlags(subuserToRun):
   return [
     "-i",
     "-t",
-    "--rm",
-    "-v="+subuserToRun.getSetupSymlinksScriptPathOnHost()+":/launch/setup-symlinks",
-    "-v="+subuserlib.paths.getDockersideScriptsPath()+":/launch/:ro"]
+    "--rm"]
 
 def getPermissionFlagDict(subuserToRun):
   """
@@ -30,13 +28,14 @@ def getPermissionFlagDict(subuserToRun):
    "allow-network-access" : lambda p: ["--net=bridge"] if p else ["--net=none"],
    "system-dirs" : lambda systemDirs: ["-v="+systemDir+":"+systemDir+":ro" for systemDir in systemDirs],
    "user-dirs" : lambda userDirs : ["-v="+os.path.join(subuserToRun.getUser().homeDir,userDir)+":"+os.path.join("/userdirs/",userDir)+":rw" for userDir in userDirs],
-   "inherit-working-directory" : lambda p: ["-v="+cwd+":/pwd:rw"] if p else [],
+   "inherit-working-directory" : lambda p: ["-v="+cwd+":/pwd:rw","--workdir=/pwd"] if p else ["--workdir="+subuserToRun.getDockersideHome()],
    "stateful-home" : lambda p : ["-v="+subuserToRun.getHomeDirOnHost()+":"+subuserToRun.getDockersideHome()+":rw"] if p else [],
    "x11" : lambda p: ["-e","DISPLAY=unix"+os.environ['DISPLAY'],"-v=/tmp/.X11-unix:/tmp/.X11-unix:rw"] if p else [],
    "graphics-card" : lambda p: ["--device=/dev/dri/"+device for device in os.listdir("/dev/dri")] if p else [],
    "sound-card" : lambda p: ["--device="+device for device in getRecursiveDirectoryContents("/dev/snd")] if p else [],
    "webcam" : lambda p: ["--device=/dev/"+device for device in os.listdir("/dev/") if device.startswith("video")] if p else [],
-   "privileged" : lambda p: ["--privileged"] if p else []
+   "privileged" : lambda p: ["--privileged"] if p else [],
+   "as-root" : lambda root: ["--user=0"] if root else ["--user="+str(os.getuid())]
    }
 
 def getCommand(subuserToRun, programArgs):
@@ -46,12 +45,7 @@ def getCommand(subuserToRun, programArgs):
   for permission, flagGenerator in permissionFlagDict.iteritems():
     flags.extend(flagGenerator(permissions[permission]))
 
-  if not subuserToRun.getPermissions()["as-root"]:
-    setupUserAndRunArgs = ["/launch/setupUserAndRun",subuserToRun.getUser().name]
-  else:
-    setupUserAndRunArgs ["/launch/runCommand","root"]
-
-  return ["run"]+flags+[subuserToRun.getImageId()]+setupUserAndRunArgs+[subuserToRun.getPermissions()["executable"]]+programArgs
+  return ["run"]+flags+[subuserToRun.getImageId()]+[subuserToRun.getPermissions()["executable"]]+programArgs
 
 def getPrettyCommand(subuserToRun,programArgs):
   """
@@ -61,14 +55,15 @@ def getPrettyCommand(subuserToRun,programArgs):
   return "docker '"+"' '".join(command)+"'"
 
 def run(subuserToRun,programArgs):
-  def createSetupSymlinksScript():
-    userDirs = subuserToRun.getPermissions()["user-dirs"]
-    os.makedirs(dirname(subuserToRun.getSetupSymlinksScriptPathOnHost()))
-    with open(subuserToRun.getSetupSymlinksScriptPathOnHost(),"w") as symlinkScrpt:
-      symlinksScript.write("#!/bin/sh\n")
-      symlinksScript.write("ln -s "+"/pwd/ "+self.getDockersideHome()+"/CurrentDirectoryOnHost")
-      for userDir in userDirs:
-        symlinksScript.write("ln -s /userdirs/"+userdir+" "+subuserToRun.getDockersideHomeDir()+"/"+userdir+"\n")
+  def setupSymlinks():
+    symlinkPath = os.path.join(subuserToRun.getHomeDirOnHost(),"Userdirs")
+    destinationPath = "/userdirs"
+    if not os.path.exists(symlinkPath):
+      os.symlink(destinationPath,symlinkPath) #Arg, why are source and destination switched?
+      #os.symlink(where does the symlink point to, where is the symlink)
+      #I guess it's to be like cp...
 
-  createSetupSymlinksScript()
+  if subuserToRun.getPermissions()["stateful-home"]:
+    setupSymlinks()
+
   subuserToRun.getUser().getDockerDaemon().execute(getCommand(subuserToRun,programArgs))

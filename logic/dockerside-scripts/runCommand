@@ -1,5 +1,0 @@
-#!/bin/bash
-if [ -d /home/pwd ]; then
-  cd /home/pwd/
-fi
-$2 "${@:3}"
