@@ -60,17 +60,6 @@ The json object MAY at your option contain the following additional fields:
 
   **Default**: `[]`
 
-
- * `system-dirs`: Absolute paths to system directories to be shared between the host operating system and the program.  The program is given read only access to these directories.
-
-  Ex:
-
-  ````json
-   ,"system-dirs"               : ["/etc/hosts"]
-  ````
-
-  **Default**: `[]`
-
  * `x11`: The program is allowed to interact with the x11 server on the host.
 
   Note: Known to be insecure!
