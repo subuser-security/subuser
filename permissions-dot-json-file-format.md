@@ -47,26 +47,6 @@ The json object MAY at your option contain the following additional fields:
 
  **Default**: The program has no executable and cannot be run(but it can be depended upon, as a library).
 
- * `shared-home`: This field marks whether the program is to share it's home directory with another program installed by subuser.
-
-  Ex:
-
-  ````json
-   ,"shared-home"             : "emacs"
-  ````
-
- **Default**: The program does not share it's home directory with any other program.
-
- * `dependency`: Any program may depend upon at most one other program to provide a base image for it to build off of.
-
-  Ex:
-
-  ````json
-   ,"dependency"              : "some-program"
-  ````
-
- **Default**: The program does not depend on any other program.
-
  * `user-dirs`: A list of relative paths to user directories which are to be shared between the host and the given program. The program is given read-write access to any user directories listed.
 
   Ex:
@@ -124,8 +104,6 @@ Warning: This means, not only can the program play sounds, but it may listen to 
   ````
 
   **Default**: `false`
-
- * `sound`: Depricated, see `sound-card`.
 
  * `webcam`: The program is allowed to access the computer's webcam/USB webcams.
 
