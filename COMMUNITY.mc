@@ -11,7 +11,7 @@ Despite our engineering focus, we recognize that people are people and that peop
 We are an equal community:
 -------------------------
 
-A members value comes from their personal investment of thought, time, and emotion.  Commercial or organizational affiliation has no affect on your importance within the community.  Attempting to claim that your issues are of "higher priority" due to the importance of the project or entity you are affiliated with will be frowned upon or ignored.  Indeed, we will try to avoid ever prioritizing issues.  Problems will be solved and features added at the rate at which elegant solutions and implementations appear.
+A members value comes from their personal investment of thought, time, and emotion.  Commercial or organizational affiliation has no affect on your importance within the community.  Attempting to claim that your issues are of "higher priority" due to the importance of the project or entity you are affiliated with will be frowned upon or ignored (that is not to say that you shouldn't share your projects with us though! ;) ).  Indeed, we will try to avoid ever prioritizing issues.  Problems will be solved and features added at the rate at which elegant solutions and implementations appear.
 
 We will not tolerate:
 ------------------
