@@ -20,5 +20,5 @@ We will not tolerate:
  - Sexism
  - Threats
 
-With regards to sexism, we will try to guide people away from sexist remarks rather than attack them with explosive accusatins.
+With regards to sexism, we will try to guide people away from sexist remarks rather than attack them with explosive accusations.
 
