@@ -29,7 +29,7 @@ def getPermissionFlagDict(subuserToRun):
    "system-dirs" : lambda systemDirs: ["-v="+systemDir+":"+systemDir+":ro" for systemDir in systemDirs],
    "user-dirs" : lambda userDirs : ["-v="+os.path.join(subuserToRun.getUser().homeDir,userDir)+":"+os.path.join("/userdirs/",userDir)+":rw" for userDir in userDirs],
    "inherit-working-directory" : lambda p: ["-v="+cwd+":/pwd:rw","--workdir=/pwd"] if p else ["--workdir="+subuserToRun.getDockersideHome()],
-   "stateful-home" : lambda p : ["-v="+subuserToRun.getHomeDirOnHost()+":"+subuserToRun.getDockersideHome()+":rw"] if p else [],
+   "stateful-home" : lambda p : ["-v="+subuserToRun.getHomeDirOnHost()+":"+subuserToRun.getDockersideHome()+":rw","-e","HOME="+subuserToRun.getDockersideHome()] if p else [],
    "x11" : lambda p: ["-e","DISPLAY=unix"+os.environ['DISPLAY'],"-v=/tmp/.X11-unix:/tmp/.X11-unix:rw"] if p else [],
    "graphics-card" : lambda p: ["--device=/dev/dri/"+device for device in os.listdir("/dev/dri")] if p else [],
    "sound-card" : lambda p: ["--device="+device for device in getRecursiveDirectoryContents("/dev/snd")] if p else [],
