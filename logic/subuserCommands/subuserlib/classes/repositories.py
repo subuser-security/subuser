@@ -3,7 +3,7 @@
 # If it is not, please file a bug report.
 
 #external imports
-import os,collections
+import os,collections,json
 #internal imports
 import subuserlib.paths, subuserlib.classes.fileBackedObject, subuserlib.classes.userOwnedObject, subuserlib.classes.repository,subuserlib.loadMultiFallbackJsonConfigFile
 
@@ -77,12 +77,14 @@ class Repositories(collections.Mapping,subuserlib.classes.userOwnedObject.UserOw
     """ Save attributes of the repositories to disk. """
     userRepositoryListDict = {}
     for name,repository in self.userRepositories.iteritems():
+      userRepositoryListDict[name] = {}
       userRepositoryListDict[name]["git-origin"] = repository.getGitOriginURI()
     with open(self.userRepositoryListPath, 'w') as file_f:
       json.dump(userRepositoryListDict, file_f, indent=1, separators=(',', ': '))
     repositoryStatesDotJsonPath = os.path.join(self.getUser().getConfig().getRegistryPath(),"repository-states.json")
     repositoryStates = {}
     for repoName,repository in self.iteritems():
+      repositoryStates[repoName] = {}
       repositoryStates[repoName]["git-commit-hash"] = repository.getGitCommitHash()
     with open(repositoryStatesDotJsonPath,mode="w") as repositoryStatesDotJsonFile:
       json.dump(repositoryStates,repositoryStatesDotJsonFile, indent=1, separators=(',', ': '))
@@ -99,8 +101,8 @@ class Repositories(collections.Mapping,subuserlib.classes.userOwnedObject.UserOw
 
   def __init__(self,user):
     subuserlib.classes.userOwnedObject.UserOwnedObject.__init__(self,user)
-    self.systemRepositoryListPaths = [os.path.join(self.getUser().homeDir,".subuser","repositories.json")
+    self.systemRepositoryListPaths = [os.path.join(subuserlib.paths.getSubuserDir(),"repositories.json")
        ,"/etc/subuser/repositories.json"] # TODO how does this work on windows?
-    self.userRepositoryListPath = os.path.join(subuserlib.paths.getSubuserDir(),"repositories.json")
+    self.userRepositoryListPath = os.path.join(self.getUser().getConfig().getRegistryPath(),"repositories.json")
     self.reloadRepositoryLists()
 

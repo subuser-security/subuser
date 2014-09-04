@@ -5,9 +5,9 @@
 # This command updates all or some of the installed subuser programs.
 
 #external imports
-#import ...
+import optparse
 #internal imports
-import subuserlib.commandLineArguments,subuserlib.classes.user,subuserlib.verify,subuserlib.git
+import subuserlib.commandLineArguments,subuserlib.classes.user,subuserlib.update
 
 
 #####################################################################################
@@ -37,20 +37,11 @@ options,args = parseCliArgs()
 user = subuserlib.classes.user.User()
 
 if ["all"] == args:
-  user.getRegistry().log("Updating...")
-  for _,repository in user.getRegistry().getRepositories().iteritems():
-    repository.updateSources()
-  subuserlib.verify.verify(user)
-  user.getRegistry().commit()
+  subuserlib.update.updateAll(user)
 elif ["log"] == args:
-  subuserlib.git.runGit(["log"],cwd=user.getConfig().getRegistryPath())
+  subuserlib.update.showLog(user)
 elif ["checkout"] == args[0]:
-  user.getRegistry().logChange("Rolling back to commit: "+args[1])
-  subuserlib.git.runGit(["rm","-r","."],cwd=user.getConfig().getRegistryPath())
-  subuserlib.git.runGit(["checkout",args[1]],cwd=user.getConfig().getRegistryPath())
-  user.getRegistry().getRepositories().reloadRepositoryLists()
-  subuserlib.verify.verify(user)
-  user.getRegistry().commit()
+  subuserlib.update.checkout(user,commit=args[1])
 else:
   sys.exit(args.join(" ") + " is not a valid update subcommand. Please use subuser update -h for help.")
 

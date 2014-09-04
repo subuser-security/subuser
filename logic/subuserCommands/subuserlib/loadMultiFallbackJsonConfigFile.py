@@ -21,7 +21,7 @@ def upNDirsInPath(path,n):
 def getSubuserDir():
   """ Get the toplevel directory for subuser. """
   pathToThisSourceFile = os.path.abspath(inspect.getfile(inspect.currentframe()))
-  return upNDirsInPath(pathToThisSourceFile,5)
+  return upNDirsInPath(pathToThisSourceFile,4)
 
 def filterOutNonExistantPaths(paths):
   _paths = []

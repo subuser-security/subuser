@@ -48,6 +48,7 @@ class DockerDaemon(subuserlib.classes.userOwnedObject.UserOwnedObject):
      Note: You can find Docker API docs here: https://docs.docker.com/reference/api/docker_remote_api_v1.13/
     """
     if not self.__connection:
+      subuserlib.docker.getAndVerifyDockerExecutable()
       self.__connection = subuserlib.classes.uhttpConnection.UHTTPConnection("/var/run/docker.sock")
     return self.__connection
 

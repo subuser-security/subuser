@@ -1,5 +1,5 @@
 {
-  "bin-dir" : "$SUBUSERDIR/bin",
+  "bin-dir" : "$HOME/.subuser/bin",
   "registry-dir" : "$HOME/.subuser/registry",
   "user-set-permissions-dir" : "$HOME/.subuser/permissions/",
   "subuser-home-dirs-dir" : "$HOME/.subuser/homes/",

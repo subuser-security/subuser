@@ -25,7 +25,7 @@ def run(args):
 
   user = subuserlib.classes.user.User()
   if subuserName in user.getRegistry().getSubusers():
-    subuserlib.run.run(user.getRegistry().getSubusers()[subuserName],argsToPassToProgram))
+    subuserlib.run.run(user.getRegistry().getSubusers()[subuserName],argsToPassToProgram)
   else:
     sys.exit(subuserName + " not found.\n"+helpString)
 

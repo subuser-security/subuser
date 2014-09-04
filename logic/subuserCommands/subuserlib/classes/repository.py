@@ -39,6 +39,7 @@ class Repository(dict,subuserlib.classes.userOwnedObject.UserOwnedObject):
     if not os.path.exists(self.getRepoPath()):
       subuserlib.git.runGit(["clone",self.getGitOriginURI(),self.getRepoPath()])
     else:
+      subuserlib.git.runGit(["checkout","master"],cwd=self.getRepoPath())
       subuserlib.git.runGit(["pull"],cwd=self.getRepoPath())
 
   def loadProgamSources(self):
@@ -58,4 +59,4 @@ class Repository(dict,subuserlib.classes.userOwnedObject.UserOwnedObject):
     subuserlib.git.runGit(["checkout",gitCommitHash],cwd=self.getRepoPath())
 
   def getGitCommitHash(self):
-    return subuserlib.git.runGitCollectOutput(["git","show-ref","-s","HEAD"],cwd=self.getRepoPath())
+    return subuserlib.git.runGitCollectOutput(["show-ref","-s","HEAD"],cwd=self.getRepoPath()).split("\n")[0]

@@ -3,7 +3,7 @@
 # If it is not, please file a bug report.
 
 #external imports
-#import ...
+import os
 #internal imports
 import subuserlib.classes.subusers, subuserlib.classes.userOwnedObject, subuserlib.git
 
@@ -25,6 +25,16 @@ class Registry(subuserlib.classes.userOwnedObject.UserOwnedObject):
 
   def __init__(self,user):
     subuserlib.classes.userOwnedObject.UserOwnedObject.__init__(self,user)
+    self.ensureGitRepoInitialized()
+
+  def ensureGitRepoInitialized(self):
+    if not os.path.exists(self.getUser().getConfig().getRegistryPath()):
+      os.makedirs(self.getUser().getConfig().getRegistryPath())
+      subuserlib.git.runGit(["init"],cwd=self.getUser().getConfig().getRegistryPath())
+      self.logChange("Initial commit.")
+      self.getRepositories().save()
+      self.getSubusers().save()
+      self.commit()
 
   def log(self,message):
     """
@@ -40,11 +50,19 @@ class Registry(subuserlib.classes.userOwnedObject.UserOwnedObject):
     self.log(message)
     self.__changed = True
 
+  def logRenameCommit(self, message):
+    """
+    Add a new message to the top of the log.
+    """
+    self.__changeLog = message + "\n" + self.__changeLog
+
   def commit(self):
     """ git commit the changes to the registry files, installed-miages.json and subusers.json. """
     if self.__changed:
-      subuserlib.git(["add","subusers.json","repositories.json","repository-states.json"],cwd=self.getUser().config.getRegistryPath())
-      subuserlib.git(["commit","-m",self.__changeLog],cwd=self.getUser().config.getRegistryPath())
+      subuserlib.git.runGit(["add","subusers.json","repository-states.json"],cwd=self.getUser().getConfig().getRegistryPath())
+      if os.path.exists(os.path.join(self.getUser().getConfig().getRegistryPath(),"repositories.json")):
+        subuserlib.git.runGit(["add","repositories.json"],cwd=self.getUser().getConfig().getRegistryPath())
+      subuserlib.git.runGit(["commit","-m",self.__changeLog],cwd=self.getUser().getConfig().getRegistryPath())
       self.__changed = False
       self.__changeLog = ""
 

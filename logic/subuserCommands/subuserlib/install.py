@@ -57,7 +57,7 @@ def installFromSubuserImagefile(programSource, useCache=False,parent=None):
     id = programSource.getUser().getDockerDaemon().build(directoryWithDockerfile=dockerImageDir,rm=True,useCache=useCache,dockerfile=dockerFileContents)
     return id
   except Exception as e:
-    sys.exit(e)
+    sys.exit("Installing image failed: "+programSource.getName()+"\n"+str(e))
 
 def installProgram(programSource, useCache=False,parent=None):
   """
@@ -67,14 +67,14 @@ def installProgram(programSource, useCache=False,parent=None):
   """
   print("Installing "+programSource.getName()+" ...")
   buildType = programSource.getBuildType()
-  if buildType == "Dockerfile":
+  if buildType == "SubuserImagefile":
     imageId = installFromSubuserImagefile(programSource,useCache=useCache,parent=parent)
   elif buildType == "BuildImage.sh":
     imageId = installFromBaseImage(programSource)
   else:
-    sys.exit("No buildfile found: There needs to be a 'Dockerfile' or a 'BuildImage.sh' in the docker-image directory.")
+    sys.exit("No buildfile found: There needs to be a 'SubuserImagefile' or a 'BuildImage.sh' in the docker-image directory.")
 
-  lastUpdateTime = programSource.getPermissions["last-update-time"]
+  lastUpdateTime = programSource.getPermissions()["last-update-time"]
   if lastUpdateTime == None:
     lastUpdateTime = installTime.currentTimeString()
 
@@ -124,12 +124,12 @@ def ensureSubuserImageIsInstalledAndUpToDate(subuser, useCache=False):
   """
   # get dependency list as a list of ProgramSources
   sourceLineage = getProgramSourceLineage(subuser.getProgramSource())
-  parent=None
+  parentId=None
   while len(sourceLineage) > 0:
     programSource = sourceLineage.pop(0)
     latestInstalledImage = programSource.getLatestInstalledImage()
-    if not isInstalledImageUpToDate(latestInstalledImage):
-      subuser.setImageId(installLineage(sourceLineage,parent=parentId))
+    if not latestInstalledImage or not isInstalledImageUpToDate(latestInstalledImage):
+      subuser.setImageId(installLineage([programSource]+sourceLineage,parent=parentId))
       subuser.getUser().getRegistry().logChange("Installed new image for subuser "+subuser.getName())
       return
     parentId=latestInstalledImage.getImageId()

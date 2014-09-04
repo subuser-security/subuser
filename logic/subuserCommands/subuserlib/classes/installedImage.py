@@ -27,7 +27,7 @@ class InstalledImage(subuserlib.classes.userOwnedObject.UserOwnedObject):
     return self.__sourceRepoId
 
   def getProgramSourceName(self):
-    return self.__progamSourceName
+    return self.__programSourceName
 
   def getLastUpdateTime(self):
     return self.__lastUpdateTime

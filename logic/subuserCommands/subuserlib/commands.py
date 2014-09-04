@@ -13,7 +13,7 @@ def getBuiltInSubuserCommands():
   """ Get a list of the names of the built in subuser commands. """
   apparentCommandsSet = set( os.listdir(paths.getSubuserCommandsDir()))
   commands = list(apparentCommandsSet.difference(nonCommands))
-  return [command[-3:] for command in commands] #remove the .py suffixes.
+  return [command[:-3] for command in commands] #remove the .py suffixes.
 
 def getExternalSubuserCommands():
   """ Return the list of "external" subuser commands.  These are not built in commands but rather stand alone executables which appear in the user's $PATH and who's names start with "subuser-" """

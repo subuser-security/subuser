@@ -104,9 +104,9 @@ class ProgramSource(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserli
     dockerfileContents = ""
     for line in subuserImagefileContents.split("\n"):
       if line.startswith("FROM-SUBUSER-IMAGE"):
-        dockerfileContents.append("FROM "+parent+"\n")
+        dockerfileContents = dockerfileContents + "FROM "+parent+"\n"
       else:
-        dockerfileContents.append(line+"\n")
+        dockerfileContents = dockerfileContents +line+"\n"
     return dockerfileContents
 
   def getDependency(self):

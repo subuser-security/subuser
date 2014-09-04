@@ -3,7 +3,7 @@
 # If it is not, please file a bug report.
 
 #external imports
-import sys,subprocess
+import sys,subprocess,os
 #internal imports
 #import ...
 
@@ -22,6 +22,8 @@ def subprocessCheckedCall(args, errorContext='',cwd=None):
  Usage:
   subprocessCheckedCall(["docker", "-d"], "ATTENTION: Special added info bla bla")
   """
+  if not cwd:
+    cwd = os.getcwd()
   process = subprocess.Popen(args,cwd=cwd)
   process.communicate()
   if not process.returncode == 0:
@@ -31,7 +33,7 @@ def subprocessCheckedCallCollectOutput(args,errorContext="",cwd=None):
   """
   Run the command and return the output to stdout as a string.
   """
-  process = subprocess.Popen(args,stdout=subprocess.PIPE,cwd=cwd)
+  process = subprocess.Popen(args,stdout=subprocess.PIPE,stderr=subprocess.PIPE,cwd=cwd)
   (stdout,stderr) = process.communicate()
   if not process.returncode == 0:
     sys.exit(formatErrorMessage(args,stderr,errorContext=errorContext))

@@ -25,9 +25,11 @@ class Subusers(dict,subuserlib.classes.userOwnedObject.UserOwnedObject,subuserli
     """
     serializedSubusersDict = {}
     for subuserName,subuser in self.iteritems():
+      serializedSubusersDict[subuserName] = {}
       serializedSubusersDict[subuserName]["source-repo"] = subuser.getProgramSource().getRepository().getName()
       serializedSubusersDict[subuserName]["source-program"] = subuser.getProgramSource().getName()
-      serializedSubusersDict[subuserName]["executable-shortcut-installed"] = subuser.getProgramSource().isExectableShortcutInstalled()
+      serializedSubusersDict[subuserName]["executable-shortcut-installed"] = subuser.isExecutableShortcutInstalled()
+      serializedSubusersDict[subuserName]["docker-image"] = subuser.getImageId()
     with open(os.path.join(self.getUser().getConfig().getSubusersDotJsonPath()), 'w') as file_f:
       json.dump(serializedSubusersDict, file_f, indent=1, separators=(',', ': '))
 
@@ -44,7 +46,10 @@ class Subusers(dict,subuserlib.classes.userOwnedObject.UserOwnedObject,subuserli
         sys.exit("ERROR: Registry inconsistent. Subuser "+subuserName+" points to non-existant repository: "+subuserAttributes["source-repo"])
       repo = self.getUser().getRegistry().getRepositories()[subuserAttributes["source-repo"]]
       name = subuserAttributes["source-program"]
-      imageId = subuserAttributes["docker-image"]
+      if "docker-image" in subuserAttributes:
+        imageId = subuserAttributes["docker-image"]
+      else:
+        imageId = None
       executableShortcutInstalled = subuserAttributes["executable-shortcut-installed"]
       programSource = subuserlib.classes.programSource.ProgramSource(user=user,name=name,repo=repo)
       self[subuserName] = subuserlib.classes.subuser.Subuser(user,subuserName,programSource,imageId=imageId,executableShortcutInstalled=executableShortcutInstalled)

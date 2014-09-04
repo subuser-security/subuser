@@ -22,7 +22,7 @@ class Permissions(collections.OrderedDict,subuserlib.classes.userOwnedObject.Use
   def describe(self):
     print(" Description: "+self["description"])
     print(" Maintainer: "+self["maintainer"])
-    print(" Last update time(version): "+self["last-update-time"])
+    print(" Last update time(version): "+str(self["last-update-time"]))
   
     if self["executable"]:
       print(" Executable: "+self["executable"])

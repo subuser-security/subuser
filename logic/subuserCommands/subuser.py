@@ -5,7 +5,7 @@
 #external imports
 import sys,optparse
 #internal imports
-import subuserlib.classes.user,subuserlib.resolve,subuserlib.classes.subuser,subuserlib.verify
+import subuserlib.classes.user,subuserlib.resolve,subuserlib.classes.subuser,subuserlib.verify, subuserlib.commandLineArguments,subuserlib.update
 
 def parseCliArgs():
   usage = "usage: subuser %prog [add|remove|create-shortcut] NAME PROGRAMSOURCE"
@@ -37,11 +37,21 @@ user = subuserlib.classes.user.User()
 if action == "add":
   name = args[1]
   programSourceId = args[2]
-  programSource = subuserlib.resolve.resolveProgramSource(user,programSourceId)
-  user.getRegistry().logChange("Adding subuser "+name+" "+programSourceId)
-  user.getRegistry().getSubusers()[name] = subuserlib.classes.subuser(user,name,programSource,None,False)
-  subuserlib.verify.verify(user)
-  user.getRegistry().commit()
+#  try:
+  if True:
+    programSource = subuserlib.resolve.resolveProgramSource(user,programSourceId)
+    user.getRegistry().logChange("Adding subuser "+name+" "+programSourceId)
+    user.getRegistry().getSubusers()[name] = subuserlib.classes.subuser.Subuser(user,name,programSource,None,False)
+    user.getRegistry().getSubusers().save()
+    subuserlib.verify.verify(user)
+    user.getRegistry().commit()
+    """
+  except Exception as e:
+    print("Adding subuser failed.")
+    print(str(e))
+    subuserlib.update.checkoutNoCommit(user,"HEAD")
+"""
+    
 elif aciton == "remove":
   name = args[1]
   user.getRegistry().logChange("Removing subuser "+name)

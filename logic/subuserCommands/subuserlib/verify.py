@@ -18,13 +18,13 @@ import shutil,os
 import subuserlib.install
 
 def verify(user):
-   """
+  """
    Ensure that:
       - Registry is consistent; warns the user about subusers that point to non-existant source programs.
      - For each subuser there is an up-to-date image installed.
      - No-longer-needed temporary repositories are removed. All temporary repositories have at least one subuser who's image is built from one of the repository's program sources.
       - No-longer-needed installed images are removed.
-   """
+  """
   user.getRegistry().log("Verifying subuser configuration.")
   verifyRegistryConsistency(user)
   user.getInstalledImages().unregisterNonExistantImages()
@@ -42,22 +42,27 @@ def ensureImagesAreInstalledAndUpToDate(user):
   user.getRegistry().log("Checking if images need to be updated or installed...")
   for _,subuser in user.getRegistry().getSubusers().iteritems():
     subuserlib.install.ensureSubuserImageIsInstalledAndUpToDate(subuser)    
+  user.getInstalledImages().save()
+  user.getRegistry().getSubusers().save()
 
 def trimUnneededTempRepos(user):
   user.getRegistry().log("Running garbage collector on temporary repositories...")
-  for repoId,repo in user.getRegistry().getRepositories().iteritems():
+  for repoId,repo in user.getRegistry().getRepositories().userRepositories.iteritems():
     keep = False
-    if not type(repoId) is str: #If this is a temp repo.
-      for _,installedProgram in user.getInstalledPrograms().iteritems():
-        if repoId == installedProgram.getSourceRepoId():
+    if not type(repoId) is str and not type(repoId) is unicode: #If this is a temp repo.
+      for _,installedImage in user.getInstalledImages().iteritems():
+        if repoId == installedImage.getSourceRepoId():
           keep = True
+    else:
+      keep = True
     if not keep:
       user.getRegistry().logChange("Removing uneeded temporary repository: "+repo.getName())
       repo.removeGitRepo()
-      del user.getRegistry().getRepositories()[repoId]
+      del user.getRegistry().getRepositories().userRepositories[repoId]
 
 def rebuildBinDir(user):
-  shutil.rmtree(user.getConfig().getBinDir())
+  if os.path.exists(user.getConfig().getBinDir()):
+    shutil.rmtree(user.getConfig().getBinDir())
   os.mkdir(user.getConfig().getBinDir())
   for _,subuser in user.getRegistry().getSubusers().iteritems():
     if subuser.isExecutableShortcutInstalled():

@@ -59,9 +59,16 @@ def run(subuserToRun,programArgs):
     symlinkPath = os.path.join(subuserToRun.getHomeDirOnHost(),"Userdirs")
     destinationPath = "/userdirs"
     if not os.path.exists(symlinkPath):
-      os.symlink(destinationPath,symlinkPath) #Arg, why are source and destination switched?
+      try:
+        os.makedirs(subuserToRun.getHomeDirOnHost())
+      except OSError:
+        pass
+      try:
+        os.symlink(destinationPath,symlinkPath) #Arg, why are source and destination switched?
       #os.symlink(where does the symlink point to, where is the symlink)
       #I guess it's to be like cp...
+      except OSError:
+        pass
 
   if subuserToRun.getPermissions()["stateful-home"]:
     setupSymlinks()
