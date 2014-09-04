@@ -69,7 +69,7 @@ class ProgramSource(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserli
     Return the installed images which are based on this image.
     """
     installedImagesBasedOnThisProgramSource = []
-    for installedImage in self.getUser().getInstalledImages():
+    for _,installedImage in self.getUser().getInstalledImages().iteritems():
       if installedImage.getProgramSourceName() == self.getName() and installedImage.getSourceRepoId() == self.getRepository().getName():
         installedImagesBasedOnThisProgramSource.append(installedImage)
     return installedImagesBasedOnThisProgramSource

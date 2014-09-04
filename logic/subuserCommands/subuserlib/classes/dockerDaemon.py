@@ -3,7 +3,7 @@
 # If it is not, please file a bug report.
 
 #external imports
-import urllib,tarfile,os,tempfile,fnmatch,re,json,StringIO
+import urllib,tarfile,os,tempfile,fnmatch,re,json,StringIO,httplib
 #internal imports
 import subuserlib.subprocessExtras,subuserlib.classes.userOwnedObject,subuserlib.classes.uhttpConnection,subuserlib.docker
 
@@ -59,6 +59,7 @@ class DockerDaemon(subuserlib.classes.userOwnedObject.UserOwnedObject):
     self.getConnection().request("GET","/images/"+imageTagOrId+"/json")
     responce = self.getConnection().getresponse()
     if not responce.status == 200:
+      responce.read() # Read the responce and discard it to prevent the server from getting locked up: http://stackoverflow.com/questions/3231543/python-httplib-responsenotready
       return None
     else:
       return json.loads(responce.read())
@@ -85,9 +86,10 @@ class DockerDaemon(subuserlib.classes.userOwnedObject.UserOwnedObject):
     with tempfile.TemporaryFile() as tmpArchive:
       archiveBuildContext(tmpArchive,directoryWithDockerfile,excludePatterns,dockerfile=dockerfile)
       self.getConnection().request("POST","/build?"+queryParametersString,body=tmpArchive)
-    response = self.getConnection().getresponse()
+      response = self.getConnection().getresponse()
+    
     if response.status != 200:
-      raise Exception("Building image failed.\n"
+      raise ImageBuildException("Building image failed.\n"
                      +"status: "+str(response.status)+"\n"
                      +"Reason: "+response.reason+"\n"
                      +response.read())
@@ -95,9 +97,12 @@ class DockerDaemon(subuserlib.classes.userOwnedObject.UserOwnedObject):
     search = r'Successfully built ([0-9a-f]+)'
     match = re.search(search, output)
     if not match:
-      raise Exception("Unexpected server response when building image.\n-----"+output)
+      raise ImageBuildException("Unexpected server response when building image.\n-----"+output)
     print(output)
     return match.group(1)
 
   def execute(self,args,cwd=None):
     subuserlib.docker.runDockerAndExitIfItFails(args,cwd=cwd)
+
+class ImageBuildException(Exception):
+  pass

@@ -5,7 +5,7 @@
 #external imports
 import sys,os,stat,uuid,json
 #internal imports
-import subuserlib.classes.installedImage, subuserlib.installedImages
+import subuserlib.classes.installedImage, subuserlib.installedImages,subuserlib.classes.dockerDaemon
 
 def installFromBaseImage(programSource):
   """
@@ -56,7 +56,7 @@ def installFromSubuserImagefile(programSource, useCache=False,parent=None):
     dockerImageDir = os.path.join(programSource.getSourceDir(),"docker-image")
     id = programSource.getUser().getDockerDaemon().build(directoryWithDockerfile=dockerImageDir,rm=True,useCache=useCache,dockerfile=dockerFileContents)
     return id
-  except Exception as e:
+  except subuserlib.classes.dockerDaemon.ImageBuildException as e:
     sys.exit("Installing image failed: "+programSource.getName()+"\n"+str(e))
 
 def installProgram(programSource, useCache=False,parent=None):
@@ -106,13 +106,13 @@ def isInstalledImageUpToDate(installedImage):
   """
   installedImageSource = installedImage.getUser().getRegistry().getRepositories()[installedImage.getSourceRepoId()][installedImage.getProgramSourceName()]
   sourceLineage = getProgramSourceLineage(installedImageSource)
-  installedImageLineage = subuserlib.installedImages.getImageLineage(installed.getUser(),installedImage.getImageId())
+  installedImageLineage = subuserlib.installedImages.getImageLineage(installedImage.getUser(),installedImage.getImageId())
   while len(sourceLineage) > 0:
-    if not len(latestInstalledImageLineage)>0:
+    if not len(installedImageLineage)>0:
       return False
     programSource = sourceLineage.pop(0)
-    installedImage = latestInstalledImageLineage.pop(0)
-    if not (installedImage.getProgramSourceName() == programSource.getName() and installedImage.getSourceRepoId() == programSource.getRepository().getName() and installedImage.getLastUpdateTime() == programSource.getPermisisons()["last-update-time"]):
+    installedImage = installedImageLineage.pop(0)
+    if not (installedImage.getProgramSourceName() == programSource.getName() and installedImage.getSourceRepoId() == programSource.getRepository().getName() and installedImage.getLastUpdateTime() == programSource.getPermissions()["last-update-time"]):
       return False
   return True
   

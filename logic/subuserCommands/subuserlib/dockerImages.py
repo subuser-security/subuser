@@ -31,7 +31,7 @@ def isProgramsImageInstalled(program):
 def inspectImage(imageTagOrId):
   """ Returns a dictionary coresponding to the json outputed by docker inspect or None if the image does not exist. """
   try:
-    dockerInspectOutput = docker.getDockerOutput(["inspect",imageTag])
+    dockerInspectOutput = docker.getDockerOutput(["inspect",imageTagOrId])
   except subprocess.CalledProcessError:
     return None
   imageInfo = json.loads(dockerInspectOutput)

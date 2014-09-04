@@ -23,14 +23,14 @@ class InstalledImages(dict,subuserlib.classes.userOwnedObject.UserOwnedObject,su
     else:
       installedImagesDict = {}
     # Create the InstalledImage objects.
-    for imageID,imageAttributes in installedImagesDict.iteritems():
+    for imageId,imageAttributes in installedImagesDict.iteritems():
       image = subuserlib.classes.installedImage.InstalledImage(
         user=self.getUser(),
-        imageID=imageID,
+        imageId=imageId,
         programSourceName=imageAttributes["program-source"],
         sourceRepoId=imageAttributes["source-repo"], 
         lastUpdateTime=imageAttributes["last-update-time"])
-      self[imageID]=image
+      self[imageId]=image
  
   def save(self):
     """ Save attributes of the installed images to disk. """
@@ -41,7 +41,7 @@ class InstalledImages(dict,subuserlib.classes.userOwnedObject.UserOwnedObject,su
       imageAttributes["last-update-time"] = installedImage.getLastUpdateTime()
       imageAttributes["program-source"] = installedImage.getProgramSourceName()
       imageAttributes["source-repo"] = installedImage.getSourceRepoId()
-      installedImagesDict[installedImage.getImageID()] = imageAttributes
+      installedImagesDict[installedImage.getImageId()] = imageAttributes
 
     # Write that dictionary to disk.
     installedImagesPath = self.getUser().getConfig().getInstalledImagesDotJsonPath()

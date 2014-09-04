@@ -39,6 +39,13 @@ def getPermissionFlagDict(subuserToRun):
    }
 
 def getCommand(subuserToRun, programArgs):
+  """
+  Returns the command requred to run the subuser as a list of string arguments.
+  Exits, printing an error message, if the subuser cannot be run due to no proper image for it being installed.
+  """
+  if not(subuserToRun.getImageId() and subuserToRun.getImageId() in subuserToRun.getUser().getInstalledImages() and subuserToRun.getUser().getInstalledImages()[subuserToRun.getImageId()].isDockerImageThere()):
+    sys.exit("Image for "+subuserToRun.getName()+" is not installed. Try running:\n $subuser repair")
+  
   flags = getBasicFlags(subuserToRun)
   permissionFlagDict = getPermissionFlagDict(subuserToRun)
   permissions = subuserToRun.getPermissions()
