@@ -32,8 +32,6 @@ class Registry(subuserlib.classes.userOwnedObject.UserOwnedObject):
       os.makedirs(self.getUser().getConfig().getRegistryPath())
       subuserlib.git.runGit(["init"],cwd=self.getUser().getConfig().getRegistryPath())
       self.logChange("Initial commit.")
-      self.getRepositories().save()
-      self.getSubusers().save()
       self.commit()
 
   def log(self,message):
@@ -59,6 +57,8 @@ class Registry(subuserlib.classes.userOwnedObject.UserOwnedObject):
   def commit(self):
     """ git commit the changes to the registry files, installed-miages.json and subusers.json. """
     if self.__changed:
+      self.getRepositories().save()
+      self.getSubusers().save()
       subuserlib.git.runGit(["add","subusers.json","repository-states.json"],cwd=self.getUser().getConfig().getRegistryPath())
       if os.path.exists(os.path.join(self.getUser().getConfig().getRegistryPath(),"repositories.json")):
         subuserlib.git.runGit(["add","repositories.json"],cwd=self.getUser().getConfig().getRegistryPath())

@@ -15,8 +15,6 @@ def updateAll(user):
   for _,repository in user.getRegistry().getRepositories().iteritems():
     repository.updateSources()
   subuserlib.verify.verify(user)
-  user.getRegistry().getRepositories().save()
-  user.getRegistry().getSubusers().save()
   user.getRegistry().commit()
 
 def showLog(user):

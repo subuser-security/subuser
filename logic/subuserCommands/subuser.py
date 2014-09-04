@@ -42,7 +42,6 @@ if action == "add":
     programSource = subuserlib.resolve.resolveProgramSource(user,programSourceId)
     user.getRegistry().logChange("Adding subuser "+name+" "+programSourceId)
     user.getRegistry().getSubusers()[name] = subuserlib.classes.subuser.Subuser(user,name,programSource,None,False)
-    user.getRegistry().getSubusers().save()
     subuserlib.verify.verify(user)
     user.getRegistry().commit()
     """

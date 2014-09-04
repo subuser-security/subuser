@@ -29,6 +29,7 @@ def verify(user):
   verifyRegistryConsistency(user)
   user.getInstalledImages().unregisterNonExistantImages()
   ensureImagesAreInstalledAndUpToDate(user)
+  user.getInstalledImages().save()
   trimUnneededTempRepos(user)
   rebuildBinDir(user)
 
@@ -42,8 +43,6 @@ def ensureImagesAreInstalledAndUpToDate(user):
   user.getRegistry().log("Checking if images need to be updated or installed...")
   for _,subuser in user.getRegistry().getSubusers().iteritems():
     subuserlib.install.ensureSubuserImageIsInstalledAndUpToDate(subuser)    
-  user.getInstalledImages().save()
-  user.getRegistry().getSubusers().save()
 
 def trimUnneededTempRepos(user):
   user.getRegistry().log("Running garbage collector on temporary repositories...")
