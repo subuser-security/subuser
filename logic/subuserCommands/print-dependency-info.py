@@ -4,7 +4,7 @@
 #external imports
 import optparse,sys
 #internal imports
-import subuserlib.classes.user,subuserlib.resolve,subuserlib.install
+import subuserlib.classes.user,subuserlib.resolve,subuserlib.install,subuserlib.commandLineArguments
 
 def parseCliArgs():
   usage = "usage: subuser %prog PROGRAM_NAME(s) SETS_OF_PROGRAMS"
@@ -31,7 +31,7 @@ def printDependencies(programSourceIds):
    programSource = subuserlib.resolve.resolveProgramSource(user,programSourceId)
    indent = 0
    for programSourceInLineage in subuserlib.install.getProgramSourceLineage(programSource):
-     displayLine = (" "*indent) + programSource.getName() + "@" + programSource.getRepository().getName()
+     displayLine = (" "*indent) + programSourceInLineage.getName() + "@" + programSourceInLineage.getRepository().getName()
      print(displayLine)
      indent = indent + 1
   

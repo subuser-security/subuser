@@ -35,6 +35,8 @@ action = args[0]
 user = subuserlib.classes.user.User()
 
 if action == "add":
+  if not len(args) == 3:
+    sys.exit("Wrong number of arguments to add.  See `subuser subuser -h`.")
   name = args[1]
   programSourceId = args[2]
 #  try:
@@ -51,12 +53,15 @@ if action == "add":
     subuserlib.update.checkoutNoCommit(user,"HEAD")
 """
     
-elif aciton == "remove":
+elif action == "remove":
   name = args[1]
-  user.getRegistry().logChange("Removing subuser "+name)
-  del user.getRegistry().getSubusers()[name]
-  subuserlib.verify.verify(user)
-  user.getRegistry().commit()
+  if name in user.getRegistry().getSubusers():
+    user.getRegistry().logChange("Removing subuser "+name)
+    del user.getRegistry().getSubusers()[name]
+    subuserlib.verify.verify(user)
+    user.getRegistry().commit()
+  else:
+    sys.exit("Cannot remove: subuser "+name+" does not exist.")
 elif action == "create-shortcut":
   name = args[1]
   user.getRegistry().logChange("Creating shortcut for subuser "+name)

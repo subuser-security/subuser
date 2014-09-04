@@ -5,7 +5,7 @@
 #external imports
 import urllib,tarfile,os,tempfile,fnmatch,re,json,StringIO,httplib
 #internal imports
-import subuserlib.subprocessExtras,subuserlib.classes.userOwnedObject,subuserlib.classes.uhttpConnection,subuserlib.docker
+import subuserlib.subprocessExtras,subuserlib.classes.userOwnedObject,subuserlib.classes.uhttpConnection,subuserlib.docker,subuserlib.test,subuserlib.classes.mockDockerDaemon
 
 def archiveBuildContext(archive,directoryWithDockerfile,excludePatterns,dockerfile=None):
   """
@@ -106,3 +106,7 @@ class DockerDaemon(subuserlib.classes.userOwnedObject.UserOwnedObject):
 
 class ImageBuildException(Exception):
   pass
+
+
+if subuserlib.test.testing:
+  DockerDaemon = subuserlib.classes.mockDockerDaemon.MockDockerDaemon

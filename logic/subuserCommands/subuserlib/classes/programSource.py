@@ -119,7 +119,7 @@ class ProgramSource(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserli
     for line in SubuserImagefileContents.split("\n"):
       if line.startswith("FROM-SUBUSER-IMAGE"):
         try:
-          return subuserlib.resolve.resolveProgramSource(user,line.split(" ")[1],contextRepository=self.getRepository(),allowRefferingToRepositoriesByName=False) #TODO, ProgramSource names with spaces or other funny characters...
+          return subuserlib.resolve.resolveProgramSource(self.getUser(),line.split(" ")[1],contextRepository=self.getRepository(),allowRefferingToRepositoriesByName=False) #TODO, ProgramSource names with spaces or other funny characters...
         except IndexError:
           raise Exception("Syntax error in SubuserImagefile one line"+str(lineNumber)+":\n"+line)
       lineNumber+=1

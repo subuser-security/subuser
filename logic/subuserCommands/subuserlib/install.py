@@ -87,7 +87,7 @@ def getProgramSourceLineage(programSource):
   """
   dependency = programSource.getDependency()
   if dependency:
-    return getProgramSourceLineage() + [programSource]
+    return getProgramSourceLineage(dependency) + [programSource]
   else:
     return [programSource]
 
@@ -133,6 +133,7 @@ def ensureSubuserImageIsInstalledAndUpToDate(subuser, useCache=False):
       subuser.getUser().getRegistry().logChange("Installed new image for subuser "+subuser.getName())
       return
     parentId=latestInstalledImage.getImageId()
-  subuser.setImageId(parentId)
-  subuser.getUser().getRegistry().logChange("Installed new image for subuser "+subuser.getName())
+  if not subuser.getImageId() == parentId:
+    subuser.setImageId(parentId)
+    subuser.getUser().getRegistry().logChange("Installed new image for subuser "+subuser.getName())
 
