@@ -5,7 +5,7 @@
 #external imports
 import subprocess,os,shutil
 #internal imports
-import subuserlib.git,subuserlib.classes.userOwnedObject,subuserlib.classes.programSource,subuserlib.subprocessExtras
+import subuserlib.git,subuserlib.classes.userOwnedObject,subuserlib.classes.imageSource,subuserlib.subprocessExtras
 
 class Repository(dict,subuserlib.classes.userOwnedObject.UserOwnedObject):
   __name = None
@@ -35,7 +35,7 @@ class Repository(dict,subuserlib.classes.userOwnedObject.UserOwnedObject):
     shutil.rmtree(self.getRepoPath())
 
   def updateSources(self):
-    """ Pull(or clone) the repo's ProgramSources from git origin. """
+    """ Pull(or clone) the repo's ImageSources from git origin. """
     if not os.path.exists(self.getRepoPath()):
       subuserlib.git.runGit(["clone",self.getGitOriginURI(),self.getRepoPath()])
     else:
@@ -46,9 +46,9 @@ class Repository(dict,subuserlib.classes.userOwnedObject.UserOwnedObject):
     """
     Load ProgamSources from disk into memory.
     """
-    programNames = filter(lambda f: os.path.isdir(os.path.join(self.getRepoPath(),f)) and not f == ".git",os.listdir(self.getRepoPath()))
-    for programName in programNames:
-      self[programName] = (subuserlib.classes.programSource.ProgramSource(self.getUser(),self,programName))
+    imageNames = filter(lambda f: os.path.isdir(os.path.join(self.getRepoPath(),f)) and not f == ".git",os.listdir(self.getRepoPath()))
+    for imageName in imageNames:
+      self[imageName] = (subuserlib.classes.imageSource.ImageSource(self.getUser(),self,imageName))
 
   def checkoutGitCommit(self,gitCommitHash):
     """

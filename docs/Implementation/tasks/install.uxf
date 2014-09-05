@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><diagram program="umlet" version="11.3">
+<?xml version="1.0" encoding="UTF-8"?><diagram image="umlet" version="11.3">
   <zoom_level>10</zoom_level>
   <element>
     <type>com.umlet.element.custom.Systemborder</type>
@@ -22,7 +22,7 @@
     </coordinates>
     <panel_attributes>command line arguments
 --
-programsToInstall
+imagesToInstall
 from</panel_attributes>
     <additional_attributes/>
   </element>
@@ -269,7 +269,7 @@ repo from does not exist</panel_attributes>
       <w>480</w>
       <h>50</h>
     </coordinates>
-    <panel_attributes>programSource = repo.getProgramSourceNamed(programName)</panel_attributes>
+    <panel_attributes>imageSource = repo.getImageSourceNamed(imageName)</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
@@ -313,7 +313,7 @@ repo from does not exist</panel_attributes>
       <w>280</w>
       <h>30</h>
     </coordinates>
-    <panel_attributes>image = programSource.buidImage()</panel_attributes>
+    <panel_attributes>image = imageSource.buidImage()</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
@@ -370,7 +370,7 @@ m2=permissions.hasExecutable()</panel_attributes>
       <w>360</w>
       <h>40</h>
     </coordinates>
-    <panel_attributes>permissions = programSource.getPermissions()</panel_attributes>
+    <panel_attributes>permissions = imageSource.getPermissions()</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
@@ -678,7 +678,7 @@ subuserName, subuser names must be unique</panel_attributes>
       <w>250</w>
       <h>40</h>
     </coordinates>
-    <panel_attributes>subuserName = programName</panel_attributes>
+    <panel_attributes>subuserName = imageName</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
@@ -700,7 +700,7 @@ subuserName, subuser names must be unique</panel_attributes>
       <w>1310</w>
       <h>1350</h>
     </coordinates>
-    <panel_attributes>topcenter:for programName in programsToInstall</panel_attributes>
+    <panel_attributes>topcenter:for imageName in imagesToInstall</panel_attributes>
     <additional_attributes/>
   </element>
   <element>

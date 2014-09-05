@@ -6,7 +6,7 @@
 import json,collections,sys,os
 #internal imports
 # import ...
-allProgramsMustHavePermissions = "All subuser programs must have a permissions.json file as defined by the permissions.json standard: <https://github.com/subuser-security/subuser/blob/master/docs/permissions-dot-json-file-format.md>"
+allImagesMustHavePermissions = "All subuser images must have a permissions.json file as defined by the permissions.json standard: <https://github.com/subuser-security/subuser/blob/master/docs/permissions-dot-json-file-format.md>"
 
 # Defaults from subuser/docs/permissions-dot-json-file-format.md
 # This is a comprehensive list of all permissions
@@ -37,7 +37,7 @@ def getPermissions(permissionsFilePath):
     try:
       permissions=json.load(file_f, object_pairs_hook=collections.OrderedDict)
     except ValueError:
-      sys.exit(permissionsFilePath+" is not valid json.  "+allProgramsMustHavePermissions)
+      sys.exit(permissionsFilePath+" is not valid json.  "+allImagesMustHavePermissions)
     # Set permission defaults for permissions that are not explicitly specified in the permissions.json file
     for permission,defaultValue in permissionDefaults.iteritems():
       if not permission in permissions:

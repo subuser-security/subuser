@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><diagram program="umlet" version="11.3">
+<?xml version="1.0" encoding="UTF-8"?><diagram image="umlet" version="11.3">
   <zoom_level>12</zoom_level>
   <element>
     <type>com.umlet.element.Class</type>
@@ -167,7 +167,7 @@
       <w>216</w>
       <h>36</h>
     </coordinates>
-    <panel_attributes>_firefox: ProgramSource_
+    <panel_attributes>_firefox: ImageSource_
 </panel_attributes>
     <additional_attributes/>
   </element>
@@ -179,7 +179,7 @@
       <w>180</w>
       <h>36</h>
     </coordinates>
-    <panel_attributes>_vim: ProgramSource_
+    <panel_attributes>_vim: ImageSource_
 </panel_attributes>
     <additional_attributes/>
   </element>
@@ -191,7 +191,7 @@
       <w>204</w>
       <h>36</h>
     </coordinates>
-    <panel_attributes>_firefox: ProgramSource_
+    <panel_attributes>_firefox: ImageSource_
 </panel_attributes>
     <additional_attributes/>
   </element>
@@ -203,7 +203,7 @@
       <w>216</w>
       <h>36</h>
     </coordinates>
-    <panel_attributes>_emacs: ProgramSource_
+    <panel_attributes>_emacs: ImageSource_
 </panel_attributes>
     <additional_attributes/>
   </element>
@@ -555,7 +555,7 @@ installed image.</panel_attributes>
     <panel_attributes>Note..
 bg=blue
 The names of source
-programs are unique
+images are unique
 only within their
 repositories.</panel_attributes>
     <additional_attributes/>

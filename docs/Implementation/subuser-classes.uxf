@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><diagram program="umlet" version="11.3">
+<?xml version="1.0" encoding="UTF-8"?><diagram image="umlet" version="11.3">
   <zoom_level>14</zoom_level>
   <element>
     <type>com.umlet.element.Class</type>
@@ -77,7 +77,7 @@ __name : string
 getName() : string
 setName() : string
 getRunnable() : Runnable
-getProgramSource() : ProgramSource
+getImageSource() : ImageSource
 getPermissions() : Permissions
 getHomeDirOnHost() : string</panel_attributes>
     <additional_attributes/>
@@ -169,10 +169,10 @@ __gitOriginURI : string
 getName() : string
 getGitOriginURI() : string
 getRepoPath() : string
-getAvailablePrograms() : ProgramSource[]
+getAvailableImages() : ImageSource[]
 updateSources() : None
 deleteSources() : None
-getProgramSourceNamed(programName : string) : ProgramSource</panel_attributes>
+getImageSourceNamed(imageName : string) : ImageSource</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
@@ -216,7 +216,7 @@ getProgramSourceNamed(programName : string) : ProgramSource</panel_attributes>
       <w>658</w>
       <h>266</h>
     </coordinates>
-    <panel_attributes>ProgramSource
+    <panel_attributes>ImageSource
 --
 __name : string
 __repo : Repository
@@ -227,7 +227,7 @@ getInstalledImages() : InstalledImage[]
 getImage() : InstalledImage or None
 buildImage() : InstalledImage
 getSubusersBasedOnThisSource() : Subuser[]
-getProgramSourceDir() : string
+getImageSourceDir() : string
 getPermissions() : Permissions</panel_attributes>
     <additional_attributes/>
   </element>
@@ -372,11 +372,11 @@ unregisterImage(image : InstalledImage) : None</panel_attributes>
 --
 __imageID
 __lastUpdateTime
-__programSource
+__imageSource
 --
 getImageID() : string
 getLastUpdateTime() : string
-getProgramSource() : ProgramSource
+getImageSource() : ImageSource
 isDockerImageThere() : bool
 areRunningContainersUsingThisImage() : bool
 removeDockerImage() : None</panel_attributes>

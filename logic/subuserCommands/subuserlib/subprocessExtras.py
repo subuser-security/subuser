@@ -17,7 +17,7 @@ def formatErrorMessage(command,error,errorContext=None):
     return "Command <"+' '.join(command)+"> failed. \nERROR: "+error
 
 def subprocessCheckedCall(args, errorContext='',cwd=None):
-  """ This helper function calls subprocess.check_call and runs sys.exit rather than throwing an error when the program exits with a non-zero exit code.
+  """ This helper function calls subprocess.check_call and runs sys.exit rather than throwing an error when the image exits with a non-zero exit code.
 
  Usage:
   subprocessCheckedCall(["docker", "-d"], "ATTENTION: Special added info bla bla")

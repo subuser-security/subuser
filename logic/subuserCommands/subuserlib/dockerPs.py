@@ -27,4 +27,4 @@ def isImageRunning(imageID):
 
 def areImagesRunning(imageIDs):
   """ Returns True if at least one of the listed images currently has a running container based on it. """
-  return not (set(getRunningImages())&set(programs)) == set()
+  return not (set(getRunningImages())&set(images)) == set()

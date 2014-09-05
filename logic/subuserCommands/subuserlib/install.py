@@ -7,14 +7,14 @@ import sys,os,stat,uuid,json
 #internal imports
 import subuserlib.classes.installedImage, subuserlib.installedImages,subuserlib.classes.dockerDaemon
 
-def installFromBaseImage(programSource):
+def installFromBaseImage(imageSource):
   """
   Build a docker base image using a script and return the image's Id.
   """
-  buildImageScriptPath = os.path.join(programSource.getSourceDir(),"docker-image", "BuildImage.sh")
+  buildImageScriptPath = os.path.join(imageSource.getSourceDir(),"docker-image", "BuildImage.sh")
   print("""\nATTENTION!
 
-  Installing <"""+programSource.getName()+"""> requires that the following shell script be run on your computer: <"""+buildImageScriptPath+"""> If you do not trust this shell script do not run it as it may be faulty or malicious!
+  Installing <"""+imageSource.getName()+"""> requires that the following shell script be run on your computer: <"""+buildImageScriptPath+"""> If you do not trust this shell script do not run it as it may be faulty or malicious!
 
   - Do you want to view the full contents of this shell script [v]?
   - Do you want to continue? (Type "run" to run the shell script)
@@ -31,7 +31,7 @@ def installFromBaseImage(programSource):
     with open(buildImageScriptPath, 'r') as file_f:
       print(file_f.read())
     print('\n===================== END SCRIPT CODE =====================\n')
-    return installFromBaseImage(programSource)
+    return installFromBaseImage(imageSource)
   
   if userInput == "run":
     #Build the image using the script
@@ -40,79 +40,79 @@ def installFromBaseImage(programSource):
     imageTag = "subuser-"+str(uuid.uuid4())
     subprocessExtras.subprocessCheckedCall([buildImageScriptPath,imageTag])
     # Return the Id of the newly created image
-    imageProperties = programSource.getUser().getDockerDaemon().getImageProperties(imageTag)
+    imageProperties = imageSource.getUser().getDockerDaemon().getImageProperties(imageTag)
     if imageProperites == None:
       sys.exit("Image failed to build.  The script exited successfully, but did not result in any Docker image being imported.")
     else:
       return imageProperties["Id"]
   sys.exit("Will not run install script.  Nothing to do.  Exiting.")
 
-def installFromSubuserImagefile(programSource, useCache=False,parent=None):
+def installFromSubuserImagefile(imageSource, useCache=False,parent=None):
   """
   Returns the Id of the newly installed image.
   """
-  dockerFileContents = programSource.generateDockerfileConents(parent=parent)
+  dockerFileContents = imageSource.generateDockerfileConents(parent=parent)
   try:
-    dockerImageDir = os.path.join(programSource.getSourceDir(),"docker-image")
-    id = programSource.getUser().getDockerDaemon().build(directoryWithDockerfile=dockerImageDir,rm=True,useCache=useCache,dockerfile=dockerFileContents)
+    dockerImageDir = os.path.join(imageSource.getSourceDir(),"docker-image")
+    id = imageSource.getUser().getDockerDaemon().build(directoryWithDockerfile=dockerImageDir,rm=True,useCache=useCache,dockerfile=dockerFileContents)
     return id
   except subuserlib.classes.dockerDaemon.ImageBuildException as e:
-    sys.exit("Installing image failed: "+programSource.getName()+"\n"+str(e))
+    sys.exit("Installing image failed: "+imageSource.getName()+"\n"+str(e))
 
-def installProgram(programSource, useCache=False,parent=None):
+def installImage(imageSource, useCache=False,parent=None):
   """
-  Install a program by building the given ProgramSource.
+  Install a image by building the given ImageSource.
   Register the newly installed image in the user's InstalledImages list.
   Return the Id of the newly installedImage.
   """
-  print("Installing "+programSource.getName()+" ...")
-  buildType = programSource.getBuildType()
+  print("Installing "+imageSource.getName()+" ...")
+  buildType = imageSource.getBuildType()
   if buildType == "SubuserImagefile":
-    imageId = installFromSubuserImagefile(programSource,useCache=useCache,parent=parent)
+    imageId = installFromSubuserImagefile(imageSource,useCache=useCache,parent=parent)
   elif buildType == "BuildImage.sh":
-    imageId = installFromBaseImage(programSource)
+    imageId = installFromBaseImage(imageSource)
   else:
     sys.exit("No buildfile found: There needs to be a 'SubuserImagefile' or a 'BuildImage.sh' in the docker-image directory.")
 
-  lastUpdateTime = programSource.getPermissions()["last-update-time"]
+  lastUpdateTime = imageSource.getPermissions()["last-update-time"]
   if lastUpdateTime == None:
     lastUpdateTime = installTime.currentTimeString()
 
-  programSource.getUser().getInstalledImages()[imageId] = subuserlib.classes.installedImage.InstalledImage(programSource.getUser(),imageId,programSource.getName(),programSource.getRepository().getName(),lastUpdateTime)
+  imageSource.getUser().getInstalledImages()[imageId] = subuserlib.classes.installedImage.InstalledImage(imageSource.getUser(),imageId,imageSource.getName(),imageSource.getRepository().getName(),lastUpdateTime)
   return imageId
 
-def getProgramSourceLineage(programSource):
+def getImageSourceLineage(imageSource):
   """
   Return the lineage of the ProgrmSource, going from its base dependency up to itself.
   """
-  dependency = programSource.getDependency()
+  dependency = imageSource.getDependency()
   if dependency:
-    return getProgramSourceLineage(dependency) + [programSource]
+    return getImageSourceLineage(dependency) + [imageSource]
   else:
-    return [programSource]
+    return [imageSource]
 
-def installLineage(programSourceLineage,parent=None):
+def installLineage(imageSourceLineage,parent=None):
   """
-  Install the lineage of program sources.
+  Install the lineage of image sources.
   Return the image id of the final installed image.
   """
-  for programSource in programSourceLineage:
-    parent = installProgram(programSource,parent=parent)
+  for imageSource in imageSourceLineage:
+    parent = installImage(imageSource,parent=parent)
   return parent
 
 def isInstalledImageUpToDate(installedImage):
   """
   Returns True if the installed image(including all of its dependencies, is up to date.  False otherwise.
   """
-  installedImageSource = installedImage.getUser().getRegistry().getRepositories()[installedImage.getSourceRepoId()][installedImage.getProgramSourceName()]
-  sourceLineage = getProgramSourceLineage(installedImageSource)
+  installedImageSource = installedImage.getUser().getRegistry().getRepositories()[installedImage.getSourceRepoId()][installedImage.getImageSourceName()]
+  sourceLineage = getImageSourceLineage(installedImageSource)
   installedImageLineage = subuserlib.installedImages.getImageLineage(installedImage.getUser(),installedImage.getImageId())
   while len(sourceLineage) > 0:
     if not len(installedImageLineage)>0:
       return False
-    programSource = sourceLineage.pop(0)
+    imageSource = sourceLineage.pop(0)
     installedImage = installedImageLineage.pop(0)
-    if not (installedImage.getProgramSourceName() == programSource.getName() and installedImage.getSourceRepoId() == programSource.getRepository().getName() and installedImage.getLastUpdateTime() == programSource.getPermissions()["last-update-time"]):
+    if not (installedImage.getImageSourceName() == imageSource.getName() and installedImage.getSourceRepoId() == imageSource.getRepository().getName() and installedImage.getLastUpdateTime() == imageSource.getPermissions()["last-update-time"]):
       return False
   return True
   
@@ -122,14 +122,14 @@ def ensureSubuserImageIsInstalledAndUpToDate(subuser, useCache=False):
   If the image is already installed, but is out of date, or it's dependencies are out of date, build it again.
   Otherwise, do nothing.
   """
-  # get dependency list as a list of ProgramSources
-  sourceLineage = getProgramSourceLineage(subuser.getProgramSource())
+  # get dependency list as a list of ImageSources
+  sourceLineage = getImageSourceLineage(subuser.getImageSource())
   parentId=None
   while len(sourceLineage) > 0:
-    programSource = sourceLineage.pop(0)
-    latestInstalledImage = programSource.getLatestInstalledImage()
+    imageSource = sourceLineage.pop(0)
+    latestInstalledImage = imageSource.getLatestInstalledImage()
     if not latestInstalledImage or not isInstalledImageUpToDate(latestInstalledImage):
-      subuser.setImageId(installLineage([programSource]+sourceLineage,parent=parentId))
+      subuser.setImageId(installLineage([imageSource]+sourceLineage,parent=parentId))
       subuser.getUser().getRegistry().logChange("Installed new image for subuser "+subuser.getName())
       return
     parentId=latestInstalledImage.getImageId()

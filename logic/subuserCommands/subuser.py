@@ -8,7 +8,7 @@ import sys,optparse
 import subuserlib.classes.user,subuserlib.resolve,subuserlib.classes.subuser,subuserlib.verify, subuserlib.commandLineArguments,subuserlib.update
 
 def parseCliArgs():
-  usage = "usage: subuser %prog [add|remove|create-shortcut] NAME PROGRAMSOURCE"
+  usage = "usage: subuser %prog [add|remove|create-shortcut] NAME IMAGESOURCE"
   description = """
 
 Add and remove subusers.  Create shorcuts for launching subusers.
@@ -38,12 +38,12 @@ if action == "add":
   if not len(args) == 3:
     sys.exit("Wrong number of arguments to add.  See `subuser subuser -h`.")
   name = args[1]
-  programSourceId = args[2]
+  imageSourceId = args[2]
 #  try:
   if True:
-    programSource = subuserlib.resolve.resolveProgramSource(user,programSourceId)
-    user.getRegistry().logChange("Adding subuser "+name+" "+programSourceId)
-    user.getRegistry().getSubusers()[name] = subuserlib.classes.subuser.Subuser(user,name,programSource,None,False)
+    imageSource = subuserlib.resolve.resolveImageSource(user,imageSourceId)
+    user.getRegistry().logChange("Adding subuser "+name+" "+imageSourceId)
+    user.getRegistry().getSubusers()[name] = subuserlib.classes.subuser.Subuser(user,name,imageSource,None,False)
     subuserlib.verify.verify(user)
     user.getRegistry().commit()
     """

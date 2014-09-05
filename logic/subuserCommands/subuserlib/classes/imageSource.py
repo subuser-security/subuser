@@ -7,7 +7,7 @@ import subprocess,os
 #internal imports
 import subuserlib.classes.userOwnedObject,subuserlib.classes.describable,subuserlib.subprocessExtras,subuserlib.resolve
 
-class ProgramSource(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.classes.describable.Describable):
+class ImageSource(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.classes.describable.Describable):
   __name = None
   __repo = None
   __permissions = None
@@ -25,11 +25,11 @@ class ProgramSource(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserli
 
   def getSubusers(self):
     """
-     Get a list of subusers that were built from this ProgramSource.
+     Get a list of subusers that were built from this ImageSource.
     """
     subusers = []
     for subuser in self.getUser().getRegistry().getSubusers():
-      if subuser.getProgramSource()==self:
+      if subuser.getImageSource()==self:
         subusers.append(subuser)
     return subusers
 
@@ -38,7 +38,7 @@ class ProgramSource(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserli
 
   def getBuildType(self):
     """
-     Return the build type for this program source.  Or None, if no valid build files are found.  Possible build types are:
+     Return the build type for this image source.  Or None, if no valid build files are found.  Possible build types are:
        - 'SubuserImagefile'
        - 'BuildImage.sh'
     """
@@ -54,8 +54,8 @@ class ProgramSource(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserli
 
   def getLatestInstalledImage(self):
     """
-    Get the most up-to-date InstalledImage based on this ProgramSource.
-    Returns None if no images have been installed from this ProgramSource.
+    Get the most up-to-date InstalledImage based on this ImageSource.
+    Returns None if no images have been installed from this ImageSource.
     """
     lastUpdateTime=''
     mostUpToDateImage = None
@@ -68,11 +68,11 @@ class ProgramSource(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserli
     """
     Return the installed images which are based on this image.
     """
-    installedImagesBasedOnThisProgramSource = []
+    installedImagesBasedOnThisImageSource = []
     for _,installedImage in self.getUser().getInstalledImages().iteritems():
-      if installedImage.getProgramSourceName() == self.getName() and installedImage.getSourceRepoId() == self.getRepository().getName():
-        installedImagesBasedOnThisProgramSource.append(installedImage)
-    return installedImagesBasedOnThisProgramSource
+      if installedImage.getImageSourceName() == self.getName() and installedImage.getSourceRepoId() == self.getRepository().getName():
+        installedImagesBasedOnThisImageSource.append(installedImage)
+    return installedImagesBasedOnThisImageSource
 
   def getPermissions(self):
     if not self.__permissions:
@@ -94,11 +94,11 @@ class ProgramSource(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserli
       with open(subuserImageFilePath,mode="r") as subuserImageFile:
         return subuserImageFile.read()
     else:
-      raise Exception("This ProgramSource does not build from a SubuserImagefile.")
+      raise Exception("This ImageSource does not build from a SubuserImagefile.")
 
   def generateDockerfileConents(self,parent=None):
     """
-    Returns a string representing the Dockerfile that is to be used to build this ProgramSource.
+    Returns a string representing the Dockerfile that is to be used to build this ImageSource.
     """
     subuserImagefileContents = self.getSubuserImagefileContents()
     dockerfileContents = ""
@@ -111,7 +111,7 @@ class ProgramSource(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserli
 
   def getDependency(self):
     """
-     Returns the dependency of this ProgramSource as a ProgramSource.
+     Returns the dependency of this ImageSource as a ImageSource.
      Or None if there is no dependency.
     """
     SubuserImagefileContents = self.getSubuserImagefileContents()
@@ -119,7 +119,7 @@ class ProgramSource(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserli
     for line in SubuserImagefileContents.split("\n"):
       if line.startswith("FROM-SUBUSER-IMAGE"):
         try:
-          return subuserlib.resolve.resolveProgramSource(self.getUser(),line.split(" ")[1],contextRepository=self.getRepository(),allowRefferingToRepositoriesByName=False) #TODO, ProgramSource names with spaces or other funny characters...
+          return subuserlib.resolve.resolveImageSource(self.getUser(),line.split(" ")[1],contextRepository=self.getRepository(),allowRefferingToRepositoriesByName=False) #TODO, ImageSource names with spaces or other funny characters...
         except IndexError:
           raise Exception("Syntax error in SubuserImagefile one line"+str(lineNumber)+":\n"+line)
       lineNumber+=1

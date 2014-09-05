@@ -27,7 +27,7 @@ class InstalledImages(dict,subuserlib.classes.userOwnedObject.UserOwnedObject,su
       image = subuserlib.classes.installedImage.InstalledImage(
         user=self.getUser(),
         imageId=imageId,
-        programSourceName=imageAttributes["program-source"],
+        imageSourceName=imageAttributes["image-source"],
         sourceRepoId=imageAttributes["source-repo"], 
         lastUpdateTime=imageAttributes["last-update-time"])
       self[imageId]=image
@@ -39,7 +39,7 @@ class InstalledImages(dict,subuserlib.classes.userOwnedObject.UserOwnedObject,su
     for _,installedImage in self.iteritems():
       imageAttributes = {}
       imageAttributes["last-update-time"] = installedImage.getLastUpdateTime()
-      imageAttributes["program-source"] = installedImage.getProgramSourceName()
+      imageAttributes["image-source"] = installedImage.getImageSourceName()
       imageAttributes["source-repo"] = installedImage.getSourceRepoId()
       installedImagesDict[installedImage.getImageId()] = imageAttributes
 

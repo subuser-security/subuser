@@ -8,19 +8,19 @@ import optparse,sys
 import subuserlib.classes.user,subuserlib.commandLineArguments,subuserlib.resolve
 
 def parseCliArgs(sysargs):
-  usage = "usage: subuser %prog describe [subuser|program] SUBUSER(s)/PROGRAM(s)"
-  description = """Show basic information about a subuser or program: Whether it is installed, what it's permissions are ect.
+  usage = "usage: subuser %prog describe [subuser|image] SUBUSER(s)/IMAGE(s)"
+  description = """Show basic information about a subuser or image: Whether it is installed, what it's permissions are ect.
 Ex:
-$ subuser describe program firefox
+$ subuser describe image firefox
 <lots of info>
-$ subuser describe program firefox
+$ subuser describe image firefox
 """
   parser = optparse.OptionParser(usage=usage,description=description,formatter=subuserlib.commandLineArguments.HelpFormatterThatDoesntReformatDescription())
   return parser.parse_args(args=sysargs[1:])
 
 def describe(sysargs):
   """
-  Describe subusers and programs.
+  Describe subusers and images.
   
   >>> import describe #import self
   >>> describe.describe(["describe","subuser","foo"])
@@ -32,13 +32,13 @@ def describe(sysargs):
    Maintainer: 
    Last update time(version): 0
    Executable: /usr/bin/foo
-  >>> describe.describe(["describe","program","foo"])
+  >>> describe.describe(["describe","image","foo"])
   foo:
    Description: 
    Maintainer: 
    Last update time(version): 0
    Executable: /usr/bin/foo
-  >>> describe.describe(["describe","program","foo@default"])
+  >>> describe.describe(["describe","image","foo@default"])
   foo:
    Description: 
    Maintainer: 
@@ -51,9 +51,9 @@ def describe(sysargs):
     print("Args: '"+"' '".join(args)+"'")
     print("Wrong number of arguments.")
     #parseCliArgs(["","subuser","describe","--help"])
-  elif args[0] == "program":
-    for program in args[1:]:
-      subuserlib.resolve.resolveProgramSource(user,program).describe()
+  elif args[0] == "image":
+    for image in args[1:]:
+      subuserlib.resolve.resolveImageSource(user,image).describe()
   elif args[0] == "subuser":
     for subuser in  args[1:]:
       try:

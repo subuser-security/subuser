@@ -7,18 +7,18 @@ import sys,os,subprocess
 #internal imports
 import paths,registry,dockerImages,docker
 
-def uninstall(programName):
-  print("Uninstalling "+programName)
-  if dockerImages.isProgramsImageInstalled(programName):
-    while not docker.runDocker(["rmi","subuser-"+programName]) == 0:
+def uninstall(imageName):
+  print("Uninstalling "+imageName)
+  if dockerImages.isImagesImageInstalled(imageName):
+    while not docker.runDocker(["rmi","subuser-"+imageName]) == 0:
       if not raw_input("Once you have solved the problem either type [y] to continue, or [q] to exit: ") == 'y':
         sys.exit()
-  if os.path.exists(paths.getExecutablePath(programName)):
-    os.remove(paths.getExecutablePath(programName))
+  if os.path.exists(paths.getExecutablePath(imageName)):
+    os.remove(paths.getExecutablePath(imageName))
 
-  registry.unregisterProgram(programName)
-  programHomeDir=paths.getProgramHomeDirOnHost(programName)
-  if os.path.exists(programHomeDir):
-    print("The program has been uninstalled but it's home directory remains:")
-    print(programHomeDir)
-  print(programName+" uninstalled successfully.")
+  registry.unregisterImage(imageName)
+  imageHomeDir=paths.getImageHomeDirOnHost(imageName)
+  if os.path.exists(imageHomeDir):
+    print("The image has been uninstalled but it's home directory remains:")
+    print(imageHomeDir)
+  print(imageName+" uninstalled successfully.")

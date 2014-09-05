@@ -38,7 +38,7 @@ def getPermissionFlagDict(subuserToRun):
    "as-root" : lambda root: ["--user=0"] if root else ["--user="+str(os.getuid())]
    }
 
-def getCommand(subuserToRun, programArgs):
+def getCommand(subuserToRun, imageArgs):
   """
   Returns the command requred to run the subuser as a list of string arguments.
   Exits, printing an error message, if the subuser cannot be run due to no proper image for it being installed.
@@ -52,16 +52,16 @@ def getCommand(subuserToRun, programArgs):
   for permission, flagGenerator in permissionFlagDict.iteritems():
     flags.extend(flagGenerator(permissions[permission]))
 
-  return ["run"]+flags+[subuserToRun.getImageId()]+[subuserToRun.getPermissions()["executable"]]+programArgs
+  return ["run"]+flags+[subuserToRun.getImageId()]+[subuserToRun.getPermissions()["executable"]]+imageArgs
 
-def getPrettyCommand(subuserToRun,programArgs):
+def getPrettyCommand(subuserToRun,imageArgs):
   """
   Get a command for pretty printing for use with dry-run.
   """
-  command = getCommand(subuserToRun,programArgs)
+  command = getCommand(subuserToRun,imageArgs)
   return "docker '"+"' '".join(command)+"'"
 
-def run(subuserToRun,programArgs):
+def run(subuserToRun,imageArgs):
   def setupSymlinks():
     symlinkPath = os.path.join(subuserToRun.getHomeDirOnHost(),"Userdirs")
     destinationPath = "/userdirs"
@@ -80,4 +80,4 @@ def run(subuserToRun,programArgs):
   if subuserToRun.getPermissions()["stateful-home"]:
     setupSymlinks()
 
-  subuserToRun.getUser().getDockerDaemon().execute(getCommand(subuserToRun,programArgs))
+  subuserToRun.getUser().getDockerDaemon().execute(getCommand(subuserToRun,imageArgs))

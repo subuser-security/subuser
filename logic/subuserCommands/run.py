@@ -8,7 +8,7 @@ import sys
 import subuserlib.classes.user, subuserlib.run
 
 ##############################################################
-helpString = """Run the given subuser program.  For example:
+helpString = """Run the given subuser image.  For example:
 $ subuser run firefox
 
 Will launch firefox.
@@ -21,11 +21,11 @@ def run(args):
     sys.exit(helpString)
 
   subuserName = args[1]
-  argsToPassToProgram = args[2:]
+  argsToPassToImage = args[2:]
 
   user = subuserlib.classes.user.User()
   if subuserName in user.getRegistry().getSubusers():
-    subuserlib.run.run(user.getRegistry().getSubusers()[subuserName],argsToPassToProgram)
+    subuserlib.run.run(user.getRegistry().getSubusers()[subuserName],argsToPassToImage)
   else:
     sys.exit(subuserName + " not found.\n"+helpString)
 

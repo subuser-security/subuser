@@ -5,7 +5,7 @@
 #external imports
 import os,json,collections
 #internal imports
-import subuserlib.classes.fileBackedObject, subuserlib.classes.userOwnedObject, subuserlib.classes.subuser, subuserlib.classes.programSource
+import subuserlib.classes.fileBackedObject, subuserlib.classes.userOwnedObject, subuserlib.classes.subuser, subuserlib.classes.imageSource
 
 class Subusers(dict,subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.classes.fileBackedObject.FileBackedObject):
   """
@@ -26,8 +26,8 @@ class Subusers(dict,subuserlib.classes.userOwnedObject.UserOwnedObject,subuserli
     serializedSubusersDict = {}
     for subuserName,subuser in self.iteritems():
       serializedSubusersDict[subuserName] = {}
-      serializedSubusersDict[subuserName]["source-repo"] = subuser.getProgramSource().getRepository().getName()
-      serializedSubusersDict[subuserName]["source-program"] = subuser.getProgramSource().getName()
+      serializedSubusersDict[subuserName]["source-repo"] = subuser.getImageSource().getRepository().getName()
+      serializedSubusersDict[subuserName]["source-image"] = subuser.getImageSource().getName()
       serializedSubusersDict[subuserName]["executable-shortcut-installed"] = subuser.isExecutableShortcutInstalled()
       serializedSubusersDict[subuserName]["docker-image"] = subuser.getImageId()
     with open(os.path.join(self.getUser().getConfig().getSubusersDotJsonPath()), 'w') as file_f:
@@ -45,11 +45,11 @@ class Subusers(dict,subuserlib.classes.userOwnedObject.UserOwnedObject,subuserli
       if not subuserAttributes["source-repo"] in self.getUser().getRegistry().getRepositories():
         sys.exit("ERROR: Registry inconsistent. Subuser "+subuserName+" points to non-existant repository: "+subuserAttributes["source-repo"])
       repo = self.getUser().getRegistry().getRepositories()[subuserAttributes["source-repo"]]
-      name = subuserAttributes["source-program"]
+      name = subuserAttributes["source-image"]
       if "docker-image" in subuserAttributes:
         imageId = subuserAttributes["docker-image"]
       else:
         imageId = None
       executableShortcutInstalled = subuserAttributes["executable-shortcut-installed"]
-      programSource = subuserlib.classes.programSource.ProgramSource(user=user,name=name,repo=repo)
-      self[subuserName] = subuserlib.classes.subuser.Subuser(user,subuserName,programSource,imageId=imageId,executableShortcutInstalled=executableShortcutInstalled)
+      imageSource = subuserlib.classes.imageSource.ImageSource(user=user,name=name,repo=repo)
+      self[subuserName] = subuserlib.classes.subuser.Subuser(user,subuserName,imageSource,imageId=imageId,executableShortcutInstalled=executableShortcutInstalled)

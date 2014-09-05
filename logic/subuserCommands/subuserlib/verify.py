@@ -20,9 +20,9 @@ import subuserlib.install
 def verify(user):
   """
    Ensure that:
-      - Registry is consistent; warns the user about subusers that point to non-existant source programs.
+      - Registry is consistent; warns the user about subusers that point to non-existant source images.
      - For each subuser there is an up-to-date image installed.
-     - No-longer-needed temporary repositories are removed. All temporary repositories have at least one subuser who's image is built from one of the repository's program sources.
+     - No-longer-needed temporary repositories are removed. All temporary repositories have at least one subuser who's image is built from one of the repository's image sources.
       - No-longer-needed installed images are removed.
   """
   user.getRegistry().log("Verifying subuser configuration.")
@@ -36,7 +36,7 @@ def verify(user):
 def verifyRegistryConsistency(user):
   user.getRegistry().log("Verifying registry consistency...")
   for _,subuser in user.getRegistry().getSubusers().iteritems():
-    if not subuser.getProgramSource().getName() in subuser.getProgramSource().getRepository():
+    if not subuser.getImageSource().getName() in subuser.getImageSource().getRepository():
       user.getRegistry().log("WARNING: "+subuser.getName()+" is no longer present in it's source repository. Support for this progam may have been dropped.")
 
 def ensureImagesAreInstalledAndUpToDate(user):

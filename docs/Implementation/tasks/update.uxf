@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><diagram program="umlet" version="11.3">
+<?xml version="1.0" encoding="UTF-8"?><diagram image="umlet" version="11.3">
   <zoom_level>10</zoom_level>
   <element>
     <type>com.umlet.element.custom.Systemborder</type>
@@ -59,7 +59,7 @@ The user selects what to update
 by telling subuser to update `all`
 or by telling subuser to update
 `repo-name` `all` or by listing
-ProgramSources explicitly. But that
+ImageSources explicitly. But that
 code is kind of boring, so it's not
 included in the diagram.</panel_attributes>
     <additional_attributes/>
@@ -206,7 +206,7 @@ included in the diagram.</panel_attributes>
       <w>350</w>
       <h>40</h>
     </coordinates>
-    <panel_attributes>programSource = subuser.getProgramSource()</panel_attributes>
+    <panel_attributes>imageSource = subuser.getImageSource()</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
@@ -273,7 +273,7 @@ m2=None</panel_attributes>
       <w>310</w>
       <h>40</h>
     </coordinates>
-    <panel_attributes>programSource.buildImage()</panel_attributes>
+    <panel_attributes>imageSource.buildImage()</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
@@ -284,7 +284,7 @@ m2=None</panel_attributes>
       <w>220</w>
       <h>40</h>
     </coordinates>
-    <panel_attributes>programSource.getImage()</panel_attributes>
+    <panel_attributes>imageSource.getImage()</panel_attributes>
     <additional_attributes/>
   </element>
   <element>

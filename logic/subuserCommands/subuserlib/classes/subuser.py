@@ -5,26 +5,26 @@
 #external imports
 import subprocess,os
 #internal imports
-import subuserlib.classes.userOwnedObject,subuserlib.classes.programSource,subuserlib.classes.permissions,subuserlib.classes.describable
+import subuserlib.classes.userOwnedObject,subuserlib.classes.imageSource,subuserlib.classes.permissions,subuserlib.classes.describable
 
 class Subuser(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.classes.describable.Describable):
   __name = None
-  __programSource = None
+  __imageSource = None
   __imageId = None
   __executableShortcutInstalled = None
 
-  def __init__(self,user,name,programSource,imageId,executableShortcutInstalled):
+  def __init__(self,user,name,imageSource,imageId,executableShortcutInstalled):
     subuserlib.classes.userOwnedObject.UserOwnedObject.__init__(self,user)
     self.__name = name
-    self.__programSource = programSource
+    self.__imageSource = imageSource
     self.__imageId = imageId
     self.__executableShortcutInstalled = executableShortcutInstalled
 
   def getName(self):
     return self.__name
 
-  def getProgramSource(self):
-    return self.__programSource
+  def getImageSource(self):
+    return self.__imageSource
 
   def isExecutableShortcutInstalled(self):
     return self.__executableShortcutInstalled
@@ -36,7 +36,7 @@ class Subuser(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.clas
     permissionsDotJsonWritePath = os.path.join(self.getUser().getConfig().getUserSetPermissionsDir(),self.getName(),"permissions.json")
     permissionsDotJsonReadPath = permissionsDotJsonWritePath 
     if not os.path.exists(permissionsDotJsonReadPath):
-      permissionsDotJsonReadPath = os.path.join(self.getProgramSource().getSourceDir(),"permissions.json")
+      permissionsDotJsonReadPath = os.path.join(self.getImageSource().getSourceDir(),"permissions.json")
     if not os.path.exists(permissionsDotJsonReadPath):
       permissionsDotJsonReadPath = None
     return subuserlib.classes.permissions.Permissions(self.getUser(),readPath=permissionsDotJsonReadPath,writePath=permissionsDotJsonWritePath)
@@ -79,11 +79,11 @@ class Subuser(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.clas
     print("Subuser: "+self.getName())
     print("------------------")
     print("Progam:")
-    self.getProgramSource().describe()
+    self.getImageSource().describe()
 
   def installExecutableShortcut(self):
     """
-     Install a trivial executable script into the PATH which launches the subser program.
+     Install a trivial executable script into the PATH which launches the subser image.
     """
     redirect="""#!/bin/bash
   subuser run """+self.getName()+""" $@

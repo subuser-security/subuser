@@ -7,26 +7,26 @@ import subprocess,json,sys
 #internal imports
 import subprocessExtras,docker
 
-def askToInstallProgram(programName):
-  """ Asks the user if they want to install the given program.  If they say yes, install it, if they decline exit."""
-  if not availablePrograms.available(programName):
-    sys.exit(programName+" does not exist.")
-  if raw_input(programName+" is not installed. Do you want to install it now [y/n]?") == "y":
-    subprocessExtras.subprocessCheckedCall(["subuser","install",programName])
+def askToInstallImage(imageName):
+  """ Asks the user if they want to install the given image.  If they say yes, install it, if they decline exit."""
+  if not availableImages.available(imageName):
+    sys.exit(imageName+" does not exist.")
+  if raw_input(imageName+" is not installed. Do you want to install it now [y/n]?") == "y":
+    subprocessExtras.subprocessCheckedCall(["subuser","install",imageName])
   else:
     sys.exit()
 
-def getImageTagOfInstalledProgram(program):
-  """ Return a tag refering to the the docker image for an installed program.
-If that program is not yet installed, install it.
+def getImageTagOfInstalledImage(image):
+  """ Return a tag refering to the the docker image for an installed image.
+If that image is not yet installed, install it.
   """
-  if not isProgramsImageInstalled(program):
-    askToInstallProgram(program)
-  return "subuser-"+program
+  if not isImagesImageInstalled(image):
+    askToInstallImage(image)
+  return "subuser-"+image
 
-def isProgramsImageInstalled(program):
-  """ Return True if the programs image tag is installed.  False otherwise. """
-  return not (getImageID("subuser-"+program) == None)
+def isImagesImageInstalled(image):
+  """ Return True if the images image tag is installed.  False otherwise. """
+  return not (getImageID("subuser-"+image) == None)
 
 def inspectImage(imageTagOrId):
   """ Returns a dictionary coresponding to the json outputed by docker inspect or None if the image does not exist. """

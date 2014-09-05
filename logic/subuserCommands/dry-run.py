@@ -8,7 +8,7 @@ import sys
 import subuserlib.classes.user, subuserlib.run
 
 ##############################################################
-helpString = """Display the command which would be issued to launch docker if you were to run this program.  For example:
+helpString = """Display the command which would be issued to launch docker if you were to run this image.  For example:
 $ subuser dry-run firefox
 
 Please note, this is only a rough approximation for debugging purposes and there is no guarantee that the command displayed here would actually work.
@@ -29,11 +29,11 @@ def dryRun(args):
     sys.exit(helpString)
 
   subuserName = args[1]
-  argsToPassToProgram = args[2:]
+  argsToPassToImage = args[2:]
 
   user = subuserlib.classes.user.User()
   if subuserName in user.getRegistry().getSubusers():
-    print(subuserlib.run.getPrettyCommand(user.getRegistry().getSubusers()[subuserName],argsToPassToProgram))
+    print(subuserlib.run.getPrettyCommand(user.getRegistry().getSubusers()[subuserName],argsToPassToImage))
   else:
     sys.exit(subuserName + " not found.\n"+helpString)
 

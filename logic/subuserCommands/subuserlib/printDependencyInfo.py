@@ -7,21 +7,21 @@ import json
 #internal imports
 import registry
 
-def printDependencyTables(programs):
-  dependencyTable = registry.getDependencyTable(programs, useHasExecutable=False, sortLists=True)
-  for program in dependencyTable.keys():
-    print(program+":")
-    print("    required-by: " + ", ".join(dependencyTable[program]["required-by"]))
-    print("    depends-on: " + ", ".join(dependencyTable[program]["depends-on"]))
+def printDependencyTables(images):
+  dependencyTable = registry.getDependencyTable(images, useHasExecutable=False, sortLists=True)
+  for image in dependencyTable.keys():
+    print(image+":")
+    print("    required-by: " + ", ".join(dependencyTable[image]["required-by"]))
+    print("    depends-on: " + ", ".join(dependencyTable[image]["depends-on"]))
 
-def printDependencyTableJson(programs):
-  dependencyTable =registry.getDependencyTable(programs, useHasExecutable=False, sortLists=True)
+def printDependencyTableJson(images):
+  dependencyTable =registry.getDependencyTable(images, useHasExecutable=False, sortLists=True)
   print(json.dumps(dependencyTable))
 
-def printDependencyTrees(programList):
-  for program in programList:
+def printDependencyTrees(imageList):
+  for image in imageList:
     treeString = ''
-    for index, dependency in enumerate(registry.getDependencyTree(program)):
+    for index, dependency in enumerate(registry.getDependencyTree(image)):
       if index > 0:
         treeString = ''.join([treeString, '  ' * index, '|__', dependency, '\n'])
       else:
@@ -30,10 +30,10 @@ def printDependencyTrees(programList):
     print(treeString)
   
   
-def printDependencyInfo(programList,format):
+def printDependencyInfo(imageList,format):
   if format == 'table':
-    printDependencyTables(programList)
+    printDependencyTables(imageList)
   elif format == 'tree':
-    printDependencyTrees(programList)
+    printDependencyTrees(imageList)
   elif format == 'json':
-    printDependencyTableJson(programList)
+    printDependencyTableJson(imageList)

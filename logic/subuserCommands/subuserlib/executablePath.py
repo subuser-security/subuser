@@ -12,19 +12,19 @@ def isExecutable(fpath):
   return os.path.isfile(fpath) and os.access(fpath, os.X_OK)
 
 # Origonally taken from: http://stackoverflow.com/questions/377017/test-if-executable-exists-in-python
-def which(program):
-  fpath, fname = os.path.split(program)
+def which(image):
+  fpath, fname = os.path.split(image)
 
   if not fpath == '':
-    if isExecutable(program):
-      return program
+    if isExecutable(image):
+      return image
   else:
-    def matchesProgram(path):
+    def matchesImage(path):
       fpath,fname = os.path.split(path)
-      return program == fname
-    programMatches = queryPATH(matchesProgram)
-    if len(programMatches) > 0:
-      return programMatches[0]
+      return image == fname
+    imageMatches = queryPATH(matchesImage)
+    if len(imageMatches) > 0:
+      return imageMatches[0]
    
   return None
 
