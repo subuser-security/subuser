@@ -21,9 +21,11 @@ def dryRun(args):
   Print the command that would have been run if this wasn't a dry run.
 
   >>> dry_run = __import__("dry-run")
-  >>> import sys
-  >>> dry_run.dryRun(sys.argv+["foo"])
-  docker 'run' '-i' '-t' '--rm' '--workdir=/home/test/' '-v=/home/test/.subuser/homes/foo:/home/test/:rw' '-e' 'HOME=/home/test/' '--net=none' '--user=0' '1' '/usr/bin/foo'
+  >>> import sys,os,getpass
+  >>> os.getuid = lambda: 1000
+  >>> getpass.getuser = lambda: "travis"
+  >>> dry_run.dryRun([sys.argv[0]]+["foo"])
+  docker 'run' '-i' '-t' '--rm' '--workdir=/home/travis/test-home' '-v=/home/travis/test-home/.subuser/homes/foo:/home/travis/test-home:rw' '-e' 'HOME=/home/travis/test-home' '--net=none' '--user=1000' '1' '/usr/bin/foo'
   """
   if len(args) == 1 or {"help","-h","--help"} & set(args):
     sys.exit(helpString)

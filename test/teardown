@@ -1,3 +1,3 @@
 #!/bin/bash
-rm -r /root/subuser/test/remote-test-repo/.git
-rm -r /home/test
+rm -r $1/test/remote-test-repo/.git
+rm -r /home/travis/test-home

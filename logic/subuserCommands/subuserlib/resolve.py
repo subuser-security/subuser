@@ -29,8 +29,8 @@ def resolveImageSource(user,imageSourcePath,contextRepository=None,allowRefferin
 
   If the repository identifier is a URI and a repository with the same URI already exists, then the URI is resolved to the name of the existing repository. Otherwise, a temporary repository is created.
 
-  >>> resolveImageSource(user,"bar@file:///root/subuser/test/remote-test-repo").getName()
-  Adding new temporary repository file:///root/subuser/test/remote-test-repo
+  >>> resolveImageSource(user,"bar@file:///home/travis/remote-test-repo").getName()
+  Adding new temporary repository file:///home/travis/remote-test-repo
   u'bar'
 
   Throws an Index error:

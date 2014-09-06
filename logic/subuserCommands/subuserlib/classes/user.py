@@ -46,7 +46,7 @@ To disable this message delete your subuser/installed-programs.json file.
       self.homeDir = homeDir
     else:
       if subuserlib.test.testing:
-        self.homeDir = "/home/test/"
+        self.homeDir = "/home/travis/test-home"
       else:
         self.homeDir = os.path.expanduser("~") 
 

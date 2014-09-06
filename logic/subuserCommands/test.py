@@ -8,10 +8,15 @@ if subuserlib.docker.getDockerExecutable():
   subuserlib.docker.runDockerAndExitIfItFails(["build","."],subuserlib.basicPaths.getSubuserDir())
   exit()
 
-import doctest,sys,subprocess,os
+import doctest,sys,subprocess,os,subuserlib.paths
 
-subprocess.call(["/root/subuser/test/teardown"])
-subprocess.call(["/root/subuser/test/setup"])
+if not "--travis" in sys.argv:
+  subuserDir = "/root/subuser"
+else:
+  subuserDir = subuserlib.paths.getSubuserDir()
+
+subprocess.call([os.path.join(subuserDir,"test/teardown"),subuserDir])
+subprocess.call([os.path.join(subuserDir,"test/setup"),subuserDir])
 
 # classes
 import subuserlib.classes.user,subuserlib.classes.subuser
