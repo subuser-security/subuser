@@ -1,14 +1,14 @@
 The permissions.json file format
---------------------------------
+-------------------------------
 
-A permissions.json file is a file which describes the rights or permissions of a program running within a docker container.  These permissions pertain mainly to that program's ability to interact with it's host operating system.
+A permissions.json file is a file which describes the rights or permissions of a image running within a docker container.  These permissions pertain mainly to that image's ability to interact with it's host operating system.
 
 Each permissions.json file is to be a valid [json](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf) file containing a single json object.
 
 The json object MUST have the following fields:
 -----------------------------------------
 
- * `description`: This field describes what the program is/what it does.
+ * `description`: This field describes what the image is/what it does.
 
   Ex:
 
@@ -16,7 +16,7 @@ The json object MUST have the following fields:
    "description"                : "Simple universal text editor."
   ````
 
- * `maintainer`: This field marks who is responsible for the `permissions.json` file, and accompanying `Dockerfile`.  It does NOT mark who is responsible for the program itself.
+ * `maintainer`: This field marks who is responsible for the `permissions.json` file, and accompanying `Dockerfile`.  It does NOT mark who is responsible for the image itself.
 
   Ex:
   
@@ -29,7 +29,7 @@ The json object MAY at your option contain the following additional fields:
 
 **Note on optional fields**: Setting an optional field to an empty string is not a valid way of requesting it's default value.  If you want the default value, don't include the field at all.
 
- * `last-update-time`: This field records the last time the program, or it's `Dockerfile` were known to be updated.  The purpose of this field is telling `subuser` if a program has been updated and must be re-installed.  It is important that this string be comparable with python's built in string comparison algorithm.
+ * `last-update-time`: This field records the last time the image, or it's `Dockerfile` were known to be updated.  The purpose of this field is telling `subuser` if a image has been updated and must be re-installed.  It is important that this string be comparable with python's built in string comparison algorithm.
 
   Ex:
 
@@ -37,7 +37,7 @@ The json object MAY at your option contain the following additional fields:
    ,"last-update-time"          : "2014-02-12-12:59"
   ````
 
- * `executable`: This field denotes the absolute path within the Docker image where the given program's executable resides.
+ * `executable`: This field denotes the absolute path within the Docker image where the given image's executable resides.
 
   Ex:
 
@@ -45,9 +45,9 @@ The json object MAY at your option contain the following additional fields:
    ,"executable"                : "/usr/bin/vim"
   ````
 
- **Default**: The program has no executable and cannot be run(but it can be depended upon, as a library).
+ **Default**: The image has no executable and cannot be run(but it can be depended upon, as a library).
 
- * `user-dirs`: A list of relative paths to user directories which are to be shared between the host and the given program. The program is given read-write access to any user directories listed.
+ * `user-dirs`: A list of relative paths to user directories which are to be shared between the host and the given image. The image is given read-write access to any user directories listed.
 
   Ex:
 
@@ -55,12 +55,12 @@ The json object MAY at your option contain the following additional fields:
    ,"user-dirs"                 : ["Downloads"]
   ````
 
-  In this example, the program is able to access the `~/Downloads` directory on the host. 
+  In this example, the image is able to access the `~/Downloads` directory on the host. 
 
 
   **Default**: `[]`
 
- * `x11`: The program is allowed to interact with the x11 server on the host.
+ * `x11`: The image is allowed to interact with the x11 server on the host.
 
   Note: Known to be insecure!
 
@@ -72,7 +72,7 @@ The json object MAY at your option contain the following additional fields:
 
   **Default**: `false`
 
- * `graphics-card`: The program is allowed to access the graphics-card directly(OpenGL).
+ * `graphics-card`: The image is allowed to access the graphics-card directly(OpenGL).
 
   Ex:
 
@@ -82,9 +82,9 @@ The json object MAY at your option contain the following additional fields:
 
   **Default**: `false`
 
- * `sound-card`:  The program is allowed to access the soundcard on the host.
+ * `sound-card`:  The image is allowed to access the soundcard on the host.
 
-Warning: This means, not only can the program play sounds, but it may listen to your microphone too!
+Warning: This means, not only can the image play sounds, but it may listen to your microphone too!
 
   Ex:
 
@@ -94,7 +94,7 @@ Warning: This means, not only can the program play sounds, but it may listen to 
 
   **Default**: `false`
 
- * `webcam`: The program is allowed to access the computer's webcam/USB webcams.
+ * `webcam`: The image is allowed to access the computer's webcam/USB webcams.
 
   Ex:
 
@@ -104,7 +104,7 @@ Warning: This means, not only can the program play sounds, but it may listen to 
 
   **Default**: `false`
 
- * `inherit-working-directory`: The program is given read-write access to the host user's current working directory.
+ * `inherit-working-directory`: The image is given read-write access to the host user's current working directory.
 
   Ex:
 
@@ -114,7 +114,7 @@ Warning: This means, not only can the program play sounds, but it may listen to 
 
   **Default**: `false`
 
- * `allow-network-access`: Should the program be allowed to access the network/internet?
+ * `allow-network-access`: Should the image be allowed to access the network/internet?
 
   Ex:
 
@@ -124,7 +124,7 @@ Warning: This means, not only can the program play sounds, but it may listen to 
 
   **Default**: `false`
 
- * `stateful-home`: Changes that the program makes to it's home directory should be saved to a special subuser-homes directory.
+ * `stateful-home`: Changes that the image makes to it's home directory should be saved to a special subuser-homes directory.
 
   ````json
    ,"stateful-home"             : false
@@ -132,7 +132,7 @@ Warning: This means, not only can the program play sounds, but it may listen to 
 
   **Default**: `true`
 
- * `as-root`: Run the program as the root user within the container.
+ * `as-root`: Run the image as the root user within the container.
 
  Ex:
 
@@ -142,7 +142,7 @@ Warning: This means, not only can the program play sounds, but it may listen to 
 
  **Default**: `false`
 
- * `privileged`: Should the program's Docker container be run in `privileged` mode?
+ * `privileged`: Should the image's Docker container be run in `privileged` mode?
 
   **Note**: Completely insecure!
 

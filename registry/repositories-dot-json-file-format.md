@@ -1,7 +1,7 @@
 The repositories.json file format
 --------------------------------
 
-In the context of subuser, a `repositories.json` file is a file which describes where subuser programs may be installed from.
+In the context of subuser, a `repositories.json` file is a file which describes where subuser images may be installed from.
 
 The `repositories.json` files are to be arranged into a hierarchy.  Subuser will build the repository list by first looking in the file `~/.subuser/registry/repositories.json` then adding an additional `system repositories` found in:
 
@@ -31,7 +31,7 @@ Properties:
  Ex:
 
  ````
- "git-origin" : "$SUBUSERDIR/programsThatCanBeInstalled/"
+ "git-origin" : "https://github.com/subuser-security/subuser-default-repository.git/"
  ````
 
 Example repositories.json file:

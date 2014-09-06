@@ -41,6 +41,6 @@ The defaults settings for these properties may be found in `$SUBUSERDIR/config.j
 
  `type`: string - path to json file
 
- * `subuser-home-dirs-dir`: The directory where subuser is to store the home directories of each subuser program.
+ * `subuser-home-dirs-dir`: The directory where subuser is to store the home directories of each subuser.
 
  `type`: string - path to directory

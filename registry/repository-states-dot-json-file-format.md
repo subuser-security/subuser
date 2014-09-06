@@ -9,7 +9,7 @@ Each repository-states.json file is to be a valid [json](http://www.ecma-interna
 
 This object is a set of key value pairs where each key is the identifier of a subuser repository.
 
-Repositories which the user has yet to initialize(by installing a program from that repository) are not represented in this file.
+Repositories which the user has yet to initialize(by installing a image from that repository) are not represented in this file.
 
 Each repository identifier can either be:
  * string - for a named repository

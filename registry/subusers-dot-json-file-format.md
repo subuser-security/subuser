@@ -7,7 +7,7 @@ Each subusers.json file is to be a valid [json](http://www.ecma-international.or
 
 This object maps subuser names to json objects which have the following attributes:
 
- * `source-repo`: The identifier of the subuser repository where the source program on which this subuser is based resides.
+ * `source-repo`: The identifier of the subuser repository where the source image on which this subuser is based resides.
 
   Ex:
 
@@ -17,12 +17,12 @@ This object maps subuser names to json objects which have the following attribut
 
   type: See information about repository identifiers [here](repositories-dot-json-file-format.md).
 
- * `source-program`: The name of the source program on which this subuser is based.
+ * `image-source`: The name of the image source on which this subuser's image is based.
 
   Ex:
 
   ````json
-   ,"source-program"                        : "firefox"
+   ,"image-source"                        : "firefox"
   ````
 
   type: subuser names can be any unicode string not containing the symobol `@`
