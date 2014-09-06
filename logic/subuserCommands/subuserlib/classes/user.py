@@ -3,9 +3,9 @@
 # If it is not, please file a bug report.
 
 #external imports
-import getpass, os
+import getpass, os, sys
 #internal imports
-import subuserlib.classes.registry, subuserlib.classes.repositories, subuserlib.classes.config, subuserlib.classes.installedImages, subuserlib.classes.dockerDaemon, subuserlib.test
+import subuserlib.classes.registry, subuserlib.classes.repositories, subuserlib.classes.config, subuserlib.classes.installedImages, subuserlib.classes.dockerDaemon, subuserlib.test, subuserlib.paths
 
 class User(object):
   """
@@ -32,6 +32,11 @@ class User(object):
   __dockerDaemon = None
   
   def __init__(self,name=None,homeDir=None):
+    if os.path.exists(os.path.join(subuserlib.paths.getSubuserDir(),"installed-images.json")):
+      sys.exit("""Hey, it looks like you are using an old version of subuser.  First of, thanks for being an early adopter!  That really means a lot to me :)  Subuser has recently undergone a major re-write.  Unfortunately, you'll have to set up everything all over again.  You can find your subuser home dirs in subuser/homes.  The new version of subuser keeps them in ~/.subuser/homes.  You can find out all about the different locations subuser serializes to by looking in the enw config.json file.  I hope I'll have some docs up soon at subuser.org.  Sorry for the inconvenience.
+
+To disable this message delete your subuser/installed-programs.json file.
+""")
     if name:
       self.name = name
     else:
