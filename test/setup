@@ -1,8 +1,8 @@
 #!/bin/bash
 mkdir -p /home/travis/
 cp -r $1/test/home/ /home/travis/test-home/
-git config --global user.name "Your Name"
-git config --global user.email you@example.com
+git config --system user.name "Your Name"
+git config --system user.email you@example.com
 cp -r $1/test/remote-test-repo/ /home/travis/remote-test-repo
 cd /home/travis/remote-test-repo
 git init

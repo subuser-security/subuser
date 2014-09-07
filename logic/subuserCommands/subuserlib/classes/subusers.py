@@ -16,6 +16,7 @@ class Subusers(dict,subuserlib.classes.userOwnedObject.UserOwnedObject,subuserli
   >>> import subuserlib.subuser
   >>> u = subuserlib.classes.user.User()
   >>> subuserlib.subuser.add(u,"foo","foo@default")
+  Initial commit.
   Adding subuser foo foo@default
   Verifying subuser configuration.
   Verifying registry consistency...

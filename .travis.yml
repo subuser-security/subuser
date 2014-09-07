@@ -4,9 +4,9 @@ python:
   - "2.7"
 before_install:
   - sudo apt-get update
+  - sudo git config --system user.email "you@example.com"
+  - sudo git config --system user.name "Your Name"
 install:
   - sudo apt-get install -y git
 script:
- - git config --global user.email "you@example.com"
- - git config --global user.name "Your Name"
  - logic/subuserCommands/test.py --travis

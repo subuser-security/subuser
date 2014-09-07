@@ -63,9 +63,9 @@ def removeOldImages(user):
 
 #################################################################################################
 
-parseCliArgs()
 
-user = subuserlib.classes.user.User()
-
-removeOldImages(user)
+if __name__ == "__main__":
+  parseCliArgs()
+  user = subuserlib.classes.user.User()
+  removeOldImages(user)
 
