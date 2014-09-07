@@ -42,4 +42,4 @@ class InstalledImage(subuserlib.classes.userOwnedObject.UserOwnedObject):
     """
       Remove the image from the Docker daemon's image store.
     """
-    subuserlib.dockerImages.removeImage(self.getImageId())
+    self.getUser().getDockerDaemon().removeImage(self.getImageId())

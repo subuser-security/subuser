@@ -46,6 +46,7 @@ def ensureImagesAreInstalledAndUpToDate(user):
 
 def trimUnneededTempRepos(user):
   user.getRegistry().log("Running garbage collector on temporary repositories...")
+  reposToRemove = []
   for repoId,repo in user.getRegistry().getRepositories().userRepositories.iteritems():
     keep = False
     if not type(repoId) is str and not type(repoId) is unicode: #If this is a temp repo.
@@ -55,9 +56,11 @@ def trimUnneededTempRepos(user):
     else:
       keep = True
     if not keep:
-      user.getRegistry().logChange("Removing uneeded temporary repository: "+repo.getName())
+      user.getRegistry().logChange("Removing uneeded temporary repository: "+repo.getGitOriginURI())
       repo.removeGitRepo()
-      del user.getRegistry().getRepositories().userRepositories[repoId]
+      reposToRemove.append(repoId)
+  for repoId in reposToRemove:
+    del user.getRegistry().getRepositories().userRepositories[repoId]
 
 def rebuildBinDir(user):
   if os.path.exists(user.getConfig().getBinDir()):

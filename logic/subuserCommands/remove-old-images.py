@@ -5,7 +5,7 @@
 #external imports
 import optparse
 #internal imports
-import subuserlib.classes.user
+import subuserlib.classes.user,subuserlib.verify
 
 def parseCliArgs():
   usage = "usage: subuser %prog"
@@ -15,17 +15,57 @@ def parseCliArgs():
   parser.add_option_group(advancedOptions)
   return parser.parse_args()
 
+def removeOldImages(user):
+  """
+  Remove images that are installed, but are not associated with any subusers.
+
+ >>> remove_old_images = __import__("remove-old-images")#import self
+ >>> import subuserlib.classes.user,subuserlib.subuser
+ >>> user = subuserlib.classes.user.User()
+ >>> subuserlib.subuser.add(user,"bar","bar@file:///home/travis/remote-test-repo")
+ Adding new temporary repository file:///home/travis/remote-test-repo
+ Adding subuser bar bar@file:///home/travis/remote-test-repo
+ Verifying subuser configuration.
+ Verifying registry consistency...
+ Checking if images need to be updated or installed...
+ Installing foo ...
+ Installed new image for subuser foo
+ Installing bar ...
+ Installed new image for subuser bar
+ Running garbage collector on temporary repositories...
+ >>> user.getInstalledImages().keys()
+ [u'1', '2']
+ >>> subuserlib.subuser.remove(user,"bar")
+ Removing subuser bar
+ Verifying subuser configuration.
+ Verifying registry consistency...
+ Checking if images need to be updated or installed...
+ Running garbage collector on temporary repositories...
+ >>> user.getInstalledImages().keys()
+ [u'1', '2']
+ >>> remove_old_images.removeOldImages(user)
+ Verifying subuser configuration.
+ Verifying registry consistency...
+ Checking if images need to be updated or installed...
+ Running garbage collector on temporary repositories...
+ Removing uneeded temporary repository: file:///home/travis/remote-test-repo
+ >>> user.getInstalledImages().keys()
+ [u'1']
+  """
+  for installedImageId,installedImage in user.getInstalledImages().iteritems():
+    imageInUse = False
+    for _,subuser in user.getRegistry().getSubusers().iteritems():
+      if subuser.getImageId() == installedImageId:
+        imageInUse = True
+    if not imageInUse:
+      installedImage.removeDockerImage()
+  subuserlib.verify.verify(user)
+
 #################################################################################################
 
 parseCliArgs()
 
 user = subuserlib.classes.user.User()
 
-for installedImageId,installedImage in user.getInstalledImages().iteritems():
-  imageInUse = False
-  for subuser in user.getRegistry().getSubusers():
-    if subuser.getImageId() == installedImageId:
-      imageInUse = True
-  if not imageInUse:
-    installedImage.removeDockerImage()
+removeOldImages(user)
 

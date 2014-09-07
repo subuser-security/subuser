@@ -56,6 +56,9 @@ class InstalledImages(dict,subuserlib.classes.userOwnedObject.UserOwnedObject,su
     """
      Go through the installed images list and unregister any images that aren't actually installed.
     """
+    keysToDelete = []
     for imageId,image in self.iteritems():
       if not image.isDockerImageThere():
-        del self[imageId]
+        keysToDelete.append(imageId)
+    for key in keysToDelete:
+      del self[key]

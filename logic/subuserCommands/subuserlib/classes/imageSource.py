@@ -94,7 +94,7 @@ class ImageSource(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.
       with open(subuserImageFilePath,mode="r") as subuserImageFile:
         return subuserImageFile.read()
     else:
-      raise Exception("This ImageSource does not build from a SubuserImagefile.")
+      raise subuserlib.classes.dockerDaemon.ImageBuildException("This ImageSource does not build from a SubuserImagefile.")
 
   def generateDockerfileConents(self,parent=None):
     """

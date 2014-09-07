@@ -64,6 +64,14 @@ class DockerDaemon(subuserlib.classes.userOwnedObject.UserOwnedObject):
     else:
       return json.loads(responce.read())
 
+  def removeImage(self,imageId):
+    self.getConnection().request("DELETE","/images/"+imageId)
+    responce = self.getConnection().getresponse()
+    if not responce.status == 200:
+      raise ImageDoesNotExistsException("The image "+imageId+" could not be deleted.\n"+responce.read())
+    else:
+      responce.read()
+
   def build(self,directoryWithDockerfile,useCache=True,rm=False,forceRm=False,quiet=False,tag=None,dockerfile=None):
     """
     Build a Docker image.  If a the dockerfile argument is set to a string, use that string as the Dockerfile.  Return the newly created images Id or raises an exception if the build fails.  
@@ -107,6 +115,8 @@ class DockerDaemon(subuserlib.classes.userOwnedObject.UserOwnedObject):
 class ImageBuildException(Exception):
   pass
 
+class ImageDoesNotExistsException(Exception):
+  pass
 
 if subuserlib.test.testing:
   DockerDaemon = subuserlib.classes.mockDockerDaemon.MockDockerDaemon

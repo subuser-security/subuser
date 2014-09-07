@@ -13,10 +13,19 @@ class Subusers(dict,subuserlib.classes.userOwnedObject.UserOwnedObject,subuserli
 
   >>> import subuserlib.classes.user
   >>> import subuserlib.classes.subusers
+  >>> import subuserlib.subuser
   >>> u = subuserlib.classes.user.User()
+  >>> subuserlib.subuser.add(u,"foo","foo@default")
+  Adding subuser foo foo@default
+  Verifying subuser configuration.
+  Verifying registry consistency...
+  Checking if images need to be updated or installed...
+  Installing foo ...
+  Installed new image for subuser foo
+  Running garbage collector on temporary repositories...
   >>> subusers = u.getRegistry().getSubusers()
   >>> subusers["foo"].getName()
-  u'foo'
+  'foo'
   """
 
   def save(self):

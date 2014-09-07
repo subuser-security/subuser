@@ -27,6 +27,7 @@ import list,describe
 dry_run = __import__("dry-run")
 mark_as_updated = __import__("mark-as-updated")
 print_dependency_info = __import__("print-dependency-info")
+remove_old_images = __import__("remove-old-images")
 
 modules = [
  # classes
@@ -40,6 +41,7 @@ modules = [
  ,describe
  ,mark_as_updated
  ,print_dependency_info
+ ,remove_old_images
  ]
 
 for module in modules:

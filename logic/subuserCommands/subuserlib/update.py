@@ -21,7 +21,6 @@ def showLog(user):
   subuserlib.git.runGit(["log"],cwd=user.getConfig().getRegistryPath())
 
 def checkoutNoCommit(user,commit):
-  exit()
   subuserlib.subprocessExtras.subprocessCheckedCall(["rm","-rf","*"],cwd=user.getConfig().getRegistryPath())
   subuserlib.git.runGit(["checkout",commit,"."],cwd=user.getConfig().getRegistryPath())
   user.getRegistry().getRepositories().reloadRepositoryLists()

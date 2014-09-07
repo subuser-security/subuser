@@ -59,4 +59,4 @@ class Repository(dict,subuserlib.classes.userOwnedObject.UserOwnedObject):
     subuserlib.git.runGit(["checkout",gitCommitHash],cwd=self.getRepoPath())
 
   def getGitCommitHash(self):
-    return subuserlib.git.runGitCollectOutput(["show-ref","-s","HEAD"],cwd=self.getRepoPath()).split("\n")[0]
+    return subuserlib.git.runGitCollectOutput(["show-ref","-s","--head"],cwd=self.getRepoPath()).split("\n")[0]

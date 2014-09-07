@@ -36,6 +36,8 @@ def subprocessCheckedCallCollectOutput(args,errorContext="",cwd=None):
   process = subprocess.Popen(args,stdout=subprocess.PIPE,stderr=subprocess.PIPE,cwd=cwd)
   (stdout,stderr) = process.communicate()
   if not process.returncode == 0:
+    if cwd:
+      errorContext = "In directory: "+cwd+"\n"+errorContext
     sys.exit(formatErrorMessage(args,stderr,errorContext=errorContext))
   return stdout
 
@@ -48,5 +50,4 @@ def subprocessCheckedOutput(args, errorContext=''):
   try:
     return subprocess.check_output(args)
   except Exception as err:
-    formatErrorMessage(args,err,errorContext=errorContext)
-    sys.exit(message)
+    sys.exit(formatErrorMessage(args,err,errorContext=errorContext))

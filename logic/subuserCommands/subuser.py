@@ -5,7 +5,7 @@
 #external imports
 import sys,optparse
 #internal imports
-import subuserlib.classes.user,subuserlib.resolve,subuserlib.classes.subuser,subuserlib.verify, subuserlib.commandLineArguments,subuserlib.update
+import subuserlib.classes.user,subuserlib.commandLineArguments,subuserlib.subuser
 
 def parseCliArgs():
   usage = "usage: subuser %prog [add|remove|create-shortcut] NAME IMAGESOURCE"
@@ -39,39 +39,15 @@ if action == "add":
     sys.exit("Wrong number of arguments to add.  See `subuser subuser -h`.")
   name = args[1]
   imageSourceId = args[2]
-#  try:
-  if True:
-    imageSource = subuserlib.resolve.resolveImageSource(user,imageSourceId)
-    user.getRegistry().logChange("Adding subuser "+name+" "+imageSourceId)
-    user.getRegistry().getSubusers()[name] = subuserlib.classes.subuser.Subuser(user,name,imageSource,None,False)
-    subuserlib.verify.verify(user)
-    user.getRegistry().commit()
-    """
-  except Exception as e:
-    print("Adding subuser failed.")
-    print(str(e))
-    subuserlib.update.checkoutNoCommit(user,"HEAD")
-"""
-    
+  subuserlib.subuser.add(user,name,imageSourceId)
 elif action == "remove":
   name = args[1]
-  if name in user.getRegistry().getSubusers():
-    user.getRegistry().logChange("Removing subuser "+name)
-    del user.getRegistry().getSubusers()[name]
-    subuserlib.verify.verify(user)
-    user.getRegistry().commit()
-  else:
-    sys.exit("Cannot remove: subuser "+name+" does not exist.")
+  subuserlib.subuser.remove(user,name)
 elif action == "create-shortcut":
   name = args[1]
-  user.getRegistry().logChange("Creating shortcut for subuser "+name)
-  user.getRegistry().getSubusers()[name].setExecutableShortcutInstalled(True) 
-  subuserlib.verify.verify(user)
-  user.getRegistry().commit()
+  subuserlib.subuser.setExecutableShortcutInstalled(user,name,True)
 elif action == "remove-shortcut":
   name = args[1]
-  user.getRegistry().logChange("Removing shortcut for subuser "+name)
-  user.getRegistry().getSubusers()[name].setExecutableShortcutInstalled(False)
-  subuserlib.verify.verify(user)
-  user.getRegistry().commit()
+  subuserlib.subuser.setExecutableShortcutInstalled(user,name,False)
+
   
