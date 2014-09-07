@@ -15,15 +15,17 @@ Please note, this is only a rough approximation for debugging purposes and there
 """
 
 #################################################################################################
+def dryRunTestSetup():
+  import sys,os,getpass
+  os.getuid = lambda: 1000
+  getpass.getuser = lambda: "travis"
 
 def dryRun(args):
   """
   Print the command that would have been run if this wasn't a dry run.
 
   >>> dry_run = __import__("dry-run")
-  >>> import sys,os,getpass
-  >>> os.getuid = lambda: 1000
-  >>> getpass.getuser = lambda: "travis"
+  >>> dry_run.dryRunTestSetup()
   >>> dry_run.dryRun([sys.argv[0]]+["foo"])
   docker 'run' '-i' '-t' '--rm' '--workdir=/home/travis/test-home' '-v=/home/travis/test-home/.subuser/homes/foo:/home/travis/test-home:rw' '-e' 'HOME=/home/travis/test-home' '--net=none' '--user=1000' '1' '/usr/bin/foo'
   """
