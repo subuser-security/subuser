@@ -23,7 +23,7 @@ import subuserlib.classes.user,subuserlib.classes.subuser
 # libs
 import subuserlib.resolve
 # commands
-import list,describe
+import list,describe,repository,subuser
 dry_run = __import__("dry-run")
 mark_as_updated = __import__("mark-as-updated")
 print_dependency_info = __import__("print-dependency-info")
@@ -42,6 +42,8 @@ modules = [
  ,mark_as_updated
  ,print_dependency_info
  ,remove_old_images
+ ,repository
+ ,subuser
  ]
 
 for module in modules:

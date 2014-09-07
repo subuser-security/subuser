@@ -60,6 +60,7 @@ def removeOldImages(user):
     if not imageInUse:
       installedImage.removeDockerImage()
   subuserlib.verify.verify(user)
+  user.getRegistry().commit()
 
 #################################################################################################
 

@@ -68,7 +68,6 @@ def lookupRepositoryByURI(user,uri):
     if uri == repository.getGitOriginURI():
       return repository
   return None
- 
 
 def getRepositoryFromURI(user,uri):
   """

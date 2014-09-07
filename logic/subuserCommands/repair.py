@@ -20,8 +20,8 @@ This is usefull when migrating from one machine to another.  You can copy your ~
   parser.add_option_group(advancedInstallOptions)
   return parser.parse_args()
 
-options,arguments=parseCliArgs()
-
-user = subuserlib.classes.user.User()
-subuserlib.verify.verify(user)
-user.getRegistry().commit()
+if __name__ == "__main__":
+  options,arguments=parseCliArgs()
+  user = subuserlib.classes.user.User()
+  subuserlib.verify.verify(user)
+  user.getRegistry().commit()
