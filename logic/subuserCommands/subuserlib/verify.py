@@ -27,6 +27,7 @@ def verify(user):
   """
   user.getRegistry().log("Verifying subuser configuration.")
   verifyRegistryConsistency(user)
+  user.getRegistry().log("Unregistering any non-existant installed images.")
   user.getInstalledImages().unregisterNonExistantImages()
   ensureImagesAreInstalledAndUpToDate(user)
   user.getInstalledImages().save()

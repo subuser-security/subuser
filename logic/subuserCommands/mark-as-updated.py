@@ -34,6 +34,10 @@ def markAsUpdated(sysargs):
    >>> len(user.getRegistry().getRepositories()["default"]["foo"].getPermissions()["last-update-time"])
    16
 
+  Cleanup:
+   >>> import subuserlib.git
+   >>> subuserlib.git.runGit(["checkout","HEAD",user.getRegistry().getRepositories()["default"]["foo"].getPermissions().getWritePath()],cwd=user.getRegistry().getRepositories()["default"].getRepoPath())
+
   If the image doesn't exist, we print a user friendly error message.
 
   >>> mark_as_updated.markAsUpdated([sys.argv[0]]+["mark-as-updated","non-existant-image"])

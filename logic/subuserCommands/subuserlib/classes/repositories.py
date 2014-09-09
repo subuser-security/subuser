@@ -101,8 +101,9 @@ class Repositories(collections.Mapping,subuserlib.classes.userOwnedObject.UserOw
 
   def __init__(self,user):
     subuserlib.classes.userOwnedObject.UserOwnedObject.__init__(self,user)
-    self.systemRepositoryListPaths = [os.path.join(subuserlib.paths.getSubuserDir(),"repositories.json")
-       ,"/etc/subuser/repositories.json"] # TODO how does this work on windows?
+    self.systemRepositoryListPaths = ["/etc/subuser/repositories.json"
+       ,os.path.join(user.homeDir,".subuser","repositories.json")
+       ,os.path.join(subuserlib.paths.getSubuserDir(),"repositories.json")] # TODO how does this work on windows?
     self.userRepositoryListPath = os.path.join(self.getUser().getConfig().getRegistryPath(),"repositories.json")
     self.reloadRepositoryLists()
 

@@ -5,7 +5,7 @@
 #external imports
 import sys,os,stat,uuid,json
 #internal imports
-import subuserlib.classes.installedImage, subuserlib.installedImages,subuserlib.classes.dockerDaemon
+import subuserlib.classes.installedImage, subuserlib.installedImages,subuserlib.classes.dockerDaemon,subuserlib.installTime
 
 def installFromBaseImage(imageSource):
   """
@@ -65,7 +65,7 @@ def installImage(imageSource, useCache=False,parent=None):
   Register the newly installed image in the user's InstalledImages list.
   Return the Id of the newly installedImage.
   """
-  print("Installing "+imageSource.getName()+" ...")
+  imageSource.getUser().getRegistry().logChange("Installing "+imageSource.getName()+" ...")
   buildType = imageSource.getBuildType()
   if buildType == "SubuserImagefile":
     imageId = installFromSubuserImagefile(imageSource,useCache=useCache,parent=parent)
@@ -76,7 +76,7 @@ def installImage(imageSource, useCache=False,parent=None):
 
   lastUpdateTime = imageSource.getPermissions()["last-update-time"]
   if lastUpdateTime == None:
-    lastUpdateTime = installTime.currentTimeString()
+    lastUpdateTime = subuserlib.installTime.currentTimeString()
 
   imageSource.getUser().getInstalledImages()[imageId] = subuserlib.classes.installedImage.InstalledImage(imageSource.getUser(),imageId,imageSource.getName(),imageSource.getRepository().getName(),lastUpdateTime)
   return imageId
@@ -104,15 +104,28 @@ def isInstalledImageUpToDate(installedImage):
   """
   Returns True if the installed image(including all of its dependencies, is up to date.  False otherwise.
   """
-  installedImageSource = installedImage.getUser().getRegistry().getRepositories()[installedImage.getSourceRepoId()][installedImage.getImageSourceName()]
-  sourceLineage = getImageSourceLineage(installedImageSource)
+  topImageSource = installedImage.getUser().getRegistry().getRepositories()[installedImage.getSourceRepoId()][installedImage.getImageSourceName()]
+  sourceLineage = getImageSourceLineage(topImageSource)
   installedImageLineage = subuserlib.installedImages.getImageLineage(installedImage.getUser(),installedImage.getImageId())
+  """print("Installed lineage for image:" + installedImage.getImageSourceName())
+  for installedImage in installedImageLineage:
+    print("  "+installedImage.getImageSourceName()+"@"+installedImage.getSourceRepoId())
+  print("Source lineage for image:" + installedImage.getImageSourceName())
+  for imageSource in sourceLineage:
+    print("  "+imageSource.getName()+"@"+imageSource.getRepository().getName())"""
   while len(sourceLineage) > 0:
     if not len(installedImageLineage)>0:
       return False
     imageSource = sourceLineage.pop(0)
     installedImage = installedImageLineage.pop(0)
-    if not (installedImage.getImageSourceName() == imageSource.getName() and installedImage.getSourceRepoId() == imageSource.getRepository().getName() and installedImage.getLastUpdateTime() == imageSource.getPermissions()["last-update-time"]):
+    sourcesMatch = installedImage.getImageSourceName() == imageSource.getName() and installedImage.getSourceRepoId() == imageSource.getRepository().getName()
+    lastUpdateTimesMatch = installedImage.getLastUpdateTime() == imageSource.getPermissions()["last-update-time"] or not imageSource.getPermissions()["last-update-time"]
+    if not (sourcesMatch and lastUpdateTimesMatch):
+      if not sourcesMatch:
+        installedImage.getUser().getRegistry().log("Depencies changed from "+installedImage.getImageSourceName()+"@"+installedImage.getSourceRepoId()+".  New depencency is: "+imageSource.getName()+"@"+imageSource.getRepository().getName())
+      elif not lastUpdateTimesMatch:
+        installedImage.getUser().getRegistry().log("Installed image "+installedImage.getImageSourceName()+"@"+installedImage.getSourceRepoId()+" is out of date.\nInstalled version:\n "+installedImage.getLastUpdateTime()+"\nCurrent version:\n "+str(imageSource.getPermissions()["last-update-time"])+"\n")
+
       return False
   return True
   

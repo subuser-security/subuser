@@ -29,6 +29,7 @@ $ subuser subuser remove-shortcut foo
 def subuser(user,sysargs):
   """
   >>> import subuser #import self
+  >>> import subuserlib.classes.user
   >>> user = subuserlib.classes.user.User()
   >>> user.getRegistry().getSubusers().keys()
   [u'foo']
@@ -36,6 +37,7 @@ def subuser(user,sysargs):
   Adding subuser bar bar@file:///home/travis/remote-test-repo
   Verifying subuser configuration.
   Verifying registry consistency...
+  Unregistering any non-existant installed images.
   Checking if images need to be updated or installed...
   Installing bar ...
   Installed new image for subuser bar
@@ -46,9 +48,8 @@ def subuser(user,sysargs):
   Removing subuser bar
   Verifying subuser configuration.
   Verifying registry consistency...
+  Unregistering any non-existant installed images.
   Checking if images need to be updated or installed...
-  Installing foo ...
-  Installed new image for subuser foo
   Running garbage collector on temporary repositories...
   >>> user.getRegistry().getSubusers().keys()
   [u'foo']

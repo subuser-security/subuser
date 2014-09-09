@@ -22,35 +22,40 @@ def removeOldImages(user):
  >>> remove_old_images = __import__("remove-old-images")#import self
  >>> import subuserlib.classes.user,subuserlib.subuser
  >>> user = subuserlib.classes.user.User()
+ >>> user.getRegistry().getSubusers().keys()
+ [u'foo']
  >>> subuserlib.subuser.add(user,"bar","bar@file:///home/travis/remote-test-repo")
  Adding new temporary repository file:///home/travis/remote-test-repo
  Adding subuser bar bar@file:///home/travis/remote-test-repo
  Verifying subuser configuration.
  Verifying registry consistency...
+ Unregistering any non-existant installed images.
  Checking if images need to be updated or installed...
- Installing foo ...
- Installed new image for subuser foo
  Installing bar ...
  Installed new image for subuser bar
  Running garbage collector on temporary repositories...
- >>> user.getInstalledImages().keys()
- [u'1', '2']
+ >>> user.getRegistry().getSubusers().keys()
+ [u'foo', 'bar']
+ >>> [i.getImageSourceName() for i in user.getInstalledImages().values()]
+ [u'foo', u'bar']
  >>> subuserlib.subuser.remove(user,"bar")
  Removing subuser bar
  Verifying subuser configuration.
  Verifying registry consistency...
+ Unregistering any non-existant installed images.
  Checking if images need to be updated or installed...
  Running garbage collector on temporary repositories...
- >>> user.getInstalledImages().keys()
- [u'1', '2']
+ >>> [i.getImageSourceName() for i in user.getInstalledImages().values()]
+ [u'foo', u'bar']
  >>> remove_old_images.removeOldImages(user)
  Verifying subuser configuration.
  Verifying registry consistency...
+ Unregistering any non-existant installed images.
  Checking if images need to be updated or installed...
  Running garbage collector on temporary repositories...
  Removing uneeded temporary repository: file:///home/travis/remote-test-repo
- >>> user.getInstalledImages().keys()
- [u'1']
+ >>> [i.getImageSourceName() for i in user.getInstalledImages().values()]
+ [u'foo']
   """
   for installedImageId,installedImage in user.getInstalledImages().iteritems():
     imageInUse = False

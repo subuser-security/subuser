@@ -8,7 +8,8 @@ cd /home/travis/remote-test-repo
 git init
 git add .
 git commit -m 'test'
-cd /home/travis/test-home/.subuser/repositories/default
+cp -r $1/test/default-test-repo/ /home/travis/default-test-repo
+cd /home/travis/default-test-repo
 git init
 git add .
 git commit -m 'test'

@@ -9,13 +9,17 @@
 
 def getImageLineageInLayers(user,imageId):
   """
-  Return the list(lineage) of Docker image layers which goes from a base image to this image including all of the image's ancestors in order of dependency.
+  Return the list(lineage) of id of Docker image layers which goes from a base image to this image including all of the image's ancestors in order of dependency.
   If imageId is None or is not installed, return [].
   """
   imageProperties = user.getDockerDaemon().getImageProperties(imageId)
   if imageProperties == None:
+    print("Failed to get properties of image "+imageId)
     return []
-  return getImageLineageInLayers(user,imageProperties["Parent"]) + [imageId]
+  if not imageProperties["Parent"] == "":
+    return getImageLineageInLayers(user,imageProperties["Parent"]) + [imageId]
+  else:
+    return [imageId]
 
 def getImageLineage(user,imageId):
   """

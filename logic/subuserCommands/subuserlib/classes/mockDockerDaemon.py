@@ -29,9 +29,13 @@ class MockDockerDaemon(subuserlib.classes.userOwnedObject.UserOwnedObject):
     """
     Build a Docker image.  If a the dockerfile argument is set to a string, use that string as the Dockerfile.  Return the newly created images Id or raises an exception if the build fails.  
     """
+    while str(self.nextImageId) in self.images:
+      self.nextImageId = self.nextImageId+1
     newId = str(self.nextImageId)
-    self.nextImageId = self.nextImageId+1
-    self.images[newId] = {"Id":newId,"Parent":""}
+    parent = dockerfile.split(" ")[1].rstrip()
+    if "debian" in dockerfile:
+      parent = ""
+    self.images[newId] = {"Id":newId,"Parent":parent}
     return newId
 
   def removeImage(self,imageId):

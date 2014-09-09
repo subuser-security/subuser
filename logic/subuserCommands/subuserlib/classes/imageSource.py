@@ -84,15 +84,20 @@ class ImageSource(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.
     print(self.getName()+":")
     self.getPermissions().describe()
 
+  def getSubuserImagefilePath(self):
+    """
+    Returns the path to the SubuserImagefile, whether it exists or not.
+    """
+    dockerImageDir = os.path.join(self.getSourceDir(),"docker-image")
+    return os.path.join(dockerImageDir,"SubuserImagefile")
+
   def getSubuserImagefileContents(self):
     """
      Returns the contents of the SubuserImagefile.  If there is no SubuserImagefile, raises an exception.
     """
-    dockerImageDir = os.path.join(self.getSourceDir(),"docker-image")
-    subuserImageFilePath = os.path.join(dockerImageDir,"SubuserImagefile")
-    if os.path.isfile(subuserImageFilePath):
-      with open(subuserImageFilePath,mode="r") as subuserImageFile:
-        return subuserImageFile.read()
+    if os.path.isfile(self.getSubuserImagefilePath()):
+      with open(self.getSubuserImagefilePath(),mode="r") as subuserImagefile:
+        return subuserImagefile.read()
     else:
       raise subuserlib.classes.dockerDaemon.ImageBuildException("This ImageSource does not build from a SubuserImagefile.")
 

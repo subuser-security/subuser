@@ -36,7 +36,7 @@ class InstalledImage(subuserlib.classes.userOwnedObject.UserOwnedObject):
     """
      Does the Docker daemon have an image with this imageId?
     """
-    return not self.getUser().getDockerDaemon().getImageProperties(self.getImageId()) == None
+    return not (self.getUser().getDockerDaemon().getImageProperties(self.getImageId()) == None)
 
   def removeDockerImage(self):
     """

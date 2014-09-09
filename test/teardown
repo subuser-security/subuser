@@ -1,3 +1,4 @@
 #!/bin/bash
 rm -r $1/test/remote-test-repo/.git
+rm -r $1/test/default-test-repo/.git
 rm -r /home/travis/test-home
