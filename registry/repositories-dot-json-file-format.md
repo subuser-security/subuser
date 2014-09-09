@@ -5,6 +5,8 @@ In the context of subuser, a `repositories.json` file is a file which describes 
 
 The `repositories.json` files are to be arranged into a hierarchy.  Subuser will build the repository list by first looking in the file `~/.subuser/registry/repositories.json` then adding an additional `system repositories` found in:
 
+ * `$HOME/.subuser/repositories.json`
+
  * `/etc/subuser/repositories.json`
 
  * `$SUBUSERDIR/repositories.json`
