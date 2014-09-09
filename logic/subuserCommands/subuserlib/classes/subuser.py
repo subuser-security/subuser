@@ -3,7 +3,7 @@
 # If it is not, please file a bug report.
 
 #external imports
-import subprocess,os
+import subprocess,os,stat
 #internal imports
 import subuserlib.classes.userOwnedObject,subuserlib.classes.imageSource,subuserlib.classes.permissions,subuserlib.classes.describable
 
