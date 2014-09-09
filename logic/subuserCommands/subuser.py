@@ -22,8 +22,6 @@ $ subuser subuser create-shorcut foo
 $ subuser subuser remove-shortcut foo
 """
   parser=optparse.OptionParser(usage=usage,description=description,formatter=subuserlib.commandLineArguments.HelpFormatterThatDoesntReformatDescription())
-  advancedOptions = subuserlib.commandLineArguments.advancedInstallOptionsGroup(parser)
-  parser.add_option_group(advancedOptions)
   return parser.parse_args(args=sysargs[1:])
 
 def subuser(user,sysargs):
