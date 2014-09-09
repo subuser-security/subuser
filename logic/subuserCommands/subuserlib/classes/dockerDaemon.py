@@ -107,7 +107,8 @@ class DockerDaemon(subuserlib.classes.userOwnedObject.UserOwnedObject):
     if not match:
       raise ImageBuildException("Unexpected server response when building image.\n-----"+output)
     print(output)
-    return match.group(1)
+    shortId = match.group(1) #This is REALLY ugly!
+    return self.getImageProperties(shortId)["Id"]
 
   def execute(self,args,cwd=None):
     subuserlib.docker.runDockerAndExitIfItFails(args,cwd=cwd)
