@@ -46,7 +46,7 @@ class Permissions(collections.OrderedDict,subuserlib.classes.userOwnedObject.Use
       print(" Has access to your soundcard, can play sounds/record sound.")
     if self["webcam"]:
       print(" Can access your computer's webcam/can see you.")
-    if self["inherit-working-directory"]:
+    if self["access-working-directory"]:
       print(" Can access the directory from which it was launched.")
     if self["allow-network-access"]:
       print(" Can access the network/internet.")
