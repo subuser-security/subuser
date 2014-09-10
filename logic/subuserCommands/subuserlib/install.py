@@ -125,7 +125,6 @@ def isInstalledImageUpToDate(installedImage):
         installedImage.getUser().getRegistry().log("Depencies changed from "+installedImage.getImageSourceName()+"@"+installedImage.getSourceRepoId()+".  New depencency is: "+imageSource.getName()+"@"+imageSource.getRepository().getName())
       elif not lastUpdateTimesMatch:
         installedImage.getUser().getRegistry().log("Installed image "+installedImage.getImageSourceName()+"@"+installedImage.getSourceRepoId()+" is out of date.\nInstalled version:\n "+installedImage.getLastUpdateTime()+"\nCurrent version:\n "+str(imageSource.getPermissions()["last-update-time"])+"\n")
-
       return False
   return True
   

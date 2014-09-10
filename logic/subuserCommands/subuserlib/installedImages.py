@@ -14,7 +14,8 @@ def getImageLineageInLayers(user,imageId):
   """
   imageProperties = user.getDockerDaemon().getImageProperties(imageId)
   if imageProperties == None:
-    sys.exit("Failed to get properties of image "+imageId)
+    return []
+    #sys.exit("Failed to get properties of image "+imageId)
   if not imageProperties["Parent"] == "":
     return getImageLineageInLayers(user,imageProperties["Parent"]) + [imageId]
   else:

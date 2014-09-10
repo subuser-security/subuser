@@ -62,6 +62,7 @@ class ImageSource(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.
     for installedImage in self.getInstalledImages():
       if installedImage.getLastUpdateTime() > lastUpdateTime:
         mostUpToDateImage = installedImage
+        lastUpdateTime = installedImage.getLastUpdateTime()
     return mostUpToDateImage
 
   def getInstalledImages(self):
