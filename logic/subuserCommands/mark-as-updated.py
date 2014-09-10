@@ -16,7 +16,7 @@ EXAMPLE:
 $ subuser mark-as-updated firefox@default
 """
   parser=optparse.OptionParser(usage=usage,description=description,formatter=subuserlib.commandLineArguments.HelpFormatterThatDoesntReformatDescription())
-  return parser.parse_args(args=sysargs[2:])
+  return parser.parse_args(args=sysargs[1:])
 
 #################################################################################################
 
@@ -25,7 +25,7 @@ def markAsUpdated(sysargs):
   Mark the given images as needing to be updated by setting their 'last-update-time' attributes to the current time.
 
   >>> mark_as_updated = __import__("mark-as-updated")#import self
-  >>> mark_as_updated.markAsUpdated([sys.argv[0]]+["mark-as-updated","foo"])
+  >>> mark_as_updated.markAsUpdated(["mark-as-updated","foo"])
 
    Here we test if the updated update time was actually saved correctly.  16 is the length of a standard formatted subuser image update time.
 
@@ -40,7 +40,7 @@ def markAsUpdated(sysargs):
 
   If the image doesn't exist, we print a user friendly error message.
 
-  >>> mark_as_updated.markAsUpdated([sys.argv[0]]+["mark-as-updated","non-existant-image"])
+  >>> mark_as_updated.markAsUpdated(["mark-as-updated","non-existant-image"])
   Traceback (most recent call last):
   SystemExit: Could not mark the image: non-existant-image as needing an update.  Image does not exist.
   """
