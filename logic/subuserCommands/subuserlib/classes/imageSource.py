@@ -3,7 +3,7 @@
 # If it is not, please file a bug report.
 
 #external imports
-import subprocess,os
+import subprocess,os,getpass
 #internal imports
 import subuserlib.classes.userOwnedObject,subuserlib.classes.describable,subuserlib.subprocessExtras,subuserlib.resolve
 
@@ -112,6 +112,7 @@ class ImageSource(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.
         dockerfileContents = dockerfileContents + "FROM "+parent+"\n"
       else:
         dockerfileContents = dockerfileContents +line+"\n"
+    dockerfileContents = dockerfileContents + "\nRUN useradd --uid="+str(os.getuid())+" "+getpass.getuser()+" ;export exitstatus=$? ; if [ $exitstatus -eq 4 ] ; then echo uid exists ; elif [ $exitstatus -eq 9 ]; then echo username exists. ; else exit $exitstatus ; fi"
     return dockerfileContents
 
   def getDependency(self):
