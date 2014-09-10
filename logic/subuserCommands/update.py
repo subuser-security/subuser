@@ -5,7 +5,7 @@
 # This command updates all or some of the installed subuser images.
 
 #external imports
-import optparse
+import optparse,sys
 #internal imports
 import subuserlib.commandLineArguments,subuserlib.classes.user,subuserlib.update
 
@@ -91,10 +91,14 @@ def update(user,sysargs):
   Note that dependency1 stays installed, so we can always use subuser update checkout to go back to the version before the update.
   """
   options,args = parseCliArgs(sysargs)
-  if ["all"] == args:
+  if len(args) < 1:
+    sys.exit("No arguments given. Please use subuser update -h for help.")
+  elif ["all"] == args:
     subuserlib.update.updateAll(user)
   elif ["log"] == args:
     subuserlib.update.showLog(user)
+  elif len(args) == 1:
+    sys.exit(args.join(" ") + " is not a valid update subcommand. Please use subuser update -h for help.")
   elif ["checkout"] == args[0]:
     subuserlib.update.checkout(user,commit=args[1])
   else:
