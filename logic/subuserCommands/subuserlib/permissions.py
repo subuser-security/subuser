@@ -23,7 +23,7 @@ permissionDefaults = {
  ,"graphics-card": False
  ,"sound-card": False
  ,"webcam": False
- ,"inherit-working-directory": False
+ ,"access-working-directory": False
  ,"allow-network-access": False
  ,"stateful-home": True
  ,"as-root": False
