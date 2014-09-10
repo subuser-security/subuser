@@ -10,11 +10,13 @@ import subuserlib.git,subuserlib.classes.userOwnedObject,subuserlib.classes.imag
 class Repository(dict,subuserlib.classes.userOwnedObject.UserOwnedObject):
   __name = None
   __gitOriginURI = None
+  __lastGitCommitHash = None
 
   def __init__(self,user,name,gitOriginURI,gitCommitHash):
     subuserlib.classes.userOwnedObject.UserOwnedObject.__init__(self,user)
     self.__name = name
     self.__gitOriginURI = gitOriginURI
+    self.__lastGitCommitHash = gitCommitHash
     self.checkoutGitCommit(gitCommitHash)
     self.loadProgamSources()
 
@@ -41,6 +43,8 @@ class Repository(dict,subuserlib.classes.userOwnedObject.UserOwnedObject):
     else:
       subuserlib.git.runGit(["checkout","master"],cwd=self.getRepoPath())
       subuserlib.git.runGit(["pull"],cwd=self.getRepoPath())
+    if not self.__lastGitCommitHash == self.getGitCommitHash():
+      self.getUser().getRegistry().logChange("Updated repository "+self.getName())
 
   def loadProgamSources(self):
     """
