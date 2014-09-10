@@ -32,7 +32,7 @@ class MockDockerDaemon(subuserlib.classes.userOwnedObject.UserOwnedObject):
     while str(self.nextImageId) in self.images:
       self.nextImageId = self.nextImageId+1
     newId = str(self.nextImageId)
-    parent = dockerfile.split(" ")[1].rstrip()
+    parent = dockerfile.split("\n")[0].split(" ")[1].rstrip()
     if "debian" in dockerfile:
       parent = ""
     self.images[newId] = {"Id":newId,"Parent":parent}
