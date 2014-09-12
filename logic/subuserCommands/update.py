@@ -25,8 +25,8 @@ def parseCliArgs(sysargs):
   log
       Prints a log of recent updates.
 
-  checkout HASH
-      Check out an old version of your subuser configuration.
+  rollback HASH
+      Subuser's undo function.  Roll back to an old version of your subuser configuration.  Find the commit hash using subuser update log.
 """
   parser=optparse.OptionParser(usage=usage,description=description,formatter=subuserlib.commandLineArguments.HelpFormatterThatDoesntReformatDescription())
   return parser.parse_args(sysargs[1:])
@@ -99,11 +99,11 @@ def update(user,sysargs):
   elif ["log"] == args:
     subuserlib.update.showLog(user)
   elif len(args) == 1:
-    sys.exit(args.join(" ") + " is not a valid update subcommand. Please use subuser update -h for help.")
-  elif ["checkout"] == args[0]:
-    subuserlib.update.checkout(user,commit=args[1])
+    sys.exit(" ".join(args) + " is not a valid update subcommand. Please use subuser update -h for help.")
+  elif "rollback" == args[0]:
+    subuserlib.update.rollback(user,commit=args[1])
   else:
-    sys.exit(args.join(" ") + " is not a valid update subcommand. Please use subuser update -h for help.")
+    sys.exit(" ".join(args) + " is not a valid update subcommand. Please use subuser update -h for help.")
 
 if __name__ == "__main__":
   user = subuserlib.classes.user.User()

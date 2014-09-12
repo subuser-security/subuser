@@ -25,8 +25,8 @@ def checkoutNoCommit(user,commit):
   subuserlib.git.runGit(["checkout",commit,"."],cwd=user.getConfig().getRegistryPath())
   user.getRegistry().getRepositories().reloadRepositoryLists()
 
-def checkout(user,commit):
-  user.getRegistry().logChange("Rolling back to commit: "+args[1])
+def rollback(user,commit):
+  user.getRegistry().logChange("Rolling back to commit: "+commit)
   checkoutNoCommit(user,commit)
   subuserlib.verify.verify(user)
   user.getRegistry().commit()
