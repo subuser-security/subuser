@@ -68,13 +68,7 @@ class Subuser(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.clas
       return "/root/"
     else:
       return self.getUser().homeDir
-  
-  def getSetupSymlinksScriptPathOnHost(self):
-    """
-    For each subuser we have a docker-side script which sets up various symlinks within the container.  This function returns a path to that script as cached on the host side.
-    """
-    return os.path.join(self.getUser().homeDir,".subuser","cache","by-subuser",self.getName(),"setup-symlinks")
-  
+
   def describe(self):
     print("Subuser: "+self.getName())
     print("------------------")
