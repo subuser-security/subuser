@@ -43,8 +43,8 @@ class Repository(dict,subuserlib.classes.userOwnedObject.UserOwnedObject):
     else:
       subuserlib.git.runGit(["checkout","master"],cwd=self.getRepoPath())
       subuserlib.git.runGit(["pull"],cwd=self.getRepoPath())
-    if not self.__lastGitCommitHash == self.getGitCommitHash():
-      self.getUser().getRegistry().logChange("Updated repository "+self.getName())
+      if not self.__lastGitCommitHash == self.getGitCommitHash():
+        self.getUser().getRegistry().logChange("Updated repository "+self.getName())
 
   def loadProgamSources(self):
     """

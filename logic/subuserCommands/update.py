@@ -74,6 +74,7 @@ def update(user,sysargs):
   >>> subuserlib.git.runGit(["commit","-a","-m","changed dependency for intermediate from dependency1 to dependency2"],cwd=user.getRegistry().getRepositories()[u'remote-repo'].getRepoPath())
   >>> update.update(user,["update","all"])
   Updating...
+  Updated repository remote-repo
   Verifying subuser configuration.
   Verifying registry consistency...
   Unregistering any non-existant installed images.
