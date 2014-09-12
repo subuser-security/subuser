@@ -7,6 +7,7 @@ import optparse
 #internal imports
 #import ...
 
+# Note the --from-cache option is not currently supported.  A pull request implementing this flag for "update all", "repair" and "subuser add" would be greatly appreciated :) .
 def advancedInstallOptionsGroup(parser):
   """  These are advanced instalation options shared by several commands, install, update ect. """
 
