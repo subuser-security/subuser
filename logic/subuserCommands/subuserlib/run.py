@@ -31,9 +31,9 @@ def getPermissionFlagDict(subuserToRun):
    "access-working-directory" : lambda p: ["-v="+os.getcwd()+":/pwd:rw","--workdir=/pwd"] if p else ["--workdir="+subuserToRun.getDockersideHome()],
    "stateful-home" : lambda p : ["-v="+subuserToRun.getHomeDirOnHost()+":"+subuserToRun.getDockersideHome()+":rw","-e","HOME="+subuserToRun.getDockersideHome()] if p else [],
    "x11" : lambda p: ["-e","DISPLAY=unix"+os.environ['DISPLAY'],"-v=/tmp/.X11-unix:/tmp/.X11-unix:rw"] if p else [],
-   "graphics-card" : lambda p: ["--device=/dev/dri/"+device for device in os.listdir("/dev/dri")] if p else [],
+   "graphics-card" : lambda p:["-v=/dev/dri:/dev/dri:rw"] + ["--device=/dev/dri/"+device for device in os.listdir("/dev/dri")] if p else [],
    "sound-card" : lambda p: ["-v=/dev/snd:/dev/snd:rw"]+["--device=/dev/snd/"+device for device in os.listdir("/dev/snd") if not device == "by-id" and not device == "by-path"] if p else [], #Why the volume here?  To make it so that the device nodes are owned by the audio group ;).  Evil, I know...
-   "webcam" : lambda p: ["--device=/dev/"+device for device in os.listdir("/dev/") if device.startswith("video")] if p else [],
+   "webcam" : lambda p: ["--volume=/dev/"+device+":/dev/"+device for device in os.listdir("/dev/") if device.startswith("video")] + ["--device=/dev/"+device for device in os.listdir("/dev/") if device.startswith("video")] if p else [],
    "privileged" : lambda p: ["--privileged"] if p else [],
    "as-root" : lambda root: ["--user=0"] if root else ["--user="+str(os.getuid())]
    }
