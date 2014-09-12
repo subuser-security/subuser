@@ -5,7 +5,7 @@
 #external imports
 #import ...
 #internal imports
-import subuserlib.classes.userOwnedObject,subuserlib.dockerImages,subuserlib.dockerPs
+import subuserlib.classes.userOwnedObject,subuserlib.dockerImages
 
 class InstalledImage(subuserlib.classes.userOwnedObject.UserOwnedObject):
   __imageId = None
