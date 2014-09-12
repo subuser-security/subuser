@@ -1,5 +1,3 @@
-installed-programs.json
-bin/*
-homes/*
 *.swp
 *.pyc
+.docs-build-environment
