@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><diagram image="umlet" version="11.3">
+<?xml version="1.0" encoding="UTF-8"?><diagram program="umlet" version="11.3">
   <zoom_level>14</zoom_level>
   <element>
     <type>com.umlet.element.Class</type>
@@ -25,9 +25,19 @@ getUser(): User
     </coordinates>
     <panel_attributes>User
 --
+__config : Config
+__registry : Registry
+__installedImages : InstalledImages
+__dockerDaemon : DockerDaemon
+--
+name : string
+homeDir : string
+--
 getRepositories() : Repositories
 getConfig() : Config
 getRegistry() : Registry
+getDockerDaemon() : DockerDaemon
+getInstalledImages() : InstalledImages
 homeDir : string</panel_attributes>
     <additional_attributes/>
   </element>
@@ -41,14 +51,8 @@ homeDir : string</panel_attributes>
     </coordinates>
     <panel_attributes>Subusers
 --
-__subuserDict
---
-getSubusers() : Subuser[]
-registerSubuser(subuser : Subuser) : None
-unregisterSubuser(subuser : Subuser) None
-getSubuserNamed(subuserName : string) : Subuser or None
-addSubuser(subuserName : string
-      , image = InstalledImage) : None</panel_attributes>
+dict
+</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
@@ -73,13 +77,21 @@ addSubuser(subuserName : string
     <panel_attributes>Subuser
 --
 __name : string
+__imageSource : ImageSource
+__imageId : string
+__executableShortcutInstalled : boolean
 --
 getName() : string
-setName() : string
-getRunnable() : Runnable
 getImageSource() : ImageSource
+isExecutableShortcutInstalled() : boolean
+setExecutableShortcutInstalled(self, installed : boolean) : None
 getPermissions() : Permissions
-getHomeDirOnHost() : string</panel_attributes>
+getImageId() : string
+setImageId(self,newId : string) : None
+getHomeDirOnHost() : string
+getDockersideHome() : string
+installExecutableShortcut() : None
+</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
@@ -145,11 +157,15 @@ getSubuserHomeDirsDir() : string</panel_attributes>
     </coordinates>
     <panel_attributes>Repositories
 --
-getDefaultRepository() : Repository
-getRepositories() : Repository[]
-registerRepository(newRepository : Repository) : None
-unregisterRepository(repository : Repository) : None
-getRepositoryNamed(name : string) : Repository or None
+collections.Mapping
+--
+systemRepositories : {string : Repository}
+userRepositories : {string : Repository}
+--
+reloadRepositoryLists() : None
+addRepository(self,repository : Repository) : None
+removeRepository(self,name : string) : None
+getNewUniqueTempRepoId() : string
 </panel_attributes>
     <additional_attributes/>
   </element>
@@ -165,14 +181,17 @@ getRepositoryNamed(name : string) : Repository or None
 --
 __name : string
 __gitOriginURI : string
+__lastGitCommitHash : string
 --
 getName() : string
 getGitOriginURI() : string
 getRepoPath() : string
-getAvailableImages() : ImageSource[]
+removeGitRepo() : None
 updateSources() : None
-deleteSources() : None
-getImageSourceNamed(imageName : string) : ImageSource</panel_attributes>
+loadProgramSources() : None
+checkoutGitCommit(self, gitCommitHash : string) : None
+getGitCommitHash() : string
+</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
@@ -220,14 +239,19 @@ getImageSourceNamed(imageName : string) : ImageSource</panel_attributes>
 --
 __name : string
 __repo : Repository
+__permissions : Permissions
 --
 getName() : string
 getRepository() : Repository
-getInstalledImages() : InstalledImage[]
-getImage() : InstalledImage or None
-buildImage() : InstalledImage
-getSubusersBasedOnThisSource() : Subuser[]
-getImageSourceDir() : string
+getSubusers() : [Subuser]
+getSourceDir() : string
+getBuildType() : string
+getLatestInstalledImage() : InstalledImage
+getInstalledImages() : [InstalledImage]
+getSubuserImagefilePath() : string
+getSubuserImagefileContents() : string
+generateDockerfileContents(self, parent : string)
+getDependency() : ImageSource
 getPermissions() : Permissions</panel_attributes>
     <additional_attributes/>
   </element>
@@ -263,38 +287,12 @@ getPermissions() : Permissions</panel_attributes>
     </coordinates>
     <panel_attributes>Permissions
 --
-__permissionsDict
+collections.OrderedDict
 --
-getHasExecutable() : bool
-setHasExecubable(hasExecubable : bool) : None
-getLastUpdateTime() : string
-setLastUpdateTime(lastUpdateTime : string) : None
-getExecubable() : string
-setExecubable(executable : string) : None
-getDependency() : string
-setDependency(dependency : string) : None
-getUserDirs() : string[]
-setUserDirs(userDirs : string []) : None
-getSystemDirs() : string[]
-setSystemDirs(systemDirs : string[]) : None
-getX11() : bool
-setX11(x11Allowed : bool) : None
-getGraphicsCard() : bool
-setGraphicsCard(graphicsCardAllowed : bool) : None
-getSoundCard() : bool
-setSoundCard(soundCardAllowed : bool) : None
-getWebcam() : bool
-setWebcam(webcamAllowed : bool) : None
-getInheritWorkingDirectory() : bool
-setInheritWorkingDirectory(inheritWorkingDirectory : bool) : None
-getAllowNetworkAccess() : bool
-setAllowNetworkAccess(allowNetworkAccess : bool) : None
-getStatefullHome() : bool
-setStatefullHome(statefullHome : bool) : None
-getAsRoot() : bool
-setAsRoot(asRoot : bool) : None
-getPrivileged() : bool
-setPrivileged(privileged : bool) : None</panel_attributes>
+__writePath
+--
+getWritePath() : String
+</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
@@ -318,31 +316,6 @@ setPrivileged(privileged : bool) : None</panel_attributes>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
     <additional_attributes>658;42;574;42;574;98;42;98</additional_attributes>
-  </element>
-  <element>
-    <type>com.umlet.element.Class</type>
-    <coordinates>
-      <x>756</x>
-      <y>672</y>
-      <w>532</w>
-      <h>84</h>
-    </coordinates>
-    <panel_attributes>Runnable
---
-run()
-showCommand()</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <type>com.umlet.element.Relation</type>
-    <coordinates>
-      <x>1106</x>
-      <y>84</y>
-      <w>280</w>
-      <h>616</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
-    <additional_attributes>252;42;252;588;42;588</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Class</type>
@@ -472,7 +445,7 @@ save()</panel_attributes>
     <panel_attributes>Registry
 --
 commit(message : string)
-installedImages : InstalledImages
+
 subusers : Subusers</panel_attributes>
     <additional_attributes/>
   </element>
