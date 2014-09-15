@@ -25,7 +25,7 @@ def getPermissionFlagDict(subuserToRun):
   This is a dictionary mapping permissions to functions which when given the permission's values return docker run flags. 
   """
   return {
-   "allow-network-access" : lambda p: ["--net=bridge"] if p else ["--net=none"],
+   "allow-network-access" : lambda p: ["--net=bridge","--dns=8.8.8.8"] if p else ["--net=none"],
    "system-dirs" : lambda systemDirs: ["-v="+systemDir+":"+systemDir+":ro" for systemDir in systemDirs],
    "user-dirs" : lambda userDirs : ["-v="+os.path.join(subuserToRun.getUser().homeDir,userDir)+":"+os.path.join("/userdirs/",userDir)+":rw" for userDir in userDirs],
    "access-working-directory" : lambda p: ["-v="+os.getcwd()+":/pwd:rw","--workdir=/pwd"] if p else ["--workdir="+subuserToRun.getDockersideHome()],
