@@ -50,9 +50,11 @@ def list(sysargs):
    Maintainer: 
    Last update time(version): 0
    Executable: /usr/bin/foo
+  >>> list.list([sys.argv[0]]+["list","subusers","--short"])
+  foo
   """
   options,args = parseCliArgs(sysargs)
-  
+ 
   if len(args)==0:
     sys.exit("Nothing to list. Issue this command with the -h argument for help.")
   
@@ -60,14 +62,22 @@ def list(sysargs):
   
   if 'available' in args:
     for repoName,repository in user.getRegistry().getRepositories().iteritems():
-      print("Images available for instalation from the repo: " + repoName)
+      if not options.short:
+        print("Images available for instalation from the repo: " + repoName)
       for imageName,imageSource in repository.iteritems():
-        imageSource.describe()
+        if options.short:
+          print(imageName)
+        else:
+          imageSource.describe()
   
   if 'subusers' in args:
-    print("The following subusers are registered.")
+    if not options.short:
+      print("The following subusers are registered.")
     for name,subuser in user.getRegistry().getSubusers().iteritems():
-      subuser.describe()
+      if options.short:
+        print(name)
+      else:
+        subuser.describe()
 
 if __name__ == "__main__":
   list(sys.argv)
