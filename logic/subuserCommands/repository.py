@@ -5,22 +5,25 @@
 #external imports
 import optparse,sys
 #internal imports
-import subuserlib.classes.user,subuserlib.resolve,subuserlib.repository
+import subuserlib.classes.user,subuserlib.resolve,subuserlib.repository,subuserlib.commandLineArguments
 
 def parseCliArgs(sysargs):
   usage = "usage: subuser %prog [options] [add|remove] NAME <URL>"
   description = """Add or remove a new named repository.
 
-  Example:
-  subuser repository add foo http://www.example.com/repo.git
+- EXAMPLE
+    Add a new repository named foo with the URI http://www.example.com/repo.git.
 
-  Example:
-  subuser repository remove foo
+    $subuser repository add foo http://www.example.com/repo.git
+
+
+- EXAMPLE
+    Remove the repository named foo.
+
+    $subuser repository remove foo
 
   """
   parser=optparse.OptionParser(usage=usage,description=description,formatter=subuserlib.commandLineArguments.HelpFormatterThatDoesntReformatDescription())
-  advancedOptions = subuserlib.commandLineArguments.advancedInstallOptionsGroup(parser)
-  parser.add_option_group(advancedOptions)
   return parser.parse_args(args=sysargs[1:])
 
 def repository(user,sysargs):

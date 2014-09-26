@@ -12,9 +12,12 @@ BUILDDIR      = _build
 	touch .docs-build-environment
 
 shell: .docs-build-environment
-	docker run -i -t --user=1000 -v $(PWD):/home/sphynx-user -w /home/sphynx-user docs-build-environment /bin/bash
+	docker run -i -t --user=1000 -v $(PWD)/..:/home/sphynx-user -w /home/sphynx-user/docs docs-build-environment /bin/bash
 
-html:
+command-docs:
+	cd commands ; ./generate-command-docs.py
+
+html: command-docs
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) . $(BUILDDIR)/html
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."

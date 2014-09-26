@@ -17,6 +17,7 @@ def parseCliArgs(sysargs):
       List all installed subusers
 
   EXAMPLES:
+
     $ subuser list available --short
     $ subuser list subusers
 """

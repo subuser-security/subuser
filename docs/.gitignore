@@ -1,1 +1,4 @@
 _build/
+commands/*
+!commands/index.rst
+!commands/generate-command-docs.py

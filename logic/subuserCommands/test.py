@@ -3,12 +3,16 @@ import subuserlib.test
 
 subuserlib.test.testing = True
 
-import subuserlib.docker,subuserlib.basicPaths
+import subuserlib.docker,subuserlib.basicPaths,sys
+if "--help" in sys.argv:
+  print("Run the subuser test suit.  Please do this before sending pull requests.")
+  sys.exit()
+
 if subuserlib.docker.getDockerExecutable():
   subuserlib.docker.runDockerAndExitIfItFails(["build","."],subuserlib.basicPaths.getSubuserDir())
   exit()
 
-import doctest,sys,subprocess,os,subuserlib.paths
+import doctest,subprocess,os,subuserlib.paths
 
 if not "--travis" in sys.argv:
   subuserDir = "/root/subuser"

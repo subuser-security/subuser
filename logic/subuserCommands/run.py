@@ -8,17 +8,21 @@ import sys
 import subuserlib.classes.user, subuserlib.run
 
 ##############################################################
-helpString = """Run the given subuser image.  For example:
-$ subuser run firefox
+helpString = """Run the given subuser.
 
-Will launch firefox.
+For example:
+
+    $ subuser run firefox
+
+Will launch the subuser named firefox.
 """
 
 #################################################################################################
 
 def run(args):
-  if len(args) == 1 or {"help","-h","--help"} & set(args):
-    sys.exit(helpString)
+  if len(args) == 1 or args[1] == "--help":
+    print(helpString)
+    sys.exit()
 
   subuserName = args[1]
   argsToPassToImage = args[2:]

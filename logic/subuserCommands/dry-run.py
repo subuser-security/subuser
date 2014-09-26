@@ -8,8 +8,14 @@ import sys
 import subuserlib.classes.user, subuserlib.run
 
 ##############################################################
-helpString = """Display the command which would be issued to launch docker if you were to run this image.  For example:
-$ subuser dry-run firefox
+helpString = """
+Display the command which would be issued to launch Docker if you were to run this subuser.
+
+For example:
+
+    $ subuser dry-run firefox
+
+Will display the command used to launch the subuser firefox.
 
 Please note, this is only a rough approximation for debugging purposes and there is no guarantee that the command displayed here would actually work.
 """
@@ -30,7 +36,8 @@ def dryRun(args):
   docker 'run' '-i' '-t' '--rm' '--workdir=/home/travis/test-home' '-v=/home/travis/test-home/.subuser/homes/foo:/home/travis/test-home:rw' '-e' 'HOME=/home/travis/test-home' '--net=none' '--user=1000' '1' '/usr/bin/foo'
   """
   if len(args) == 1 or {"help","-h","--help"} & set(args):
-    sys.exit(helpString)
+    print(helpString)
+    sys.exit()
 
   subuserName = args[1]
   argsToPassToImage = args[2:]

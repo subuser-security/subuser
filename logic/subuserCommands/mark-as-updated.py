@@ -13,7 +13,7 @@ Mark a image as needing to be updated.  Note, that this may mess up the formatti
 
 EXAMPLE:
 
-$ subuser mark-as-updated firefox@default
+    $ subuser mark-as-updated firefox@default
 """
   parser=optparse.OptionParser(usage=usage,description=description,formatter=subuserlib.commandLineArguments.HelpFormatterThatDoesntReformatDescription())
   return parser.parse_args(args=sysargs[1:])

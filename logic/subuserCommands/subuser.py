@@ -13,13 +13,23 @@ def parseCliArgs(sysargs):
 
 Add and remove subusers.  Create shorcuts for launching subusers.
 
-$ subuser subuser add foo foo@default
+EXAMPLES:
 
-$ subuser subuser remove foo
+Add a new subuser named foo based on the image foo@default.
 
-$ subuser subuser create-shorcut foo
+    $ subuser subuser add foo foo@default
 
-$ subuser subuser remove-shortcut foo
+Remove the subuser named foo.
+
+    $ subuser subuser remove foo
+
+Create a launcher for the subuser named foo.
+
+    $ subuser subuser create-shorcut foo
+
+Remove the launcher (if one exists) for the subuser named foo.
+
+    $ subuser subuser remove-shortcut foo
 """
   parser=optparse.OptionParser(usage=usage,description=description,formatter=subuserlib.commandLineArguments.HelpFormatterThatDoesntReformatDescription())
   return parser.parse_args(args=sysargs[1:])

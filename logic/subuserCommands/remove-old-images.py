@@ -5,7 +5,7 @@
 #external imports
 import optparse
 #internal imports
-import subuserlib.classes.user,subuserlib.verify
+import subuserlib.classes.user,subuserlib.verify,subuserlib.commandLineArguments
 
 def parseCliArgs():
   usage = "usage: subuser %prog"

@@ -10,10 +10,13 @@ import subuserlib.classes.user,subuserlib.commandLineArguments,subuserlib.resolv
 def parseCliArgs(sysargs):
   usage = "usage: subuser %prog describe [subuser|image] SUBUSER(s)/IMAGE(s)"
   description = """Show basic information about a subuser or image: Whether it is installed, what it's permissions are ect.
-Ex:
-$ subuser describe image firefox
-<lots of info>
-$ subuser describe image firefox
+
+EXAMPLE:
+
+    $ subuser describe image firefox
+    <lots of info>
+
+    $ subuser describe image firefox
 """
   parser = optparse.OptionParser(usage=usage,description=description,formatter=subuserlib.commandLineArguments.HelpFormatterThatDoesntReformatDescription())
   return parser.parse_args(args=sysargs[1:])

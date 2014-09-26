@@ -40,7 +40,11 @@ To disable this message delete your subuser/installed-programs.json file.
     if name:
       self.name = name
     else:
-      self.name = getpass.getuser()
+      try:
+        self.name = getpass.getuser()
+      except KeyError:
+        # We use a broken setup when generating documentation...
+        self.name = "I have no name!"
 
     if homeDir:
       self.homeDir = homeDir
