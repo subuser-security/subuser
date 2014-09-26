@@ -16,8 +16,6 @@ Repair your subuser installation.
 This is usefull when migrating from one machine to another.  You can copy your ~/.subuser folder to the new machine and run repair, and things should just work.
 """
   parser = optparse.OptionParser(usage=usage,description=description,formatter=subuserlib.commandLineArguments.HelpFormatterThatDoesntReformatDescription())
-  advancedInstallOptions = subuserlib.commandLineArguments.advancedInstallOptionsGroup(parser)
-  parser.add_option_group(advancedInstallOptions)
   return parser.parse_args()
 
 if __name__ == "__main__":
