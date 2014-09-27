@@ -14,7 +14,11 @@ def archiveBuildContext(archive,directoryWithDockerfile,excludePatterns,dockerfi
   """
   # Inspired by and partialy taken from https://github.com/docker/docker-py
   contexttarfile = tarfile.open(mode="w",fileobj=archive)
-  for dirpath, _, filenames in os.walk(directoryWithDockerfile):
+  if directoryWithDockerfile:
+    fileList = os.walk(directoryWithDockerfile)
+  else:
+    fileList = []
+  for dirpath, _, filenames in fileList:
     relpath = os.path.relpath(dirpath, directoryWithDockerfile)
     if relpath == '.':
       relpath = ''
@@ -72,9 +76,9 @@ class DockerDaemon(subuserlib.classes.userOwnedObject.UserOwnedObject):
     else:
       responce.read()
 
-  def build(self,directoryWithDockerfile,useCache=True,rm=False,forceRm=False,quiet=False,tag=None,dockerfile=None):
+  def build(self,directoryWithDockerfile=None,useCache=True,rm=False,forceRm=False,quiet=False,tag=None,dockerfile=None):
     """
-    Build a Docker image.  If a the dockerfile argument is set to a string, use that string as the Dockerfile.  Return the newly created images Id or raises an exception if the build fails.  
+    Build a Docker image.  If a the dockerfile argument is set to a string, use that string as the Dockerfile.  Returns the newly created images Id or raises an exception if the build fails.  
     """
     # Inspired by and partialy taken from https://github.com/docker/docker-py
     queryParameters =  {
@@ -85,12 +89,12 @@ class DockerDaemon(subuserlib.classes.userOwnedObject.UserOwnedObject):
       'forcerm': forceRm
       }
     queryParametersString = urllib.urlencode(queryParameters)
-    dockerignore = os.path.join(directoryWithDockerfile, '.dockerignore')
-    if os.path.exists(dockerignore):
-      with open(dockerignore, 'r') as f:
-        exclude = list(filter(bool, f.read().split('\n')))
-    else:
-      excludePatterns = []
+    excludePatterns = []
+    if directoryWithDockerfile:
+      dockerignore = os.path.join(directoryWithDockerfile, '.dockerignore')
+      if os.path.exists(dockerignore):
+        with open(dockerignore, 'r') as f:
+          exclude = list(filter(bool, f.read().split('\n')))
     with tempfile.TemporaryFile() as tmpArchive:
       archiveBuildContext(tmpArchive,directoryWithDockerfile,excludePatterns,dockerfile=dockerfile)
       self.getConnection().request("POST","/build?"+queryParametersString,body=tmpArchive)
@@ -106,7 +110,8 @@ class DockerDaemon(subuserlib.classes.userOwnedObject.UserOwnedObject):
     match = re.search(search, output)
     if not match:
       raise ImageBuildException("Unexpected server response when building image.\n-----"+output)
-    print(output)
+    if not quiet:
+      print(output)
     shortId = match.group(1) #This is REALLY ugly!
     return self.getImageProperties(shortId)["Id"]
 

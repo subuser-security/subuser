@@ -33,7 +33,12 @@ def dryRun(args):
   >>> dry_run = __import__("dry-run")
   >>> dry_run.dryRunTestSetup()
   >>> dry_run.dryRun([sys.argv[0]]+["foo"])
-  docker 'run' '-i' '-t' '--rm' '--workdir=/home/travis/test-home' '-v=/home/travis/test-home/.subuser/homes/foo:/home/travis/test-home:rw' '-e' 'HOME=/home/travis/test-home' '--net=none' '--user=1000' '1' '/usr/bin/foo'
+  The image will be prepared using the Dockerfile:
+  FROM 1
+  RUN useradd --uid=1000 travis ;export exitstatus=$? ; if [ $exitstatus -eq 4 ] ; then echo uid exists ; elif [ $exitstatus -eq 9 ]; then echo username exists. ; else exit $exitstatus ; fi
+  <BLANKLINE>
+  The command to launch the image is:
+  docker 'run' '-i' '-t' '--rm' '--workdir=/home/travis/test-home' '-v=/home/travis/test-home/.subuser/homes/foo:/home/travis/test-home:rw' '-e' 'HOME=/home/travis/test-home' '--net=none' '--user=1000' 'imageId' '/usr/bin/foo'
   """
   if len(args) == 1 or {"help","-h","--help"} & set(args):
     print(helpString)
@@ -44,7 +49,10 @@ def dryRun(args):
 
   user = subuserlib.classes.user.User()
   if subuserName in user.getRegistry().getSubusers():
-    print(subuserlib.run.getPrettyCommand(user.getRegistry().getSubusers()[subuserName],argsToPassToImage))
+    print("The image will be prepared using the Dockerfile:")
+    print(subuserlib.run.generateImagePreparationDockerfile(user.getRegistry().getSubusers()[subuserName]))
+    print("The command to launch the image is:")
+    print(subuserlib.run.getPrettyCommand(user.getRegistry().getSubusers()[subuserName],"imageId",argsToPassToImage))
   else:
     sys.exit(subuserName + " not found.\n"+helpString)
 

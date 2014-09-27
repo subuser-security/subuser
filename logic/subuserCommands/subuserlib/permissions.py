@@ -23,6 +23,7 @@ permissionDefaults = {
  ,"graphics-card": False
  ,"sound-card": False
  ,"webcam": False
+ ,"serial-devices":False
  ,"access-working-directory": False
  ,"allow-network-access": False
  ,"stateful-home": True
