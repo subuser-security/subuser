@@ -104,7 +104,11 @@ def isInstalledImageUpToDate(installedImage):
   """
   Returns True if the installed image(including all of its dependencies, is up to date.  False otherwise.
   """
-  topImageSource = installedImage.getUser().getRegistry().getRepositories()[installedImage.getSourceRepoId()][installedImage.getImageSourceName()]
+  try:
+    topImageSource = installedImage.getUser().getRegistry().getRepositories()[installedImage.getSourceRepoId()][installedImage.getImageSourceName()]
+  except KeyError: # Image source not found, therefore updating would be pointless.
+    return True
+
   sourceLineage = getImageSourceLineage(topImageSource)
   installedImageLineage = subuserlib.installedImages.getImageLineage(installedImage.getUser(),installedImage.getImageId())
   """print("Installed lineage for image:" + installedImage.getImageSourceName())
