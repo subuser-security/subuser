@@ -104,12 +104,12 @@ Warning: This means, not only can the image play sounds, but it may listen to yo
 
   **Default**: `false`
 
- * `inherit-working-directory`: The image is given read-write access to the host user's current working directory.
+ * `access-working-directory`: The image is given read-write access to the host user's current working directory.
 
   Ex:
 
   ````json
-   ,"inherit-working-directory" : true
+   ,"access-working-directory" : true
   ````
 
   **Default**: `false`
