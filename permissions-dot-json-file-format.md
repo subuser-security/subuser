@@ -142,6 +142,16 @@ Warning: This means, not only can the subuser play sounds, but it may listen to 
 
   **Default**: `true`
 
+ * `system-dbus`: Should the subuser be allowed to communicate with the system wide dbus daemon?
+
+  Ex:
+
+  ````json
+   ,"system-dbus"              : false
+  ````
+
+  **Default**: `false`
+
  * `as-root`: Run the subuser as the root user within the container.
 
  Ex:
