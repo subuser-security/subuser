@@ -27,6 +27,7 @@ permissionDefaults = {
  ,"access-working-directory": False
  ,"allow-network-access": False
  ,"stateful-home": True
+ ,"system-dbus": False
  ,"as-root": False
  ,"privileged": False
  }
