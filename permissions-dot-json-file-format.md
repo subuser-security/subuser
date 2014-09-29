@@ -29,6 +29,16 @@ The json object MAY at your option contain the following additional fields:
 
 **Note on optional fields**: Setting an optional field to an empty string is not a valid way of requesting it's default value.  If you want the default value, don't include the field at all.
 
+Permissions are categorized into 4 levels of permissiveness:
+
+ 1. conservative: These permissions should be 100% safe in all cases.
+ 2. moderate: These permissions have the potential to give the subuser access to some user data but not all.
+ 3. liberal: These permissions give the subuser access to some or all user data, and/or present a significantly increased risk of the subuser breaking out of the container.
+ 4. anarchistic: These permissions give the subuser full access to the system.
+
+Conservative permissions
+------------------------
+
  * `last-update-time`: This field records the last time the image, or it's `Dockerfile` were known to be updated.  The purpose of this field is telling `subuser` if a image has been updated and must be re-installed.  It is important that this string be comparable with python's built in string comparison algorithm.
 
   Ex:
@@ -47,6 +57,17 @@ The json object MAY at your option contain the following additional fields:
 
  **Default**: The image has no executable and cannot be run(but it can be depended upon, as a library).
 
+ * `stateful-home`: Changes that the subuser makes to it's home directory should be saved to a special subuser-homes directory.
+
+  ````json
+   ,"stateful-home"             : false
+  ````
+
+  **Default**: `true`
+
+Moderate permissions
+--------------------
+
  * `user-dirs`: A list of relative paths to user directories which are to be shared between the host and the given image. The subuser is given read-write access to any user directories listed.
 
   Ex:
@@ -59,28 +80,6 @@ The json object MAY at your option contain the following additional fields:
 
 
   **Default**: `[]`
-
- * `x11`: The subuser is allowed to interact with the x11 server on the host.
-
-  Note: Known to be insecure!
-
-  Ex:
-
-  ````json
-   ,"x11"                       : true
-  ````
-
-  **Default**: `false`
-
- * `graphics-card`: The subuser is allowed to access the graphics-card directly(OpenGL).
-
-  Ex:
-
-  ````json
-   ,"graphics-card"                       : true
-  ````
-
-  **Default**: `false`
 
  * `sound-card`:  The subuser is allowed to access the soundcard on the host.
 
@@ -100,16 +99,6 @@ Warning: This means, not only can the subuser play sounds, but it may listen to 
 
   ````json
    ,"webcam"                     : true
-  ````
-
-  **Default**: `false`
-
- * `serial-devices`: The subuser is allowed to access serial devices: `/dev/ttyACM*`, `/dev/ttyUSB*`, and `/dev/ttyS*`.
-
-  Ex:
-
-  ````json
-   ,"serial-devices"                     : true
   ````
 
   **Default**: `false`
@@ -134,13 +123,40 @@ Warning: This means, not only can the subuser play sounds, but it may listen to 
 
   **Default**: `false`
 
- * `stateful-home`: Changes that the subuser makes to it's home directory should be saved to a special subuser-homes directory.
+Liberal permissions
+-------------------
+
+ * `x11`: The subuser is allowed to interact with the x11 server on the host.
+
+  Note: Known to be insecure!
+
+  Ex:
 
   ````json
-   ,"stateful-home"             : false
+   ,"x11"                       : true
   ````
 
-  **Default**: `true`
+  **Default**: `false`
+
+ * `graphics-card`: The subuser is allowed to access the graphics-card directly(OpenGL).
+
+  Ex:
+
+  ````json
+   ,"graphics-card"                       : true
+  ````
+
+  **Default**: `false`
+
+ * `serial-devices`: The subuser is allowed to access serial devices: `/dev/ttyACM*`, `/dev/ttyUSB*`, and `/dev/ttyS*`.
+
+  Ex:
+
+  ````json
+   ,"serial-devices"                     : true
+  ````
+
+  **Default**: `false`
 
  * `system-dbus`: Should the subuser be allowed to communicate with the system wide dbus daemon?
 
@@ -161,6 +177,9 @@ Warning: This means, not only can the subuser play sounds, but it may listen to 
  ````
 
  **Default**: `false`
+
+Anarchistic permissions
+-----------------------
 
  * `privileged`: Should the subuser's Docker container be run in `privileged` mode?
 
