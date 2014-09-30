@@ -34,7 +34,7 @@ def dryRun(args):
   >>> dry_run.dryRunTestSetup()
   >>> dry_run.dryRun([sys.argv[0]]+["foo"])
   The image will be prepared using the Dockerfile:
-  FROM 1
+  FROM 2
   RUN useradd --uid=1000 travis ;export exitstatus=$? ; if [ $exitstatus -eq 4 ] ; then echo uid exists ; elif [ $exitstatus -eq 9 ]; then echo username exists. ; else exit $exitstatus ; fi
   <BLANKLINE>
   The command to launch the image is:

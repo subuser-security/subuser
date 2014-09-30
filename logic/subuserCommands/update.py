@@ -41,8 +41,8 @@ def update(user,sysargs):
   >>> user = subuserlib.classes.user.User()
   >>> user.getRegistry().getSubusers().keys()
   [u'foo']
-  >>> [i.getImageSourceName() for i in user.getInstalledImages().values()]
-  [u'foo', u'bar']
+  >>> set([i.getImageSourceName() for i in user.getInstalledImages().values()]) == set([u'foo', u'bar'])
+  True
   >>> subuser.subuser(user,["subuser","add","dependent","dependent@file:///home/travis/remote-test-repo"])
   Adding subuser dependent dependent@file:///home/travis/remote-test-repo
   Verifying subuser configuration.
@@ -56,8 +56,8 @@ def update(user,sysargs):
   Running garbage collector on temporary repositories...
   >>> user.getRegistry().getSubusers().keys()
   ['dependent', u'foo']
-  >>> [i.getImageSourceName() for i in user.getInstalledImages().values()]
-  [u'foo', u'dependency1', u'bar', u'dependent', u'intermediary']
+  >>> set([i.getImageSourceName() for i in user.getInstalledImages().values()]) == set([u'foo', u'dependency1', u'bar', u'dependent', u'intermediary'])
+  True
   >>> update.update(user,["update","all"])
   Updating...
   Verifying subuser configuration.
@@ -65,10 +65,10 @@ def update(user,sysargs):
   Unregistering any non-existant installed images.
   Checking if images need to be updated or installed...
   Running garbage collector on temporary repositories...
-  >>> user.getRegistry().getSubusers().keys()
-  ['dependent', u'foo']
-  >>> [i.getImageSourceName() for i in user.getInstalledImages().values()]
-  [u'foo', u'dependency1', u'bar', u'dependent', u'intermediary']
+  >>> set(user.getRegistry().getSubusers().keys()) == set(['dependent', u'foo'])
+  True
+  >>> set([i.getImageSourceName() for i in user.getInstalledImages().values()]) == set([u'foo', u'dependency1', u'bar', u'dependent', u'intermediary'])
+  True
   >>> with open(user.getRegistry().getRepositories()[u'remote-repo']["intermediary"].getSubuserImagefilePath(),mode="w") as subuserImagefile:
   ...   subuserImagefile.write("FROM-SUBUSER-IMAGE dependency2")
   >>> subuserlib.git.runGit(["commit","-a","-m","changed dependency for intermediate from dependency1 to dependency2"],cwd=user.getRegistry().getRepositories()[u'remote-repo'].getRepoPath())
@@ -84,10 +84,10 @@ def update(user,sysargs):
   Installing dependent ...
   Installed new image for subuser dependent
   Running garbage collector on temporary repositories...
-  >>> user.getRegistry().getSubusers().keys()
-  ['dependent', u'foo']
-  >>> [i.getImageSourceName() for i in user.getInstalledImages().values()]
-  [u'foo', u'dependency1', u'bar', u'dependent', u'intermediary', u'intermediary', u'dependency2', u'dependent']
+  >>> set(user.getRegistry().getSubusers().keys()) == set(['dependent', u'foo'])
+  True
+  >>> set([i.getImageSourceName() for i in user.getInstalledImages().values()]) == set([u'foo', u'dependency1', u'bar', u'dependent', u'intermediary', u'intermediary', u'dependency2', u'dependent'])
+  True
 
   Note that dependency1 stays installed, so we can always use subuser update checkout to go back to the version before the update.
   """
