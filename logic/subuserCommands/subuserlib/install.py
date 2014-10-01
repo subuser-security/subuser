@@ -78,6 +78,8 @@ def installImage(imageSource, useCache=False,parent=None):
   if lastUpdateTime == None:
     lastUpdateTime = subuserlib.installTime.currentTimeString()
 
+  imageId = imageSource.getUs
+
   imageSource.getUser().getInstalledImages()[imageId] = subuserlib.classes.installedImage.InstalledImage(imageSource.getUser(),imageId,imageSource.getName(),imageSource.getRepository().getName(),lastUpdateTime)
   return imageId
 
