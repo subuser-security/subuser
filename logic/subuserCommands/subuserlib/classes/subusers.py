@@ -3,7 +3,7 @@
 # If it is not, please file a bug report.
 
 #external imports
-import os,json,collections
+import os,json,collections,sys
 #internal imports
 import subuserlib.classes.fileBackedObject, subuserlib.classes.userOwnedObject, subuserlib.classes.subuser, subuserlib.classes.imageSource
 
