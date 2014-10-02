@@ -15,11 +15,7 @@ The `repositories.json` files are to be arranged into a hierarchy.  Subuser will
 
 Each repositories.json file is to be a valid [json](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf) file containing a single json object.
 
-This object is a set of key value pairs where each key is the identifier of a subuser repository.
-
-Each identity can either be:
- * string - for a named repository
- * number - for an annonymous repository
+This object is a set of key value pairs where each key is the name of a subuser repository.
 
 Repository names must not contain any of the following characters: `\`,`:` .
 
@@ -34,6 +30,14 @@ Properties:
 
  ````
  "git-origin" : "https://github.com/subuser-security/subuser-default-repository.git/"
+ ````
+
+ * `temporary` : Is this a temporary repository? NOTE: this property defaults to false and is not mandatory.  In fact it looks cleaner if you don't include it when false ;).
+
+ Ex:
+
+ ````
+ "temporary" : true
  ````
 
 Example repositories.json file:
