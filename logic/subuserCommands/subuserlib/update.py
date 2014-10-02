@@ -31,3 +31,12 @@ def rollback(user,commit):
   subuserlib.verify.verify(user)
   user.getRegistry().commit()
 
+def lockSubuser(user,subuserName,commit):
+  """
+  Lock the subuser to the image and permissions that it had at a given registry commit.
+  """
+  
+def unlockSubuser(user,subuserName,unlockPermissions=False):
+  """
+  Unlock the subuser, leaving it to have an up to date image.  Delete user set permissions if unlockPermissions is True.
+  """

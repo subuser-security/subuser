@@ -54,7 +54,7 @@ class Subusers(dict,subuserlib.classes.userOwnedObject.UserOwnedObject,subuserli
       serializedSubusersDict = {}
     for subuserName, subuserAttributes in serializedSubusersDict.iteritems():
       if not subuserAttributes["source-repo"] in self.getUser().getRegistry().getRepositories():
-        sys.exit("ERROR: Registry inconsistent. Subuser "+subuserName+" points to non-existant repository: "+subuserAttributes["source-repo"])
+        sys.exit("ERROR: Registry inconsistent. Subuser "+str(subuserName)+" points to non-existant repository: "+str(subuserAttributes["source-repo"]))
       repo = self.getUser().getRegistry().getRepositories()[subuserAttributes["source-repo"]]
       name = subuserAttributes["image-source"]
       if "docker-image" in subuserAttributes:

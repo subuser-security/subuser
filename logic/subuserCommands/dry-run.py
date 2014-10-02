@@ -39,6 +39,43 @@ def dryRun(args):
   <BLANKLINE>
   The command to launch the image is:
   docker 'run' '-i' '-t' '--rm' '--workdir=/home/travis/test-home' '-v=/home/travis/test-home/.subuser/homes/foo:/home/travis/test-home:rw' '-e' 'HOME=/home/travis/test-home' '--net=none' '--user=1000' 'imageId' '/usr/bin/foo'
+
+Running subusers installed through temporary repositories works as well.
+ 
+  >>> import subuser,subuserlib.classes.user
+  >>> remove_old_images = __import__("remove-old-images")
+  >>> user = subuserlib.classes.user.User()
+  >>> subuser.subuser(user,["subuser","add","bar","bar@file:///home/travis/remote-test-repo"])
+  Adding new temporary repository file:///home/travis/remote-test-repo
+  Adding subuser bar bar@file:///home/travis/remote-test-repo
+  Verifying subuser configuration.
+  Verifying registry consistency...
+  Unregistering any non-existant installed images.
+  Checking if images need to be updated or installed...
+  Installing bar ...
+  Installed new image for subuser bar
+  Running garbage collector on temporary repositories...
+  >>> dry_run.dryRun([sys.argv[0]]+["bar"])
+  The image will be prepared using the Dockerfile:
+  FROM 4
+  RUN useradd --uid=1000 travis ;export exitstatus=$? ; if [ $exitstatus -eq 4 ] ; then echo uid exists ; elif [ $exitstatus -eq 9 ]; then echo username exists. ; else exit $exitstatus ; fi
+  <BLANKLINE>
+  The command to launch the image is:
+  docker 'run' '-i' '-t' '--rm' '--workdir=/home/travis/test-home' '-v=/home/travis/test-home/.subuser/homes/bar:/home/travis/test-home:rw' '-e' 'HOME=/home/travis/test-home' '--net=none' '--user=1000' 'imageId' '/usr/bin/bar'
+  >>> subuser.subuser(user,["subuser","remove","bar"])
+  Removing subuser bar
+  Verifying subuser configuration.
+  Verifying registry consistency...
+  Unregistering any non-existant installed images.
+  Checking if images need to be updated or installed...
+  Running garbage collector on temporary repositories...
+  >>> remove_old_images.removeOldImages(user)
+  Verifying subuser configuration.
+  Verifying registry consistency...
+  Unregistering any non-existant installed images.
+  Checking if images need to be updated or installed...
+  Running garbage collector on temporary repositories...
+  Removing uneeded temporary repository: file:///home/travis/remote-test-repo
   """
   if len(args) == 1 or {"help","-h","--help"} & set(args):
     print(helpString)

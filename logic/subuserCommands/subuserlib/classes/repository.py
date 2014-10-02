@@ -11,12 +11,14 @@ class Repository(dict,subuserlib.classes.userOwnedObject.UserOwnedObject):
   __name = None
   __gitOriginURI = None
   __lastGitCommitHash = None
+  __temporary = False
 
-  def __init__(self,user,name,gitOriginURI,gitCommitHash):
+  def __init__(self,user,name,gitOriginURI,gitCommitHash,temporary=False):
     subuserlib.classes.userOwnedObject.UserOwnedObject.__init__(self,user)
     self.__name = name
     self.__gitOriginURI = gitOriginURI
     self.__lastGitCommitHash = gitCommitHash
+    self.__temporary=temporary
     self.checkoutGitCommit(gitCommitHash)
     self.loadProgamSources()
 
@@ -29,6 +31,9 @@ class Repository(dict,subuserlib.classes.userOwnedObject.UserOwnedObject):
   def getRepoPath(self):
     """ Get the path of the repo's sources on disk. """
     return os.path.join(self.getUser().getConfig().getRepositoriesDir(),str(self.getName()))
+
+  def isTemporary(self):
+    return self.__temporary
 
   def removeGitRepo(self):
     """

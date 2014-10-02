@@ -54,6 +54,22 @@ class Subuser(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.clas
     """
     self.__imageId = imageId
 
+  def locked(self):
+    """
+    Returns True if the subuser is locked.  Users lock subusers in order to prevent updates and rollbacks from effecting them.
+    """
+    return
+
+  def lock(self):
+    """
+    Lock the subuser in its current state to prevent updates and rollbacks from effecting it.
+    """
+
+  def unlock(self):
+    """
+    Unlock subuser and ensure its image is up to date.
+    """
+
   def getHomeDirOnHost(self):
     """
     Returns the path to the subuser's home dir. Unless the subuser is configured to have a stateless home, in which case returns None.

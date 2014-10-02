@@ -41,7 +41,10 @@ class Repositories(collections.Mapping,subuserlib.classes.userOwnedObject.UserOw
           gitCommitHash = repositoryStates[repoName]["git-commit-hash"]
         else:
           gitCommitHash = "master"
-        repositories[repoName] = subuserlib.classes.repository.Repository(self.getUser(),name=repoName,gitOriginURI=repoAttributes["git-origin"],gitCommitHash=gitCommitHash)
+        temporary=False
+        if "temporary" in repoAttributes:
+          temporary=repoAttributes["temporary"]
+        repositories[repoName] = subuserlib.classes.repository.Repository(self.getUser(),name=repoName,gitOriginURI=repoAttributes["git-origin"],gitCommitHash=gitCommitHash,temporary=temporary)
       return repositories
 
     self.systemRepositories = loadRepositoryDict(self.systemRepositoryListPaths)
@@ -60,14 +63,18 @@ class Repositories(collections.Mapping,subuserlib.classes.userOwnedObject.UserOw
       return {}
 
   def addRepository(self,repository):
-    if not type(repository.getName()) is int:
+    if not repository.isTemporary():
       self.getUser().getRegistry().logChange("Adding new repository "+repository.getName())
     else:
       self.getUser().getRegistry().logChange("Adding new temporary repository "+repository.getGitOriginURI())
     self.userRepositories[repository.getName()] = repository
 
   def removeRepository(self,name):
-    if not type(name) is int:
+    try:
+      repository = self.userRepositories[name]
+    except KeyError:
+      sys.exit("Cannot remove repository "+name+". Repository does not exist.")
+    if not repository.isTemporary():
       self.getUser().getRegistry().logChange("Removing repository "+name)
     else:
       self.getUser().getRegistry().logChange("Removing temporary repository "+self[name].getGitOriginURI())
@@ -79,6 +86,7 @@ class Repositories(collections.Mapping,subuserlib.classes.userOwnedObject.UserOw
     for name,repository in self.userRepositories.iteritems():
       userRepositoryListDict[name] = {}
       userRepositoryListDict[name]["git-origin"] = repository.getGitOriginURI()
+      userRepositoryListDict[name]["temporary"] = repository.isTemporary()
     with open(self.userRepositoryListPath, 'w') as file_f:
       json.dump(userRepositoryListDict, file_f, indent=1, separators=(',', ': '))
     repositoryStatesDotJsonPath = os.path.join(self.getUser().getConfig().getRegistryPath(),"repository-states.json")
@@ -95,9 +103,9 @@ class Repositories(collections.Mapping,subuserlib.classes.userOwnedObject.UserOw
     """
     id=0
     for _,repo in self.iteritems():
-      if repo.getName() == id:
+      if repo.getName() == str(id):
         id = id + 1
-    return id
+    return str(id)
 
   def __init__(self,user):
     subuserlib.classes.userOwnedObject.UserOwnedObject.__init__(self,user)

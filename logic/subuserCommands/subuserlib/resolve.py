@@ -78,6 +78,6 @@ def getRepositoryFromURI(user,uri):
   if repository:
     return repository
   # If it doesn't, create a new repo and return it.
-  newTempRepo = subuserlib.classes.repository.Repository(user=user,name=user.getRegistry().getRepositories().getNewUniqueTempRepoId(),gitOriginURI=uri,gitCommitHash="master")
+  newTempRepo = subuserlib.classes.repository.Repository(user=user,name=user.getRegistry().getRepositories().getNewUniqueTempRepoId(),gitOriginURI=uri,gitCommitHash="master",temporary=True)
   user.getRegistry().getRepositories().addRepository(newTempRepo)
   return newTempRepo

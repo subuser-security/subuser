@@ -50,7 +50,7 @@ def trimUnneededTempRepos(user):
   reposToRemove = []
   for repoId,repo in user.getRegistry().getRepositories().userRepositories.iteritems():
     keep = False
-    if not type(repoId) is str and not type(repoId) is unicode: #If this is a temp repo.
+    if repo.isTemporary():
       for _,installedImage in user.getInstalledImages().iteritems():
         if repoId == installedImage.getSourceRepoId():
           keep = True
