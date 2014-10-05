@@ -16,7 +16,7 @@ EXAMPLE:
     $ subuser describe image firefox
     <lots of info>
 
-    $ subuser describe image firefox
+    $ subuser describe subuser firefox
 """
   parser = optparse.OptionParser(usage=usage,description=description,formatter=subuserlib.commandLineArguments.HelpFormatterThatDoesntReformatDescription())
   return parser.parse_args(args=sysargs[1:])
