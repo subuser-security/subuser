@@ -26,7 +26,7 @@ Quick packaging tutorial
   
 2. Add subuser images:
 
- a. Create a folder in your subuser repository for your new subuser image and add a `docker-image` subdirectory.:
+ a. Create a folder in your subuser repository for your new subuser image and add a ``docker-image`` subdirectory:
 
 ::
 
@@ -59,3 +59,21 @@ Create an `permissions.json` file.  Here is an example::
 You can find a full specification for the `permissions.json` file format `here <https://github.com/subuser-security/subuser-standard/blob/master/permissions-dot-json-file-format.md>`_.
 
  b. Create a directory called `docker-image` and add a `SubuserImagefile` to that directory.  This is the same as a Dockerfile except for the adition of a special `FROM-SUBUSER-IMAGE` command which takes `the identifier of a subuser image source <https://github.com/subuser-security/subuser-standard/blob/master/image-source-identifiers.md>`_ as it's argument. For information on creating a Dockerfile, please see the `official documentation for writting Dockerfiles <https://docs.docker.com/reference/builder/>`_.
+
+Example::
+
+  FROM debian
+  RUN apt-get update && apt-get install -yyq vim
+
+Example2::
+
+  FROM-SUBUSER-IMAGE libx11
+  RUN apt-get update && apt-get install -yyq firefox
+
+Example3::
+
+  FROM debian
+  RUN apt-get update && apt-get install -yyq firefox
+
+.. note :: Examples 2 and 3 do the **SAME** thing, it's just that Example3 takes a little longer to build and uses more space on disk.  There is **no magic** in the ``libx11`` image and never will be(we hope).
+
