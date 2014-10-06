@@ -1,5 +1,7 @@
-Subuser - Securing the Linux desktop with Docker
+[Subuser - Securing the Linux desktop with Docker](http://subuser.org)
 --------------------------
+
+[![Subuser logo](./docs/_themes/sphinx_rtd_theme/static/images/subuser-logo.png)](http://subuser.org "Visit us at subuser.org!")
 
 As free software developers we like to share.  We surf the web and discover new code.  We are eager to try it out.  We live out an orgy of love and trust, unafraid that some code we cloned from Git might be faulty or malicious.  We live in the 60s, carefree hippies.
 
