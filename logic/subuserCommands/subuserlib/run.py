@@ -45,7 +45,10 @@ def passOnEnvVar(envVar):
   """
   Generate the arguments required to pass on a given ENV var to the container from the host.
   """
-  return ["-e",envVar+"="+os.environ[envVar]]
+  try:
+    return ["-e",envVar+"="+os.environ[envVar]]
+  except KeyError:
+    return []
 
 def getPermissionFlagDict(subuserToRun):
   """
