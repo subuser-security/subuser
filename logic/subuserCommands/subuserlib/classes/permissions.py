@@ -29,26 +29,56 @@ class Permissions(collections.OrderedDict,subuserlib.classes.userOwnedObject.Use
     print(" Description: "+self["description"])
     print(" Maintainer: "+self["maintainer"])
     print(" Last update time(version): "+str(self["last-update-time"]))
-  
     if self["executable"]:
       print(" Executable: "+self["executable"])
     else:
       print(" Is a library")
-    if not self["user-dirs"]==[]:
-      print(" Has access to the following user directories: '~/"+"' '~/".join(self["user-dirs"])+"'")
-    if not self["system-dirs"]==[]:
-      print(" Can read from the following system directories: '"+"' '".join(self["system-dirs"])+"'")
-    if self["x11"]:
-      print(" Can display X11 windows.")
-    if self["graphics-card"]:
-      print(" Can access your graphics-card directly for OpenGL tasks.")
-    if self["sound-card"]:
-      print(" Has access to your soundcard, can play sounds/record sound.")
-    if self["webcam"]:
-      print(" Can access your computer's webcam/can see you.")
-    if self["access-working-directory"]:
-      print(" Can access the directory from which it was launched.")
-    if self["allow-network-access"]:
-      print(" Can access the network/internet.")
-    if self["privileged"]:
-      print(" Is fully privileged.  NOTE: Highly insecure!")
+
+    def areAnyOfThesePermitted(permissions):
+      permitted = False
+      for permission in permissions:
+        if self[permission]:
+          permitted = True
+      return permitted
+
+    conservativePermissions = ["stateful-home","inherit-locale","inherit-timezone"]
+    if areAnyOfThesePermitted(conservativePermissions):
+      print(" Conservative permissions(These are safe):")
+      if self["stateful-home"]:
+        print("  Has it's own home directory where it can save files and settings.")
+      if self["inherit-locale"]:
+        print("  Can find out language you speak and what region you live in.")
+      if self["inherit-timezone"]:
+        print("  Can find out your current timezone.")
+
+    moderatePermissions = ["user-dirs","sound-card","webcam","access-working-directory","allow-network-access"]
+    if areAnyOfThesePermitted(moderatePermissions):
+      print(" Moderate permissions(These are probably safe):")
+      if not self["user-dirs"]==[]:
+        print("  Has access to the following user directories: '~/"+"' '~/".join(self["user-dirs"])+"'")
+      if self["sound-card"]:
+        print("  Has access to your soundcard, can play sounds/record sound.")
+      if self["webcam"]:
+        print("  Can access your computer's webcam/can see you.")
+      if self["access-working-directory"]:
+        print("  Can access the directory from which it was launched.")
+      if self["allow-network-access"]:
+        print("  Can access the network/internet.")
+
+    liberalPermissions = ["x11","graphics-card","serial-devices","system-dbus","as-root"]
+    if areAnyOfThesePermitted(liberalPermissions):
+      print(" Liberal permissions(These may pose a security risk):")
+      if self["x11"]:
+        print("  Can display X11 windows and interact with your X11 server directly(log keypresses, read over your shoulder ect.)")
+      if self["graphics-card"]:
+        print(" Can access your graphics-card directly for OpenGL tasks.")
+      if self["serial-devices"]:
+        print(" Can access serial devices such as programable micro-controlers and modems.")
+      if self["system-dbus"]:
+        print(" Can talk to the system dbus daemon.")
+    anarchisticPermissions = ["privileged"]
+    if areAnyOfThesePermitted(anarchisticPermissions):
+      print("WARNING: this subuser has full access to your system when run.")
+      if self["privileged"]:
+        print(" Has full access to your system.  Can even do things as root outside of its container.")
+

@@ -41,24 +41,35 @@ def getBasicFlags(subuserToRun):
     "-t",
     "--rm"]
 
+def passOnEnvVar(envVar):
+  """
+  Generate the arguments required to pass on a given ENV var to the container from the host.
+  """
+  return ["-e",envVar+"="+os.environ[envVar]]
+
 def getPermissionFlagDict(subuserToRun):
   """
   This is a dictionary mapping permissions to functions which when given the permission's values return docker run flags. 
   """
   return {
-   "allow-network-access" : lambda p: ["--net=bridge","--dns=8.8.8.8"] if p else ["--net=none"],
-   "system-dirs" : lambda systemDirs: ["-v="+systemDir+":"+systemDir+":ro" for systemDir in systemDirs],
-   "user-dirs" : lambda userDirs : ["-v="+os.path.join(subuserToRun.getUser().homeDir,userDir)+":"+os.path.join("/userdirs/",userDir)+":rw" for userDir in userDirs],
-   "access-working-directory" : lambda p: ["-v="+os.getcwd()+":/pwd:rw","--workdir=/pwd"] if p else ["--workdir="+subuserToRun.getDockersideHome()],
+   # Conservative permissions
    "stateful-home" : lambda p : ["-v="+subuserToRun.getHomeDirOnHost()+":"+subuserToRun.getDockersideHome()+":rw","-e","HOME="+subuserToRun.getDockersideHome()] if p else [],
-   "x11" : lambda p: ["-e","DISPLAY=unix"+os.environ['DISPLAY'],"-v=/tmp/.X11-unix:/tmp/.X11-unix:rw"] if p else [],
-   "graphics-card" : lambda p:["-v=/dev/dri:/dev/dri:rw"] + ["--device=/dev/dri/"+device for device in os.listdir("/dev/dri")] if p else [],
+   "inherit-locale" : lambda p : passOnEnvVar("LANG")+passOnEnvVar("LANGUAGE") if p else [],
+   "inherit-timezone" : lambda p : passOnEnvVar("TZ")+["-v=/etc/localtime:/etc/localtime:r"] if p else [],
+   # Moderate permissions
+   "user-dirs" : lambda userDirs : ["-v="+os.path.join(subuserToRun.getUser().homeDir,userDir)+":"+os.path.join("/userdirs/",userDir)+":rw" for userDir in userDirs],
    "sound-card" : lambda p: ["-v=/dev/snd:/dev/snd:rw"]+["--device=/dev/snd/"+device for device in os.listdir("/dev/snd") if not device == "by-id" and not device == "by-path"] if p else [], #Why the volume here?  To make it so that the device nodes are owned by the audio group ;).  Evil, I know...
    "webcam" : lambda p: ["--volume=/dev/"+device+":/dev/"+device for device in os.listdir("/dev/") if device.startswith("video")] + ["--device=/dev/"+device for device in os.listdir("/dev/") if device.startswith("video")] if p else [],
+   "access-working-directory" : lambda p: ["-v="+os.getcwd()+":/pwd:rw","--workdir=/pwd"] if p else ["--workdir="+subuserToRun.getDockersideHome()],
+   "allow-network-access" : lambda p: ["--net=bridge","--dns=8.8.8.8"] if p else ["--net=none"],
+   # Liberal permissions
+   "x11" : lambda p: ["-e","DISPLAY=unix"+os.environ['DISPLAY'],"-v=/tmp/.X11-unix:/tmp/.X11-unix:rw"] if p else [],
+   "graphics-card" : lambda p:["-v=/dev/dri:/dev/dri:rw"] + ["--device=/dev/dri/"+device for device in os.listdir("/dev/dri")] if p else [],
    "serial-devices" : lambda sd: ["--volume=/dev/"+device+":/dev/"+device for device in getSerialDevices()] + ["--device=/dev/"+device for device in getSerialDevices()] if sd else [],
    "system-dbus" : lambda dbus: ["--volume=/var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket"] if dbus else [],
-   "privileged" : lambda p: ["--privileged"] if p else [],
-   "as-root" : lambda root: ["--user=0"] if root else ["--user="+str(os.getuid())]
+   "as-root" : lambda root: ["--user=0"] if root else ["--user="+str(os.getuid())],
+   # Anarchistic permissions
+   "privileged" : lambda p: ["--privileged"] if p else []
    }
 
 def getCommand(subuserToRun, imageId, imageArgs):

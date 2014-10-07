@@ -11,26 +11,32 @@ allImagesMustHavePermissions = "All subuser images must have a permissions.json 
 # Defaults from subuser/docs/permissions-dot-json-file-format.md
 # This is a comprehensive list of all permissions
 permissionDefaults = {
+ # Conservative permissions
   "description": "" 
  ,"maintainer": ""
  ,"last-update-time": None
  ,"executable": None
- ,"shared-home": None
- ,"dependency": None
+ ,"basic-common-permissions": False
+ ,"stateful-home": False
+ ,"inherit-locale": False
+ ,"inherit-timezone": False
+ # Moderate permissions
  ,"user-dirs": []
- ,"system-dirs": []
- ,"x11": False
- ,"graphics-card": False
  ,"sound-card": False
  ,"webcam": False
- ,"serial-devices":False
  ,"access-working-directory": False
  ,"allow-network-access": False
- ,"stateful-home": True
+ # Liberal permissions
+ ,"x11": False
+ ,"graphics-card": False
+ ,"serial-devices":False
  ,"system-dbus": False
  ,"as-root": False
+ # Anarchistic permissions
  ,"privileged": False
  }
+
+basicCommonPermissions = ["stateful-home","inherit-locale","inherit-timezone"]
 
 def getPermissions(permissionsFilePath):
   """ Return a dictionary of permissions from the given permissions.json file.  Permissions that are not specified are set to their default values."""
@@ -41,6 +47,10 @@ def getPermissions(permissionsFilePath):
     except ValueError:
       sys.exit(permissionsFilePath+" is not valid json.  "+allImagesMustHavePermissions)
     # Set permission defaults for permissions that are not explicitly specified in the permissions.json file
+    if "basic-common-permissions" in permissions and permissions["basic-common-permissions"]:
+      for basicCommonPermission in basicCommonPermissions:
+        if not basicCommonPermission in permissions:
+          permissions[basicCommonPermission] = True
     for permission,defaultValue in permissionDefaults.iteritems():
       if not permission in permissions:
         permissions[permission] = defaultValue
