@@ -57,13 +57,37 @@ Conservative permissions
 
  **Default**: The image has no executable and cannot be run(but it can be depended upon, as a library).
 
+ * `basic-common-permissions`: This flag allows you to enable a set of basic, safe, and common permissions without having to list them individualy.  The basic common permissions are:
+
+  - `stateful-home`
+  - `inherit-locale`
+  - `inherit-timezone`
+
+  If any of the basic common permissions are also set, their value over-rides this value.  For example, if `stateful-home` is explicitly set to `false` but `basic-common-permissions` is set to `true`, `stateful-home` is `false`.
+
  * `stateful-home`: Changes that the subuser makes to it's home directory should be saved to a special subuser-homes directory.
 
   ````json
    ,"stateful-home"             : false
   ````
 
-  **Default**: `true`
+  **Default**: `false`
+
+ * `inherit-locale`: Automatically set the $LANG and $LANGUAGE environment variable in the container to the value outside of the container. Note: You do not have to set this if you have set `basic-common-permissions`.
+
+  ````json
+   ,"inherit-locale"             : true
+  ````
+
+  **Default**: `false`
+
+ * `inherit-timezone`: Automatically set the $TZ environment variable in the container to the value outside of the container.  Give the sub user read only access to the `/etc/localtime` file. Note: You do not have to set this if you have set `basic-common-permissions`.
+
+  ````json
+   ,"inherit-timezone"             : true
+  ````
+
+  **Default**: `false`
 
 Moderate permissions
 --------------------
