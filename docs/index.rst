@@ -4,32 +4,62 @@ Subuser - Securing the linux desktop with Docker
 
 .. raw :: html
 
-  <div id="marketingClaim"> <h1> Welcome to Subuser! </h1> </div>
-  <div id="slide1"><h1>Docker on the Desktop</h1></div>
-  <dif id="slide2"><h1>Bedrock linux meets Android permissions lists</h1></div>
-  <div id="slide3"><h1>QubesOS light</h1></div>
-  <div id="slide4"><h1>A package manager with an undo function</h1></div>
- 
   <script>
-  slides = ["slide1"
-           ,"slide2"
-           ,"slide3"
-           ,"slide4"]
-  for(slide=0;slide<slides.length;slide++){
-      currentSlideElement = document.getElementById(slides[slide])
-      currentSlideElement.style.display = "none"
-  }
-  slide=0
-  var interval = setInterval(function() {
-      currentSlideElement = document.getElementById(slides[slide++])
-      document.getElementById('marketingClaim').innerHTML = currentSlideElement.innerHTML;
-      if(slide == slides.length) {
-        slide = 0
+  numSlides = 22
+  slide=1
+  var autoplay=true
+  function moveSlidePointerNext(){
+      slide++
+      if(slide > numSlides) {
+        slide = numSlides
       }
-  
-  }, 2000);
+  }
+  function moveSlidePointerPrevious(){
+      slide--
+      if(slide < 1) {
+        slide = 1
+      }
+  }
+  function changeSlide(moveSlidePointer){
+      var presentationSVG1 = document.getElementById("presentationSVG")
+      var presentationSVG  = presentationSVG1.getSVGDocument()
+ 
+      previousSlideElement = presentationSVG.getElementById("id"+slide)
+      previousSlideElement.setAttribute("visibility","hidden")
+      moveSlidePointer()
+      currentSlideElement = presentationSVG.getElementById("id"+slide)
+      currentSlideElement.setAttribute("visibility","visible")
+  }
+  function previousSlide(){
+    changeSlide(moveSlidePointerPrevious);
+  }
+  function nextSlide(){
+    changeSlide(moveSlidePointerNext);
+  }
+  function toggleAutoplay(){
+    playPauseButton = document.getElementById("playPauseButton")
+    playPauseButtonText = "Play";
+    autoplay = !autoplay 
+    if(autoplay){
+      playPauseButtonText = "Pause"
+    }
+    playPauseButton.innerHTML = playPauseButtonText
+  }
+
+  var interval = setInterval(function() {
+    if(autoplay){
+      nextSlide()
+    }
+  }, 3000);
   </script>
 
+
+  <center><embed id="presentationSVG" src="_static/images/subuser-website.svg" height="80%"></embed></center>
+  <center><button onclick="previousSlide()">&lt;--</button><button id="playPauseButton" onclick="toggleAutoplay()">Pause</button><button onclick="nextSlide()">--&gt;</button></center>
+
+
+Index
+-----
 
 .. toctree::
 
