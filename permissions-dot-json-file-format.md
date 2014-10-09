@@ -92,6 +92,30 @@ Conservative permissions
 Moderate permissions
 --------------------
 
+ * `gui`: Is the subuser allowed to display a graphical user interface?  This permission has the following sub-permissions:
+
+  - `clipboard`: Is the subuser allowed to read and write to the clipboard?
+  - `system-tray`: Is this subuser allowed to display system-tray icons?
+  - `cursors`: Is this subuser allowed to change the way the mouse cursor is displayed?
+
+  All sub-permissions are boolean and default to false.
+
+ Ex:
+
+ ````json
+  ,"gui" : {"system-tray":true,"clipboard":true}
+ ````
+
+ This example allows the subuser to display windows, display system-tray icons, and access the clipboard.  However, it cannot change the mouses cursor.
+
+ Ex:
+
+ ````json
+  ,"gui" : {}
+ ````
+
+ This example allows the subuser to display windows.
+
  * `user-dirs`: A list of relative paths to user directories which are to be shared between the host and the given image. The subuser is given read-write access to any user directories listed.
 
   Ex:
