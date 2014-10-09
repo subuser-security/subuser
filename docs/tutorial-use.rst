@@ -23,7 +23,7 @@ You can run the subuser with::
 
   $ subuser run vim SomeTextFileToEdit
 
-Creating subuser shortcuts
+You don't have to type ``subuser run`` every time you launch a program
 --------------------------
 
 You can turn a subuser into a "normal" program by running::
