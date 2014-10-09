@@ -50,6 +50,14 @@ def passOnEnvVar(envVar):
   except KeyError:
     return []
 
+def generateSoundArgs():
+  soundArgs = []
+  if os.path.exists("/dev/snd"):
+    soundArgs += ["-v=/dev/snd:/dev/snd:rw"]+["--device=/dev/snd/"+device for device in os.listdir("/dev/snd") if not device == "by-id" and not device == "by-path"]
+  if os.path.exists("/dev/dsp"):
+    ["-v=/dev/dsp:/dev/dsp:rw"]+["--device=/dev/dsp/"+device for device in os.listdir("/dev/dsp")]
+  return soundArgs
+
 def getPermissionFlagDict(subuserToRun):
   """
   This is a dictionary mapping permissions to functions which when given the permission's values return docker run flags. 
@@ -61,7 +69,7 @@ def getPermissionFlagDict(subuserToRun):
    "inherit-timezone" : lambda p : passOnEnvVar("TZ")+["-v=/etc/localtime:/etc/localtime:r"] if p else [],
    # Moderate permissions
    "user-dirs" : lambda userDirs : ["-v="+os.path.join(subuserToRun.getUser().homeDir,userDir)+":"+os.path.join("/userdirs/",userDir)+":rw" for userDir in userDirs],
-   "sound-card" : lambda p: ["-v=/dev/snd:/dev/snd:rw"]+["--device=/dev/snd/"+device for device in os.listdir("/dev/snd") if not device == "by-id" and not device == "by-path"] if p else [], #Why the volume here?  To make it so that the device nodes are owned by the audio group ;).  Evil, I know...
+   "sound-card" : lambda p: generateSoundArgs() if p else [], #Why the volume here?  To make it so that the device nodes are owned by the audio group ;).  Evil, I know...
    "webcam" : lambda p: ["--volume=/dev/"+device+":/dev/"+device for device in os.listdir("/dev/") if device.startswith("video")] + ["--device=/dev/"+device for device in os.listdir("/dev/") if device.startswith("video")] if p else [],
    "access-working-directory" : lambda p: ["-v="+os.getcwd()+":/pwd:rw","--workdir=/pwd"] if p else ["--workdir="+subuserToRun.getDockersideHome()],
    "allow-network-access" : lambda p: ["--net=bridge","--dns=8.8.8.8"] if p else ["--net=none"],
