@@ -19,6 +19,7 @@ def generateImagePreparationDockerfile(subuserToRun):
   """
   dockerfileContents  = "FROM "+subuserToRun.getImageId()+"\n"
   dockerfileContents += "RUN useradd --uid="+str(os.getuid())+" "+getpass.getuser()+" ;export exitstatus=$? ; if [ $exitstatus -eq 4 ] ; then echo uid exists ; elif [ $exitstatus -eq 9 ]; then echo username exists. ; else exit $exitstatus ; fi\n"
+  dockerfileContents += "RUN test -d /home/"+getpass.getuser()+" || mkdir /home/"+getpass.getuser()+" && chown "+getpass.getuser()+" /home/"+getpass.getuser()+"\n"
   if subuserToRun.getPermissions()["serial-devices"]:
     dockerfileContents += "RUN groupadd dialout; export exitstatus=$? ; if [ $exitstatus -eq 4 ] ; then echo gid exists ; elif [ $exitstatus -eq 9 ]; then echo groupname exists. ; else exit $exitstatus ; fi\n"
     dockerfileContents += "RUN groupadd uucp; export exitstatus=$? ; if [ $exitstatus -eq 4 ] ; then echo gid exists ; elif [ $exitstatus -eq 9 ]; then echo groupname exists. ; else exit $exitstatus ; fi\n"
