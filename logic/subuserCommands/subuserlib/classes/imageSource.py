@@ -125,9 +125,15 @@ class ImageSource(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.
     for line in SubuserImagefileContents.split("\n"):
       if line.startswith("FROM-SUBUSER-IMAGE"):
         try:
-          return subuserlib.resolve.resolveImageSource(self.getUser(),line.split(" ")[1],contextRepository=self.getRepository(),allowRefferingToRepositoriesByName=False) #TODO, ImageSource names with spaces or other funny characters...
+          imageURI = line.split(" ")[1]
+          return subuserlib.resolve.resolveImageSource(self.getUser(),imageURI,contextRepository=self.getRepository(),allowRefferingToRepositoriesByName=False) #TODO, ImageSource names with spaces or other funny characters...
         except IndexError:
-          raise Exception("Syntax error in SubuserImagefile one line"+str(lineNumber)+":\n"+line)
+          raise SyntaxError("Syntax error in SubuserImagefile one line "+str(lineNumber)+":\n"+line)
+        except KeyError:
+          raise SyntaxError("Error in SubuserImagefile one line "+str(lineNumber)+"\n Subuser image does not exist: \""+imageURI+"\"")
       lineNumber+=1
     return None
-  
+
+class SyntaxError(Exception):
+  pass
+

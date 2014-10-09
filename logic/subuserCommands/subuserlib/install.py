@@ -5,7 +5,18 @@
 #external imports
 import sys,os,stat,uuid,json
 #internal imports
-import subuserlib.classes.installedImage, subuserlib.installedImages,subuserlib.classes.dockerDaemon,subuserlib.installTime
+import subuserlib.classes.installedImage, subuserlib.installedImages,subuserlib.classes.dockerDaemon,subuserlib.installTime,subuserlib.verify
+
+
+def cleanUpAndExitOnError(user,error):
+  """
+  Takes a user and an exception, prints the exception to the screen, cleans up by resetting the subusers list to the one saved on disk and running verify, exits with exit code 1.
+  """
+  user.getRegistry().log(str(error))
+  user.getRegistry().log("Cleaning up.")
+  user.getRegistry().reloadSubusersFromDisk()
+  subuserlib.verify.verify(user)
+  sys.exit(1)
 
 def installFromBaseImage(imageSource):
   """
@@ -24,7 +35,7 @@ def installFromBaseImage(imageSource):
   try:
     userInput = sys.stdin.readline().strip()
   except KeyboardInterrupt:
-    sys.exit("\nOperation aborted.  Exiting.")
+    cleanUpAndExitOnError(imageSource.getUser(),"\nOperation aborted.  Exiting.")
 
   if userInput == "v":
     print('\n===================== SCRIPT CODE =====================\n')
@@ -42,10 +53,10 @@ def installFromBaseImage(imageSource):
     # Return the Id of the newly created image
     imageProperties = imageSource.getUser().getDockerDaemon().getImageProperties(imageTag)
     if imageProperites == None:
-      sys.exit("Image failed to build.  The script exited successfully, but did not result in any Docker image being imported.")
+      cleanUpAndExitOnError(imageSource.getUser(),"Image failed to build.  The script exited successfully, but did not result in any Docker image being imported.")
     else:
       return imageProperties["Id"]
-  sys.exit("Will not run install script.  Nothing to do.  Exiting.")
+  cleanUpAndExitOnError(imageSource.getUser(),"Will not run install script.  Nothing to do.  Exiting.")
 
 def installFromSubuserImagefile(imageSource, useCache=False,parent=None):
   """
@@ -57,7 +68,7 @@ def installFromSubuserImagefile(imageSource, useCache=False,parent=None):
     id = imageSource.getUser().getDockerDaemon().build(directoryWithDockerfile=dockerImageDir,rm=True,useCache=useCache,dockerfile=dockerFileContents)
     return id
   except subuserlib.classes.dockerDaemon.ImageBuildException as e:
-    sys.exit("Installing image failed: "+imageSource.getName()+"\n"+str(e))
+    cleanUpAndExitOnError(imageSource.getUser(),"Installing image failed: "+imageSource.getName()+"\n"+str(e))
 
 def installImage(imageSource, useCache=False,parent=None):
   """
@@ -72,7 +83,7 @@ def installImage(imageSource, useCache=False,parent=None):
   elif buildType == "BuildImage.sh":
     imageId = installFromBaseImage(imageSource)
   else:
-    sys.exit("No buildfile found: There needs to be a 'SubuserImagefile' or a 'BuildImage.sh' in the docker-image directory.")
+    cleanUpAndExitOnError(imageSource.getUser(),"No buildfile found: There needs to be a 'SubuserImagefile' or a 'BuildImage.sh' in the docker-image directory.")
 
   lastUpdateTime = imageSource.getPermissions()["last-update-time"]
   if lastUpdateTime == None:
@@ -89,7 +100,10 @@ def getImageSourceLineage(imageSource):
   """
   Return the lineage of the ProgrmSource, going from its base dependency up to itself.
   """
-  dependency = imageSource.getDependency()
+  try:
+    dependency = imageSource.getDependency()
+  except subuserlib.classes.imageSource.SyntaxError as syntaxError:
+    cleanUpAndExitOnError(imageSource.getUser(),"Error while building image: "+ str(syntaxError))
   if dependency:
     return getImageSourceLineage(dependency) + [imageSource]
   else:

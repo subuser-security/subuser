@@ -13,7 +13,7 @@ This is one of the most important modules in subuser.  This module has one funct
 """
 
 #external imports
-import shutil,os
+import shutil,os,sys
 #internal imports
 import subuserlib.install
 
@@ -70,3 +70,4 @@ def rebuildBinDir(user):
   for _,subuser in user.getRegistry().getSubusers().iteritems():
     if subuser.isExecutableShortcutInstalled():
       subuser.installExecutableShortcut()
+

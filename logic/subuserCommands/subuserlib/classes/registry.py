@@ -18,6 +18,12 @@ class Registry(subuserlib.classes.userOwnedObject.UserOwnedObject):
       self.__subusers = subuserlib.classes.subusers.Subusers(self.getUser())
     return self.__subusers
 
+  def reloadSubusersFromDisk(self):
+    """
+    Discard all changes to the subusers list in memory and reload from disk.
+    """
+    self.__subusers = None
+
   def getRepositories(self):
     if not self.__repositories:
       self.__repositories =      subuserlib.classes.repositories.Repositories(self.getUser())

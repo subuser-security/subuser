@@ -9,12 +9,7 @@ import subuserlib.classes.registry, subuserlib.classes.repositories, subuserlib.
 
 class User(object):
   """
-  This class provides a "base" User object used by subuser.  This is the stem of a tree like data structure which holds all of the various objects owned by a given user:
-
-   - settings
-   - subusers
-   - repository lists
-  ect.
+  This class provides a "base" User object used by subuser.  This is the stem of a tree like data structure which holds all of the various objects owned by a given user.
 
   You create a new User object by passing the home dir of the user.
 

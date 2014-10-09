@@ -61,6 +61,40 @@ def subuser(user,sysargs):
   Running garbage collector on temporary repositories...
   >>> user.getRegistry().getSubusers().keys()
   [u'foo']
+  >>> try:
+  ...   subuser.subuser(user,["subuser","add","broken-syntax","broken-syntax@file:///home/travis/remote-test-repo"])
+  ... except SystemExit:
+  ...   pass
+  Adding subuser broken-syntax broken-syntax@file:///home/travis/remote-test-repo
+  Verifying subuser configuration.
+  Verifying registry consistency...
+  Unregistering any non-existant installed images.
+  Checking if images need to be updated or installed...
+  Error while building image: Error in SubuserImagefile one line 0
+   Subuser image does not exist: ""
+  Cleaning up.
+  Verifying subuser configuration.
+  Verifying registry consistency...
+  Unregistering any non-existant installed images.
+  Checking if images need to be updated or installed...
+  Running garbage collector on temporary repositories...
+  >>> try:
+  ...   subuser.subuser(user,["subuser","add","broken-non-existant-dependency","broken-non-existant-dependency@file:///home/travis/remote-test-repo"])
+  ... except SystemExit:
+  ...   pass
+  Adding subuser broken-non-existant-dependency broken-non-existant-dependency@file:///home/travis/remote-test-repo
+  Verifying subuser configuration.
+  Verifying registry consistency...
+  Unregistering any non-existant installed images.
+  Checking if images need to be updated or installed...
+  Error while building image: Error in SubuserImagefile one line 0
+   Subuser image does not exist: "non-existant-I-do-not-exist!!!!!"
+  Cleaning up.
+  Verifying subuser configuration.
+  Verifying registry consistency...
+  Unregistering any non-existant installed images.
+  Checking if images need to be updated or installed...
+  Running garbage collector on temporary repositories...
   """
   options,args = parseCliArgs(sysargs)
   action = args[0]
@@ -83,10 +117,6 @@ def subuser(user,sysargs):
     sys.exit("Action "+args[0]+" does not exist. Try:\n subuser subuser --help")
 #################################################################################################
 
-
-
-
-  
 if __name__ == "__main__":
   user = subuserlib.classes.user.User()
   subuser(user,sys.argv)

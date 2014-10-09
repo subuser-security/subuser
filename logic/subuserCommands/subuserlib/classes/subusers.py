@@ -64,3 +64,4 @@ class Subusers(dict,subuserlib.classes.userOwnedObject.UserOwnedObject,subuserli
       executableShortcutInstalled = subuserAttributes["executable-shortcut-installed"]
       imageSource = subuserlib.classes.imageSource.ImageSource(user=user,name=name,repo=repo)
       self[subuserName] = subuserlib.classes.subuser.Subuser(user,subuserName,imageSource,imageId=imageId,executableShortcutInstalled=executableShortcutInstalled)
+
