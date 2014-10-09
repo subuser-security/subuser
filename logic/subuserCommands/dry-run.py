@@ -36,9 +36,11 @@ def dryRun(args):
   The image will be prepared using the Dockerfile:
   FROM 2
   RUN useradd --uid=1000 travis ;export exitstatus=$? ; if [ $exitstatus -eq 4 ] ; then echo uid exists ; elif [ $exitstatus -eq 9 ]; then echo username exists. ; else exit $exitstatus ; fi
+  RUN test -d /home/travis || mkdir /home/travis && chown travis /home/travis
   <BLANKLINE>
   The command to launch the image is:
-  docker 'run' '-i' '-t' '--rm' '--workdir=/home/travis/test-home' '--net=none' '--user=1000' 'imageId' '/usr/bin/foo'
+  docker 'run' '-i' '-t' '--rm' '--workdir=/home/travis/test-home' '-e' 'HOME=/home/travis/test-home' '--net=none' '--user=1000' 'imageId' '/usr/bin/foo'
+
 
 Running subusers installed through temporary repositories works as well.
  
@@ -59,9 +61,10 @@ Running subusers installed through temporary repositories works as well.
   The image will be prepared using the Dockerfile:
   FROM 4
   RUN useradd --uid=1000 travis ;export exitstatus=$? ; if [ $exitstatus -eq 4 ] ; then echo uid exists ; elif [ $exitstatus -eq 9 ]; then echo username exists. ; else exit $exitstatus ; fi
+  RUN test -d /home/travis || mkdir /home/travis && chown travis /home/travis
   <BLANKLINE>
   The command to launch the image is:
-  docker 'run' '-i' '-t' '--rm' '--workdir=/home/travis/test-home' '--net=none' '--user=1000' 'imageId' '/usr/bin/bar'
+  docker 'run' '-i' '-t' '--rm' '--workdir=/home/travis/test-home' '-e' 'HOME=/home/travis/test-home' '--net=none' '--user=1000' 'imageId' '/usr/bin/bar'
   >>> subuser.subuser(user,["subuser","remove","bar"])
   Removing subuser bar
   Verifying subuser configuration.
