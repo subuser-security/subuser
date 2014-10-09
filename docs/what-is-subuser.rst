@@ -3,8 +3,8 @@ What is subuser?
 
 .. raw :: html
 
-  <div id="marketingClaim"> <h1>Docker on the Desktop</h1> </div>
-  <dif id="slide1"><h1>Bedrock linux meets Android permissions lists</h1></div>
+  <div style="height: 10em;position:relative"><div id="marketingClaim" style="text-align:center;margin:auto;top:0;bottom:0;left:0;right:0;position:absolute"><h1>Docker on the Desktop</h1></div> </div>
+  <dif id="slide1"><h1>Bedrock linux meets Android permissions</h1></div>
   <div id="slide2"><h1>QubesOS light</h1></div>
   <div id="slide3"><h1>A package manager with an undo function</h1></div>
   <div id="slide4"><h1>Docker on the Desktop</h1></div>
