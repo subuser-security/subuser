@@ -103,7 +103,7 @@ class Repositories(collections.Mapping,subuserlib.classes.userOwnedObject.UserOw
     """
     id=0
     for _,repo in self.iteritems():
-      if repo.getName() == str(id):
+      if repo.getName() == str(id) or os.path.exists(os.path.join(self.getUser().getConfig().getRepositoriesDir(),str(id))):
         id = id + 1
     return str(id)
 
