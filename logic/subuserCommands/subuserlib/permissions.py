@@ -47,6 +47,10 @@ def getPermissions(permissionsFilePath):
       permissions=json.load(file_f, object_pairs_hook=collections.OrderedDict)
     except ValueError:
       sys.exit(permissionsFilePath+" is not valid json.  "+allImagesMustHavePermissions)
+    # Validate that the permissions are supported by this version of subuser.
+    for permission in permissions.keys():
+      if not permission in permissionDefaults:
+        sys.exit("Error: the permission \""+permission+"\" is not supported by your version of subuser.  Try updating first.")
     # Set permission defaults for permissions that are not explicitly specified in the permissions.json file
     if "basic-common-permissions" in permissions and permissions["basic-common-permissions"]:
       for basicCommonPermission in basicCommonPermissions:
