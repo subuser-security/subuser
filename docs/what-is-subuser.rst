@@ -17,7 +17,7 @@ As free software developers we like to share.  We surf the web and discover new 
 
 This is utopia.
 
-But sharing code isn't safe.  Every time we try out some strangers script we put ourselves at risk.  Despite the ocational claim that linux is a secure operating system, haphazardly sharing programs is NOT secure.
+But sharing code isn't safe.  Every time we try out some strangers script we put ourselves at risk.  Despite the occasional claim that linux is a secure operating system, haphazardly sharing programs is NOT secure.
 
 Furthermore, the fragmentation of linux desktop means that packaging work is needlessly repeated.  Programs that build and run on Fedora must be repackaged for Ubuntu.  This takes time away from creating great free open source software.
 
