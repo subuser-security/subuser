@@ -32,6 +32,7 @@ permissionDefaults = {
  ,"serial-devices":False
  ,"system-dbus": False
  ,"as-root": False
+ ,"sudo": False
  # Anarchistic permissions
  ,"privileged": False
  }

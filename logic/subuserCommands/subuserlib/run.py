@@ -24,6 +24,8 @@ def generateImagePreparationDockerfile(subuserToRun):
     dockerfileContents += "RUN groupadd uucp; export exitstatus=$? ; if [ $exitstatus -eq 4 ] ; then echo gid exists ; elif [ $exitstatus -eq 9 ]; then echo groupname exists. ; else exit $exitstatus ; fi\n"
     dockerfileContents += "RUN usermod -a -G dialout "+getpass.getuser()+"\n"
     dockerfileContents += "RUN usermod -a -G uucp "+getpass.getuser()+"\n"
+  if subuserToRun.getPermissions()["sudo"]:
+    dockerfileContents += "RUN (umask 337; echo \""+getpass.getuser()+" ALL=(ALL) NOPASSWD: ALL\" > /etc/sudoers.d/allowsudo )\n"
   return dockerfileContents
 
 def buildRunReadyImageForSubuser(subuserToRun):
