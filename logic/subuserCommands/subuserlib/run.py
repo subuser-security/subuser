@@ -109,6 +109,8 @@ def getPrettyCommand(subuserToRun,imageId,imageArgs):
   return "docker '"+"' '".join(command)+"'"
 
 def run(subuserToRun,imageArgs):
+  if not subuserToRun.getPermissions()["executable"]:
+    sys.exit("Cannot run subuser, no executable configured in permissions.json file.")
   def setupSymlinks():
     symlinkPath = os.path.join(subuserToRun.getHomeDirOnHost(),"Userdirs")
     destinationPath = "/userdirs"
