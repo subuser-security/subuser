@@ -202,6 +202,17 @@ Liberal permissions
 
  **Default**: `false`
 
+ * `sudo`: Grant the subuser sudo privileges within the container.
+
+ Ex:
+
+ ````json
+  ,"sudo"                     : true
+ ````
+
+ **Default**: `false`
+
+
 Anarchistic permissions
 -----------------------
 
