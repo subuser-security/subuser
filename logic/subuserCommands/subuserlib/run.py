@@ -67,7 +67,7 @@ def getPermissionFlagDict(subuserToRun):
   """
   return {
    # Conservative permissions
-   "stateful-home" : lambda p : ["-v="+subuserToRun.getHomeDirOnHost()+":"+subuserToRun.getDockersideHome()+":rw","-e","HOME="+subuserToRun.getDockersideHome()] if p else [],
+   "stateful-home" : lambda p : ["-v="+subuserToRun.getHomeDirOnHost()+":"+subuserToRun.getDockersideHome()+":rw","-e","HOME="+subuserToRun.getDockersideHome()] if p else ["-e","HOME="+subuserToRun.getDockersideHome()],
    "inherit-locale" : lambda p : passOnEnvVar("LANG")+passOnEnvVar("LANGUAGE") if p else [],
    "inherit-timezone" : lambda p : passOnEnvVar("TZ")+["-v=/etc/localtime:/etc/localtime:r"] if p else [],
    # Moderate permissions
