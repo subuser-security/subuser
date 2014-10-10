@@ -54,6 +54,7 @@ def subuser(user,sysargs):
   [u'foo', 'bar']
   >>> subuser.subuser(user,["subuser","remove","bar"])
   Removing subuser bar
+   If you wish to remove the subusers image, issue the command $ subuser remove-old-images
   Verifying subuser configuration.
   Verifying registry consistency...
   Unregistering any non-existant installed images.

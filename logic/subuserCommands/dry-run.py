@@ -67,6 +67,7 @@ Running subusers installed through temporary repositories works as well.
   docker 'run' '-i' '-t' '--rm' '--workdir=/home/travis/test-home' '-e' 'HOME=/home/travis/test-home' '--net=none' '--user=1000' 'imageId' '/usr/bin/bar'
   >>> subuser.subuser(user,["subuser","remove","bar"])
   Removing subuser bar
+   If you wish to remove the subusers image, issue the command $ subuser remove-old-images
   Verifying subuser configuration.
   Verifying registry consistency...
   Unregistering any non-existant installed images.

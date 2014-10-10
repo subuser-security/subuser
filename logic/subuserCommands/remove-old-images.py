@@ -38,6 +38,7 @@ def removeOldImages(user):
  [u'foo', u'bar']
  >>> subuserlib.subuser.remove(user,"bar")
  Removing subuser bar
+  If you wish to remove the subusers image, issue the command $ subuser remove-old-images
  Verifying subuser configuration.
  Verifying registry consistency...
  Unregistering any non-existant installed images.

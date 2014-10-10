@@ -25,6 +25,10 @@ def add(user,subuserName,imageSourceIdentifier):
 def remove(user,subuserName):
   if subuserName in user.getRegistry().getSubusers():
     user.getRegistry().logChange("Removing subuser "+subuserName)
+    subuserHome = user.getRegistry().getSubusers()[subuserName].getHomeDirOnHost()
+    if subuserHome:
+      user.getRegistry().logChange(" If you wish to remove the subusers home directory, issule the command $ rm -r "+subuserHome)
+    user.getRegistry().logChange(" If you wish to remove the subusers image, issue the command $ subuser remove-old-images")
     del user.getRegistry().getSubusers()[subuserName]
     subuserlib.verify.verify(user)
     user.getRegistry().commit()
