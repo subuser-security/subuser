@@ -44,11 +44,11 @@ As free software developers we like to share.  We surf the web and discover new 
 
 This is utopia.
 
-But sharing code isn't safe.  Every time we try out some strangers script we put ourselves at risk.  Despite the occasional claim that linux is a secure operating system, haphazardly sharing programs is NOT secure.
+But sharing code isn't safe.  Every time we try out some stranger's script we put ourselves at risk.  Despite the occasional claim that linux is a secure operating system, haphazardly sharing programs is NOT secure.
 
-Furthermore, the fragmentation of linux desktop means that packaging work is needlessly repeated.  Programs that build and run on Fedora must be repackaged for Ubuntu.  This takes time away from creating great free open source software.
+Furthermore, the fragmentation of the linux desktop means that packaging work is needlessly repeated.  Programs that build and run on Fedora must be repackaged for Ubuntu.  This takes time away from creating great free open source software.
 
-Subuser with Docker attack both problems symultaneously.  Docker provides an isolated and consistent environment for your programs to run in.  Subuser gives your desktop programs access to the reasources they need in order to function normally.
+Subuser with Docker attacks both problems simultaneously.  Docker provides an isolated and consistent environment for your programs to run in.  Subuser gives your desktop programs access to the resources they need in order to function normally.
 
 Subuser turns Docker containers into normal linux programs
 ------------------------------------------------------------
@@ -57,7 +57,7 @@ Right now I'm editing this file in `vim`.  `vim` is not installed on my computer
 
   $ vim README.md
 
-Subuser turns a docker container into a normal program.  But this program is not fully privilaged.  It can only access the directory from which it was called, `not my entire home dir <http://xkcd.com/1200/>`_.  Each subuser is assigned a specific set of permissions, just like in Android.  You can see an example `permissions.json` file bellow::
+Subuser turns a docker container into a normal program.  But this program is not fully privileged.  It can only access the directory from which it was called, `not my entire home dir <http://xkcd.com/1200/>`_.  Each subuser is assigned a specific set of permissions, just like in Android.  You can see an example `permissions.json` file below::
 
   {
     "description"                : "Simple universal text editor."

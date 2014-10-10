@@ -4,7 +4,7 @@ Using subuser - a quick tutorial
 Installing a program with subuser
 ---------------------------------
 
-You can see a list of instalable programs(also refered to as images) by doing::
+You can see a list of installable programs (also refered to as images) by doing::
 
   $ subuser list available
 

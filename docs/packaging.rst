@@ -1,7 +1,7 @@
 Packaging programs to run with subuser
 ======================================
 
-Subuser allows anyone to create and share repositories of subuser images.  This allows anyone to become a packager and maintainer of subuser images.  There is no need for any beurocracy, the process is entirely distributed.
+Subuser allows anyone to create and share repositories of subuser images.  This allows anyone to become a packager and maintainer of subuser images.  There is no need for any bureaucracy, the process is entirely distributed.
 
 Packaging programs for use with subuser is much simpler than packaging for say, Debian.  Furthermore, if your program is already packaged for a linux distribution then almost all of your work is already done.
 
