@@ -7,7 +7,7 @@ Related projects
 
  * `Bedrock linux <http://bedrocklinux.org>`_ 
 
- Bedrock linux is a project that I learned about long after I started working on subuser.  Like subuser, it allows you to install software from a variety of distributions with ease. However, where subuser intends to isolate programs as much as possible while maintaining usability, Bedrock Linux attempts to integrate the software completely. Bedrock Linux has a greater scope than subuser, in that any piece of the system - not just normal executables, but also system wide components such as Desktop environments, pid1/init, and even the bootloader and root filesystem - can each be acquired from different distributions and run together like one cohesive system.  You can see a marvelous video `here <http://www.youtube.com/watch?v=MuYMBCcgs98>`_.
+ Bedrock Linux is a project that I learned about long after I started working on subuser. Like subuser, it allows you to install software packaged for a variety of Linux distributions. Unlike subuser, which installs and runs programs in isolated environments running within a base system, Bedrock Linux mixes everything together at the same level without any segregation.
 
  * `Android permissions <http://developer.android.com/guide/topics/security/permissions.html>`_
 
