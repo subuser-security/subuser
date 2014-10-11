@@ -21,7 +21,7 @@ Related projects
 
  This is an academic project that I learned about after I started working on subuser.  It's main utility share's the name subuser. It has some of the same goals when it comes to security via containment.
 
- * `AppArmor <http://en.wikipedia.org/wiki/AppArmor>`_ , `SELinux <http://en.wikipedia.org/wiki/Security-Enhanced_Linux>`_, `TOMOYO <http://tomoyo.sourceforge.jp>`_
+ * `AppArmor <http://en.wikipedia.org/wiki/AppArmor>`_ , `SELinux <http://en.wikipedia.org/wiki/Security-Enhanced_Linux>`_, `TOMOYO <http://tomoyo.sourceforge.jp>`_, `Smack <http://schaufler-ca.com/home>`_
 
  These are competing programs which enforce `Mandatory Access Control(MAC) <http://en.wikipedia.org/wiki/Mandatory_access_control>`_ policies.  Those are either white lists or black lists of what the program is allowed to do.  While these peices of software work fine for protecting the system, they are complicated to set up and provide overly wide access to user data.  Normally, when a program is expected to work with user data under SELinux or Apparmour, that program is given full access to the user's home directory.
 
