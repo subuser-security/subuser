@@ -54,7 +54,7 @@ Subuser - Securing the linux desktop with Docker
   </script>
 
 
-  <center><embed id="presentationSVG" src="_static/images/subuser-website.svg" height="80%"></embed></center>
+  <center><embed id="presentationSVG" src="_static/images/subuser-website.svg" width="80%"></embed></center>
   <center><button onclick="previousSlide()">&lt;--</button><button id="playPauseButton" onclick="toggleAutoplay()">Pause</button><button onclick="nextSlide()">--&gt;</button></center>
 
 
