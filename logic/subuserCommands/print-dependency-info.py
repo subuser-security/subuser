@@ -23,17 +23,36 @@ def printDependencies(imageSourceIds):
  """
  Print the dependencies of the listed progam sources.
 
+ Tests
+ -----
+
+ **Setup:**
  >>> print_dependency_info = __import__("print-dependency-info")#import self
+
+ Prints a list of images that the image depends on, including itself.
+
  >>> print_dependency_info.printDependencies(["foo@default"])
  foo@default
+
+ If the image doesn't exist, tell us.
+
+ >>> try:
+ ...  print_dependency_info.printDependencies(["non-existant@default"])
+ ... except SystemExit as e:
+ ...  print(e)
+ The image non-existant@default does not exist.
+
  """
  user = subuserlib.classes.user.User()
 
  for imageSourceId in imageSourceIds:
-   imageSource = subuserlib.resolve.resolveImageSource(user,imageSourceId)
+   try:
+     imageSource = subuserlib.resolve.resolveImageSource(user,imageSourceId)
+   except KeyError:
+     sys.exit("The image "+imageSourceId+" does not exist.")
    indent = 0
    for imageSourceInLineage in subuserlib.install.getImageSourceLineage(imageSource):
-     displayLine = (" "*indent) + imageSourceInLineage.getName() + "@" + imageSourceInLineage.getRepository().getName()
+     displayLine = (" "*indent) + imageSourceInLineage.getIdentifier()
      print(displayLine)
      indent = indent + 1
   

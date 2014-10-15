@@ -18,44 +18,74 @@ def removeOldImages(user):
   """
   Remove images that are installed, but are not associated with any subusers.
 
- >>> remove_old_images = __import__("remove-old-images")#import self
- >>> import subuserlib.classes.user,subuserlib.subuser
- >>> user = subuserlib.classes.user.User()
- >>> user.getRegistry().getSubusers().keys()
- [u'foo']
- >>> subuserlib.subuser.add(user,"bar","bar@file:///home/travis/remote-test-repo")
- Adding new temporary repository file:///home/travis/remote-test-repo
- Adding subuser bar bar@file:///home/travis/remote-test-repo
- Verifying subuser configuration.
- Verifying registry consistency...
- Unregistering any non-existant installed images.
- Checking if images need to be updated or installed...
- Installing bar ...
- Installed new image for subuser bar
- Running garbage collector on temporary repositories...
- >>> user.getRegistry().getSubusers().keys()
- [u'foo', 'bar']
- >>> [i.getImageSourceName() for i in user.getInstalledImages().values()]
- [u'foo', u'bar']
- >>> subuserlib.subuser.remove(user,"bar")
- Removing subuser bar
-  If you wish to remove the subusers image, issue the command $ subuser remove-old-images
- Verifying subuser configuration.
- Verifying registry consistency...
- Unregistering any non-existant installed images.
- Checking if images need to be updated or installed...
- Running garbage collector on temporary repositories...
- >>> [i.getImageSourceName() for i in user.getInstalledImages().values()]
- [u'foo', u'bar']
- >>> remove_old_images.removeOldImages(user)
- Verifying subuser configuration.
- Verifying registry consistency...
- Unregistering any non-existant installed images.
- Checking if images need to be updated or installed...
- Running garbage collector on temporary repositories...
- Removing uneeded temporary repository: file:///home/travis/remote-test-repo
- >>> [i.getImageSourceName() for i in user.getInstalledImages().values()]
- [u'foo']
+  Tests
+  -----
+
+  **Setup:**
+
+  >>> remove_old_images = __import__("remove-old-images")#import self
+  >>> import subuserlib.classes.user,subuserlib.subuser
+  >>> user = subuserlib.classes.user.User()
+
+  Check our assumptions about what subusers are installed in the test environment.
+
+  >>> user.getRegistry().getSubusers().keys()
+  [u'foo']
+
+  Add a ``bar`` subuser, which we will then remove.  This will leave us with a leftover image.
+
+  >>> subuserlib.subuser.add(user,"bar","bar@file:///home/travis/remote-test-repo")
+  Adding new temporary repository file:///home/travis/remote-test-repo
+  Adding subuser bar bar@file:///home/travis/remote-test-repo
+  Verifying subuser configuration.
+  Verifying registry consistency...
+  Unregistering any non-existant installed images.
+  Checking if images need to be updated or installed...
+  Installing bar ...
+  Installed new image for subuser bar
+  Running garbage collector on temporary repositories...
+
+  Check to see if subuser ``bar`` was successfully added.
+
+  >>> user.getRegistry().getSubusers().keys()
+  [u'foo', 'bar']
+
+  Check to see if the image for ``bar`` was also installed.
+
+  >>> [i.getImageSourceName() for i in user.getInstalledImages().values()]
+  [u'foo', u'bar']
+
+  Remove the ``bar`` subuser.
+
+  >>> subuserlib.subuser.remove(user,"bar")
+  Removing subuser bar
+   If you wish to remove the subusers image, issue the command $ subuser remove-old-images
+  Verifying subuser configuration.
+  Verifying registry consistency...
+  Unregistering any non-existant installed images.
+  Checking if images need to be updated or installed...
+  Running garbage collector on temporary repositories...
+
+  See that the image for ``bar`` was indeed left behind.
+
+  >>> [i.getImageSourceName() for i in user.getInstalledImages().values()]
+  [u'foo', u'bar']
+
+  Now we use ``remove-old-images`` to clean up our installed images.
+
+  >>> remove_old_images.removeOldImages(user)
+  Verifying subuser configuration.
+  Verifying registry consistency...
+  Unregistering any non-existant installed images.
+  Checking if images need to be updated or installed...
+  Running garbage collector on temporary repositories...
+  Removing uneeded temporary repository: file:///home/travis/remote-test-repo
+
+  And now the uneccesary ``bar`` image is gone.
+
+  >>> [i.getImageSourceName() for i in user.getInstalledImages().values()]
+  [u'foo']
+ 
   """
   for installedImageId,installedImage in user.getInstalledImages().iteritems():
     imageInUse = False

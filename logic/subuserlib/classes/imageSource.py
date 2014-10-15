@@ -20,6 +20,15 @@ class ImageSource(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.
   def getName(self):
     return self.__name
 
+  def getIdentifier(self):
+    """
+    Return a standard human readable identifier for an ImageSource.
+    """
+    if self.getRepository().isTemporary():
+      return self.getName() + "@" + self.getRepository().getGitOriginURI()
+    else:
+      return self.getName() + "@" + self.getRepository().getName()
+
   def getRepository(self):
     return self.__repo
 

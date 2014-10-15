@@ -33,7 +33,13 @@ def dryRun(args):
 
   >>> dry_run = __import__("dry-run")
   >>> dry_run.dryRunTestSetup()
-  >>> dry_run.dryRun([sys.argv[0]]+["foo"])
+  >>> import subuser,subuserlib.classes.user
+  >>> user = subuserlib.classes.user.User()
+  >>> remove_old_images = __import__("remove-old-images")
+
+  If we dry run the basic foo test subuser, we will see the generated pre-run Dockerfile and also the docker command that will launch our subuser.
+
+  >>> dry_run.dryRun(["foo"])
   The image will be prepared using the Dockerfile:
   FROM 2
   RUN useradd --uid=1000 travis ;export exitstatus=$? ; if [ $exitstatus -eq 4 ] ; then echo uid exists ; elif [ $exitstatus -eq 9 ]; then echo username exists. ; else exit $exitstatus ; fi
@@ -42,13 +48,9 @@ def dryRun(args):
   The command to launch the image is:
   docker 'run' '-i' '-t' '--rm' '--workdir=/home/travis/test-home' '-e' 'HOME=/home/travis/test-home' '--net=none' '--user=1000' 'imageId' '/usr/bin/foo'
 
-
-Running subusers installed through temporary repositories works as well.
+  Running subusers installed through temporary repositories works as well.  Here, we add a subuser named bar, run it, and then remove it again.
  
-  >>> import subuser,subuserlib.classes.user
-  >>> remove_old_images = __import__("remove-old-images")
-  >>> user = subuserlib.classes.user.User()
-  >>> subuser.subuser(user,["subuser","add","bar","bar@file:///home/travis/remote-test-repo"])
+  >>> subuser.subuser(user,["add","bar","bar@file:///home/travis/remote-test-repo"])
   Adding new temporary repository file:///home/travis/remote-test-repo
   Adding subuser bar bar@file:///home/travis/remote-test-repo
   Verifying subuser configuration.
@@ -58,7 +60,10 @@ Running subusers installed through temporary repositories works as well.
   Installing bar ...
   Installed new image for subuser bar
   Running garbage collector on temporary repositories...
-  >>> dry_run.dryRun([sys.argv[0]]+["bar"])
+
+  The actual dry-run call.
+
+  >>> dry_run.dryRun(["bar"])
   The image will be prepared using the Dockerfile:
   FROM 4
   RUN useradd --uid=1000 travis ;export exitstatus=$? ; if [ $exitstatus -eq 4 ] ; then echo uid exists ; elif [ $exitstatus -eq 9 ]; then echo username exists. ; else exit $exitstatus ; fi
@@ -66,7 +71,10 @@ Running subusers installed through temporary repositories works as well.
   <BLANKLINE>
   The command to launch the image is:
   docker 'run' '-i' '-t' '--rm' '--workdir=/home/travis/test-home' '-e' 'HOME=/home/travis/test-home' '--net=none' '--user=1000' 'imageId' '/usr/bin/bar'
-  >>> subuser.subuser(user,["subuser","remove","bar"])
+
+  Cleanup.
+
+  >>> subuser.subuser(user,["remove","bar"])
   Removing subuser bar
    If you wish to remove the subusers image, issue the command $ subuser remove-old-images
   Verifying subuser configuration.
@@ -82,12 +90,12 @@ Running subusers installed through temporary repositories works as well.
   Running garbage collector on temporary repositories...
   Removing uneeded temporary repository: file:///home/travis/remote-test-repo
   """
-  if len(args) == 1 or {"help","-h","--help"} & set(args):
+  if len(args) == 0 or {"help","-h","--help"} & set(args):
     print(helpString)
     sys.exit()
 
-  subuserName = args[1]
-  argsToPassToImage = args[2:]
+  subuserName = args[0]
+  argsToPassToImage = args[1:]
 
   user = subuserlib.classes.user.User()
   if subuserName in user.getRegistry().getSubusers():
@@ -99,4 +107,4 @@ Running subusers installed through temporary repositories works as well.
     sys.exit(subuserName + " not found.\n"+helpString)
 
 if __name__ == "__main__":
-  dryRun(sys.argv)
+  dryRun(sys.argv[1:])

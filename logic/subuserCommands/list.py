@@ -24,7 +24,7 @@ def parseCliArgs(sysargs):
 """
   parser=optparse.OptionParser(usage=usage,description=description,formatter=subuserlib.commandLineArguments.HelpFormatterThatDoesntReformatDescription())
   parser.add_option("--short",dest="short",action="store_true",default=False,help="Only display the names of the images to be listed, and no other information.")
-  return parser.parse_args(args=sysargs[1:])
+  return parser.parse_args(args=sysargs)
 
 #################################################################################################
 
@@ -34,14 +34,20 @@ def list(sysargs):
 
   >>> import sys
   >>> import list #import self
-  >>> list.list([sys.argv[0]]+["list","available"])
+
+  Listing available images lists the images along with their default permissions.
+
+  >>> list.list(["available"])
   Images available for instalation from the repo: default
   foo:
    Description: 
    Maintainer: 
    Last update time(version): 0
    Executable: /usr/bin/foo
-  >>> list.list([sys.argv[0]]+["list","subusers"])
+
+  Similar result when listing subusers.
+
+  >>> list.list(["subusers"])
   The following subusers are registered.
   Subuser: foo
   ------------------
@@ -51,8 +57,15 @@ def list(sysargs):
    Maintainer: 
    Last update time(version): 0
    Executable: /usr/bin/foo
-  >>> list.list([sys.argv[0]]+["list","subusers","--short"])
+
+  In both cases, there is a ``--short`` option.
+
+  >>> list.list(["subusers","--short"])
   foo
+
+  >>> list.list(["available","--short"])
+  foo@default
+
   """
   options,args = parseCliArgs(sysargs)
  
@@ -65,9 +78,9 @@ def list(sysargs):
     for repoName,repository in user.getRegistry().getRepositories().iteritems():
       if not options.short:
         print("Images available for instalation from the repo: " + repoName)
-      for imageName,imageSource in repository.iteritems():
+      for _,imageSource in repository.iteritems():
         if options.short:
-          print(imageName)
+          print(imageSource.getIdentifier())
         else:
           imageSource.describe()
   
@@ -81,4 +94,4 @@ def list(sysargs):
         subuser.describe()
 
 if __name__ == "__main__":
-  list(sys.argv)
+  list(sys.argv[1:])

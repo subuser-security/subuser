@@ -27,6 +27,9 @@ def describe(sysargs):
   Describe subusers and images.
   
   >>> import describe #import self
+
+  Describing a subuser prints its permissions.
+
   >>> describe.describe(["describe","subuser","foo"])
   Subuser: foo
   ------------------
@@ -36,12 +39,18 @@ def describe(sysargs):
    Maintainer: 
    Last update time(version): 0
    Executable: /usr/bin/foo
+
+  Describing an image prints the default permissions for that image.
+
   >>> describe.describe(["describe","image","foo"])
   foo:
    Description: 
    Maintainer: 
    Last update time(version): 0
    Executable: /usr/bin/foo
+
+  Images can be refered to with their full paths as well.  Even remote images can be described.
+
   >>> describe.describe(["describe","image","foo@default"])
   foo:
    Description: 

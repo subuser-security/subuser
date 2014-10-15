@@ -18,7 +18,7 @@ EXAMPLE:
     $ subuser mark-as-updated firefox/permissions.json 
 """
   parser=optparse.OptionParser(usage=usage,description=description,formatter=subuserlib.commandLineArguments.HelpFormatterThatDoesntReformatDescription())
-  return parser.parse_args(args=sysargs[1:])
+  return parser.parse_args(args=sysargs)
 
 #################################################################################################
 
@@ -26,24 +26,33 @@ def markAsUpdated(sysargs):
   """
   Mark the given images as needing to be updated by setting their 'last-update-time' attributes to the current time.
 
+  Tests
+  -----
+
+  Setup
+
   >>> mark_as_updated = __import__("mark-as-updated")#import self, os
   >>> import subuserlib.classes.user,os
   >>> user = subuserlib.classes.user.User()
   >>> foosPermissionsFilePath = os.path.join(user.getRegistry().getRepositories()["default"]["foo"].getSourceDir(),"permissions.json")
-  >>> mark_as_updated.markAsUpdated(["mark-as-updated",foosPermissionsFilePath])
 
-   Here we test if the updated update time was actually saved correctly.  16 is the length of a standard formatted subuser image update time.
+  We mark the program source's permissions.json file.
 
-   >>> len(user.getRegistry().getRepositories()["default"]["foo"].getPermissions()["last-update-time"])
-   16
+  >>> mark_as_updated.markAsUpdated([foosPermissionsFilePath])
+
+  We test if the updated update time was actually saved correctly.  16 is the length of a standard formatted subuser image update time.
+
+  >>> len(user.getRegistry().getRepositories()["default"]["foo"].getPermissions()["last-update-time"])
+  16
 
   Cleanup:
-   >>> import subuserlib.git
-   >>> subuserlib.git.runGit(["checkout","HEAD",user.getRegistry().getRepositories()["default"]["foo"].getPermissions().getWritePath()],cwd=user.getRegistry().getRepositories()["default"].getRepoPath())
+
+  >>> import subuserlib.git
+  >>> subuserlib.git.runGit(["checkout","HEAD",user.getRegistry().getRepositories()["default"]["foo"].getPermissions().getWritePath()],cwd=user.getRegistry().getRepositories()["default"].getRepoPath())
 
   If the file doesn't exist, we print a user friendly error message.
 
-  >>> mark_as_updated.markAsUpdated(["mark-as-updated","/non-existant-path/permissions.json"])
+  >>> mark_as_updated.markAsUpdated(["/non-existant-path/permissions.json"])
   Traceback (most recent call last):
   SystemExit: Could not mark the file /non-existant-path/permissions.json as needing an update.  File does not exist.
   """
@@ -59,4 +68,4 @@ def markAsUpdated(sysargs):
       sys.exit("Could not mark the file "+permissionsFile+" as needing an update.  File does not exist.")
 
 if __name__ == "__main__":
-  markAsUpdated(sys.argv)
+  markAsUpdated(sys.argv[1:])

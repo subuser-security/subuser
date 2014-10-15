@@ -25,20 +25,42 @@ def parseCliArgs(sysargs):
 
   """
   parser=optparse.OptionParser(usage=usage,description=description,formatter=subuserlib.commandLineArguments.HelpFormatterThatDoesntReformatDescription())
-  return parser.parse_args(args=sysargs[1:])
+  return parser.parse_args(args=sysargs)
 
 def repository(user,sysargs):
   """
+  Manage named subuser repositories.
+
+  Tests
+  -----
+
+  **Setup:**
+
   >>> import repository #import self
   >>> user = subuserlib.classes.user.User()
+
+  Check our assumptions about the initial state of the test environment.
+
   >>> user.getRegistry().getRepositories().keys()
   [u'default']
-  >>> repository.repository(user,["repository","add","remote-repo","file:///home/travis/remote-test-repo"])
+
+  Add a new repository named ``remote-repo``.
+
+  >>> repository.repository(user,["add","remote-repo","file:///home/travis/remote-test-repo"])
   Adding new repository remote-repo
+
+  See that it was actually successfully added.
+
   >>> user.getRegistry().getRepositories().keys()
   [u'default', 'remote-repo']
-  >>> repository.repository(user,["repository","remove","remote-repo"])
+
+  Remove the ``remote-repo`` repository.
+
+  >>> repository.repository(user,["remove","remote-repo"])
   Removing repository remote-repo
+
+  See that it was actually removed.
+
   >>> user.getRegistry().getRepositories().keys()
   [u'default']
   """
@@ -62,5 +84,5 @@ def repository(user,sysargs):
 
 if __name__ == "__main__":
   user = subuserlib.classes.user.User()
-  repository(user,sys.argv)
+  repository(user,sys.argv[1:])
 
