@@ -1,4 +1,5 @@
 #!/usr/bin/python
+import pathConfig
 import subuserlib.test
 
 subuserlib.test.testing = True

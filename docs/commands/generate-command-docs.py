@@ -1,6 +1,6 @@
 #!/usr/bin/python
 import sys,subprocess
-sys.path.append("../../logic/subuserCommands")
+sys.path.append("../../logic")
 import subuserlib.commands
 
 builtInCommands = subuserlib.commands.getBuiltInSubuserCommands()

@@ -7,7 +7,7 @@ import os
 #internal imports
 import executablePath,paths
 
-nonCommands = {"__init__.py", "__init__.pyc", "subuserlib"}
+nonCommands = {"__init__.py", "__init__.pyc", "pathConfig.py", "pathConfig.pyc"}
 
 def getBuiltInSubuserCommands():
   """ Get a list of the names of the built in subuser commands. """
