@@ -70,4 +70,5 @@ Index
   commands/index
   packaging
   flaws
+  community
   related-projects
