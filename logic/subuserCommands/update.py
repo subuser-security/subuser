@@ -4,6 +4,7 @@
 
 # This command updates all or some of the installed subuser images.
 
+import pathConfig
 #external imports
 import optparse,sys
 #internal imports

@@ -12,5 +12,5 @@ home = os.path.expanduser("~")
 
 def getSubuserDir():
   """ Get the toplevel directory for subuser. """
-  return os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))))) # BLEGH!
+  return os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))))) # BLEGH!
 
