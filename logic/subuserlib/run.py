@@ -33,7 +33,7 @@ def buildRunReadyImageForSubuser(subuserToRun):
   """
   Returns the Id of the Docker image to be run.
   """
-  return subuserToRun.getUser().getDockerDaemon().build(None,quiet=True,useCache=True,rm=False,dockerfile=generateImagePreparationDockerfile(subuserToRun))
+  return subuserToRun.getUser().getDockerDaemon().build(None,quiet=True,quietClient=True,useCache=True,rm=False,dockerfile=generateImagePreparationDockerfile(subuserToRun))
 
 def getSerialDevices():
   return [device for device in os.listdir("/dev/") if device.startswith("ttyS") or device.startswith("ttyUSB") or device.startswith("ttyACM")]

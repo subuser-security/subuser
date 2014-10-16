@@ -76,9 +76,13 @@ class DockerDaemon(subuserlib.classes.userOwnedObject.UserOwnedObject):
     else:
       responce.read()
 
-  def build(self,directoryWithDockerfile=None,useCache=True,rm=False,forceRm=False,quiet=False,tag=None,dockerfile=None):
+  def build(self,directoryWithDockerfile=None,useCache=True,rm=False,forceRm=False,quiet=False,tag=None,dockerfile=None,quietClient=False):
     """
     Build a Docker image.  If a the dockerfile argument is set to a string, use that string as the Dockerfile.  Returns the newly created images Id or raises an exception if the build fails.  
+
+    Most of the options are passed directly on to Docker.
+
+    The quietClient option makes it so that this function does not print any of Docker's status messages when building.
     """
     # Inspired by and partialy taken from https://github.com/docker/docker-py
     queryParameters =  {
@@ -114,7 +118,7 @@ class DockerDaemon(subuserlib.classes.userOwnedObject.UserOwnedObject):
     chunk = None
     while chunk == None or not chunk == "":
       chunk = response.read(80)
-      if "\n" in chunk:
+      if not quietClient and "\n" in chunk:
         try:
           lineStart = output.rindex("\n")
         except ValueError:
