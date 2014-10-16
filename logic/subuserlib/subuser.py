@@ -8,6 +8,8 @@ import sys
 import subuserlib.classes.user,subuserlib.resolve,subuserlib.classes.subuser,subuserlib.verify,subuserlib.update
 
 def add(user,subuserName,imageSourceIdentifier):
+  if subuserName in user.getRegistry().getSubusers():
+    sys.exit("A subuser named "+subuserName+" already exists.")
   try:
     try:
       imageSource = subuserlib.resolve.resolveImageSource(user,imageSourceIdentifier)
