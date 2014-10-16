@@ -56,9 +56,9 @@ Create an `permissions.json` file.  Here is an example::
 
 **Note**: Listing every permission is not necessary.
 
-You can find a full specification for the `permissions.json` file format `here <https://github.com/subuser-security/subuser-standard/blob/master/permissions-dot-json-file-format.md>`_.
+You can find a full specification for the `permissions.json` file format :doc:`here <subuser-standard/permissions-dot-json-file-format>`.
 
- b. Create a directory called `docker-image` and add a `SubuserImagefile` to that directory.  This is the same as a Dockerfile except for the adition of a special `FROM-SUBUSER-IMAGE` command which takes `the identifier of a subuser image source <https://github.com/subuser-security/subuser-standard/blob/master/image-source-identifiers.md>`_ as it's argument. For information on creating a Dockerfile, please see the `official documentation for writting Dockerfiles <https://docs.docker.com/reference/builder/>`_.
+ b. Create a directory called `docker-image` and add a `SubuserImagefile` to that directory.  This is the same as a Dockerfile except for the adition of a special `FROM-SUBUSER-IMAGE` command which takes :doc:`the identifier of a subuser image source <subuser-standard/image-source-identifiers>` as it's argument. For information on creating a Dockerfile, please see the `official documentation for writting Dockerfiles <https://docs.docker.com/reference/builder/>`_.
 
 Example::
 

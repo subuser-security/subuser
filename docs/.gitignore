@@ -3,3 +3,4 @@ commands/*
 !commands/index.rst
 !commands/generate-command-docs.py
 _themes/sphinx_rtd_theme/static/images/subuser-website.svg
+subuser-standard

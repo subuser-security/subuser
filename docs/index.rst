@@ -69,6 +69,7 @@ Index
   tutorial-use
   commands/index
   packaging
+  subuser-standard/standard
   flaws
   community
   related-projects
