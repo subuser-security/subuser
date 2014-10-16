@@ -3,7 +3,7 @@
 # If it is not, please file a bug report.
 
 #external imports
-import urllib,tarfile,os,tempfile,fnmatch,re,json,StringIO,httplib
+import urllib,tarfile,os,tempfile,fnmatch,re,json,StringIO,httplib,sys
 #internal imports
 import subuserlib.subprocessExtras,subuserlib.classes.userOwnedObject,subuserlib.classes.uhttpConnection,subuserlib.docker,subuserlib.test,subuserlib.classes.mockDockerDaemon
 
@@ -98,14 +98,34 @@ class DockerDaemon(subuserlib.classes.userOwnedObject.UserOwnedObject):
     with tempfile.TemporaryFile() as tmpArchive:
       archiveBuildContext(tmpArchive,directoryWithDockerfile,excludePatterns,dockerfile=dockerfile)
       self.getConnection().request("POST","/build?"+queryParametersString,body=tmpArchive)
-      response = self.getConnection().getresponse()
+      try:
+        response = self.getConnection().getresponse()
+      except httplib.ResponseNotReady as rnr:
+        raise ImageBuildException(rnr)
     
     if response.status != 200:
       raise ImageBuildException("Building image failed.\n"
                      +"status: "+str(response.status)+"\n"
                      +"Reason: "+response.reason+"\n"
                      +response.read())
-    output = response.read()
+
+    # Warning, reading from an httpresponse is not exactly high level programming ;)
+    output = ""
+    chunk = None
+    while chunk == None or not chunk == "":
+      chunk = response.read(80)
+      if "\n" in chunk:
+        try:
+          lineStart = output.rindex("\n")
+        except ValueError:
+          lineStart = 0
+        lineContainingRegion = output[lineStart:] + chunk[:chunk.rindex("\n")]
+        for line in lineContainingRegion.split("\n"):
+          if line:
+            sys.stdout.write(json.loads(line)["stream"])
+      output += chunk
+    # Done with low leveliness.
+    # Now we move to regex code stolen from the official python Docker bindings.
     search = r'Successfully built ([0-9a-f]+)'
     match = re.search(search, output)
     if not match:
