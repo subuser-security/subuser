@@ -9,6 +9,15 @@ Related projects
 
  Bedrock Linux is a project that I learned about long after I started working on subuser. Like subuser, it allows you to install software packaged for a variety of Linux distributions. Unlike subuser, which installs and runs programs in isolated environments running within a base system, Bedrock Linux mixes everything together at the same level without any segregation.
 
+ * `zero-install <http://zero-install.sourceforge.net/>`_, `Portable Linux Apps <http://portablelinuxapps.org/>`_, `Autopackage <https://en.wikipedia.org/wiki/Autopackage>`_, `Listaller <http://listaller.tenstral.net/>`_, and to a lesser extent: `PPAs <http://www.ubuntu.com/news/launchpad-ppa>`_ and `One Click Install <http://en.opensuse.org/openSUSE:One_Click_Install>`_
+
+ These allow one to package software "universally" so that the software may be installed and run on any distribution.  They have two flaws:
+
+  - It is hard to package software for these systems
+  - They don't deal with the security implications of running untrusted third party code
+
+ Subuser solves both of these problems.
+
  * `Android permissions <http://developer.android.com/guide/topics/security/permissions.html>`_
 
  Subuser's permission sets were inspired by Android permissions.  We build off experience from the Android project and avoid the mistakes of using overly broad permissions and permissions that the user cannot easily deny.
