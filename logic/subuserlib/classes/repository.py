@@ -2,6 +2,10 @@
 # This file should be compatible with both Python 2 and 3.
 # If it is not, please file a bug report.
 
+"""
+A repository is a collection of C{ImageSource}s which are published in a git repo.
+"""
+
 #external imports
 import subprocess,os,shutil
 #internal imports

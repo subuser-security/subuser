@@ -2,6 +2,10 @@
 # This file should be compatible with both Python 2 and 3.
 # If it is not, please file a bug report.
 
+"""
+Module used for loading multiple json config files, where attributes consequtively over-ride eachother.
+"""
+
 #external imports
 import os,inspect,json
 #internal imports
@@ -44,8 +48,8 @@ def expandPathsInDict(homeDir,pathAttributes,dict):
 def getConfig(configFileHierarchy):
   """ This function is used for loading hierarchical config files in subuser.  That is, loading config.json and repositories.json.  For more information on config file hierarchies, see the documentation for these two files in the subuser standard:
 
- config.json - https://github.com/subuser-security/subuser-standard/blob/master/config-dot-json-file-format.md
- repositories.json - https://github.com/subuser-security/subuser-standard/blob/master/repositories-dot-json-file-format.md
+ - U{config.json <http://subuser.org/subuser-standard/serializations/config-dot-json-file-format.html>}
+ - U{repositories.json <http://subuser.org/subuser-standard/serializations/registry/repositories-dot-json-file-format.html>}
 
 It takes a hierarchy(a list of paths) of config files starting with the config file with the highest precidence and going to the config file with the least precidence.
 

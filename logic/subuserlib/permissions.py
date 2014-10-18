@@ -2,6 +2,10 @@
 # This file should be compatible with both Python 2 and 3.
 # If it is not, please file a bug report.
 
+"""
+Module used for the loading and saving of permissions.json files. Contains the default permissions list.
+"""
+
 #external imports
 import json,collections,sys,os
 #internal imports

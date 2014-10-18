@@ -2,6 +2,10 @@
 # This file should be compatible with both Python 2 and 3.
 # If it is not, please file a bug report.
 
+"""
+This is the list of repositories from which subuser images may be installed or updated.
+"""
+
 #external imports
 import os,collections,json
 #internal imports

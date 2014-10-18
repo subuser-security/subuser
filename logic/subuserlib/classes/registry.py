@@ -2,6 +2,10 @@
 # This file should be compatible with both Python 2 and 3.
 # If it is not, please file a bug report.
 
+"""
+Each user's settings are stored in a "registry". This is a git repository with a set of json files which store the state of the subuser installation.
+"""
+
 #external imports
 import os
 #internal imports

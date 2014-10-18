@@ -2,16 +2,20 @@
 # This file should be compatible with both Python 2 and 3.
 # If it is not, please file a bug report.
 
+"""
+Module used for determining non-user-configurable paths.
+"""
+
 #external imports
 import os,sys,inspect,json
 #internal imports
-import permissions,basicPaths
+import subuserlib.basicPaths
 
-home = basicPaths.home
+home = subuserlib.basicPaths.home
 
 def getSubuserDir():
   """ Get the toplevel directory for subuser. """
-  return basicPaths.getSubuserDir()
+  return subuserlib.basicPaths.getSubuserDir()
 
 def getDockersideScriptsPath():
   return os.path.join(getSubuserDir(),"logic","dockerside-scripts")

@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 # This file should be compatible with both Python 2 and 3.
 # If it is not, please file a bug report.
-
-# This command updates all or some of the installed subuser images.
+"""
+High level operations used for updating, rolling back, locking ect.
+"""
 
 #external imports
 #import ..
@@ -11,6 +12,9 @@ import subuserlib.verify,subuserlib.git,subuserlib.subprocessExtras
 
 #####################################################################################
 def updateAll(user):
+  """
+  This command updates all or some of the installed subuser images.
+  """
   user.getRegistry().log("Updating...")
   for _,repository in user.getRegistry().getRepositories().iteritems():
     repository.updateSources()

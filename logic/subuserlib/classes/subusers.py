@@ -2,6 +2,10 @@
 # This file should be compatible with both Python 2 and 3.
 # If it is not, please file a bug report.
 
+"""
+This is the list of subusers controled by a given user.
+"""
+
 #external imports
 import os,json,collections,sys
 #internal imports

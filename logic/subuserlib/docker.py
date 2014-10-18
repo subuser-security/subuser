@@ -2,16 +2,21 @@
 # This file should be compatible with both Python 2 and 3.
 # If it is not, please file a bug report.
 
+"""
+This module helps us interact with the Docker executable directly.
+"""
+
+
 #external imports
 import sys,os,getpass,grp,subprocess
 #internal imports
-import subprocessExtras,executablePath
+import subuserlib.subprocessExtras,subuserlib.executablePath
 
 def getDockerExecutable():
   """ Return the name of the docker executable or None if docker is not installed. """
-  if executablePath.which("docker.io"): # Docker is called docker.io on debian.
+  if subuserlib.executablePath.which("docker.io"): # Docker is called docker.io on debian.
     return "docker.io"
-  if executablePath.which("docker"):
+  if subuserlib.executablePath.which("docker"):
     return "docker"
   return None
 
@@ -45,4 +50,4 @@ def getDockerOutput(args):
 
 def runDockerAndExitIfItFails(args,cwd=None):
   """ Run docker with the given command line arguments.  If the command returns a non-zero exit code, exit with an error message. """
-  subprocessExtras.subprocessCheckedCall([getAndVerifyDockerExecutable()]+args,cwd=cwd)
+  subuserlib.subprocessExtras.subprocessCheckedCall([getAndVerifyDockerExecutable()]+args,cwd=cwd)

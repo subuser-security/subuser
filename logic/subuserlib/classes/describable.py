@@ -2,6 +2,10 @@
 # This file should be compatible with both Python 2 and 3.
 # If it is not, please file a bug report.
 
+"""
+If you want to print a description of an object to standard output, make that object describable.
+"""
+
 #external imports
 import abc
 #internal imports

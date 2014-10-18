@@ -2,6 +2,10 @@
 # This file should be compatible with both Python 2 and 3.
 # If it is not, please file a bug report.
 
+"""
+The C{User} object is the base object which owns all other objects in a running subuser instance.
+"""
+
 #external imports
 import getpass, os, sys
 #internal imports

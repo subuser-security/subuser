@@ -2,6 +2,10 @@
 # This file should be compatible with both Python 2 and 3.
 # If it is not, please file a bug report.
 
+"""
+This module provides the usefull function C{which} which allows us to find the full path of a given executable and determine if an executable is present on the given system.
+"""
+
 #external imports
 import os
 #internal imports
@@ -13,6 +17,12 @@ def isExecutable(fpath):
 
 # Origonally taken from: http://stackoverflow.com/questions/377017/test-if-executable-exists-in-python
 def which(program):
+  """
+  @type program: string
+  @param program: The short name of the executable.  Ex: "vim"
+  @rtype: str or None
+  @return: Returns the full path of a given executable.  Or None, of the executable is not present on the given system.
+  """
   fpath, fname = os.path.split(program)
 
   if not fpath == '':
@@ -25,7 +35,6 @@ def which(program):
     programMatches = queryPATH(matchesImage)
     if len(programMatches) > 0:
       return programMatches[0]
-   
   return None
 
 def queryPATH(test):

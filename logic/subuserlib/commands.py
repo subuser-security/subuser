@@ -1,19 +1,22 @@
 #!/usr/bin/env python
 # This file should be compatible with both Python 2 and 3.
 # If it is not, please file a bug report.
+"""
+This module helps us figure out which subuser subcommands can be called.
+"""
 
 #external imports
 import os
 #internal imports
-import executablePath,paths
+import subuserlib.executablePath,subuserlib.paths
 
-nonCommands = {"__init__.py", "__init__.pyc", "pathConfig.py", "pathConfig.pyc"}
+nonCommands = {"__init__.py", "pathConfig.py"}
 
 def getBuiltInSubuserCommands():
   """ Get a list of the names of the built in subuser commands. """
-  apparentCommandsSet = set( os.listdir(paths.getSubuserCommandsDir()))
+  apparentCommandsSet = set( os.listdir(subuserlib.paths.getSubuserCommandsDir()))
   commands = list(apparentCommandsSet.difference(nonCommands))
-  return [command[:-3] for command in commands] #remove the .py suffixes.
+  return [command[:-3] for command in commands if not command.endswith(".pyc")] #remove the .py suffixes.
 
 def getExternalSubuserCommands():
   """ Return the list of "external" subuser commands.  These are not built in commands but rather stand alone executables which appear in the user's $PATH and who's names start with "subuser-" """
@@ -22,7 +25,7 @@ def getExternalSubuserCommands():
     directory, executableName = os.path.split(path)
     return executableName.startswith("subuser-")
 
-  externalCommandPaths = executablePath.queryPATH(isPathToSubuserCommand)
+  externalCommandPaths = subuserlib.executablePath.queryPATH(isPathToSubuserCommand)
 
   externalCommands = []
   subuserPrefixLength=len("subuser-")
@@ -38,7 +41,7 @@ def getSubuserCommands():
   return getBuiltInSubuserCommands() + getExternalSubuserCommands()
 
 def getSubuserCommandPath(command):
-  builtInCommandPath = os.path.join(paths.getSubuserCommandsDir(),command)
+  builtInCommandPath = os.path.join(subuserlib.paths.getSubuserCommandsDir(),command)
   if os.path.exists(builtInCommandPath):
     return builtInCommandPath
   elif os.path.exists(builtInCommandPath+".py"):

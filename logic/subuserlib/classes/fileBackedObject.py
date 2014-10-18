@@ -2,6 +2,10 @@
 # This file should be compatible with both Python 2 and 3.
 # If it is not, please file a bug report.
 
+"""
+If an object has persistant state which needs to be serialzed to disk, that object should be backed by a file.
+"""
+
 #external imports
 import abc
 #internal imports

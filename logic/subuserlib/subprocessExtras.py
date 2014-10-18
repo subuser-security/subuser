@@ -2,6 +2,10 @@
 # This file should be compatible with both Python 2 and 3.
 # If it is not, please file a bug report.
 
+"""
+Helper functions for running foreign executables.
+"""
+
 #external imports
 import sys,subprocess,os
 #internal imports

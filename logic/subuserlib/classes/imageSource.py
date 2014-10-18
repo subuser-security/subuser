@@ -2,6 +2,10 @@
 # This file should be compatible with both Python 2 and 3.
 # If it is not, please file a bug report.
 
+"""
+Images in subuser are built from ImageSource objects.
+"""
+
 #external imports
 import subprocess,os,getpass
 #internal imports

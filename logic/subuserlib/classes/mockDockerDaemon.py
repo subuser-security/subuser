@@ -2,6 +2,10 @@
 # This file should be compatible with both Python 2 and 3.
 # If it is not, please file a bug report.
 
+"""
+In order to make our test suit work, we must use a MockDockerDaemon rather than communicating with a real Docker instance.
+"""
+
 #external imports
 import uuid
 #internal imports

@@ -23,7 +23,7 @@ def verify(user):
       - Registry is consistent; warns the user about subusers that point to non-existant source images.
      - For each subuser there is an up-to-date image installed.
      - No-longer-needed temporary repositories are removed. All temporary repositories have at least one subuser who's image is built from one of the repository's image sources.
-      - No-longer-needed installed images are removed.
+     - No-longer-needed installed images are removed.
   """
   user.getRegistry().log("Verifying subuser configuration.")
   verifyRegistryConsistency(user)

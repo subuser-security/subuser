@@ -3,6 +3,10 @@
 # If it is not, please file a bug report.
 # Taken from: http://www.openpanel.com/2007/08/http-on-unix-sockets-with-python/
 
+"""
+This module allows us to communicate using http over standard unix sockets.
+"""
+
 #external imports
 import socket,httplib
 #internal imports

@@ -2,10 +2,14 @@
 # This file should be compatible with both Python 2 and 3.
 # If it is not, please file a bug report.
 
+"""
+Each user has a set of images that have been installed.
+"""
+
 #external imports
 #import ...
 #internal imports
-import subuserlib.classes.userOwnedObject,subuserlib.dockerImages
+import subuserlib.classes.userOwnedObject
 
 class InstalledImage(subuserlib.classes.userOwnedObject.UserOwnedObject):
   __imageId = None
