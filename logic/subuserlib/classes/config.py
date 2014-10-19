@@ -19,11 +19,11 @@ class Config(subuserlib.classes.userOwnedObject.UserOwnedObject):
     configFileInEtc = "/etc/subuser/config.json"
     configFileInSubuserDir = os.path.join(subuserlib.paths.getSubuserDir(),"config.json")
     return [configFileInHomeDir,configFileInEtc,configFileInSubuserDir]
-  
+
   def _expandPathsInConfig(self,config):
     """ Go through a freshly loaded config file and expand any environment variables in the paths. """
     subuserlib.loadMultiFallbackJsonConfigFile.expandPathsInDict(self.getUser().homeDir,["bin-dir","registry-dir","installed-images-list","user-set-permissions-dir","subuser-home-dirs-dir","repositories-dir"],config)
-  
+
   def _loadConfig(self):
     """ Loads the subuser config: a dictionary of settings used by subuser. """
     configFileHierarchy = self._getSubuserConfigPaths()

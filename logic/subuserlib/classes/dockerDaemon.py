@@ -82,7 +82,7 @@ class DockerDaemon(subuserlib.classes.userOwnedObject.UserOwnedObject):
 
   def build(self,directoryWithDockerfile=None,useCache=True,rm=False,forceRm=False,quiet=False,tag=None,dockerfile=None,quietClient=False):
     """
-    Build a Docker image.  If a the dockerfile argument is set to a string, use that string as the Dockerfile.  Returns the newly created images Id or raises an exception if the build fails.  
+    Build a Docker image.  If a the dockerfile argument is set to a string, use that string as the Dockerfile.  Returns the newly created images Id or raises an exception if the build fails.
 
     Most of the options are passed directly on to Docker.
 
@@ -110,7 +110,7 @@ class DockerDaemon(subuserlib.classes.userOwnedObject.UserOwnedObject):
         response = self.getConnection().getresponse()
       except httplib.ResponseNotReady as rnr:
         raise ImageBuildException(rnr)
-    
+
     if response.status != 200:
       raise ImageBuildException("Building image failed.\n"
                      +"status: "+str(response.status)+"\n"

@@ -29,11 +29,11 @@ def getExternalSubuserCommands():
 
   externalCommands = []
   subuserPrefixLength=len("subuser-")
-  for externalCommandPath in externalCommandPaths: 
+  for externalCommandPath in externalCommandPaths:
     commandDir, executableName = os.path.split(externalCommandPath)
     commandName = executableName[subuserPrefixLength:]
     externalCommands.append(commandName)
-  
+
   return list(set(externalCommands)) # remove duplicate entries
 
 def getSubuserCommands():
@@ -45,8 +45,7 @@ def getSubuserCommandPath(command):
   if os.path.exists(builtInCommandPath):
     return builtInCommandPath
   elif os.path.exists(builtInCommandPath+".py"):
-
     return (builtInCommandPath+".py")
   else:
-    externalCommandPath = executablePath.which("subuser-"+command)
+    externalCommandPath = subuserlib.executablePath.which("subuser-"+command)
     return externalCommandPath

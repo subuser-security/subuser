@@ -7,13 +7,13 @@ This module is used to parse the image source identifiers used to identify image
 """
 
 #external imports
-import sys
+#import ...
 #internal imports
 import subuserlib.classes.subuser, subuserlib.classes.repository, subuserlib.classes.imageSource
 
 def resolveImageSource(user,imageSourcePath,contextRepository=None,allowRefferingToRepositoriesByName=True):
   """
-  From a image source identifier path return a ProgamSource object. 
+  From a image source identifier path return a ProgamSource object.
 
   >>> user = subuserlib.classes.user.User()
 
@@ -46,7 +46,7 @@ def resolveImageSource(user,imageSourcePath,contextRepository=None,allowRefferin
   splitImageIdentifier = imageSourcePath.split("@",1)
   imageName = splitImageIdentifier[0]
   # For identifiers of the format:
-  # "foo" 
+  # "foo"
   if len(splitImageIdentifier)==1:
     repository = contextRepository
   # "foo@bar"

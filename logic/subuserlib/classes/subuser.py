@@ -7,7 +7,7 @@ A subuser is an entity that runs within a Docker container and has a home direct
 """
 
 #external imports
-import subprocess,os,stat
+import os,stat
 #internal imports
 import subuserlib.classes.userOwnedObject,subuserlib.classes.imageSource,subuserlib.classes.permissions,subuserlib.classes.describable
 
@@ -38,7 +38,7 @@ class Subuser(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.clas
 
   def getPermissions(self):
     permissionsDotJsonWritePath = os.path.join(self.getUser().getConfig().getUserSetPermissionsDir(),self.getName(),"permissions.json")
-    permissionsDotJsonReadPath = permissionsDotJsonWritePath 
+    permissionsDotJsonReadPath = permissionsDotJsonWritePath
     if not os.path.exists(permissionsDotJsonReadPath):
       permissionsDotJsonReadPath = os.path.join(self.getImageSource().getSourceDir(),"permissions.json")
     if not os.path.exists(permissionsDotJsonReadPath):
@@ -82,7 +82,7 @@ class Subuser(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.clas
       return os.path.join(self.getUser().getConfig().getSubuserHomeDirsDir(),self.getName())
     else:
       return None
-  
+
   def getDockersideHome(self):
     if self.getPermissions()["as-root"]:
       return "/root/"
@@ -107,4 +107,4 @@ class Subuser(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.clas
       file_f.write(redirect)
       st = os.stat(executablePath)
       os.chmod(executablePath, stat.S_IMODE(st.st_mode) | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
-  
+

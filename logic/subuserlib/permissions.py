@@ -7,7 +7,7 @@ Module used for the loading and saving of permissions.json files. Contains the d
 """
 
 #external imports
-import json,collections,sys,os
+import json,collections,sys
 #internal imports
 # import ...
 allImagesMustHavePermissions = "All subuser images must have a permissions.json file as defined by the permissions.json standard: <https://github.com/subuser-security/subuser/blob/master/docs/permissions-dot-json-file-format.md>"
@@ -16,7 +16,7 @@ allImagesMustHavePermissions = "All subuser images must have a permissions.json 
 # This is a comprehensive list of all permissions
 permissionDefaults = {
  # Conservative permissions
-  "description": "" 
+  "description": ""
  ,"maintainer": ""
  ,"last-update-time": None
  ,"executable": None

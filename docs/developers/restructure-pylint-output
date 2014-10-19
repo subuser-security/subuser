@@ -1,10 +1,19 @@
 #!/usr/bin/python
+import time
 
 toWrite = """
 Pylint output
 %%%%%%%%%%%%%
 
-"""
+Please keep in mind, that linting is, at it's heart, pendanticism so boneheaded, even a computer can do it.  Don't take what the linter tells you as a command ;).  If you look at the ``Makefile`` in the docs directory, you will see that I have dissabled many warnings.  Some of the warnings, like too many local variables, are quite absurd!
+
+I have removed pylint's "Global Evaluation" field from the output. This is because such ratings are truely misguided.  Code quality cannot be analized by a linter.
+
+However, in Python, linting can be helpfull to point out the most trivial mistakes.  It also provides us some nice statistics about how many lines of code/modules/classes subuser has.  This linter gets run every time the website is updated.  It was last run:
+
+"""+time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime())+"\n"
+
+globalEvaluation = False
 
 with open("developers/pylint.rst", "r") as pylintOutputFile:
   for line in pylintOutputFile:
@@ -12,6 +21,11 @@ with open("developers/pylint.rst", "r") as pylintOutputFile:
       toWrite += "\n- "+line[len("************* "):]
     elif line[0] in "CEFIRW" and line[1] == ":":
       toWrite += "\n + "+line
+    elif "Global evaluation" in line:
+      globalEvaluation = True
+    elif globalEvaluation:
+      if "Your code has been rated" in line:
+        globalEvaluation = False
     else:
       toWrite += line
 

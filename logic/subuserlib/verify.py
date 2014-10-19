@@ -13,7 +13,7 @@ This is one of the most important modules in subuser.  This module has one funct
 """
 
 #external imports
-import shutil,os,sys
+import shutil,os
 #internal imports
 import subuserlib.install
 
@@ -43,7 +43,7 @@ def verifyRegistryConsistency(user):
 def ensureImagesAreInstalledAndUpToDate(user):
   user.getRegistry().log("Checking if images need to be updated or installed...")
   for _,subuser in user.getRegistry().getSubusers().iteritems():
-    subuserlib.install.ensureSubuserImageIsInstalledAndUpToDate(subuser)    
+    subuserlib.install.ensureSubuserImageIsInstalledAndUpToDate(subuser)
 
 def trimUnneededTempRepos(user):
   user.getRegistry().log("Running garbage collector on temporary repositories...")

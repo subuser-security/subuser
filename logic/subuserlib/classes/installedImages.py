@@ -32,10 +32,10 @@ class InstalledImages(dict,subuserlib.classes.userOwnedObject.UserOwnedObject,su
         user=self.getUser(),
         imageId=imageId,
         imageSourceName=imageAttributes["image-source"],
-        sourceRepoId=imageAttributes["source-repo"], 
+        sourceRepoId=imageAttributes["source-repo"],
         lastUpdateTime=imageAttributes["last-update-time"])
       self[imageId]=image
- 
+
   def save(self):
     """ Save attributes of the installed images to disk. """
     # Build a dictionary of installed images.

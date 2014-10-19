@@ -6,7 +6,7 @@ Just some helper functions for running git.
 """
 
 #external imports
-import sys,os
+#import ...
 #internal imports
 import subuserlib.subprocessExtras
 

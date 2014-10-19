@@ -1,13 +1,14 @@
 #!/usr/bin/env python
 # This file should be compatible with both Python 2 and 3.
 # If it is not, please file a bug report.
+# pylint: disable=unused-argument
 
 """
 In order to make our test suit work, we must use a MockDockerDaemon rather than communicating with a real Docker instance.
 """
 
 #external imports
-import uuid
+#import ...
 #internal imports
 import subuserlib.classes.userOwnedObject
 
@@ -31,7 +32,7 @@ class MockDockerDaemon(subuserlib.classes.userOwnedObject.UserOwnedObject):
 
   def build(self,directoryWithDockerfile=None,useCache=True,rm=False,forceRm=False,quiet=False,tag=None,dockerfile=None):
     """
-    Build a Docker image.  If a the dockerfile argument is set to a string, use that string as the Dockerfile.  Return the newly created images Id or raises an exception if the build fails.  
+    Build a Docker image.  If a the dockerfile argument is set to a string, use that string as the Dockerfile.  Return the newly created images Id or raises an exception if the build fails.
     """
     while str(self.nextImageId) in self.images:
       self.nextImageId = self.nextImageId+1

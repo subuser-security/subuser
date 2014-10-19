@@ -15,6 +15,6 @@ class Describable(object):
   __metaclass__ = abc.ABCMeta
 
   @abc.abstractmethod
-  def describe():
+  def describe(self):
     """ Print out a human readable description of the object. """
     pass

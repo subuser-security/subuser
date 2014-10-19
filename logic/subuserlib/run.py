@@ -6,15 +6,15 @@ Contains code that prepairs a subuser to be run and then runs it.
 """
 
 #external imports
-import sys,os,getpass,subprocess,tempfile
+import sys,os,getpass
 #internal imports
 import subuserlib.subprocessExtras
 
 def getRecursiveDirectoryContents(directory):
   files = []
   for (directory,_,fileList) in os.walk(directory):
-    for file in fileList:
-      files.append(os.path.join(directory,file))
+    for fileName in fileList:
+      files.append(os.path.join(directory,fileName))
   return files
 
 def generateImagePreparationDockerfile(subuserToRun):
@@ -42,7 +42,7 @@ def buildRunReadyImageForSubuser(subuserToRun):
 def getSerialDevices():
   return [device for device in os.listdir("/dev/") if device.startswith("ttyS") or device.startswith("ttyUSB") or device.startswith("ttyACM")]
 
-def getBasicFlags(subuserToRun):
+def getBasicFlags():
   return [
     "-i",
     "-t",
@@ -62,12 +62,12 @@ def generateSoundArgs():
   if os.path.exists("/dev/snd"):
     soundArgs += ["-v=/dev/snd:/dev/snd:rw"]+["--device=/dev/snd/"+device for device in os.listdir("/dev/snd") if not device == "by-id" and not device == "by-path"]
   if os.path.exists("/dev/dsp"):
-    ["-v=/dev/dsp:/dev/dsp:rw"]+["--device=/dev/dsp/"+device for device in os.listdir("/dev/dsp")]
+    soundArgs += ["-v=/dev/dsp:/dev/dsp:rw"]+["--device=/dev/dsp/"+device for device in os.listdir("/dev/dsp")]
   return soundArgs
 
 def getPermissionFlagDict(subuserToRun):
   """
-  This is a dictionary mapping permissions to functions which when given the permission's values return docker run flags. 
+  This is a dictionary mapping permissions to functions which when given the permission's values return docker run flags.
   """
   return {
    # Conservative permissions
@@ -97,8 +97,8 @@ def getCommand(subuserToRun, imageId, imageArgs):
   """
   if not(subuserToRun.getImageId() and subuserToRun.getImageId() in subuserToRun.getUser().getInstalledImages() and subuserToRun.getUser().getInstalledImages()[subuserToRun.getImageId()].isDockerImageThere()):
     sys.exit("Image for "+subuserToRun.getName()+" is not installed. Try running:\n $subuser repair")
-  
-  flags = getBasicFlags(subuserToRun)
+
+  flags = getBasicFlags()
   permissionFlagDict = getPermissionFlagDict(subuserToRun)
   permissions = subuserToRun.getPermissions()
   for permission, flagGenerator in permissionFlagDict.iteritems():

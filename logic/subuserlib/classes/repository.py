@@ -7,7 +7,7 @@ A repository is a collection of ``ImageSource`` s which are published in a git r
 """
 
 #external imports
-import subprocess,os,shutil
+import os,shutil
 #internal imports
 import subuserlib.git,subuserlib.classes.userOwnedObject,subuserlib.classes.imageSource,subuserlib.subprocessExtras
 

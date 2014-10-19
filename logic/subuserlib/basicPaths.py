@@ -10,7 +10,7 @@ This module exists only to provide some things that are also int paths, to modul
 import os,inspect
 #internal imports
 #import ...
-home = os.path.expanduser("~") 
+home = os.path.expanduser("~")
 
 def getSubuserDir():
   """ Get the toplevel directory for subuser. """

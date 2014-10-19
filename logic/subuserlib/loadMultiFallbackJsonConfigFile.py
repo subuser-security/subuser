@@ -34,16 +34,15 @@ def filterOutNonExistantPaths(paths):
       _paths.append(path)
   return _paths
 
-def expandPathInDict(homeDir,pathAttribute,dict):
+def expandPathInDict(homeDir,pathAttribute,dictionary):
   """ Expand the environment variables in a dictionary of setting-value pairs given that the setting holds a path. """
   os.environ["SUBUSERDIR"] = getSubuserDir()
   os.environ["HOME"] = homeDir
-  dict[pathAttribute] = os.path.expandvars(dict[pathAttribute]).replace("//","/") # os.path.expandvars is buggy and expands $HOME/foo to /home/user-name//foo
-  
+  dictionary[pathAttribute] = os.path.expandvars(dictionary[pathAttribute]).replace("//","/") # os.path.expandvars is buggy and expands $HOME/foo to /home/user-name//foo
 
-def expandPathsInDict(homeDir,pathAttributes,dict):
+def expandPathsInDict(homeDir,pathAttributes,dictionary):
   for pathAttribute in pathAttributes:
-    expandPathInDict(homeDir,pathAttribute,dict)
+    expandPathInDict(homeDir,pathAttribute,dictionary)
 
 def getConfig(configFileHierarchy):
   """ This function is used for loading hierarchical config files in subuser.  That is, loading config.json and repositories.json.  For more information on config file hierarchies, see the documentation for these two files in the subuser standard:

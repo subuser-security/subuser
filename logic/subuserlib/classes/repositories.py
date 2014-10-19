@@ -7,7 +7,7 @@ This is the list of repositories from which subuser images may be installed or u
 """
 
 #external imports
-import os,collections,json
+import os,collections,json,sys
 #internal imports
 import subuserlib.paths, subuserlib.classes.fileBackedObject, subuserlib.classes.userOwnedObject, subuserlib.classes.repository,subuserlib.loadMultiFallbackJsonConfigFile
 
@@ -87,7 +87,7 @@ class Repositories(collections.Mapping,subuserlib.classes.userOwnedObject.UserOw
   def save(self):
     """
     Save attributes of the repositories to disk.
-    
+
     Note: This is done automatically for you when you ``commit()`` the registry.
     """
     userRepositoryListDict = {}
@@ -109,11 +109,11 @@ class Repositories(collections.Mapping,subuserlib.classes.userOwnedObject.UserOw
     """
     Return a new, unique, identifier for a temporary repository.  This function is useful when creating new temporary repositories.
     """
-    id=0
+    idAsInt=0
     for _,repo in self.iteritems():
-      if repo.getName() == str(id) or os.path.exists(os.path.join(self.getUser().getConfig().getRepositoriesDir(),str(id))):
-        id = id + 1
-    return str(id)
+      if repo.getName() == str(idAsInt) or os.path.exists(os.path.join(self.getUser().getConfig().getRepositoriesDir(),str(idAsInt))):
+        idAsInt = idAsInt + 1
+    return str(idAsInt)
 
   def __init__(self,user):
     subuserlib.classes.userOwnedObject.UserOwnedObject.__init__(self,user)

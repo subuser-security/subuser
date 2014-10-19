@@ -6,7 +6,7 @@ Implements functions involved in building/installing/updating subuser images.
 """
 
 #external imports
-import sys,os,stat,uuid,json
+import sys,os,stat,uuid
 #internal imports
 import subuserlib.classes.installedImage, subuserlib.installedImages,subuserlib.classes.dockerDaemon,subuserlib.installTime,subuserlib.verify
 
@@ -46,16 +46,16 @@ def installFromBaseImage(imageSource):
       print(file_f.read())
     print('\n===================== END SCRIPT CODE =====================\n')
     return installFromBaseImage(imageSource)
-  
+
   if userInput == "run":
     #Build the image using the script
     st = os.stat(buildImageScriptPath)
     os.chmod(buildImageScriptPath, stat.S_IMODE(st.st_mode) | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
     imageTag = "subuser-"+str(uuid.uuid4())
-    subprocessExtras.subprocessCheckedCall([buildImageScriptPath,imageTag])
+    subuserlib.subprocessExtras.subprocessCheckedCall([buildImageScriptPath,imageTag])
     # Return the Id of the newly created image
     imageProperties = imageSource.getUser().getDockerDaemon().getImageProperties(imageTag)
-    if imageProperites == None:
+    if imageProperties == None:
       cleanUpAndExitOnError(imageSource.getUser(),"Image failed to build.  The script exited successfully, but did not result in any Docker image being imported.")
     else:
       return imageProperties["Id"]
@@ -68,8 +68,8 @@ def installFromSubuserImagefile(imageSource, useCache=False,parent=None):
   dockerFileContents = imageSource.generateDockerfileConents(parent=parent)
   try:
     dockerImageDir = os.path.join(imageSource.getSourceDir(),"docker-image")
-    id = imageSource.getUser().getDockerDaemon().build(directoryWithDockerfile=dockerImageDir,rm=True,useCache=useCache,dockerfile=dockerFileContents)
-    return id
+    imageId = imageSource.getUser().getDockerDaemon().build(directoryWithDockerfile=dockerImageDir,rm=True,useCache=useCache,dockerfile=dockerFileContents)
+    return imageId
   except subuserlib.classes.dockerDaemon.ImageBuildException as e:
     cleanUpAndExitOnError(imageSource.getUser(),"Installing image failed: "+imageSource.getName()+"\n"+str(e))
 
@@ -135,12 +135,6 @@ def isInstalledImageUpToDate(installedImage):
 
   sourceLineage = getImageSourceLineage(topImageSource)
   installedImageLineage = subuserlib.installedImages.getImageLineage(installedImage.getUser(),installedImage.getImageId())
-  """print("Installed lineage for image:" + installedImage.getImageSourceName())
-  for installedImage in installedImageLineage:
-    print("  "+installedImage.getImageSourceName()+"@"+installedImage.getSourceRepoId())
-  print("Source lineage for image:" + installedImage.getImageSourceName())
-  for imageSource in sourceLineage:
-    print("  "+imageSource.getName()+"@"+imageSource.getRepository().getName())"""
   while len(sourceLineage) > 0:
     if not len(installedImageLineage)>0:
       return False
@@ -155,7 +149,7 @@ def isInstalledImageUpToDate(installedImage):
         installedImage.getUser().getRegistry().log("Installed image "+installedImage.getImageSourceName()+"@"+installedImage.getSourceRepoId()+" is out of date.\nInstalled version:\n "+installedImage.getLastUpdateTime()+"\nCurrent version:\n "+str(imageSource.getPermissions()["last-update-time"])+"\n")
       return False
   return True
-  
+
 def ensureSubuserImageIsInstalledAndUpToDate(subuser, useCache=False):
   """
   Ensure that the Docker image associated with the subuser is installed and up to date.

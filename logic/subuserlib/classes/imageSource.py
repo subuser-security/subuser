@@ -7,7 +7,7 @@ Images in subuser are built from ImageSource objects.
 """
 
 #external imports
-import subprocess,os,getpass
+import os
 #internal imports
 import subuserlib.classes.userOwnedObject,subuserlib.classes.describable,subuserlib.subprocessExtras,subuserlib.resolve
 
@@ -62,11 +62,11 @@ class ImageSource(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.
     pathToBuildTypeMap = {
       "SubuserImagefile" : os.path.join(dockerImageDir,"SubuserImagefile"),
       "BuildImage.sh" : os.path.join(dockerImageDir,"BuildImage.sh")}
-    buildType = None
-    for type,path in pathToBuildTypeMap.iteritems():
+    myBuildType = None
+    for buildType,path in pathToBuildTypeMap.iteritems():
       if os.path.isfile(path):
-        buildType = type
-    return buildType 
+        myBuildType = buildType
+    return myBuildType
 
   def getLatestInstalledImage(self):
     """

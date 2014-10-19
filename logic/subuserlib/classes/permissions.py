@@ -7,7 +7,7 @@ Each subuser has a set of permissions which specify what parts of the host syste
 """
 
 #external imports
-import json,os,sys,collections
+import collections
 #internal imports
 import subuserlib.classes.userOwnedObject,subuserlib.classes.fileBackedObject,subuserlib.permissions
 
@@ -21,10 +21,10 @@ class Permissions(collections.OrderedDict,subuserlib.classes.userOwnedObject.Use
     self.update(subuserlib.permissions.getPermissions(readPath))
 
   def getWritePath(self):
-     """
-     Return the path to which the permissions object is to be saved.
-     """
-     return self.__writePath
+    """
+    Return the path to which the permissions object is to be saved.
+    """
+    return self.__writePath
 
   def save(self):
     subuserlib.permissions.setPermissions(self,self.__writePath)

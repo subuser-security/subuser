@@ -14,15 +14,15 @@ import socket,httplib
 
 
 class UHTTPConnection(httplib.HTTPConnection):
-    """Subclass of Python library HTTPConnection that uses a unix-domain socket.
-    """
- 
-    def __init__(self, path):
-        httplib.HTTPConnection.__init__(self, 'localhost')
-        self.path = path
- 
-    def connect(self):
-        sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-        sock.connect(self.path)
-        self.sock = sock
+  """Subclass of Python library HTTPConnection that uses a unix-domain socket.
+  """
+
+  def __init__(self, path):
+    httplib.HTTPConnection.__init__(self, 'localhost')
+    self.path = path
+
+  def connect(self):
+    sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+    sock.connect(self.path)
+    self.sock = sock
 

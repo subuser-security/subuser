@@ -7,7 +7,7 @@ This is used for deep inspection of which images are installed in Docker and wha
 """
 
 #external imports
-import sys
+#import ...
 #internal imports
 #import ...
 

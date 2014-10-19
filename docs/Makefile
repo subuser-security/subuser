@@ -19,7 +19,7 @@ command-docs:
 	echo DONE GENERATING COMMAND DOCS
 
 pylint:
-	cd ../logic ; pylint --disable=C0111,C0301,C0103,C0322,C0323,C0324,R0913,R0903,R0904 --indent-string='  ' subuserlib/ > ../docs/developers/pylint.rst ; echo DONE GENERATING PYLINT OUTPUT
+	cd ../logic ; pylint --disable=C0111,C0301,C0103,C0322,C0323,C0324,R0913,R0903,R0904,superfluous-parens,bad-continuation,unused-variable,too-many-branches,too-many-locals,bad-builtin,deprecated-lambda,locally-disabled --indent-string='  ' subuserlib/ > ../docs/developers/pylint.rst ; echo DONE GENERATING PYLINT OUTPUT
 	./developers/restructure-pylint-output
 
 images-dir:

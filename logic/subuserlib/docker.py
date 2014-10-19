@@ -32,7 +32,7 @@ For installation instructions see <https://www.docker.io/gettingstarted/#h_insta
 
 # docker -d
 """)
- 
+
   username = getpass.getuser()
   if not username in grp.getgrnam("docker").gr_mem:
     sys.exit("""Error: You are not a member of the docker group.

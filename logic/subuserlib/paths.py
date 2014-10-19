@@ -7,7 +7,7 @@ Module used for determining non-user-configurable paths.
 """
 
 #external imports
-import os,sys,inspect,json
+import os
 #internal imports
 import subuserlib.basicPaths
 
