@@ -12,7 +12,7 @@ import os,collections,json
 import subuserlib.paths, subuserlib.classes.fileBackedObject, subuserlib.classes.userOwnedObject, subuserlib.classes.repository,subuserlib.loadMultiFallbackJsonConfigFile
 
 class Repositories(collections.Mapping,subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.classes.fileBackedObject.FileBackedObject):
-  systemRepositories = {}
+  systemRepositories = {} # TODO rename and document these variables
   userRepositories = {}
 
   def _getAllRepositories(self):
@@ -85,7 +85,11 @@ class Repositories(collections.Mapping,subuserlib.classes.userOwnedObject.UserOw
     del self.userRepositories[name]
 
   def save(self):
-    """ Save attributes of the repositories to disk. """
+    """
+    Save attributes of the repositories to disk.
+    
+    Note: This is done automatically for you when you ``commit()`` the registry.
+    """
     userRepositoryListDict = {}
     for name,repository in self.userRepositories.iteritems():
       userRepositoryListDict[name] = {}

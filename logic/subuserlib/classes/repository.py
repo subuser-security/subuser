@@ -3,7 +3,7 @@
 # If it is not, please file a bug report.
 
 """
-A repository is a collection of C{ImageSource}s which are published in a git repo.
+A repository is a collection of ``ImageSource`` s which are published in a git repo.
 """
 
 #external imports
@@ -65,7 +65,7 @@ class Repository(dict,subuserlib.classes.userOwnedObject.UserOwnedObject):
 
   def checkoutGitCommit(self,gitCommitHash):
     """
-    Checkout a given git commit.
+    Checkout a given git commit if it is not already checked out.
     """
     if not os.path.exists(self.getRepoPath()):
       self.updateSources()
@@ -73,4 +73,8 @@ class Repository(dict,subuserlib.classes.userOwnedObject.UserOwnedObject):
       subuserlib.git.runGit(["checkout",gitCommitHash],cwd=self.getRepoPath())
 
   def getGitCommitHash(self):
+    """
+    Get the hash of the local repository's currently checked out git commit.
+    """
     return subuserlib.git.runGitCollectOutput(["show-ref","-s","--head"],cwd=self.getRepoPath()).split("\n")[0]
+

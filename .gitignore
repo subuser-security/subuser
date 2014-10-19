@@ -2,3 +2,5 @@
 *.pyc
 .docs-build-environment
 *~
+.bash_history
+.pylint.d

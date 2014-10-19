@@ -1,0 +1,19 @@
+#!/usr/bin/python
+
+toWrite = """
+Pylint output
+%%%%%%%%%%%%%
+
+"""
+
+with open("developers/pylint.rst", "r") as pylintOutputFile:
+  for line in pylintOutputFile:
+    if line.startswith("************* "):
+      toWrite += "\n- "+line[len("************* "):]
+    elif line[0] in "CEFIRW" and line[1] == ":":
+      toWrite += "\n + "+line
+    else:
+      toWrite += line
+
+with open("developers/pylint.rst", "w") as pylintOutputFile:
+  pylintOutputFile.write(toWrite)

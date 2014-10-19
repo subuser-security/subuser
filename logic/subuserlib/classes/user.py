@@ -3,7 +3,7 @@
 # If it is not, please file a bug report.
 
 """
-The C{User} object is the base object which owns all other objects in a running subuser instance.
+The ``User`` object is the base object which owns all other objects in a running subuser instance.
 """
 
 #external imports
@@ -15,7 +15,7 @@ class User(object):
   """
   This class provides a "base" User object used by subuser.  This is the stem of a tree like data structure which holds all of the various objects owned by a given user.
 
-  You create a new User object by passing the home dir of the user.
+  You create a new User object by passing the username and home dir of the user.
 
   >>> import subuserlib.classes.user
   >>> u = subuserlib.classes.user.User("root","/root/")
@@ -24,7 +24,13 @@ class User(object):
 
   """
   name = None
+  """
+  The user's actual username.
+  """
   homeDir = None
+  """
+  The user's home dir.
+  """
   __config = None
   __registry = None
   __installedImages = None
@@ -54,21 +60,40 @@ To disable this message delete your subuser/installed-programs.json file.
         self.homeDir = os.path.expanduser("~") 
 
   def getConfig(self):
+    """
+    Get the user's :doc:`Config <config>` object.
+
+    Note: the user's config will be loaded the first time this is called.
+    """
     if self.__config == None:
       self.__config = subuserlib.classes.config.Config(self)
     return self.__config
 
   def getRegistry(self):
+    """
+    Get the user's subuser :doc:`Registry <registry>`.
+
+    Note: the registry will be loaded the first time this is called.
+    """
     if self.__registry == None:
       self.__registry = subuserlib.classes.registry.Registry(self)
     return self.__registry
 
   def getInstalledImages(self):
+    """
+    Get the user's  :doc:`InstalledImages <installed-images>` list.
+
+    Note: the installed images list will be loaded the first time this is called.
+    """
     if self.__installedImages == None:
       self.__installedImages = subuserlib.classes.installedImages.InstalledImages(self)
     return self.__installedImages
 
   def getDockerDaemon(self):
+    """
+    Get the :doc:`DockerDaemon <docker>` object.  You will use this to communicate with the Docker daemon.
+    """
     if self.__dockerDaemon == None:
       self.__dockerDaemon = subuserlib.classes.dockerDaemon.DockerDaemon(self)
     return self.__dockerDaemon
+

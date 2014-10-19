@@ -34,6 +34,9 @@ class ImageSource(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.
       return self.getName() + "@" + self.getRepository().getName()
 
   def getRepository(self):
+    """
+    Get the repository where this ImageSource resides.
+    """
     return self.__repo
 
   def getSubusers(self):
@@ -95,6 +98,11 @@ class ImageSource(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.
     return self.__permissions
 
   def describe(self):
+    """
+    Describe this ImageSource including it's default permissions.
+
+    Prints to standard output.
+    """
     print(self.getName()+":")
     self.getPermissions().describe()
 
@@ -148,5 +156,8 @@ class ImageSource(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.
     return None
 
 class SyntaxError(Exception):
+  """
+  A syntax error may be raised when parsing an ImageSource's ``Dockerfile``
+  """
   pass
 

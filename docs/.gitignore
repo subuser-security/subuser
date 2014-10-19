@@ -4,3 +4,6 @@ commands/*
 !commands/generate-command-docs.py
 _themes/sphinx_rtd_theme/static/images/subuser-website.svg
 subuser-standard
+developers/pylint.rst
+developers/images/*
+?/*

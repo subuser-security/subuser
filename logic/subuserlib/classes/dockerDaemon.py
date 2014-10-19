@@ -51,9 +51,9 @@ class DockerDaemon(subuserlib.classes.userOwnedObject.UserOwnedObject):
 
   def getConnection(self):
     """
-     Get an U{HTTPConnection <https://docs.python.org/2/library/httplib.html#httplib.HTTPConnection>} to the Docker daemon.
+     Get an `HTTPConnection <https://docs.python.org/2/library/httplib.html#httplib.HTTPConnection>`_ to the Docker daemon.
 
-     Note: You can find more info in the U{Docker API docs <https://docs.docker.com/reference/api/docker_remote_api_v1.13/>}
+     Note: You can find more info in the `Docker API docs <https://docs.docker.com/reference/api/docker_remote_api_v1.13/>`_
     """
     if not self.__connection:
       subuserlib.docker.getAndVerifyDockerExecutable()
@@ -154,3 +154,4 @@ class ImageDoesNotExistsException(Exception):
 
 if subuserlib.test.testing:
   DockerDaemon = subuserlib.classes.mockDockerDaemon.MockDockerDaemon
+

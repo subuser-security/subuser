@@ -1,4 +1,3 @@
-FROM debian
-RUN apt-get update
-RUN apt-get install -y python-pip texlive-latex-base texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended
-RUN pip install sphinx
+FROM debian:sid
+RUN apt-get update && apt-get install -y python-pip umlet pylint
+RUN pip install sphinx 

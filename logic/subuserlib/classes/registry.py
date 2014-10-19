@@ -35,9 +35,9 @@ class Registry(subuserlib.classes.userOwnedObject.UserOwnedObject):
 
   def __init__(self,user):
     subuserlib.classes.userOwnedObject.UserOwnedObject.__init__(self,user)
-    self.ensureGitRepoInitialized()
+    self._ensureGitRepoInitialized()
 
-  def ensureGitRepoInitialized(self):
+  def _ensureGitRepoInitialized(self):
     if not os.path.exists(self.getUser().getConfig().getRegistryPath()):
       os.makedirs(self.getUser().getConfig().getRegistryPath())
       subuserlib.git.runGit(["init"],cwd=self.getUser().getConfig().getRegistryPath())

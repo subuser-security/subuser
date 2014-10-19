@@ -48,8 +48,8 @@ def expandPathsInDict(homeDir,pathAttributes,dict):
 def getConfig(configFileHierarchy):
   """ This function is used for loading hierarchical config files in subuser.  That is, loading config.json and repositories.json.  For more information on config file hierarchies, see the documentation for these two files in the subuser standard:
 
- - U{config.json <http://subuser.org/subuser-standard/serializations/config-dot-json-file-format.html>}
- - U{repositories.json <http://subuser.org/subuser-standard/serializations/registry/repositories-dot-json-file-format.html>}
+ - `config.json <http://subuser.org/subuser-standard/serializations/config-dot-json-file-format.html>`_
+ - `repositories.json <http://subuser.org/subuser-standard/serializations/registry/repositories-dot-json-file-format.html>`_
 
 It takes a hierarchy(a list of paths) of config files starting with the config file with the highest precidence and going to the config file with the least precidence.
 

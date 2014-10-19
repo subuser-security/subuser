@@ -62,6 +62,7 @@ Index
 -----
 
 .. toctree::
+  :maxdepth: 2
 
   what-is-subuser
   security
@@ -70,6 +71,8 @@ Index
   commands/index
   packaging
   subuser-standard/standard
-  flaws
+  developers/index
   community
+  community-guidelines
+  flaws
   related-projects
