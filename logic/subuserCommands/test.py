@@ -1,19 +1,25 @@
 #!/usr/bin/python
-import pathConfig
-import subuserlib.test
+import pathConfig,subuserlib.docker,os,subuserlib.basicPaths,sys
 
-subuserlib.test.testing = True
-
-import subuserlib.docker,subuserlib.basicPaths,sys
 if "--help" in sys.argv:
   print("Run the subuser test suit.  Please do this before sending pull requests.")
   sys.exit()
 
 if subuserlib.docker.getDockerExecutable():
-  subuserlib.docker.runDockerAndExitIfItFails(["build","."],subuserlib.basicPaths.getSubuserDir())
+  import subuserlib.classes.dockerDaemon
+  dockerDaemon = subuserlib.classes.dockerDaemon.DockerDaemon(None)
+  testDockerfileNames = ["Dockerfile-debian-python2","Dockerfile-arch-python3"]
+  for testDockerfileName in testDockerfileNames:
+    with open(os.path.join(subuserlib.basicPaths.getSubuserDir(),"test",testDockerfileName),"r") as dockerfile:
+      dockerfileContents = dockerfile.read()
+    dockerDaemon.build(directoryWithDockerfile=subuserlib.basicPaths.getSubuserDir(),useCache=True,dockerfile=dockerfileContents)
   exit()
 
-import doctest,subprocess,os,subuserlib.paths
+import subuserlib.test
+
+subuserlib.test.testing = True
+
+import subuserlib.docker,sys,doctest,subprocess,os,subuserlib.paths
 
 if not "--travis" in sys.argv:
   subuserDir = "/root/subuser"

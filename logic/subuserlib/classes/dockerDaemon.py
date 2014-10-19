@@ -130,7 +130,10 @@ class DockerDaemon(subuserlib.classes.userOwnedObject.UserOwnedObject):
         lineContainingRegion = output[lineStart:] + chunk[:chunk.rindex("\n")]
         for line in lineContainingRegion.split("\n"):
           if line:
-            sys.stdout.write(json.loads(line)["stream"])
+            try:
+                sys.stdout.write(json.loads(line)["stream"])
+            except (KeyError,ValueError): # TODO, handle errorDetail messages
+              sys.stdout.write(line)
       output += chunk
     # Done with low leveliness.
     # Now we move to regex code stolen from the official python Docker bindings.
@@ -138,8 +141,6 @@ class DockerDaemon(subuserlib.classes.userOwnedObject.UserOwnedObject):
     match = re.search(search, output)
     if not match:
       raise ImageBuildException("Unexpected server response when building image.\n-----"+output)
-    if not quiet:
-      print(output)
     shortId = match.group(1) #This is REALLY ugly!
     return self.getImageProperties(shortId)["Id"]
 
