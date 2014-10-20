@@ -36,22 +36,22 @@ def verify(user):
 
 def verifyRegistryConsistency(user):
   user.getRegistry().log("Verifying registry consistency...")
-  for _,subuser in user.getRegistry().getSubusers().iteritems():
+  for _,subuser in user.getRegistry().getSubusers().items():
     if not subuser.getImageSource().getName() in subuser.getImageSource().getRepository():
       user.getRegistry().log("WARNING: "+subuser.getName()+" is no longer present in it's source repository. Support for this progam may have been dropped.")
 
 def ensureImagesAreInstalledAndUpToDate(user):
   user.getRegistry().log("Checking if images need to be updated or installed...")
-  for _,subuser in user.getRegistry().getSubusers().iteritems():
+  for _,subuser in user.getRegistry().getSubusers().items():
     subuserlib.install.ensureSubuserImageIsInstalledAndUpToDate(subuser)
 
 def trimUnneededTempRepos(user):
   user.getRegistry().log("Running garbage collector on temporary repositories...")
   reposToRemove = []
-  for repoId,repo in user.getRegistry().getRepositories().userRepositories.iteritems():
+  for repoId,repo in user.getRegistry().getRepositories().userRepositories.items():
     keep = False
     if repo.isTemporary():
-      for _,installedImage in user.getInstalledImages().iteritems():
+      for _,installedImage in user.getInstalledImages().items():
         if repoId == installedImage.getSourceRepoId():
           keep = True
     else:
@@ -67,7 +67,7 @@ def rebuildBinDir(user):
   if os.path.exists(user.getConfig().getBinDir()):
     shutil.rmtree(user.getConfig().getBinDir())
   os.mkdir(user.getConfig().getBinDir())
-  for _,subuser in user.getRegistry().getSubusers().iteritems():
+  for _,subuser in user.getRegistry().getSubusers().items():
     if subuser.isExecutableShortcutInstalled():
       subuser.installExecutableShortcut()
 

@@ -51,8 +51,8 @@ def update(user,sysargs):
 
   Check initial test environment:
 
-  >>> user.getRegistry().getSubusers().keys()
-  [u'foo']
+  >>> set(user.getRegistry().getSubusers().keys()) == set([u'foo'])
+  True
   >>> set([i.getImageSourceName() for i in user.getInstalledImages().values()]) == set([u'foo', u'bar'])
   True
 
@@ -105,7 +105,7 @@ def update(user,sysargs):
   Now we change the ImageSource for the ``dependent`` image.
 
   >>> with open(user.getRegistry().getRepositories()[u'remote-repo']["intermediary"].getSubuserImagefilePath(),mode="w") as subuserImagefile:
-  ...   subuserImagefile.write("FROM-SUBUSER-IMAGE dependency2")
+  ...   _ = subuserImagefile.write("FROM-SUBUSER-IMAGE dependency2")
 
   And commit the changes to git.
 

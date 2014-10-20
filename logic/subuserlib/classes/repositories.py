@@ -40,7 +40,7 @@ class Repositories(collections.Mapping,subuserlib.classes.userOwnedObject.UserOw
       """
       repositoryDict = subuserlib.loadMultiFallbackJsonConfigFile.getConfig(paths)
       repositories = {}
-      for repoName,repoAttributes in repositoryDict.iteritems():
+      for repoName,repoAttributes in repositoryDict.items():
         if repoName in repositoryStates:
           gitCommitHash = repositoryStates[repoName]["git-commit-hash"]
         else:
@@ -91,7 +91,7 @@ class Repositories(collections.Mapping,subuserlib.classes.userOwnedObject.UserOw
     Note: This is done automatically for you when you ``commit()`` the registry.
     """
     userRepositoryListDict = {}
-    for name,repository in self.userRepositories.iteritems():
+    for name,repository in self.userRepositories.items():
       userRepositoryListDict[name] = {}
       userRepositoryListDict[name]["git-origin"] = repository.getGitOriginURI()
       userRepositoryListDict[name]["temporary"] = repository.isTemporary()
@@ -99,7 +99,7 @@ class Repositories(collections.Mapping,subuserlib.classes.userOwnedObject.UserOw
       json.dump(userRepositoryListDict, file_f, indent=1, separators=(',', ': '))
     repositoryStatesDotJsonPath = os.path.join(self.getUser().getConfig().getRegistryPath(),"repository-states.json")
     repositoryStates = {}
-    for repoName,repository in self.iteritems():
+    for repoName,repository in self.items():
       repositoryStates[repoName] = {}
       repositoryStates[repoName]["git-commit-hash"] = repository.getGitCommitHash()
     with open(repositoryStatesDotJsonPath,mode="w") as repositoryStatesDotJsonFile:
@@ -110,7 +110,7 @@ class Repositories(collections.Mapping,subuserlib.classes.userOwnedObject.UserOw
     Return a new, unique, identifier for a temporary repository.  This function is useful when creating new temporary repositories.
     """
     idAsInt=0
-    for _,repo in self.iteritems():
+    for _,repo in self.items():
       if repo.getName() == str(idAsInt) or os.path.exists(os.path.join(self.getUser().getConfig().getRepositoriesDir(),str(idAsInt))):
         idAsInt = idAsInt + 1
     return str(idAsInt)

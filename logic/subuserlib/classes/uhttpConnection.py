@@ -8,7 +8,12 @@ This module allows us to communicate using http over standard unix sockets.
 """
 
 #external imports
-import socket,httplib
+import socket
+try:
+ import httplib
+except ImportError:
+ import http.client
+ httplib = http.client
 #internal imports
 #import ...
 

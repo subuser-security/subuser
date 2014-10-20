@@ -7,7 +7,12 @@ The DockerDaemon object allows us to communicate with the Docker daemon via the 
 """
 
 #external imports
-import urllib,tarfile,os,tempfile,fnmatch,re,json,StringIO,httplib,sys
+import urllib,tarfile,os,tempfile,fnmatch,re,json,io,sys
+try:
+ import httplib
+except ImportError:
+ import http.client
+ httplib = http.client
 #internal imports
 import subuserlib.subprocessExtras,subuserlib.classes.userOwnedObject,subuserlib.classes.uhttpConnection,subuserlib.docker,subuserlib.test,subuserlib.classes.mockDockerDaemon
 
@@ -36,9 +41,11 @@ def archiveBuildContext(archive,directoryWithDockerfile,excludePatterns,dockerfi
         contexttarfile.add(os.path.join(directoryWithDockerfile,fileNameInArchive), arcname=fileNameInArchive,recursive=False) # Explicit setting of recursive is not strictly necessary.
   # Add the provided Dockerfile if necessary
   if not dockerfile == None:
-    dockerfileFileObject = StringIO.StringIO(dockerfile)
+    dockerfileFileObject = io.StringIO(dockerfile)
     tarinfo = tarfile.TarInfo(name="Dockerfile")
-    tarinfo.size = dockerfileFileObject.len
+    dockerfileFileObject.seek(0, os.SEEK_END) # TODO either I am doing this wrong, or python3 sucks.
+    tarinfo.size = dockerfileFileObject.tell()
+    dockerfileFileObject.seek(0)
     contexttarfile.addfile(tarinfo,dockerfileFileObject)
   contexttarfile.close()
   archive.seek(0)

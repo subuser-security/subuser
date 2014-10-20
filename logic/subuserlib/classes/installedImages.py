@@ -27,7 +27,7 @@ class InstalledImages(dict,subuserlib.classes.userOwnedObject.UserOwnedObject,su
     else:
       installedImagesDict = {}
     # Create the InstalledImage objects.
-    for imageId,imageAttributes in installedImagesDict.iteritems():
+    for imageId,imageAttributes in installedImagesDict.items():
       image = subuserlib.classes.installedImage.InstalledImage(
         user=self.getUser(),
         imageId=imageId,
@@ -40,7 +40,7 @@ class InstalledImages(dict,subuserlib.classes.userOwnedObject.UserOwnedObject,su
     """ Save attributes of the installed images to disk. """
     # Build a dictionary of installed images.
     installedImagesDict = {}
-    for _,installedImage in self.iteritems():
+    for _,installedImage in self.items():
       imageAttributes = {}
       imageAttributes["last-update-time"] = installedImage.getLastUpdateTime()
       imageAttributes["image-source"] = installedImage.getImageSourceName()
@@ -61,7 +61,7 @@ class InstalledImages(dict,subuserlib.classes.userOwnedObject.UserOwnedObject,su
      Go through the installed images list and unregister any images that aren't actually installed.
     """
     keysToDelete = []
-    for imageId,image in self.iteritems():
+    for imageId,image in self.items():
       if not image.isDockerImageThere():
         keysToDelete.append(imageId)
     for key in keysToDelete:

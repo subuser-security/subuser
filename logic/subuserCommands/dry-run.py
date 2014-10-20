@@ -46,7 +46,7 @@ def dryRun(args):
   RUN test -d /home/travis || mkdir /home/travis && chown travis /home/travis
   <BLANKLINE>
   The command to launch the image is:
-  docker 'run' '-i' '-t' '--rm' '--workdir=/home/travis/test-home' '-e' 'HOME=/home/travis/test-home' '--net=none' '--user=1000' 'imageId' '/usr/bin/foo'
+  docker 'run' '-i' '-t' '--rm' '-e' 'HOME=/home/travis/test-home' '--workdir=/home/travis/test-home' '--net=none' '--user=1000' 'imageId' '/usr/bin/foo'
 
   Running subusers installed through temporary repositories works as well.  Here, we add a subuser named bar, run it, and then remove it again.
  
@@ -70,7 +70,7 @@ def dryRun(args):
   RUN test -d /home/travis || mkdir /home/travis && chown travis /home/travis
   <BLANKLINE>
   The command to launch the image is:
-  docker 'run' '-i' '-t' '--rm' '--workdir=/home/travis/test-home' '-e' 'HOME=/home/travis/test-home' '--net=none' '--user=1000' 'imageId' '/usr/bin/bar'
+  docker 'run' '-i' '-t' '--rm' '-e' 'HOME=/home/travis/test-home' '--workdir=/home/travis/test-home' '--net=none' '--user=1000' 'imageId' '/usr/bin/bar'
 
   Cleanup.
 

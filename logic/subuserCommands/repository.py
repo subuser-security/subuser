@@ -41,8 +41,8 @@ def repository(user,sysargs):
 
   Check our assumptions about the initial state of the test environment.
 
-  >>> user.getRegistry().getRepositories().keys()
-  [u'default']
+  >>> set(user.getRegistry().getRepositories().keys()) == set([u'default'])
+  True
 
   Add a new repository named ``remote-repo``.
 
@@ -51,8 +51,8 @@ def repository(user,sysargs):
 
   See that it was actually successfully added.
 
-  >>> user.getRegistry().getRepositories().keys()
-  [u'default', 'remote-repo']
+  >>> set(user.getRegistry().getRepositories().keys()) == set([u'default', 'remote-repo'])
+  True
 
   Remove the ``remote-repo`` repository.
 
@@ -61,8 +61,8 @@ def repository(user,sysargs):
 
   See that it was actually removed.
 
-  >>> user.getRegistry().getRepositories().keys()
-  [u'default']
+  >>> set(user.getRegistry().getRepositories().keys()) == set([u'default'])
+  True
   """
   options,args = parseCliArgs(sysargs)
   action = args[0]

@@ -1,5 +1,5 @@
 #!/usr/bin/python
-import pathConfig,subuserlib.docker,os,subuserlib.basicPaths,sys
+import pathConfig,subuserlib.docker,os,subuserlib.basicPaths,sys,io
 
 if "--help" in sys.argv:
   print("Run the subuser test suit.  Please do this before sending pull requests.")
@@ -8,9 +8,10 @@ if "--help" in sys.argv:
 if subuserlib.docker.getDockerExecutable():
   import subuserlib.classes.dockerDaemon
   dockerDaemon = subuserlib.classes.dockerDaemon.DockerDaemon(None)
-  testDockerfileNames = ["Dockerfile-debian-python2","Dockerfile-arch-python3"]
+  testDockerfileNames = ["Dockerfile-debian-python2",
+                        "Dockerfile-arch-python3"]
   for testDockerfileName in testDockerfileNames:
-    with open(os.path.join(subuserlib.basicPaths.getSubuserDir(),"test",testDockerfileName),"r") as dockerfile:
+    with io.open(os.path.join(subuserlib.basicPaths.getSubuserDir(),"test",testDockerfileName),encoding="utf-8",mode="r") as dockerfile:
       dockerfileContents = dockerfile.read()
     dockerDaemon.build(directoryWithDockerfile=subuserlib.basicPaths.getSubuserDir(),useCache=True,dockerfile=dockerfileContents)
   exit()

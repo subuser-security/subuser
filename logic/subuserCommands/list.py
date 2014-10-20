@@ -75,10 +75,10 @@ def list(sysargs):
   user = subuserlib.classes.user.User()
   
   if 'available' in args:
-    for repoName,repository in user.getRegistry().getRepositories().iteritems():
+    for repoName,repository in user.getRegistry().getRepositories().items():
       if not options.short:
         print("Images available for instalation from the repo: " + repoName)
-      for _,imageSource in repository.iteritems():
+      for _,imageSource in repository.items():
         if options.short:
           print(imageSource.getIdentifier())
         else:
@@ -87,7 +87,7 @@ def list(sysargs):
   if 'subusers' in args:
     if not options.short:
       print("The following subusers are registered.")
-    for name,subuser in user.getRegistry().getSubusers().iteritems():
+    for name,subuser in user.getRegistry().getSubusers().items():
       if options.short:
         print(name)
       else:

@@ -29,8 +29,8 @@ def removeOldImages(user):
 
   Check our assumptions about what subusers are installed in the test environment.
 
-  >>> user.getRegistry().getSubusers().keys()
-  [u'foo']
+  >>> set(user.getRegistry().getSubusers().keys()) == set(["foo"])
+  True
 
   Add a ``bar`` subuser, which we will then remove.  This will leave us with a leftover image.
 
@@ -47,13 +47,13 @@ def removeOldImages(user):
 
   Check to see if subuser ``bar`` was successfully added.
 
-  >>> user.getRegistry().getSubusers().keys()
-  [u'foo', 'bar']
+  >>> set(user.getRegistry().getSubusers().keys()) == set([u'foo', 'bar'])
+  True
 
   Check to see if the image for ``bar`` was also installed.
 
-  >>> [i.getImageSourceName() for i in user.getInstalledImages().values()]
-  [u'foo', u'bar']
+  >>> set([i.getImageSourceName() for i in user.getInstalledImages().values()]) == set([u'foo', u'bar'])
+  True
 
   Remove the ``bar`` subuser.
 
@@ -68,8 +68,8 @@ def removeOldImages(user):
 
   See that the image for ``bar`` was indeed left behind.
 
-  >>> [i.getImageSourceName() for i in user.getInstalledImages().values()]
-  [u'foo', u'bar']
+  >>> set([i.getImageSourceName() for i in user.getInstalledImages().values()]) == set([u'foo', u'bar'])
+  True
 
   Now we use ``remove-old-images`` to clean up our installed images.
 
@@ -83,13 +83,13 @@ def removeOldImages(user):
 
   And now the uneccesary ``bar`` image is gone.
 
-  >>> [i.getImageSourceName() for i in user.getInstalledImages().values()]
-  [u'foo']
+  >>> set([i.getImageSourceName() for i in user.getInstalledImages().values()]) == set([u'foo'])
+  True
  
   """
-  for installedImageId,installedImage in user.getInstalledImages().iteritems():
+  for installedImageId,installedImage in user.getInstalledImages().items():
     imageInUse = False
-    for _,subuser in user.getRegistry().getSubusers().iteritems():
+    for _,subuser in user.getRegistry().getSubusers().items():
       if subuser.getImageId() == installedImageId:
         imageInUse = True
     if not imageInUse:

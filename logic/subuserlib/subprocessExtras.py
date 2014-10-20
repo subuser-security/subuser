@@ -43,7 +43,7 @@ def subprocessCheckedCallCollectOutput(args,errorContext="",cwd=None):
     if cwd:
       errorContext = "In directory: "+cwd+"\n"+errorContext
     sys.exit(formatErrorMessage(args,stderr,errorContext=errorContext))
-  return stdout
+  return stdout.decode("utf-8")
 
 def subprocessCheckedOutput(args, errorContext=''):
   """ This function calls subprocess.check_output and uses sys.exit when the call fails rather than throwing an error.

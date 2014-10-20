@@ -60,6 +60,6 @@ It returns a dictionary of entries.
   for _configFile in configPaths:
     with open(_configFile, 'r') as configFile:
       _config = json.load(configFile)
-      for identifier,setting in _config.iteritems():
+      for identifier,setting in _config.items():
         addIfUnrepresented(identifier,setting,config)
   return config

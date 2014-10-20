@@ -63,7 +63,7 @@ class ImageSource(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.
       "SubuserImagefile" : os.path.join(dockerImageDir,"SubuserImagefile"),
       "BuildImage.sh" : os.path.join(dockerImageDir,"BuildImage.sh")}
     myBuildType = None
-    for buildType,path in pathToBuildTypeMap.iteritems():
+    for buildType,path in pathToBuildTypeMap.items():
       if os.path.isfile(path):
         myBuildType = buildType
     return myBuildType
@@ -86,7 +86,7 @@ class ImageSource(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.
     Return the installed images which are based on this image.
     """
     installedImagesBasedOnThisImageSource = []
-    for _,installedImage in self.getUser().getInstalledImages().iteritems():
+    for _,installedImage in self.getUser().getInstalledImages().items():
       if installedImage.getImageSourceName() == self.getName() and installedImage.getSourceRepoId() == self.getRepository().getName():
         installedImagesBasedOnThisImageSource.append(installedImage)
     return installedImagesBasedOnThisImageSource

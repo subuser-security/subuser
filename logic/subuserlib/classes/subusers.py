@@ -39,7 +39,7 @@ class Subusers(dict,subuserlib.classes.userOwnedObject.UserOwnedObject,subuserli
      Save the list of subusers to disk.
     """
     serializedSubusersDict = {}
-    for subuserName,subuser in self.iteritems():
+    for subuserName,subuser in self.items():
       serializedSubusersDict[subuserName] = {}
       serializedSubusersDict[subuserName]["source-repo"] = subuser.getImageSource().getRepository().getName()
       serializedSubusersDict[subuserName]["image-source"] = subuser.getImageSource().getName()
@@ -56,7 +56,7 @@ class Subusers(dict,subuserlib.classes.userOwnedObject.UserOwnedObject,subuserli
         serializedSubusersDict = json.load(file_f, object_pairs_hook=collections.OrderedDict)
     else:
       serializedSubusersDict = {}
-    for subuserName, subuserAttributes in serializedSubusersDict.iteritems():
+    for subuserName, subuserAttributes in serializedSubusersDict.items():
       if not subuserAttributes["source-repo"] in self.getUser().getRegistry().getRepositories():
         sys.exit("ERROR: Registry inconsistent. Subuser "+str(subuserName)+" points to non-existant repository: "+str(subuserAttributes["source-repo"]))
       repo = self.getUser().getRegistry().getRepositories()[subuserAttributes["source-repo"]]

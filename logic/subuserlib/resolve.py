@@ -19,19 +19,19 @@ def resolveImageSource(user,imageSourcePath,contextRepository=None,allowRefferin
 
   Usually, the syntax is image-name@repository-name.
 
-  >>> resolveImageSource(user,"foo@default").getName()
-  u'foo'
+  >>> print(resolveImageSource(user,"foo@default").getName())
+  foo
 
   If there is no @, then we assume that the repository is the contextRepository.  The default contextRepository is the "default" repository.
 
-  >>> resolveImageSource(user,"foo").getName()
-  u'foo'
+  >>> print(resolveImageSource(user,"foo").getName())
+  foo
 
   If the repository identifier is a URI and a repository with the same URI already exists, then the URI is resolved to the name of the existing repository. Otherwise, a temporary repository is created.
 
-  >>> resolveImageSource(user,"bar@file:///home/travis/remote-test-repo").getName()
+  >>> print(resolveImageSource(user,"bar@file:///home/travis/remote-test-repo").getName())
   Adding new temporary repository file:///home/travis/remote-test-repo
-  u'bar'
+  bar
 
   Throws an Index error:
     - If the repository does not exist
@@ -64,7 +64,7 @@ def lookupRepositoryByURI(user,uri):
   """
   If a repository with this URI exists, return that repository.  Otherwise, return None.
   """
-  for _,repository in user.getRegistry().getRepositories().iteritems():
+  for _,repository in user.getRegistry().getRepositories().items():
     if uri == repository.getGitOriginURI():
       return repository
   return None

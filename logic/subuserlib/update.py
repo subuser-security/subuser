@@ -16,7 +16,7 @@ def updateAll(user):
   This command updates all or some of the installed subuser images.
   """
   user.getRegistry().log("Updating...")
-  for _,repository in user.getRegistry().getRepositories().iteritems():
+  for _,repository in user.getRegistry().getRepositories().items():
     repository.updateSources()
   subuserlib.verify.verify(user)
   user.getRegistry().commit()

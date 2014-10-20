@@ -60,7 +60,7 @@ def getPermissions(permissionsFilePath):
       for basicCommonPermission in basicCommonPermissions:
         if not basicCommonPermission in permissions:
           permissions[basicCommonPermission] = True
-    for permission,defaultValue in permissionDefaults.iteritems():
+    for permission,defaultValue in permissionDefaults.items():
       if not permission in permissions:
         permissions[permission] = defaultValue
     return permissions
@@ -70,7 +70,7 @@ def setPermissions(permissions,permissionsFilePath):
   Save the permissions to the given file.  We only save permissions that are not set to their default values.
   """
   permissionsToSave = {}
-  for permission,value in permissions.iteritems():
+  for permission,value in permissions.items():
     if not value == permissionDefaults[permission]:
       permissionsToSave[permission] = value
   with open(permissionsFilePath, 'w') as file_f:

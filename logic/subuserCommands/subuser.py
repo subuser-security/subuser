@@ -50,8 +50,8 @@ def subuser(user,sysargs):
 
   At the start of our tests, the test environment has one subuser named ``foo``.
 
-  >>> user.getRegistry().getSubusers().keys()
-  [u'foo']
+  >>> set(user.getRegistry().getSubusers().keys()) == set([u'foo'])
+  True
 
   We add another subuser named ``bar``.
 
@@ -67,8 +67,8 @@ def subuser(user,sysargs):
 
   Now we have two subusers.
 
-  >>> user.getRegistry().getSubusers().keys()
-  [u'foo', 'bar']
+  >>> set(user.getRegistry().getSubusers().keys()) == set([u'foo', 'bar'])
+  True
 
   We remove ``bar``.
 
@@ -83,8 +83,8 @@ def subuser(user,sysargs):
 
   Now we only have one subuser.
 
-  >>> user.getRegistry().getSubusers().keys()
-  [u'foo']
+  >>> set(user.getRegistry().getSubusers().keys()) == set([u'foo'])
+  True
 
   If we try adding a subuser which fails to install do to a bad ``SubuserImagefile`` an error is displayed, a cleanup process occures, and nothing terribly bad happens.
 
