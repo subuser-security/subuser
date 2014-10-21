@@ -13,7 +13,7 @@ This object maps subuser names to json objects which have the following attribut
 
     ,"source-repo"                        : "default"
 
-  **type**: See information about repository identifiers [here](repositories-dot-json-file-format.md).
+  **type**: See information about repository identifiers `here <repositories-dot-json-file-format.md>`_ .
 
  * ``image-source``: The name of the image source on which this subuser's image is based.
 
