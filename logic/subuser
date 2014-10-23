@@ -24,4 +24,4 @@ if not commandExecutablePath:
   printHelp()
   sys.exit(1)
 
-subprocess.call([commandExecutablePath]+sys.argv[2:])
+sys.exit(subprocess.call([commandExecutablePath]+sys.argv[2:]))
