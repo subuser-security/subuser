@@ -50,6 +50,32 @@ def archiveBuildContext(archive,directoryWithDockerfile,excludePatterns,dockerfi
   contexttarfile.close()
   archive.seek(0)
 
+def readAndPrintSreamingBuildStatus(response):
+  # Warning, reading from an httpresponse is not exactly high level programming ;)
+  output = ""
+  chunk = None
+  while chunk == None or not chunk == "":
+    chunk = response.read(80)
+    if "\n" in chunk:
+      try:
+        lineStart = output.rindex("\n")
+      except ValueError:
+        lineStart = 0
+      lineContainingRegion = output[lineStart:] + chunk[:chunk.rindex("\n")]
+      for line in lineContainingRegion.split("\n"):
+        if line:
+          lineJson = json.loads(line)
+          try:
+              if "stream" in lineJson:
+                sys.stdout.write(lineJson["stream"])
+              else:
+                print(lineJson["errorDetail"]["message"])
+                print(lineJson["error"])
+          except (KeyError,ValueError): # TODO, handle errorDetail messages
+            sys.stdout.write(line)
+    output += chunk
+  return output
+
 class DockerDaemon(subuserlib.classes.userOwnedObject.UserOwnedObject):
   __connection = None
 
@@ -119,35 +145,23 @@ class DockerDaemon(subuserlib.classes.userOwnedObject.UserOwnedObject):
         raise ImageBuildException(rnr)
 
     if response.status != 200:
+      if quietClient:
+        responce.read()
+      else:
+        readAndPrintSreamingBuildStatus(responce)
       raise ImageBuildException("Building image failed.\n"
                      +"status: "+str(response.status)+"\n"
-                     +"Reason: "+response.reason+"\n"
-                     +response.read())
+                     +"Reason: "+response.reason+"\n")
 
-    # Warning, reading from an httpresponse is not exactly high level programming ;)
-    output = ""
-    chunk = None
-    while chunk == None or not chunk == "":
-      chunk = response.read(80)
-      if not quietClient and "\n" in chunk:
-        try:
-          lineStart = output.rindex("\n")
-        except ValueError:
-          lineStart = 0
-        lineContainingRegion = output[lineStart:] + chunk[:chunk.rindex("\n")]
-        for line in lineContainingRegion.split("\n"):
-          if line:
-            try:
-                sys.stdout.write(json.loads(line)["stream"])
-            except (KeyError,ValueError): # TODO, handle errorDetail messages
-              sys.stdout.write(line)
-      output += chunk
-    # Done with low leveliness.
+    if quietClient:
+      output = responce.read()
+    else:
+      output = readAndPrintSreamingBuildStatus(response)
     # Now we move to regex code stolen from the official python Docker bindings.
     search = r'Successfully built ([0-9a-f]+)'
     match = re.search(search, output)
     if not match:
-      raise ImageBuildException("Unexpected server response when building image.\n-----"+output)
+      raise ImageBuildException("Unexpected server response when building image.")
     shortId = match.group(1) #This is REALLY ugly!
     return self.getImageProperties(shortId)["Id"]
 

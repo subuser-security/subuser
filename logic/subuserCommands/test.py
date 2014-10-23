@@ -13,7 +13,10 @@ if subuserlib.docker.getDockerExecutable():
   for testDockerfileName in testDockerfileNames:
     with io.open(os.path.join(subuserlib.basicPaths.getSubuserDir(),"test",testDockerfileName),encoding="utf-8",mode="r") as dockerfile:
       dockerfileContents = dockerfile.read()
-    dockerDaemon.build(directoryWithDockerfile=subuserlib.basicPaths.getSubuserDir(),useCache=True,dockerfile=dockerfileContents)
+    try:
+      dockerDaemon.build(directoryWithDockerfile=subuserlib.basicPaths.getSubuserDir(),useCache=True,dockerfile=dockerfileContents)
+    except subuserlib.classes.dockerDaemon.ImageBuildException:
+      exit(1)
   exit()
 
 import subuserlib.test
