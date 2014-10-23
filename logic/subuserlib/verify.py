@@ -43,7 +43,8 @@ def verifyRegistryConsistency(user):
 def ensureImagesAreInstalledAndUpToDate(user):
   user.getRegistry().log("Checking if images need to be updated or installed...")
   for _,subuser in user.getRegistry().getSubusers().items():
-    subuserlib.install.ensureSubuserImageIsInstalledAndUpToDate(subuser)
+    if not subuser.locked():
+      subuserlib.install.ensureSubuserImageIsInstalledAndUpToDate(subuser)
 
 def trimUnneededTempRepos(user):
   user.getRegistry().log("Running garbage collector on temporary repositories...")

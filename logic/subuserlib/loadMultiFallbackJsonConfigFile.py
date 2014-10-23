@@ -11,11 +11,6 @@ import os,inspect,json
 #internal imports
 #import ...
 
-def addIfUnrepresented(identifier,path,paths):
-  """ Add the tuple to the dictionary if it's key is not yet in the dictionary. """
-  if not identifier in paths.keys():
-    paths[identifier] = path
-
 def upNDirsInPath(path,n):
   if n > 0:
     return os.path.dirname(upNDirsInPath(path,n-1))
@@ -56,10 +51,10 @@ It returns a dictionary of entries.
 
 """
   configPaths = filterOutNonExistantPaths(configFileHierarchy)
+  configPaths.reverse()
   config = {}
   for _configFile in configPaths:
     with open(_configFile, 'r') as configFile:
       _config = json.load(configFile)
-      for identifier,setting in _config.items():
-        addIfUnrepresented(identifier,setting,config)
+      config.update(_config)
   return config

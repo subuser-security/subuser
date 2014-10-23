@@ -79,6 +79,12 @@ To disable this message delete your subuser/installed-programs.json file.
       self.__registry = subuserlib.classes.registry.Registry(self)
     return self.__registry
 
+  def reloadRegistry(self):
+    """
+    Reload registry from disk.
+    """
+    self.__registry = None
+
   def getInstalledImages(self):
     """
     Get the user's  :doc:`InstalledImages <installed-images>` list.

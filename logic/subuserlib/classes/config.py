@@ -22,7 +22,7 @@ class Config(subuserlib.classes.userOwnedObject.UserOwnedObject):
 
   def _expandPathsInConfig(self,config):
     """ Go through a freshly loaded config file and expand any environment variables in the paths. """
-    subuserlib.loadMultiFallbackJsonConfigFile.expandPathsInDict(self.getUser().homeDir,["bin-dir","registry-dir","installed-images-list","user-set-permissions-dir","subuser-home-dirs-dir","repositories-dir"],config)
+    subuserlib.loadMultiFallbackJsonConfigFile.expandPathsInDict(self.getUser().homeDir,["bin-dir","registry-dir","installed-images-list","locked-subusers-path","user-set-permissions-dir","subuser-home-dirs-dir","repositories-dir"],config)
 
   def _loadConfig(self):
     """ Loads the subuser config: a dictionary of settings used by subuser. """
@@ -51,6 +51,9 @@ class Config(subuserlib.classes.userOwnedObject.UserOwnedObject):
     """ Get the path to the installed-images.json file where installed docker images are registered. """
     return self.__config["installed-images-list"]
 
+  def getLockedSubusersDotJsonPath(self):
+    """ Get the path to the locked-subusers.json file where attributes of locked subusers are stored. """
+    return self.__config["locked-subusers-path"]
   def getSubusersDotJsonPath(self):
     """ Get the path to the subusers.json file where subusers are registered. """
     return os.path.join(self.getRegistryPath(),"subusers.json")

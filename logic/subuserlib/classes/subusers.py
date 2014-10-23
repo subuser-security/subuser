@@ -38,24 +38,32 @@ class Subusers(dict,subuserlib.classes.userOwnedObject.UserOwnedObject,subuserli
     """
      Save the list of subusers to disk.
     """
-    serializedSubusersDict = {}
+    serializedUnlockedSubusersDict = {}
+    serializedLockedSubusersDict = {}
     for subuserName,subuser in self.items():
-      serializedSubusersDict[subuserName] = {}
-      serializedSubusersDict[subuserName]["source-repo"] = subuser.getImageSource().getRepository().getName()
-      serializedSubusersDict[subuserName]["image-source"] = subuser.getImageSource().getName()
-      serializedSubusersDict[subuserName]["executable-shortcut-installed"] = subuser.isExecutableShortcutInstalled()
-      serializedSubusersDict[subuserName]["docker-image"] = subuser.getImageId()
+      serializedSubuser = {}
+      serializedSubuser["source-repo"] = subuser.getImageSource().getRepository().getName()
+      serializedSubuser["image-source"] = subuser.getImageSource().getName()
+      serializedSubuser["executable-shortcut-installed"] = subuser.isExecutableShortcutInstalled()
+      serializedSubuser["docker-image"] = subuser.getImageId()
+      if subuser.locked():
+        serializedLockedSubusersDict[subuserName] = serializedSubuser
+      else:
+        serializedUnlockedSubusersDict[subuserName] = serializedSubuser
     with open(os.path.join(self.getUser().getConfig().getSubusersDotJsonPath()), 'w') as file_f:
-      json.dump(serializedSubusersDict, file_f, indent=1, separators=(',', ': '))
+      json.dump(serializedUnlockedSubusersDict, file_f, indent=1, separators=(',', ': '))
+    with open(os.path.join(self.getUser().getConfig().getLockedSubusersDotJsonPath()), 'w') as file_f:
+      json.dump(serializedLockedSubusersDict, file_f, indent=1, separators=(',', ': '))
 
-  def __init__(self,user):
-    subuserlib.classes.userOwnedObject.UserOwnedObject.__init__(self,user)
+  def _loadSerializedSubusersDict(self,serializedSubusersPath,locked):
+    """
+    Load the serialzed subusers json file into memory.
+    """
+    serializedSubusersDict = {}
+    if os.path.exists(serializedSubusersPath):
+      with open(serializedSubusersPath, 'r') as file_f:
+        serializedSubusersDict.update(json.load(file_f, object_pairs_hook=collections.OrderedDict))
 
-    if os.path.exists(self.getUser().getConfig().getSubusersDotJsonPath()):
-      with open(self.getUser().getConfig().getSubusersDotJsonPath(), 'r') as file_f:
-        serializedSubusersDict = json.load(file_f, object_pairs_hook=collections.OrderedDict)
-    else:
-      serializedSubusersDict = {}
     for subuserName, subuserAttributes in serializedSubusersDict.items():
       if not subuserAttributes["source-repo"] in self.getUser().getRegistry().getRepositories():
         sys.exit("ERROR: Registry inconsistent. Subuser "+str(subuserName)+" points to non-existant repository: "+str(subuserAttributes["source-repo"]))
@@ -66,6 +74,11 @@ class Subusers(dict,subuserlib.classes.userOwnedObject.UserOwnedObject,subuserli
       else:
         imageId = None
       executableShortcutInstalled = subuserAttributes["executable-shortcut-installed"]
-      imageSource = subuserlib.classes.imageSource.ImageSource(user=user,name=name,repo=repo)
-      self[subuserName] = subuserlib.classes.subuser.Subuser(user,subuserName,imageSource,imageId=imageId,executableShortcutInstalled=executableShortcutInstalled)
+      imageSource = subuserlib.classes.imageSource.ImageSource(user=self.getUser(),name=name,repo=repo)
+      self[subuserName] = subuserlib.classes.subuser.Subuser(self.getUser(),subuserName,imageSource,imageId=imageId,executableShortcutInstalled=executableShortcutInstalled,locked=locked)
+
+  def __init__(self,user):
+    subuserlib.classes.userOwnedObject.UserOwnedObject.__init__(self,user)
+    self._loadSerializedSubusersDict(self.getUser().getConfig().getLockedSubusersDotJsonPath(),locked=True)
+    self._loadSerializedSubusersDict(self.getUser().getConfig().getSubusersDotJsonPath(),locked=False)
 

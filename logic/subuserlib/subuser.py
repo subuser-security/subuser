@@ -20,7 +20,7 @@ def add(user,subuserName,imageSourceIdentifier):
     except KeyError as keyError:
       sys.exit("Could not add subuser.  The image source "+imageSourceIdentifier+" does not exist.")
     user.getRegistry().logChange("Adding subuser "+subuserName+" "+imageSourceIdentifier)
-    user.getRegistry().getSubusers()[subuserName] = subuserlib.classes.subuser.Subuser(user,subuserName,imageSource,None,False)
+    user.getRegistry().getSubusers()[subuserName] = subuserlib.classes.subuser.Subuser(user,subuserName,imageSource,None,False,False)
     subuserlib.verify.verify(user)
     user.getRegistry().commit()
   except subuserlib.classes.dockerDaemon.ImageBuildException as e:

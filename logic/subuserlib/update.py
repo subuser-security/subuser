@@ -6,7 +6,7 @@ High level operations used for updating, rolling back, locking ect.
 """
 
 #external imports
-#import ..
+import os
 #internal imports
 import subuserlib.verify,subuserlib.git,subuserlib.subprocessExtras
 
@@ -27,11 +27,11 @@ def showLog(user):
 def checkoutNoCommit(user,commit):
   subuserlib.subprocessExtras.subprocessCheckedCall(["rm","-rf","*"],cwd=user.getConfig().getRegistryPath())
   subuserlib.git.runGit(["checkout",commit,"."],cwd=user.getConfig().getRegistryPath())
-  user.getRegistry().getRepositories().reloadRepositoryLists()
+  user.reloadRegistry()
 
 def rollback(user,commit):
-  user.getRegistry().logChange("Rolling back to commit: "+commit)
   checkoutNoCommit(user,commit)
+  user.getRegistry().logChange("Rolling back to commit: "+commit)
   subuserlib.verify.verify(user)
   user.getRegistry().commit()
 
@@ -39,8 +39,23 @@ def lockSubuser(user,subuserName,commit):
   """
   Lock the subuser to the image and permissions that it had at a given registry commit.
   """
+  checkoutNoCommit(user,commit)
+  subuserObject = user.getRegistry().getSubusers()[subuserName]
+  if not os.path.exists(os.path.join(user.getConfig().getUserSetPermissionsDir(),subuserName,"permissions.json")):
+    subuserObject.getPermissions().save()
+  checkoutNoCommit(user,"master")
+  user.getRegistry().logChange("Locking subuser "+subuserName+" to commit: "+commit)
+  user.getRegistry().getSubusers()[subuserName] = subuserObject
+  subuserObject.setLocked(True)
+  subuserlib.verify.verify(user)
+  user.getRegistry().commit()
 
-def unlockSubuser(user,subuserName,unlockPermissions=False):
+def unlockSubuser(user,subuserName):
   """
   Unlock the subuser, leaving it to have an up to date image.  Delete user set permissions if unlockPermissions is True.
   """
+  user.getRegistry().logChange("Unlocking subuser "+subuserName)
+  user.getRegistry().getSubusers()[subuserName].setLocked(False)
+  subuserlib.verify.verify(user)
+  user.getRegistry().commit()
+ 

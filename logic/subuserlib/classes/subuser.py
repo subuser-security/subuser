@@ -17,12 +17,13 @@ class Subuser(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.clas
   __imageId = None
   __executableShortcutInstalled = None
 
-  def __init__(self,user,name,imageSource,imageId,executableShortcutInstalled):
+  def __init__(self,user,name,imageSource,imageId,executableShortcutInstalled,locked):
     subuserlib.classes.userOwnedObject.UserOwnedObject.__init__(self,user)
     self.__name = name
     self.__imageSource = imageSource
     self.__imageId = imageId
     self.__executableShortcutInstalled = executableShortcutInstalled
+    self.__locked = locked
 
   def getName(self):
     return self.__name
@@ -62,17 +63,15 @@ class Subuser(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.clas
     """
     Returns True if the subuser is locked.  Users lock subusers in order to prevent updates and rollbacks from effecting them.
     """
-    return
+    return self.__locked
 
-  def lock(self):
+  def setLocked(self,locked):
     """
-    Lock the subuser in its current state to prevent updates and rollbacks from effecting it.
-    """
+    Mark the subuser as locked or unlocked.
 
-  def unlock(self):
+    We lock subusers to their current states to prevent updates and rollbacks from effecting them.
     """
-    Unlock subuser and ensure its image is up to date.
-    """
+    self.__locked = locked
 
   def getHomeDirOnHost(self):
     """
