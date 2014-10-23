@@ -41,6 +41,10 @@ The defaults settings for these properties may be found in ``$SUBUSERDIR/config.
 
   ``type``: string - path to json file
 
+ * ``locked-subusers-path``: path to locked-subusers.json file.
+
+  ``type``: path to json file.
+
  * ``subuser-home-dirs-dir``: The directory where subuser is to store the home directories of each subuser.
 
   ``type``: string - path to directory
