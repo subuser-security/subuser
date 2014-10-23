@@ -29,11 +29,15 @@ def parseCliArgs(sysargs):
   lock-subuser-to SUBUSER GIT-COMMIT
       Don't want a subuser to be updated?  No problem, lock it to a given version with this update sub-command.  Use subuser update log to see a list of possible hashes.
 
+  unlock-subuser SUBUSER
+      Unlock the subuser and ensure that it is up-to-date.
+
   rollback HASH
       Subuser's undo function.  Roll back to an old version of your subuser configuration.  Find the commit hash using subuser update log.  Note: This command is less usefull than lock-subuser-to.
 """
   parser=optparse.OptionParser(usage=usage,description=description,formatter=subuserlib.commandLineArguments.HelpFormatterThatDoesntReformatDescription())
   return parser.parse_args(sysargs)
+
 #################################################################################################
 
 def update(user,sysargs):
@@ -222,3 +226,4 @@ def update(user,sysargs):
 if __name__ == "__main__":
   user = subuserlib.classes.user.User()
   update(user,sys.argv)
+
