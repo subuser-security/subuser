@@ -98,20 +98,20 @@ class DockerDaemon(subuserlib.classes.userOwnedObject.UserOwnedObject):
      Returns a dictionary of image properties, or None if the image does not exist.
     """
     self.getConnection().request("GET","/images/"+imageTagOrId+"/json")
-    responce = self.getConnection().getresponse()
-    if not responce.status == 200:
-      responce.read() # Read the responce and discard it to prevent the server from getting locked up: http://stackoverflow.com/questions/3231543/python-httplib-responsenotready
+    response = self.getConnection().getresponse()
+    if not response.status == 200:
+      response.read() # Read the response and discard it to prevent the server from getting locked up: http://stackoverflow.com/questions/3231543/python-httplib-responsenotready
       return None
     else:
-      return json.loads(responce.read())
+      return json.loads(response.read())
 
   def removeImage(self,imageId):
     self.getConnection().request("DELETE","/images/"+imageId)
-    responce = self.getConnection().getresponse()
-    if not responce.status == 200:
-      raise ImageDoesNotExistsException("The image "+imageId+" could not be deleted.\n"+responce.read())
+    response = self.getConnection().getresponse()
+    if not response.status == 200:
+      raise ImageDoesNotExistsException("The image "+imageId+" could not be deleted.\n"+response.read())
     else:
-      responce.read()
+      response.read()
 
   def build(self,directoryWithDockerfile=None,useCache=True,rm=False,forceRm=False,quiet=False,tag=None,dockerfile=None,quietClient=False):
     """
@@ -146,15 +146,15 @@ class DockerDaemon(subuserlib.classes.userOwnedObject.UserOwnedObject):
 
     if response.status != 200:
       if quietClient:
-        responce.read()
+        response.read()
       else:
-        readAndPrintSreamingBuildStatus(responce)
+        readAndPrintSreamingBuildStatus(response)
       raise ImageBuildException("Building image failed.\n"
                      +"status: "+str(response.status)+"\n"
                      +"Reason: "+response.reason+"\n")
 
     if quietClient:
-      output = responce.read()
+      output = response.read()
     else:
       output = readAndPrintSreamingBuildStatus(response)
     # Now we move to regex code stolen from the official python Docker bindings.
