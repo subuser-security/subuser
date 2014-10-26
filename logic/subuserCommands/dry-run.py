@@ -34,7 +34,6 @@ def dryRun(args):
   >>> dry_run = __import__("dry-run")
   >>> dry_run.dryRunTestSetup()
   >>> import subuser,subuserlib.classes.user
-  >>> user = subuserlib.classes.user.User()
   >>> remove_old_images = __import__("remove-old-images")
 
   If we dry run the basic foo test subuser, we will see the generated pre-run Dockerfile and also the docker command that will launch our subuser.
@@ -50,9 +49,9 @@ def dryRun(args):
 
   Running subusers installed through temporary repositories works as well.  Here, we add a subuser named bar, run it, and then remove it again.
  
-  >>> subuser.subuser(user,["add","bar","bar@file:///home/travis/remote-test-repo"])
-  Adding new temporary repository file:///home/travis/remote-test-repo
+  >>> subuser.subuser(["add","bar","bar@file:///home/travis/remote-test-repo"])
   Adding subuser bar bar@file:///home/travis/remote-test-repo
+  Adding new temporary repository file:///home/travis/remote-test-repo
   Verifying subuser configuration.
   Verifying registry consistency...
   Unregistering any non-existant installed images.
@@ -74,7 +73,7 @@ def dryRun(args):
 
   Cleanup.
 
-  >>> subuser.subuser(user,["remove","bar"])
+  >>> subuser.subuser(["remove","bar"])
   Removing subuser bar
    If you wish to remove the subusers image, issue the command $ subuser remove-old-images
   Verifying subuser configuration.
@@ -82,7 +81,7 @@ def dryRun(args):
   Unregistering any non-existant installed images.
   Checking if images need to be updated or installed...
   Running garbage collector on temporary repositories...
-  >>> remove_old_images.removeOldImages(user)
+  >>> remove_old_images.removeOldImages([])
   Verifying subuser configuration.
   Verifying registry consistency...
   Unregistering any non-existant installed images.

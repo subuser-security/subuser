@@ -14,12 +14,12 @@ import subuserlib.classes.user,subuserlib.resolve,subuserlib.classes.subuser,sub
 def add(user,subuserName,imageSourceIdentifier):
   if subuserName in user.getRegistry().getSubusers():
     sys.exit("A subuser named "+subuserName+" already exists.")
+  user.getRegistry().logChange("Adding subuser "+subuserName+" "+imageSourceIdentifier)
   try:
     try:
       imageSource = subuserlib.resolve.resolveImageSource(user,imageSourceIdentifier)
     except KeyError as keyError:
       sys.exit("Could not add subuser.  The image source "+imageSourceIdentifier+" does not exist.")
-    user.getRegistry().logChange("Adding subuser "+subuserName+" "+imageSourceIdentifier)
     user.getRegistry().getSubusers()[subuserName] = subuserlib.classes.subuser.Subuser(user,subuserName,imageSource,None,False,False)
     subuserlib.verify.verify(user)
     user.getRegistry().commit()

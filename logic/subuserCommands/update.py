@@ -13,7 +13,7 @@ import subuserlib.commandLineArguments,subuserlib.classes.user,subuserlib.update
 
 #####################################################################################
 
-def parseCliArgs(sysargs):
+def parseCliArgs(realArgs):
   usage = "usage: subuser %prog [options]"
   description = """Update subuser images.
 
@@ -36,11 +36,11 @@ def parseCliArgs(sysargs):
       Subuser's undo function.  Roll back to an old version of your subuser configuration.  Find the commit hash using subuser update log.  Note: This command is less usefull than lock-subuser-to.
 """
   parser=optparse.OptionParser(usage=usage,description=description,formatter=subuserlib.commandLineArguments.HelpFormatterThatDoesntReformatDescription())
-  return parser.parse_args(sysargs)
+  return parser.parse_args(args=realArgs)
 
 #################################################################################################
 
-def update(user,sysargs):
+def update(realArgs):
   """
   Update your subuser installation.
 
@@ -50,11 +50,11 @@ def update(user,sysargs):
   **Setup:**
 
   >>> import os
-  >>> import update,subuser,subuserlib.git
-  >>> user = subuserlib.classes.user.User()
+  >>> import update,subuser,subuserlib.git,repository
 
   Check initial test environment:
 
+  >>> user = subuserlib.classes.user.User()
   >>> set(user.getRegistry().getSubusers().keys()) == set([u'foo'])
   True
   >>> set([i.getImageSourceName() for i in user.getInstalledImages().values()]) == set([u'foo', u'bar'])
@@ -62,7 +62,7 @@ def update(user,sysargs):
 
   Add a subuser who's image has a lot of dependencies.
 
-  >>> subuser.subuser(user,["add","dependent","dependent@file:///home/travis/remote-test-repo"])
+  >>> subuser.subuser(["add","dependent","dependent@file:///home/travis/remote-test-repo"])
   Adding subuser dependent dependent@file:///home/travis/remote-test-repo
   Verifying subuser configuration.
   Verifying registry consistency...
@@ -76,6 +76,7 @@ def update(user,sysargs):
 
   Check that our new subuser was successfully added.
 
+  >>> user = subuserlib.classes.user.User()
   >>> subuserNamesBeforeUpdate = user.getRegistry().getSubusers().keys()
   >>> set(subuserNamesBeforeUpdate) == set(['dependent', u'foo'])
   True
@@ -88,7 +89,7 @@ def update(user,sysargs):
 
   Running update, when there is nothing to be updated, does nothing.
 
-  >>> update.update(user,["all"])
+  >>> update.update(["all"])
   Updating...
   Verifying subuser configuration.
   Verifying registry consistency...
@@ -98,6 +99,7 @@ def update(user,sysargs):
 
   The same subusers are still installed.
 
+  >>> user = subuserlib.classes.user.User()
   >>> set(user.getRegistry().getSubusers().keys()) == set(subuserNamesBeforeUpdate)
   True
 
@@ -108,18 +110,19 @@ def update(user,sysargs):
 
   Now we change the ImageSource for the ``dependent`` image.
 
-  >>> with open(user.getRegistry().getRepositories()[u'remote-repo']["intermediary"].getSubuserImagefilePath(),mode="w") as subuserImagefile:
+
+  >>> with open(user.getRegistry().getRepositories()[u'1']["intermediary"].getSubuserImagefilePath(),mode="w") as subuserImagefile:
   ...   _ = subuserImagefile.write("FROM-SUBUSER-IMAGE dependency2")
 
   And commit the changes to git.
 
-  >>> subuserlib.git.runGit(["commit","-a","-m","changed dependency for intermediate from dependency1 to dependency2"],cwd=user.getRegistry().getRepositories()[u'remote-repo'].getRepoPath())
+  >>> subuserlib.git.runGit(["commit","-a","-m","changed dependency for intermediate from dependency1 to dependency2"],cwd=user.getRegistry().getRepositories()[u'1'].getRepoPath())
 
   Running an update after a change installs new images and registers them with their subusers.  But it does not delete the old ones.
 
-  >>> update.update(user,["all"])
+  >>> update.update(["all"])
   Updating...
-  Updated repository remote-repo
+  Updated repository file:///home/travis/remote-test-repo
   Verifying subuser configuration.
   Verifying registry consistency...
   Unregistering any non-existant installed images.
@@ -130,6 +133,7 @@ def update(user,sysargs):
   Installed new image for subuser dependent
   Running garbage collector on temporary repositories...
 
+  >>> user = subuserlib.classes.user.User()
   >>> set(user.getRegistry().getSubusers().keys()) == set(['dependent', u'foo'])
   True
 
@@ -140,7 +144,7 @@ def update(user,sysargs):
 
   Now we lock the dependent subuser and try changing it again.
 
-  >>> update.update(user,["lock-subuser-to","dependent","HEAD"])
+  >>> update.update(["lock-subuser-to","dependent","HEAD"])
   Locking subuser dependent to commit: HEAD
   Verifying subuser configuration.
   Verifying registry consistency...
@@ -148,24 +152,25 @@ def update(user,sysargs):
   Checking if images need to be updated or installed...
   Running garbage collector on temporary repositories...
 
-  >>> with open(user.getRegistry().getRepositories()[u'remote-repo']["intermediary"].getSubuserImagefilePath(),mode="w") as subuserImagefile:
+  >>> with open(user.getRegistry().getRepositories()[u'1']["intermediary"].getSubuserImagefilePath(),mode="w") as subuserImagefile:
   ...   _ = subuserImagefile.write("FROM-SUBUSER-IMAGE dependency3")
 
   And commit the changes to git.
 
-  >>> subuserlib.git.runGit(["commit","-a","-m","changed dependency for intermediate from dependency2 to dependency3"],cwd=user.getRegistry().getRepositories()[u'remote-repo'].getRepoPath())
+  >>> subuserlib.git.runGit(["commit","-a","-m","changed dependency for intermediate from dependency2 to dependency3"],cwd=user.getRegistry().getRepositories()[u'1'].getRepoPath())
 
   Running an update after a change does nothing because the affected subuser is locked.
 
-  >>> update.update(user,["all"])
+  >>> update.update(["all"])
   Updating...
-  Updated repository remote-repo
+  Updated repository file:///home/travis/remote-test-repo
   Verifying subuser configuration.
   Verifying registry consistency...
   Unregistering any non-existant installed images.
   Checking if images need to be updated or installed...
   Running garbage collector on temporary repositories...
 
+  >>> user = subuserlib.classes.user.User()
   >>> set(user.getRegistry().getSubusers().keys()) == set(['dependent', u'foo'])
   True
 
@@ -174,7 +179,7 @@ def update(user,sysargs):
 
   When we unlock the subuser it gets updated imediately.
 
-  >>> update.update(user,["unlock-subuser","dependent"])
+  >>> update.update(["unlock-subuser","dependent"])
   Unlocking subuser dependent
   Verifying subuser configuration.
   Verifying registry consistency...
@@ -186,13 +191,15 @@ def update(user,sysargs):
   Installed new image for subuser dependent
   Running garbage collector on temporary repositories...
 
+  >>> user = subuserlib.classes.user.User()
   >>> set(user.getRegistry().getSubusers().keys()) == set(['dependent', u'foo'])
   True
 
   >>> set([i.getImageSourceName() for i in user.getInstalledImages().values()]) == set([u'foo', u'dependency1', u'bar', u'dependent', u'intermediary', u'intermediary', u'dependency2',u'dependency3', u'dependent'])
   True
   """
-  options,args = parseCliArgs(sysargs)
+  options,args = parseCliArgs(realArgs)
+  user = subuserlib.classes.user.User()
   if len(args) < 1:
     sys.exit("No arguments given. Please use subuser update -h for help.")
   elif ["all"] == args:
@@ -224,6 +231,5 @@ def update(user,sysargs):
     sys.exit(" ".join(args) + " is not a valid update subcommand. Please use subuser update -h for help.")
 
 if __name__ == "__main__":
-  user = subuserlib.classes.user.User()
-  update(user,sys.argv)
+  update(sys.argv[1:])
 

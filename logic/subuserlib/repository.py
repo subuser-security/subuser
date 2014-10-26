@@ -25,4 +25,5 @@ def add(user,name,url):
 
 def remove(user,name):
   user.getRegistry().getRepositories().removeRepository(name)
+  user.getRegistry().commit()
 

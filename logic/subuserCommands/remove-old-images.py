@@ -8,13 +8,13 @@ import optparse
 #internal imports
 import subuserlib.classes.user,subuserlib.verify,subuserlib.commandLineArguments
 
-def parseCliArgs():
+def parseCliArgs(realArgs):
   usage = "usage: subuser %prog"
   description = """ Remove old, no longer used, installed images.  Note, once you do this, you will no longer be able to return to previous configuration states with subuser update checkout."""
   parser=optparse.OptionParser(usage=usage,description=description,formatter=subuserlib.commandLineArguments.HelpFormatterThatDoesntReformatDescription())
-  return parser.parse_args()
+  return parser.parse_args(args=realArgs)
 
-def removeOldImages(user):
+def removeOldImages(realArgs):
   """
   Remove images that are installed, but are not associated with any subusers.
 
@@ -24,19 +24,20 @@ def removeOldImages(user):
   **Setup:**
 
   >>> remove_old_images = __import__("remove-old-images")#import self
-  >>> import subuserlib.classes.user,subuserlib.subuser
+  >>> import subuser
+  >>> import subuserlib.classes.user
+
+  Check our assumptions about what subusers are installed in the test environment.  We load a new user object each time we checked, because we are interested about whether the changes we want are present on disk.
+
   >>> user = subuserlib.classes.user.User()
-
-  Check our assumptions about what subusers are installed in the test environment.
-
   >>> set(user.getRegistry().getSubusers().keys()) == set(["foo"])
   True
 
   Add a ``bar`` subuser, which we will then remove.  This will leave us with a leftover image.
 
-  >>> subuserlib.subuser.add(user,"bar","bar@file:///home/travis/remote-test-repo")
-  Adding new temporary repository file:///home/travis/remote-test-repo
+  >>> subuser.subuser(["add","bar","bar@file:///home/travis/remote-test-repo"])
   Adding subuser bar bar@file:///home/travis/remote-test-repo
+  Adding new temporary repository file:///home/travis/remote-test-repo
   Verifying subuser configuration.
   Verifying registry consistency...
   Unregistering any non-existant installed images.
@@ -47,6 +48,7 @@ def removeOldImages(user):
 
   Check to see if subuser ``bar`` was successfully added.
 
+  >>> user = subuserlib.classes.user.User()
   >>> set(user.getRegistry().getSubusers().keys()) == set([u'foo', 'bar'])
   True
 
@@ -57,7 +59,7 @@ def removeOldImages(user):
 
   Remove the ``bar`` subuser.
 
-  >>> subuserlib.subuser.remove(user,"bar")
+  >>> subuser.subuser(["remove","bar"])
   Removing subuser bar
    If you wish to remove the subusers image, issue the command $ subuser remove-old-images
   Verifying subuser configuration.
@@ -68,12 +70,13 @@ def removeOldImages(user):
 
   See that the image for ``bar`` was indeed left behind.
 
+  >>> user = subuserlib.classes.user.User()
   >>> set([i.getImageSourceName() for i in user.getInstalledImages().values()]) == set([u'foo', u'bar'])
   True
 
   Now we use ``remove-old-images`` to clean up our installed images.
 
-  >>> remove_old_images.removeOldImages(user)
+  >>> remove_old_images.removeOldImages([])
   Verifying subuser configuration.
   Verifying registry consistency...
   Unregistering any non-existant installed images.
@@ -83,10 +86,15 @@ def removeOldImages(user):
 
   And now the uneccesary ``bar`` image is gone.
 
+  >>> user = subuserlib.classes.user.User()
   >>> set([i.getImageSourceName() for i in user.getInstalledImages().values()]) == set([u'foo'])
   True
  
   """
+  parseCliArgs(realArgs)
+
+  user = subuserlib.classes.user.User()
+
   for installedImageId,installedImage in user.getInstalledImages().items():
     imageInUse = False
     for _,subuser in user.getRegistry().getSubusers().items():
@@ -99,9 +107,6 @@ def removeOldImages(user):
 
 #################################################################################################
 
-
 if __name__ == "__main__":
-  parseCliArgs()
-  user = subuserlib.classes.user.User()
-  removeOldImages(user)
+  removeOldImages(sys.argv[1:])
 

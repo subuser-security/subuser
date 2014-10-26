@@ -35,7 +35,7 @@ Remove the launcher (if one exists) for the subuser named foo.
   parser=optparse.OptionParser(usage=usage,description=description,formatter=subuserlib.commandLineArguments.HelpFormatterThatDoesntReformatDescription())
   return parser.parse_args(args=sysargs)
 
-def subuser(user,sysargs):
+def subuser(sysargs):
   """
   Manage subusers
 
@@ -46,17 +46,18 @@ def subuser(user,sysargs):
 
   >>> import subuser #import self
   >>> import subuserlib.classes.user
-  >>> user = subuserlib.classes.user.User()
 
   At the start of our tests, the test environment has one subuser named ``foo``.
 
+  >>> user = subuserlib.classes.user.User()
   >>> set(user.getRegistry().getSubusers().keys()) == set([u'foo'])
   True
 
   We add another subuser named ``bar``.
 
-  >>> subuser.subuser(user,["add","bar","bar@file:///home/travis/remote-test-repo"])
+  >>> subuser.subuser(["add","bar","bar@file:///home/travis/remote-test-repo"])
   Adding subuser bar bar@file:///home/travis/remote-test-repo
+  Adding new temporary repository file:///home/travis/remote-test-repo
   Verifying subuser configuration.
   Verifying registry consistency...
   Unregistering any non-existant installed images.
@@ -67,12 +68,13 @@ def subuser(user,sysargs):
 
   Now we have two subusers.
 
+  >>> user = subuserlib.classes.user.User()
   >>> set(user.getRegistry().getSubusers().keys()) == set([u'foo', 'bar'])
   True
 
   We remove ``bar``.
 
-  >>> subuser.subuser(user,["remove","bar"])
+  >>> subuser.subuser(["remove","bar"])
   Removing subuser bar
    If you wish to remove the subusers image, issue the command $ subuser remove-old-images
   Verifying subuser configuration.
@@ -83,6 +85,7 @@ def subuser(user,sysargs):
 
   Now we only have one subuser.
 
+  >>> user = subuserlib.classes.user.User()
   >>> set(user.getRegistry().getSubusers().keys()) == set([u'foo'])
   True
 
@@ -91,7 +94,7 @@ def subuser(user,sysargs):
   This works for syntax errors.
 
   >>> try:
-  ...   subuser.subuser(user,["add","broken-syntax","broken-syntax@file:///home/travis/remote-test-repo"])
+  ...   subuser.subuser(["add","broken-syntax","broken-syntax@file:///home/travis/remote-test-repo"])
   ... except SystemExit:
   ...   pass
   Adding subuser broken-syntax broken-syntax@file:///home/travis/remote-test-repo
@@ -111,7 +114,7 @@ def subuser(user,sysargs):
   And missing dependencies.
 
   >>> try:
-  ...   subuser.subuser(user,["add","broken-non-existant-dependency","broken-non-existant-dependency@file:///home/travis/remote-test-repo"])
+  ...   subuser.subuser(["add","broken-non-existant-dependency","broken-non-existant-dependency@file:///home/travis/remote-test-repo"])
   ... except SystemExit:
   ...   pass
   Adding subuser broken-non-existant-dependency broken-non-existant-dependency@file:///home/travis/remote-test-repo
@@ -129,6 +132,7 @@ def subuser(user,sysargs):
   Running garbage collector on temporary repositories...
   """
   options,args = parseCliArgs(sysargs)
+  user = subuserlib.classes.user.User()
   action = args[0]
   if action == "add":
     if not len(args) == 3:
@@ -150,5 +154,4 @@ def subuser(user,sysargs):
 #################################################################################################
 
 if __name__ == "__main__":
-  user = subuserlib.classes.user.User()
-  subuser(user,sys.argv[1:])
+  subuser(sys.argv[1:])

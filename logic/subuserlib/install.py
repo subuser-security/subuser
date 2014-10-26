@@ -124,6 +124,35 @@ def installLineage(imageSourceLineage,parent=None):
     parent = installImage(imageSource,parent=parent)
   return parent
 
+def doImagesMatch(installedImage,imageSource):
+  return installedImage.getImageSourceName() == imageSource.getName() and installedImage.getSourceRepoId() == imageSource.getRepository().getName()
+
+def doLastUpdateTimesMatch(installedImage,imageSource):
+  return installedImage.getLastUpdateTime() == imageSource.getPermissions()["last-update-time"] or not imageSource.getPermissions()["last-update-time"]
+
+def compareSourceLineageAndInstalledImageLineage(user,sourceLineage,installedImageLineage):
+  if not len(sourceLineage) == len(installedImageLineage):
+    user.getRegistry().log("Number of dependencies changed from "+str(len(installedImageLineage))+" to "+str(len(sourceLineage)))
+    print("Image sources:")
+    for imageSource in sourceLineage:
+      print(imageSource.getName())
+    print("Installed images:")
+    for installedImage in installedImageLineage:
+      print(installedImage.getImageSourceName())
+    return False
+
+  lineage = zip(sourceLineage,installedImageLineage)
+  for imageSource,installedImage in lineage:
+    imagesMatch =  doImagesMatch(installedImage,imageSource)
+    lastUpdateTimesMatch = doLastUpdateTimesMatch(installedImage,imageSource)
+    if not (imagesMatch and lastUpdateTimesMatch):
+      if not imagesMatch:
+        user.getRegistry().log("Dependency changed for image from "+installedImage.getImageSourceName()+"@"+installedImage.getSourceRepoId()+" to "+imageSource.getName()+"@"+imageSource.getRepository().getName())
+      elif not lastUpdateTimesMatch:
+        user.getRegistry().log("Installed image "+installedImage.getImageSourceName()+"@"+installedImage.getSourceRepoId()+" is out of date.\nInstalled version:\n "+installedImage.getLastUpdateTime()+"\nCurrent version:\n "+str(imageSource.getPermissions()["last-update-time"])+"\n")
+      return False
+  return True
+
 def isInstalledImageUpToDate(installedImage):
   """
   Returns True if the installed image(including all of its dependencies, is up to date.  False otherwise.
@@ -135,20 +164,7 @@ def isInstalledImageUpToDate(installedImage):
 
   sourceLineage = getImageSourceLineage(topImageSource)
   installedImageLineage = subuserlib.installedImages.getImageLineage(installedImage.getUser(),installedImage.getImageId())
-  while len(sourceLineage) > 0:
-    if not len(installedImageLineage)>0:
-      return False
-    imageSource = sourceLineage.pop(0)
-    installedImage = installedImageLineage.pop(0)
-    sourcesMatch = installedImage.getImageSourceName() == imageSource.getName() and installedImage.getSourceRepoId() == imageSource.getRepository().getName()
-    lastUpdateTimesMatch = installedImage.getLastUpdateTime() == imageSource.getPermissions()["last-update-time"] or not imageSource.getPermissions()["last-update-time"]
-    if not (sourcesMatch and lastUpdateTimesMatch):
-      if not sourcesMatch:
-        installedImage.getUser().getRegistry().log("Depencies changed from "+installedImage.getImageSourceName()+"@"+installedImage.getSourceRepoId()+".  New depencency is: "+imageSource.getName()+"@"+imageSource.getRepository().getName())
-      elif not lastUpdateTimesMatch:
-        installedImage.getUser().getRegistry().log("Installed image "+installedImage.getImageSourceName()+"@"+installedImage.getSourceRepoId()+" is out of date.\nInstalled version:\n "+installedImage.getLastUpdateTime()+"\nCurrent version:\n "+str(imageSource.getPermissions()["last-update-time"])+"\n")
-      return False
-  return True
+  return compareSourceLineageAndInstalledImageLineage(installedImage.getUser(),sourceLineage,installedImageLineage)
 
 def ensureSubuserImageIsInstalledAndUpToDate(subuser, useCache=False):
   """

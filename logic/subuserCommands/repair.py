@@ -4,12 +4,12 @@
 
 import pathConfig
 #external imports
-import optparse
+import optparse,sys
 #internal imports
 import subuserlib.classes.user,subuserlib.verify,subuserlib.commandLineArguments
 
 ####################################################
-def parseCliArgs():
+def parseCliArgs(realArgs):
   usage = "usage: subuser %prog [options]"
   description = """
 Repair your subuser installation.
@@ -17,10 +17,14 @@ Repair your subuser installation.
 This is usefull when migrating from one machine to another.  You can copy your ~/.subuser folder to the new machine and run repair, and things should just work.
 """
   parser = optparse.OptionParser(usage=usage,description=description,formatter=subuserlib.commandLineArguments.HelpFormatterThatDoesntReformatDescription())
-  return parser.parse_args()
+  return parser.parse_args(args=realArgs)
 
-if __name__ == "__main__":
-  options,arguments=parseCliArgs()
+def verify(realArgs):
+  options,arguments=parseCliArgs(realArgs)
   user = subuserlib.classes.user.User()
   subuserlib.verify.verify(user)
   user.getRegistry().commit()
+
+if __name__ == "__main__":
+  verify(sys.argv[1:])
+

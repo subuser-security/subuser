@@ -8,18 +8,26 @@ In order to make our test suit work, we must use a MockDockerDaemon rather than 
 """
 
 #external imports
-#import ...
+import json
 #internal imports
 import subuserlib.classes.userOwnedObject
 
 class MockDockerDaemon(subuserlib.classes.userOwnedObject.UserOwnedObject):
   images = {}
   nextImageId = 1
+  imagesPath = "/root/subuser/test/docker/images.json"
+
+  def __load(self):
+    with open(self.imagesPath,"r") as imagesFile:
+      self.images = json.load(imagesFile)
+
+  def __save(self):
+    with open(self.imagesPath,"w") as imagesFile:
+      json.dump(self.images,imagesFile)
 
   def __init__(self,user):
     subuserlib.classes.userOwnedObject.UserOwnedObject.__init__(self,user)
-    for imageId in user.getInstalledImages().keys():
-      self.images[imageId] = {"Id":imageId,"Parent":""}
+    self.__load()
 
   def getImageProperties(self,imageTagOrId):
     """
@@ -41,10 +49,12 @@ class MockDockerDaemon(subuserlib.classes.userOwnedObject.UserOwnedObject):
     if "debian" in dockerfile:
       parent = ""
     self.images[newId] = {"Id":newId,"Parent":parent}
+    self.__save()
     return newId
 
   def removeImage(self,imageId):
     del self.images[imageId]
+    self.__save()
 
   def execute(self,args,cwd=None):
     pass

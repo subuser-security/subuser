@@ -32,6 +32,15 @@ class Repository(dict,subuserlib.classes.userOwnedObject.UserOwnedObject):
   def getGitOriginURI(self):
     return self.__gitOriginURI
 
+  def getDisplayName(self):
+    """
+    How should we refer to this repository when communicating with the user?
+    """
+    if self.isTemporary():
+      return self.getGitOriginURI()
+    else:
+      return self.getName()
+
   def getRepoPath(self):
     """ Get the path of the repo's sources on disk. """
     return os.path.join(self.getUser().getConfig().getRepositoriesDir(),str(self.getName()))
@@ -53,7 +62,7 @@ class Repository(dict,subuserlib.classes.userOwnedObject.UserOwnedObject):
       subuserlib.git.runGit(["checkout","master"],cwd=self.getRepoPath())
       subuserlib.git.runGit(["pull"],cwd=self.getRepoPath())
       if not self.__lastGitCommitHash == self.getGitCommitHash():
-        self.getUser().getRegistry().logChange("Updated repository "+self.getName())
+        self.getUser().getRegistry().logChange("Updated repository "+self.getDisplayName())
 
   def loadProgamSources(self):
     """

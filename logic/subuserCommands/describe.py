@@ -20,7 +20,7 @@ EXAMPLE:
     $ subuser describe subuser firefox
 """
   parser = optparse.OptionParser(usage=usage,description=description,formatter=subuserlib.commandLineArguments.HelpFormatterThatDoesntReformatDescription())
-  return parser.parse_args(args=sysargs[1:])
+  return parser.parse_args(args=sysargs)
 
 def describe(sysargs):
   """
@@ -30,7 +30,7 @@ def describe(sysargs):
 
   Describing a subuser prints its permissions.
 
-  >>> describe.describe(["describe","subuser","foo"])
+  >>> describe.describe(["subuser","foo"])
   Subuser: foo
   ------------------
   Progam:
@@ -42,7 +42,7 @@ def describe(sysargs):
 
   Describing an image prints the default permissions for that image.
 
-  >>> describe.describe(["describe","image","foo"])
+  >>> describe.describe(["image","foo"])
   foo:
    Description: 
    Maintainer: 
@@ -51,7 +51,7 @@ def describe(sysargs):
 
   Images can be refered to with their full paths as well.  Even remote images can be described.
 
-  >>> describe.describe(["describe","image","foo@default"])
+  >>> describe.describe(["image","foo@default"])
   foo:
    Description: 
    Maintainer: 
@@ -76,7 +76,6 @@ def describe(sysargs):
   else:
     print("Args: '"+"' '".join(args)+"'")
     print("Option not supported.")
-    #parseCliArgs(["","subuser","describe","--help"])
 
 if __name__ == "__main__":
-  describe(sys.argv)
+  describe(sys.argv[1:])
