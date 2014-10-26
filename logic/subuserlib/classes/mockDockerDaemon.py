@@ -8,14 +8,13 @@ In order to make our test suit work, we must use a MockDockerDaemon rather than 
 """
 
 #external imports
-import json
+import json,os
 #internal imports
 import subuserlib.classes.userOwnedObject
 
 class MockDockerDaemon(subuserlib.classes.userOwnedObject.UserOwnedObject):
   images = {}
   nextImageId = 1
-  imagesPath = "/root/subuser/test/docker/images.json"
 
   def __load(self):
     with open(self.imagesPath,"r") as imagesFile:
@@ -27,6 +26,9 @@ class MockDockerDaemon(subuserlib.classes.userOwnedObject.UserOwnedObject):
 
   def __init__(self,user):
     subuserlib.classes.userOwnedObject.UserOwnedObject.__init__(self,user)
+    self.imagesPath = "/root/subuser/test/docker/images.json"
+    if not os.path.exists(self.imagesPath):
+      self.imagesPath = "/home/travis/build/subuser-security/subuser/test/docker/images.json"
     self.__load()
 
   def getImageProperties(self,imageTagOrId):
