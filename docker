@@ -1,5 +1,0 @@
-# This Dockerfile is "injected" by the test util into the top directory of the repo.  Keep that in mind when examining the ADD command.
-FROM debian
-RUN apt-get update && apt-get install -y python git
-ADD ./ /root/subuser/
-RUN /root/subuser/logic/subuser test
