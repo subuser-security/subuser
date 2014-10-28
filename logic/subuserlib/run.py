@@ -37,7 +37,11 @@ def buildRunReadyImageForSubuser(subuserToRun):
   """
   Returns the Id of the Docker image to be run.
   """
-  return subuserToRun.getUser().getDockerDaemon().build(None,quiet=True,quietClient=True,useCache=True,rm=False,dockerfile=generateImagePreparationDockerfile(subuserToRun))
+  try:
+    imageId = subuserToRun.getUser().getDockerDaemon().build(None,quietClient=True,useCache=True,forceRm=False,rm=False,dockerfile=generateImagePreparationDockerfile(subuserToRun))
+  except subuserlib.classes.dockerDaemon.ImageBuildException as ibe:
+    sys.exit(str(ibe))
+  return imageId
 
 def getSerialDevices():
   return [device for device in os.listdir("/dev/") if device.startswith("ttyS") or device.startswith("ttyUSB") or device.startswith("ttyACM")]
@@ -60,9 +64,9 @@ def passOnEnvVar(envVar):
 def generateSoundArgs():
   soundArgs = []
   if os.path.exists("/dev/snd"):
-    soundArgs += ["-v=/dev/snd:/dev/snd:rw"]+["--device=/dev/snd/"+device for device in os.listdir("/dev/snd") if not device == "by-id" and not device == "by-path"]
+    soundArgs += ["--device=/dev/snd/"+device for device in os.listdir("/dev/snd") if not device == "by-id" and not device == "by-path"]
   if os.path.exists("/dev/dsp"):
-    soundArgs += ["-v=/dev/dsp:/dev/dsp:rw"]+["--device=/dev/dsp/"+device for device in os.listdir("/dev/dsp")]
+    soundArgs += ["--device=/dev/dsp/"+device for device in os.listdir("/dev/dsp")]
   return soundArgs
 
 def getPermissionFlagDict(subuserToRun):
@@ -76,14 +80,14 @@ def getPermissionFlagDict(subuserToRun):
    ("inherit-timezone", lambda p : passOnEnvVar("TZ")+["-v=/etc/localtime:/etc/localtime:r"] if p else []),
    # Moderate permissions
    ("user-dirs", lambda userDirs : ["-v="+os.path.join(subuserToRun.getUser().homeDir,userDir)+":"+os.path.join("/userdirs/",userDir)+":rw" for userDir in userDirs]),
-   ("sound-card", lambda p: generateSoundArgs() if p else []), #Why the volume here?  To make it so that the device nodes are owned by the audio group ;).  Evil, I know...
-   ("webcam", lambda p: ["--volume=/dev/"+device+":/dev/"+device for device in os.listdir("/dev/") if device.startswith("video")] + ["--device=/dev/"+device for device in os.listdir("/dev/") if device.startswith("video")] if p else []),
+   ("sound-card", lambda p: generateSoundArgs() if p else []),
+   ("webcam", lambda p: ["--device=/dev/"+device for device in os.listdir("/dev/") if device.startswith("video")] if p else []),
    ("access-working-directory", lambda p: ["-v="+os.getcwd()+":/pwd:rw","--workdir=/pwd"] if p else ["--workdir="+subuserToRun.getDockersideHome()]),
    ("allow-network-access", lambda p: ["--net=bridge","--dns=8.8.8.8"] if p else ["--net=none"]),
    # Liberal permissions
    ("x11", lambda p: ["-e","DISPLAY=unix"+os.environ['DISPLAY'],"-v=/tmp/.X11-unix:/tmp/.X11-unix:rw"] if p else []),
-   ("graphics-card", lambda p:["-v=/dev/dri:/dev/dri:rw"] + ["--device=/dev/dri/"+device for device in os.listdir("/dev/dri")] if p else []),
-   ("serial-devices", lambda sd: ["--volume=/dev/"+device+":/dev/"+device for device in getSerialDevices()] + ["--device=/dev/"+device for device in getSerialDevices()] if sd else []),
+   ("graphics-card", lambda p: ["--device=/dev/dri/"+device for device in os.listdir("/dev/dri")] if p else []),
+   ("serial-devices", lambda sd: ["--device=/dev/"+device for device in getSerialDevices()] if sd else []),
    ("system-dbus", lambda dbus: ["--volume=/var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket"] if dbus else []),
    ("as-root", lambda root: ["--user=0"] if root else ["--user="+str(os.getuid())]),
    # Anarchistic permissions

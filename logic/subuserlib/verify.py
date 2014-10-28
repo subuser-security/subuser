@@ -42,9 +42,17 @@ def verifyRegistryConsistency(user):
 
 def ensureImagesAreInstalledAndUpToDate(user):
   user.getRegistry().log("Checking if images need to be updated or installed...")
+  subusersWhosImagesFailedToBuild = []
   for _,subuser in user.getRegistry().getSubusers().items():
-    if not subuser.locked():
-      subuserlib.install.ensureSubuserImageIsInstalledAndUpToDate(subuser)
+    if not subuser.locked(): # TODO: We should install images for locked subusers if their images have dissappered.
+      try:
+        subuserlib.install.ensureSubuserImageIsInstalledAndUpToDate(subuser)
+      except subuserlib.classes.dockerDaemon.ImageBuildException as e:
+        subusersWhosImagesFailedToBuild.append(subuser)
+  if subusersWhosImagesFailedToBuild:
+    user.getRegistry().log("Images for the following subusers failed to build:")
+    for subuser in subusersWhosImagesFailedToBuild:
+      user.getRegistry().log(subuser.getName())
 
 def trimUnneededTempRepos(user):
   user.getRegistry().log("Running garbage collector on temporary repositories...")

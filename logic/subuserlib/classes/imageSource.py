@@ -7,7 +7,7 @@ Images in subuser are built from ImageSource objects.
 """
 
 #external imports
-import os
+import os,io
 #internal imports
 import subuserlib.classes.userOwnedObject,subuserlib.classes.describable,subuserlib.subprocessExtras,subuserlib.resolve
 
@@ -118,7 +118,7 @@ class ImageSource(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.
      Returns the contents of the SubuserImagefile.  If there is no SubuserImagefile, raises an exception.
     """
     if os.path.isfile(self.getSubuserImagefilePath()):
-      with open(self.getSubuserImagefilePath(),mode="r") as subuserImagefile:
+      with io.open(self.getSubuserImagefilePath(),mode="r",encoding="utf-8") as subuserImagefile:
         return subuserImagefile.read()
     else:
       raise subuserlib.classes.dockerDaemon.ImageBuildException("This ImageSource does not build from a SubuserImagefile.")

@@ -50,30 +50,29 @@ def archiveBuildContext(archive,directoryWithDockerfile,excludePatterns,dockerfi
   contexttarfile.close()
   archive.seek(0)
 
-def readAndPrintSreamingBuildStatus(response):
-  # Warning, reading from an httpresponse is not exactly high level programming ;)
+def readAndPrintStreamingBuildStatus(response,dontPrint):
+  jsonSegment = ""
   output = ""
-  chunk = None
-  while chunk == None or not chunk == "":
-    chunk = response.read(80)
-    if "\n" in chunk:
-      try:
-        lineStart = output.rindex("\n")
-      except ValueError:
-        lineStart = 0
-      lineContainingRegion = output[lineStart:] + chunk[:chunk.rindex("\n")]
-      for line in lineContainingRegion.split("\n"):
-        if line:
-          lineJson = json.loads(line)
-          try:
-              if "stream" in lineJson:
-                sys.stdout.write(lineJson["stream"])
-              else:
-                print(lineJson["errorDetail"]["message"])
-                print(lineJson["error"])
-          except (KeyError,ValueError): # TODO, handle errorDetail messages
-            sys.stdout.write(line)
-    output += chunk
+  byte = response.read(1)
+  while byte:
+    jsonSegment += byte
+    output += byte
+    byte = response.read(1)
+    try:
+      lineDict = json.loads(jsonSegment)
+      if "stream" in lineDict:
+        if not dontPrint:
+          sys.stdout.write(lineDict["stream"])
+      elif "status" in lineDict:
+        if not dontPrint:
+          sys.stdout.write(lineDict["status"])
+      elif "errorDetail" in lineDict:
+        raise ImageBuildException("Build error:"+lineDict["errorDetail"]["message"]+"\n"+response.read())
+      else:
+        raise ImageBuildException("Build error:"+jsonSegment+"\n"+response.read())
+      jsonSegment = ""
+    except ValueError:
+      pass
   return output
 
 class DockerDaemon(subuserlib.classes.userOwnedObject.UserOwnedObject):
@@ -97,7 +96,7 @@ class DockerDaemon(subuserlib.classes.userOwnedObject.UserOwnedObject):
     """
      Returns a dictionary of image properties, or None if the image does not exist.
     """
-    self.getConnection().request("GET","/images/"+imageTagOrId+"/json")
+    self.getConnection().request("GET","/v1.13/images/"+imageTagOrId+"/json")
     response = self.getConnection().getresponse()
     if not response.status == 200:
       response.read() # Read the response and discard it to prevent the server from getting locked up: http://stackoverflow.com/questions/3231543/python-httplib-responsenotready
@@ -106,14 +105,14 @@ class DockerDaemon(subuserlib.classes.userOwnedObject.UserOwnedObject):
       return json.loads(response.read())
 
   def removeImage(self,imageId):
-    self.getConnection().request("DELETE","/images/"+imageId)
+    self.getConnection().request("DELETE","/v1.13/images/"+imageId)
     response = self.getConnection().getresponse()
     if not response.status == 200:
       raise ImageDoesNotExistsException("The image "+imageId+" could not be deleted.\n"+response.read())
     else:
       response.read()
 
-  def build(self,directoryWithDockerfile=None,useCache=True,rm=False,forceRm=False,quiet=False,tag=None,dockerfile=None,quietClient=False):
+  def build(self,directoryWithDockerfile=None,useCache=True,rm=True,forceRm=True,quiet=False,tag=None,dockerfile=None,quietClient=False):
     """
     Build a Docker image.  If a the dockerfile argument is set to a string, use that string as the Dockerfile.  Returns the newly created images Id or raises an exception if the build fails.
 
@@ -123,12 +122,13 @@ class DockerDaemon(subuserlib.classes.userOwnedObject.UserOwnedObject):
     """
     # Inspired by and partialy taken from https://github.com/docker/docker-py
     queryParameters =  {
-      't': tag,
       'q': quiet,
       'nocache': not useCache,
       'rm': rm,
       'forcerm': forceRm
       }
+    if tag:
+      queryParameters["tag"] = tag
     queryParametersString = urllib.urlencode(queryParameters)
     excludePatterns = []
     if directoryWithDockerfile:
@@ -138,7 +138,7 @@ class DockerDaemon(subuserlib.classes.userOwnedObject.UserOwnedObject):
           exclude = list(filter(bool, f.read().split('\n')))
     with tempfile.TemporaryFile() as tmpArchive:
       archiveBuildContext(tmpArchive,directoryWithDockerfile,excludePatterns,dockerfile=dockerfile)
-      self.getConnection().request("POST","/build?"+queryParametersString,body=tmpArchive)
+      self.getConnection().request("POST","/v1.13/build?"+queryParametersString,body=tmpArchive)
       try:
         response = self.getConnection().getresponse()
       except httplib.ResponseNotReady as rnr:
@@ -148,20 +148,17 @@ class DockerDaemon(subuserlib.classes.userOwnedObject.UserOwnedObject):
       if quietClient:
         response.read()
       else:
-        readAndPrintSreamingBuildStatus(response)
+        readAndPrintStreamingBuildStatus(response,dontPrint=False)
       raise ImageBuildException("Building image failed.\n"
                      +"status: "+str(response.status)+"\n"
                      +"Reason: "+response.reason+"\n")
 
-    if quietClient:
-      output = response.read()
-    else:
-      output = readAndPrintSreamingBuildStatus(response)
+    output = readAndPrintStreamingBuildStatus(response,dontPrint=quietClient)
     # Now we move to regex code stolen from the official python Docker bindings.
     search = r'Successfully built ([0-9a-f]+)'
     match = re.search(search, output)
     if not match:
-      raise ImageBuildException("Unexpected server response when building image.")
+      raise ImageBuildException("Unexpected server response when building image:\n"+output)
     shortId = match.group(1) #This is REALLY ugly!
     return self.getImageProperties(shortId)["Id"]
 

@@ -4,7 +4,7 @@
 
 import pathConfig
 #external imports
-import optparse
+import optparse,sys
 #internal imports
 import subuserlib.classes.user,subuserlib.verify,subuserlib.commandLineArguments
 

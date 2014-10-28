@@ -6,19 +6,13 @@ Implements functions involved in building/installing/updating subuser images.
 """
 
 #external imports
-import sys,os,stat,uuid
+import sys,os,stat,uuid,io
 #internal imports
 import subuserlib.classes.installedImage, subuserlib.installedImages,subuserlib.classes.dockerDaemon,subuserlib.installTime,subuserlib.verify
 
-
 def cleanUpAndExitOnError(user,error):
-  """
-  Takes a user and an exception, prints the exception to the screen, cleans up by resetting the subusers list to the one saved on disk and running verify, exits with exit code 1.
-  """
   user.getRegistry().log(str(error))
   user.getRegistry().log("Cleaning up.")
-  user.getRegistry().reloadSubusersFromDisk()
-  subuserlib.verify.verify(user)
   sys.exit(1)
 
 def installFromBaseImage(imageSource):
@@ -42,7 +36,7 @@ def installFromBaseImage(imageSource):
 
   if userInput == "v":
     print('\n===================== SCRIPT CODE =====================\n')
-    with open(buildImageScriptPath, 'r') as file_f:
+    with io.open(buildImageScriptPath, 'r',encoding="utf-8") as file_f:
       print(file_f.read())
     print('\n===================== END SCRIPT CODE =====================\n')
     return installFromBaseImage(imageSource)
@@ -66,12 +60,9 @@ def installFromSubuserImagefile(imageSource, useCache=False,parent=None):
   Returns the Id of the newly installed image.
   """
   dockerFileContents = imageSource.generateDockerfileConents(parent=parent)
-  try:
-    dockerImageDir = os.path.join(imageSource.getSourceDir(),"docker-image")
-    imageId = imageSource.getUser().getDockerDaemon().build(directoryWithDockerfile=dockerImageDir,rm=True,useCache=useCache,dockerfile=dockerFileContents)
-    return imageId
-  except subuserlib.classes.dockerDaemon.ImageBuildException as e:
-    cleanUpAndExitOnError(imageSource.getUser(),"Installing image failed: "+imageSource.getName()+"\n"+str(e))
+  dockerImageDir = os.path.join(imageSource.getSourceDir(),"docker-image")
+  imageId = imageSource.getUser().getDockerDaemon().build(directoryWithDockerfile=dockerImageDir,rm=True,useCache=useCache,dockerfile=dockerFileContents)
+  return imageId
 
 def installImage(imageSource, useCache=False,parent=None):
   """
@@ -94,12 +85,11 @@ def installImage(imageSource, useCache=False,parent=None):
 
   subuserSetupDockerFile = ""
   subuserSetupDockerFile += "FROM "+imageId+"\n"
-  subuserSetupDockerFile += "RUN mkdir /subuser ; echo "+str(uuid.uuid4())+" > /subuser/uuid\n"
-  imageId = imageSource.getUser().getDockerDaemon().build(dockerfile=subuserSetupDockerFile) # This ensures that all images have unique Ids.  Even images that are otherwise the same.
-
-
-
+  subuserSetupDockerFile += "RUN mkdir /subuser ; echo "+str(uuid.uuid4())+" > /subuser/uuid\n" # This ensures that all images have unique Ids.  Even images that are otherwise the same.
+  imageId = imageSource.getUser().getDockerDaemon().build(dockerfile=subuserSetupDockerFile)
+  
   imageSource.getUser().getInstalledImages()[imageId] = subuserlib.classes.installedImage.InstalledImage(imageSource.getUser(),imageId,imageSource.getName(),imageSource.getRepository().getName(),lastUpdateTime)
+  imageSource.getUser().getInstalledImages().save()
   return imageId
 
 def getImageSourceLineage(imageSource):

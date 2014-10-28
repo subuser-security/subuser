@@ -4,7 +4,7 @@ Installing subuser
 System Requirements
 --------------------
 
- * Docker 1.2 or higher
+ * Docker 1.3 or higher
 
  * Python >= 2.7
 
@@ -30,3 +30,4 @@ Instalation
 4. Log out and then back in again.
 
 5. Done!
+
