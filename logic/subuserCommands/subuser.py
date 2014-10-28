@@ -105,13 +105,6 @@ def subuser(sysargs):
   Error while building image: Error in SubuserImagefile one line 0
    Subuser image does not exist: ""
   Cleaning up.
-  Verifying subuser configuration.
-  Verifying registry consistency...
-  Unregistering any non-existant installed images.
-  Checking if images need to be updated or installed...
-  Running garbage collector on temporary repositories...
-
-  And missing dependencies.
 
   >>> try:
   ...   subuser.subuser(["add","broken-non-existant-dependency","broken-non-existant-dependency@file:///home/travis/remote-test-repo"])
@@ -125,11 +118,6 @@ def subuser(sysargs):
   Error while building image: Error in SubuserImagefile one line 0
    Subuser image does not exist: "non-existant-I-do-not-exist!!!!!"
   Cleaning up.
-  Verifying subuser configuration.
-  Verifying registry consistency...
-  Unregistering any non-existant installed images.
-  Checking if images need to be updated or installed...
-  Running garbage collector on temporary repositories...
   """
   options,args = parseCliArgs(sysargs)
   user = subuserlib.classes.user.User()
