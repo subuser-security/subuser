@@ -50,7 +50,7 @@ class ImageSource(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.
     return subusers
 
   def getSourceDir(self):
-    return os.path.join(self.getRepository().getRepoPath(),self.getName())
+    return os.path.join(self.getRepository().getSubuserRepositoryRoot(),self.getName())
 
   def getBuildType(self):
     """

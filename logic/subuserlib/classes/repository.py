@@ -7,7 +7,7 @@ A repository is a collection of ``ImageSource`` s which are published in a git r
 """
 
 #external imports
-import os,shutil
+import os,shutil,io,json
 #internal imports
 import subuserlib.git,subuserlib.classes.userOwnedObject,subuserlib.classes.imageSource,subuserlib.subprocessExtras
 
@@ -45,6 +45,33 @@ class Repository(dict,subuserlib.classes.userOwnedObject.UserOwnedObject):
     """ Get the path of the repo's sources on disk. """
     return os.path.join(self.getUser().getConfig().getRepositoriesDir(),str(self.getName()))
 
+  def getRepoConfigPath(self):
+    return os.path.join(self.getRepoPath(),".subuser.json")
+
+  def getRepoConfig(self):
+    """
+    Either returns the config as a dictionary or None.
+    """
+    if os.path.exists(self.getRepoConfigPath()):
+      with io.open(self.getRepoConfigPath(),"r",encoding="utf-8") as configFile:
+        try:
+          return json.load(configFile)
+        except ValueError as ve:
+          self.getRegistry().log("Error parsing .subuser.json file for repository "+self.getName()+":\n"+str(ve))
+          return None
+    else:
+      return None
+
+  def getSubuserRepositoryRoot(self):
+    """ Get the path of the repo's subuser root on disk on the host. """
+    repoConfig = self.getRepoConfig()
+    if repoConfig:
+      if "subuser-repository-root" in repoConfig:
+        if repoConfig["subuser-repository-root"].startswith("../"):
+          raise ValueError("Paths in .subuser.json may not be relative to a higher directory.")
+        return os.path.join(self.getRepoPath(),repoConfig["subuser-repository-root"])
+    return self.getRepoPath()
+
   def isTemporary(self):
     return self.__temporary
 
@@ -68,7 +95,7 @@ class Repository(dict,subuserlib.classes.userOwnedObject.UserOwnedObject):
     """
     Load ProgamSources from disk into memory.
     """
-    imageNames = filter(lambda f: os.path.isdir(os.path.join(self.getRepoPath(),f)) and not f == ".git",os.listdir(self.getRepoPath()))
+    imageNames = filter(lambda f: os.path.isdir(os.path.join(self.getSubuserRepositoryRoot(),f)) and not f == ".git",os.listdir(self.getSubuserRepositoryRoot()))
     for imageName in imageNames:
       self[imageName] = (subuserlib.classes.imageSource.ImageSource(self.getUser(),self,imageName))
 
