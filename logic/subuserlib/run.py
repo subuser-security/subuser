@@ -64,8 +64,10 @@ def passOnEnvVar(envVar):
 def generateSoundArgs():
   soundArgs = []
   if os.path.exists("/dev/snd"):
+    soundArgs += ["--volume=/dev/snd:/dev/snd"]
     soundArgs += ["--device=/dev/snd/"+device for device in os.listdir("/dev/snd") if not device == "by-id" and not device == "by-path"]
   if os.path.exists("/dev/dsp"):
+    soundArgs += ["--volume=/dev/dsp:/dev/dsp"]
     soundArgs += ["--device=/dev/dsp/"+device for device in os.listdir("/dev/dsp")]
   return soundArgs
 
