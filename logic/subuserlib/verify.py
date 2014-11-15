@@ -48,6 +48,7 @@ def ensureImagesAreInstalledAndUpToDate(user):
       try:
         subuserlib.install.ensureSubuserImageIsInstalledAndUpToDate(subuser)
       except subuserlib.classes.dockerDaemon.ImageBuildException as e:
+        user.getRegistry().log(str(e))
         subusersWhosImagesFailedToBuild.append(subuser)
   if subusersWhosImagesFailedToBuild:
     user.getRegistry().log("Images for the following subusers failed to build:")
@@ -62,6 +63,9 @@ def trimUnneededTempRepos(user):
     if repo.isTemporary():
       for _,installedImage in user.getInstalledImages().items():
         if repoId == installedImage.getSourceRepoId():
+          keep = True
+      for _,subuser in user.getRegistry().getSubusers().items():
+        if repoId == subuser.getImageSource().getRepository().getName():
           keep = True
     else:
       keep = True
