@@ -33,6 +33,9 @@ class InstalledImage(subuserlib.classes.userOwnedObject.UserOwnedObject):
   def getImageSourceName(self):
     return self.__imageSourceName
 
+  def getImageSource(self):
+    return self.getUser().getRegistry().getRepositories()[self.getSourceRepoId()][self.getImageSourceName()]
+
   def getLastUpdateTime(self):
     return self.__lastUpdateTime
 

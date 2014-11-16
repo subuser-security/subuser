@@ -6,12 +6,13 @@ import pathConfig
 #external imports
 import optparse,sys
 #internal imports
-import subuserlib.classes.user,subuserlib.verify,subuserlib.commandLineArguments
+import subuserlib.classes.user,subuserlib.commandLineArguments,subuserlib.removeOldImages
 
 def parseCliArgs(realArgs):
   usage = "usage: subuser %prog"
   description = """ Remove old, no longer used, installed images.  Note, once you do this, you will no longer be able to return to previous configuration states with subuser update checkout."""
   parser=optparse.OptionParser(usage=usage,description=description,formatter=subuserlib.commandLineArguments.HelpFormatterThatDoesntReformatDescription())
+  parser.add_option("--dry-run", dest="dryrun",action="store_true",default=False,help="Don't actually delete the images. Print which images would be deleted.")
   return parser.parse_args(args=realArgs)
 
 def removeOldImages(realArgs):
@@ -74,6 +75,13 @@ def removeOldImages(realArgs):
   >>> set([i.getImageSourceName() for i in user.getInstalledImages().values()]) == set([u'foo', u'bar'])
   True
 
+  Use dry-run to see which images are to be deleted.
+
+  >>> remove_old_images.removeOldImages(["--dry-run"])
+  The following images are uneeded and would be deleted.
+  DOCKER-ID : SUBUSER-ID
+  5 : bar@file:///home/travis/remote-test-repo
+
   Now we use ``remove-old-images`` to clean up our installed images.
 
   >>> remove_old_images.removeOldImages([])
@@ -91,19 +99,15 @@ def removeOldImages(realArgs):
   True
  
   """
-  parseCliArgs(realArgs)
+  options,args = parseCliArgs(realArgs)
 
   user = subuserlib.classes.user.User()
 
-  for installedImageId,installedImage in user.getInstalledImages().items():
-    imageInUse = False
-    for _,subuser in user.getRegistry().getSubusers().items():
-      if subuser.getImageId() == installedImageId:
-        imageInUse = True
-    if not imageInUse:
-      installedImage.removeDockerImage()
-  subuserlib.verify.verify(user)
-  user.getRegistry().commit()
+  if options.dryrun:
+    print("The following images are uneeded and would be deleted.")
+    print("DOCKER-ID : SUBUSER-ID")
+
+  subuserlib.removeOldImages.removeOldImages(user=user,dryrun=options.dryrun)
 
 #################################################################################################
 
