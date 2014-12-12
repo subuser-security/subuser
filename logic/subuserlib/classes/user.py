@@ -35,6 +35,7 @@ class User(object):
   __registry = None
   __installedImages = None
   __dockerDaemon = None
+  __runtimeCache = None
 
   def __init__(self,name=None,homeDir=None):
     if os.path.exists(os.path.join(subuserlib.paths.getSubuserDir(),"installed-images.json")):

@@ -7,9 +7,9 @@ A subuser is an entity that runs within a Docker container and has a home direct
 """
 
 #external imports
-import os,stat
+import os,stat,json
 #internal imports
-import subuserlib.classes.userOwnedObject,subuserlib.classes.imageSource,subuserlib.classes.permissions,subuserlib.classes.describable
+import subuserlib.classes.userOwnedObject,subuserlib.classes.imageSource,subuserlib.classes.permissions,subuserlib.classes.describable,subuserlib.runReadyImages,subuserlib.classes.runtime
 
 class Subuser(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.classes.describable.Describable):
   __name = None
@@ -58,6 +58,27 @@ class Subuser(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.clas
     Set the installed image associated with this subuser.
     """
     self.__imageId = imageId
+
+  def getRuntime(self,environment):
+    """
+    Returns the subuser's Runtime object for it's current permissions, creating it if necessary.
+    """
+    pathToCurrentImagesRuntimeCacheDir = os.path.join(self.getUser().getConfig().getRuntimeCache(),self.getImageId())
+    pathToRuntimeCacheFile = os.path.join(pathToCurrentImagesRuntimeCacheDir,self.getPermissions().getHash()+".json")
+    if os.path.exists(pathToRuntimeCacheFile):
+      with open(pathToRuntimeCacheFile,mode="r") as runtimeCacheFileHandle:
+        runtimeCacheInfo = json.load(runtimeCacheFileHandle)
+        return subuserlib.classes.runtime.Runtime(self.getUser(),subuser=self,runReadyImageId=runtimeCacheInfo['run-ready-image-id'],environment=environment)
+    try:
+      os.makedirs(pathToCurrentImagesRuntimeCacheDir)
+    except OSError:
+      pass
+    runReadyImageId = subuserlib.runReadyImages.buildRunReadyImageForSubuser(self)
+    runtimeInfo = {}
+    runtimeInfo['run-ready-image-id'] = runReadyImageId
+    with open(pathToRuntimeCacheFile,mode='w') as runtimeCacheFileHandle:
+      json.dump(runtimeInfo,runtimeCacheFileHandle,indent=1,separators=(',',': '))
+    return subuserlib.classes.runtime.Runtime(self.getUser(),subuser=self,runReadyImageId=runReadyImageId,environment=environment)
 
   def locked(self):
     """

@@ -40,7 +40,7 @@ class MockDockerDaemon(subuserlib.classes.userOwnedObject.UserOwnedObject):
     else:
       return None
 
-  def build(self,directoryWithDockerfile=None,useCache=True,rm=True,forceRm=True,quiet=False,tag=None,dockerfile=None):
+  def build(self,directoryWithDockerfile=None,useCache=True,rm=True,forceRm=True,quiet=False,quietClient=False,tag=None,dockerfile=None):
     """
     Build a Docker image.  If a the dockerfile argument is set to a string, use that string as the Dockerfile.  Return the newly created images Id or raises an exception if the build fails.
     """

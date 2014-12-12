@@ -65,19 +65,26 @@ def getPermissions(permissionsFilePath):
         permissions[permission] = defaultValue
     return permissions
 
-def setPermissions(permissions,permissionsFilePath):
+def getPermissonsJSONString(permissions):
   """
-  Save the permissions to the given file.  We only save permissions that are not set to their default values.
+  Returns the given permissions as a JSON formated string.
   """
   permissionsToSave = {}
   for permission,value in permissions.items():
     if not value == permissionDefaults[permission]:
       permissionsToSave[permission] = value
+  return json.dumps(permissionsToSave,indent=1, separators=(',', ': '))
+
+
+def setPermissions(permissions,permissionsFilePath):
+  """
+  Save the permissions to the given file.  We only save permissions that are not set to their default values.
+  """
   try:
     dir,_ = os.path.split(permissionsFilePath)
     os.makedirs(dir)
   except OSError:
     pass
   with open(permissionsFilePath, 'w') as file_f:
-    json.dump(permissionsToSave,file_f,indent=1, separators=(',', ': '))
+    file_f.write(getPermissonsJSONString(permissions))
 

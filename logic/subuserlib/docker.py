@@ -40,13 +40,9 @@ For installation instructions see <https://www.docker.io/gettingstarted/#h_insta
 To learn how to become a member of the docker group please watch this video: <http://www.youtube.com/watch?v=ahgRx5U4V7E>""")
   return executable
 
-def runDocker(args):
+def runDocker(args,cwd=None):
   """ Run docker with the given command line arguments. """
-  return subprocess.call([getAndVerifyDockerExecutable()]+args)
-
-def getDockerOutput(args):
-  """ Run docker with the given command line arguments and return it's output. """
-  return subprocess.check_output([getAndVerifyDockerExecutable()]+args)
+  return subuserlib.subprocessExtras.subprocessCallPlus([getAndVerifyDockerExecutable()]+args,cwd)
 
 def runDockerAndExitIfItFails(args,cwd=None):
   """ Run docker with the given command line arguments.  If the command returns a non-zero exit code, exit with an error message. """

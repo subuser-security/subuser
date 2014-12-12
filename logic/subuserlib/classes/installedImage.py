@@ -7,7 +7,7 @@ Each user has a set of images that have been installed.
 """
 
 #external imports
-#import ...
+import os,json
 #internal imports
 import subuserlib.classes.userOwnedObject
 
@@ -45,6 +45,21 @@ class InstalledImage(subuserlib.classes.userOwnedObject.UserOwnedObject):
     """
     return not (self.getUser().getDockerDaemon().getImageProperties(self.getImageId()) == None)
 
+  def removeCachedRuntimes(self):
+    """
+    Remove cached runtime environments.
+    """
+    pathToImagesRuntimeCacheDir = os.path.join(self.getUser().getConfig().getRuntimeCache(),self.getImageId())
+    try:
+      for permissionsSpecificCacheInfoFileName in os.listdir(pathToImagesRuntimeCacheDir):
+        permissionsSpecificCacheInfoFilePath = os.path.join(pathToImagesRuntimeCacheDir,permissionsSpecificCacheInfoFileName)
+        with open(permissionsSpecificCacheInfoFilePath,mode='r') as permissionsSpecificCacheInfoFileHandle:
+          permissionsSpecificCacheInfo = json.load(permissionsSpecificCacheInfoFileHandle)
+          self.getUser().getDockerDaemon().removeImage(permissionsSpecificCacheInfo['run-ready-image-id'])
+          os.remove(permissionsSpecificCacheInfoFilePath)
+    except OSError:
+      pass
+  
   def removeDockerImage(self):
     """
       Remove the image from the Docker daemon's image store.

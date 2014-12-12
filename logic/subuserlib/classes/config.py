@@ -22,7 +22,7 @@ class Config(subuserlib.classes.userOwnedObject.UserOwnedObject):
 
   def _expandPathsInConfig(self,config):
     """ Go through a freshly loaded config file and expand any environment variables in the paths. """
-    subuserlib.loadMultiFallbackJsonConfigFile.expandPathsInDict(self.getUser().homeDir,["bin-dir","registry-dir","installed-images-list","locked-subusers-path","user-set-permissions-dir","subuser-home-dirs-dir","repositories-dir"],config)
+    subuserlib.loadMultiFallbackJsonConfigFile.expandPathsInDict(self.getUser().homeDir,["bin-dir","registry-dir","installed-images-list","locked-subusers-path","user-set-permissions-dir","subuser-home-dirs-dir","repositories-dir","runtime-cache"],config)
 
   def _loadConfig(self):
     """ Loads the subuser config: a dictionary of settings used by subuser. """
@@ -54,6 +54,13 @@ class Config(subuserlib.classes.userOwnedObject.UserOwnedObject):
   def getLockedSubusersDotJsonPath(self):
     """ Get the path to the locked-subusers.json file where attributes of locked subusers are stored. """
     return self.__config["locked-subusers-path"]
+
+  def getRuntimeCache(self):
+    """
+    Return the path to the directory where runtime specific configurations are cached.
+    """
+    return self.__config["runtime-cache"]
+
   def getSubusersDotJsonPath(self):
     """ Get the path to the subusers.json file where subusers are registered. """
     return os.path.join(self.getRegistryPath(),"subusers.json")

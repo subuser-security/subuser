@@ -4,9 +4,9 @@
 
 import pathConfig
 #external imports
-import sys
+import sys,os
 #internal imports
-import subuserlib.classes.user, subuserlib.run
+import subuserlib.classes.user,subuserlib.runReadyImages
 
 ##############################################################
 helpString = """
@@ -45,7 +45,7 @@ def dryRun(args):
   RUN test -d /home/travis || mkdir /home/travis && chown travis /home/travis
   <BLANKLINE>
   The command to launch the image is:
-  docker 'run' '-i' '-t' '--rm' '-e' 'HOME=/home/travis/test-home' '--workdir=/home/travis/test-home' '--net=none' '--user=1000' 'imageId' '/usr/bin/foo'
+  docker 'run' '-i' '-t' '--rm' '-e' 'HOME=/home/travis/test-home' '--workdir=/home/travis/test-home' '--net=none' '--user=1000' '3' '/usr/bin/foo'
 
   Running subusers installed through temporary repositories works as well.  Here, we add a subuser named bar, run it, and then remove it again.
  
@@ -64,12 +64,12 @@ def dryRun(args):
 
   >>> dry_run.dryRun(["bar"])
   The image will be prepared using the Dockerfile:
-  FROM 4
+  FROM 5
   RUN useradd --uid=1000 travis ;export exitstatus=$? ; if [ $exitstatus -eq 4 ] ; then echo uid exists ; elif [ $exitstatus -eq 9 ]; then echo username exists. ; else exit $exitstatus ; fi
   RUN test -d /home/travis || mkdir /home/travis && chown travis /home/travis
   <BLANKLINE>
   The command to launch the image is:
-  docker 'run' '-i' '-t' '--rm' '-e' 'HOME=/home/travis/test-home' '--workdir=/home/travis/test-home' '--net=none' '--user=1000' 'imageId' '/usr/bin/bar'
+  docker 'run' '-i' '-t' '--rm' '-e' 'HOME=/home/travis/test-home' '--workdir=/home/travis/test-home' '--net=none' '--user=1000' '6' '/usr/bin/bar'
 
   Cleanup.
 
@@ -98,10 +98,11 @@ def dryRun(args):
 
   user = subuserlib.classes.user.User()
   if subuserName in user.getRegistry().getSubusers():
+    subuser = user.getRegistry().getSubusers()[subuserName]
     print("The image will be prepared using the Dockerfile:")
-    print(subuserlib.run.generateImagePreparationDockerfile(user.getRegistry().getSubusers()[subuserName]))
+    print(subuserlib.runReadyImages.generateImagePreparationDockerfile(subuser))
     print("The command to launch the image is:")
-    print(subuserlib.run.getPrettyCommand(user.getRegistry().getSubusers()[subuserName],"imageId",argsToPassToImage))
+    print(subuser.getRuntime(os.environ).getPrettyCommand(argsToPassToImage))
   else:
     sys.exit(subuserName + " not found.\n"+helpString)
 

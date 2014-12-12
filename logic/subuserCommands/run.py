@@ -4,9 +4,9 @@
 
 import pathConfig
 #external imports
-import sys
+import sys,os
 #internal imports
-import subuserlib.classes.user, subuserlib.run
+import subuserlib.classes.user
 
 ##############################################################
 helpString = """Run the given subuser.
@@ -30,7 +30,7 @@ def run(args):
 
   user = subuserlib.classes.user.User()
   if subuserName in user.getRegistry().getSubusers():
-    subuserlib.run.run(user.getRegistry().getSubusers()[subuserName],argsToPassToImage)
+    user.getRegistry().getSubusers()[subuserName].getRuntime(os.environ).run(argsToPassToImage)
   else:
     sys.exit(subuserName + " not found.\n"+helpString)
 

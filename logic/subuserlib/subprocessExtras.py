@@ -33,6 +33,15 @@ def subprocessCheckedCall(args, errorContext='',cwd=None):
   if not process.returncode == 0:
     sys.exit(formatErrorMessage(args,"running command in dir: "+cwd,errorContext=errorContext))
 
+def subprocessCallPlus(args,cwd=None):
+  """
+  Same as subprocess.call except here you can specify the cwd.
+  """
+  process = subprocess.Popen(args,cwd=cwd)
+  (stdout,stderr) = process.communicate()
+  return process.returncode
+
+
 def subprocessCheckedCallCollectOutput(args,errorContext="",cwd=None):
   """
   Run the command and return the output to stdout as a string.
