@@ -14,10 +14,10 @@ def parseCliArgs(sysargs):
 
 EXAMPLE:
 
-    $ subuser describe image firefox
+    $ subuser describe image iceweasel
     <lots of info>
 
-    $ subuser describe subuser firefox
+    $ subuser describe subuser iceweasel
 """
   parser = optparse.OptionParser(usage=usage,description=description,formatter=subuserlib.commandLineArguments.HelpFormatterThatDoesntReformatDescription())
   return parser.parse_args(args=sysargs)

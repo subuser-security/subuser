@@ -68,12 +68,12 @@ Example::
 Example2::
 
   FROM-SUBUSER-IMAGE libx11
-  RUN apt-get update && apt-get install -yyq firefox
+  RUN apt-get update && apt-get install -yyq iceweasel
 
 Example3::
 
   FROM debian
-  RUN apt-get update && apt-get install -yyq firefox
+  RUN apt-get update && apt-get install -yyq iceweasel
 
 .. note :: Examples 2 and 3 do the **SAME** thing, it's just that Example3 takes a little longer to build and uses more space on disk.  There is **no magic** in the ``libx11`` image and never will be(we hope).
 

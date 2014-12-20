@@ -14,9 +14,9 @@ Display the command which would be issued to launch Docker if you were to run th
 
 For example:
 
-    $ subuser dry-run firefox
+    $ subuser dry-run iceweasel
 
-Will display the command used to launch the subuser firefox.
+Will display the command used to launch the subuser iceweasel.
 
 Please note, this is only a rough approximation for debugging purposes and there is no guarantee that the command displayed here would actually work.
 """

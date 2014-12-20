@@ -13,9 +13,9 @@ helpString = """Run the given subuser.
 
 For example:
 
-    $ subuser run firefox
+    $ subuser run iceweasel
 
-Will launch the subuser named firefox.
+Will launch the subuser named iceweasel
 """
 
 #################################################################################################

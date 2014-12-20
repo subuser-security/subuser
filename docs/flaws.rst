@@ -1,7 +1,7 @@
 Design flaws/bugs in subuser
 ============================
 
-* Application startup time is slowed.  On my system with Docker's ``aufs`` backend it takes 2.5 seconds extra time for all applications, be it ``vim`` or ``firefox``.  I have read reports that on newer systems with SSDs and ``btrfs`` this can be reduced to a quarter of a second.
+* Application startup time is slowed.  On my system with Docker's ``aufs`` backend it takes 2.5 seconds extra time for all applications, be it ``vim`` or ``iceweasel``.  I have read reports that on newer systems with SSDs and ``btrfs`` this can be reduced to a quarter of a second.
 
 * Certain things involving sharing of data between applications, like the clipboard in `vim`, just won't work.
 
