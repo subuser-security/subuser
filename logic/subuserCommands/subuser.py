@@ -120,8 +120,11 @@ def subuser(sysargs):
   Cleaning up.
   """
   options,args = parseCliArgs(sysargs)
+  try:
+    action = args[0]
+  except IndexError:
+    parseCliArgs(["--help"])
   user = subuserlib.classes.user.User()
-  action = args[0]
   if action == "add":
     if not len(args) == 3:
       sys.exit("Wrong number of arguments to add.  See `subuser subuser -h`.")
