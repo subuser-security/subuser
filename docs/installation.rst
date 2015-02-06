@@ -10,8 +10,8 @@ System Requirements
 
  * Git
 
-Instalation
-------------
+Installation
+-------------
 
 1. Install `Docker <http://www.docker.io/gettingstarted/#h_installation). Then [add yourself to the docker group](http://docs.docker.io/en/v0.7.3/use/basics/>`_ and add your user to the ``docker`` group.
 
