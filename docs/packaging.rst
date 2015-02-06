@@ -26,7 +26,7 @@ Quick packaging tutorial
   
 2. Add subuser images:
 
- a. Create a folder in your subuser repository for your new subuser image and add a ``docker-image`` subdirectory:
+a. Create a folder in your subuser repository for your new subuser image and add a ``docker-image`` subdirectory:
 
 ::
 
@@ -34,7 +34,48 @@ Quick packaging tutorial
   $ cd my-subuser-image
   $ mkdir docker-image
 
-Create an `permissions.json` file.  Here is an example::
+b. Create an `permissions.json` file. More on this later.
+
+::
+
+  $ vi permissons.json
+
+c. Create a `SubuserImagefile` file. More on this later.
+
+::
+
+  $ vi docker-image/SubuserImagefile
+
+3. Commit your changes.
+
+::
+
+  $ cd ..
+  $ git add .
+  $ git commit
+
+4. Install your subuser image.
+
+::
+
+  $ subuser subuser add my-new-subuser my-new-subuser@file:///home/timothy/my-subuser-programs/
+
+5. Test your image.
+
+::
+
+  $ subuser run my-new-subuser
+
+6. If you publish your new git repository to a website such as `Gitorious <https://gitorious.org>`_, `Bitbucket <https://bitbucket.org>`_, or `Github <https://github.com>`_, others will be able to install your images with a command similar to the one bellow.
+
+::
+
+  $ subuser subuser add subuser-name my-subuser-program@https://github.com/timthelion/my-subuser-programs.git
+
+Creating a `permissions.json` file
+---------------------------------
+
+Here is an example::
 
   {
     "description"                : "Simple universal text editor."
@@ -58,9 +99,14 @@ Create an `permissions.json` file.  Here is an example::
 
 You can find a full specification for the `permissions.json` file format :doc:`here <subuser-standard/permissions-dot-json-file-format>`.
 
- b. Create a directory called `docker-image` and add a `SubuserImagefile` to that directory.  This is the same as a Dockerfile except for the adition of a special `FROM-SUBUSER-IMAGE` command which takes :doc:`the identifier of a subuser image source <subuser-standard/image-source-identifiers>` as it's argument. For information on creating a Dockerfile, please see the `official documentation for writting Dockerfiles <https://docs.docker.com/reference/builder/>`_.
+Creating a `SubuserImagefile`
+-----------------------------
 
-Example::
+Create a directory called `docker-image` and add a `SubuserImagefile` to that directory. This is a very similar format to that of the Dockerfile.
+
+The only difference is the adition of a special `FROM-SUBUSER-IMAGE` command which takes :doc:`the identifier of a subuser image source <subuser-standard/image-source-identifiers>` as it's argument. For information on creating a Dockerfile, please see the `official documentation for writting Dockerfiles <https://docs.docker.com/reference/builder/>`_.
+
+Example `SubuserImagefile`::
 
   FROM debian
   RUN apt-get update && apt-get install -yyq vim
