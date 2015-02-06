@@ -23,7 +23,7 @@ Instalation
   $ cd
   $ git clone https://github.com/subuser-security/subuser
 
-3. Add ``subuser/logic`` and ``~/.subuser/bin`` to your path by adding the line ``PATH=$PATH:$HOME/subuser/logic:$HOME/.subuser/bin`` to the end of your ``.bashrc`` file.
+3. Add ``subuser/logic`` and ``~/.subuser/bin`` to your path by adding the line ``PATH=$HOME/subuser/logic:$HOME/.subuser/bin:$PATH`` to the end of your ``.bashrc`` file.
 
 .. note:: You will need to change the path to ``subuser/logic`` to refer to the location to which you downloaded subuser.
 
