@@ -10,7 +10,7 @@ import subuserlib.classes.user,subuserlib.resolve,subuserlib.install,subuserlib.
 
 def parseCliArgs(realArgs):
   usage = "usage: subuser %prog IMAGE_NAME(s) SETS_OF_IMAGES"
-  description = """Prints information about how the listed images relate to eachother:
+  description = """Prints information about how the listed images relate to each other:
 
 Example:
 
