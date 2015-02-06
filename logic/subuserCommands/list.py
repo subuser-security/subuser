@@ -13,7 +13,7 @@ def parseCliArgs(sysargs):
   description = """   List subuser-images.  You can use this command to list images that are:
 
   available 
-      List all subuser images available for instalation
+      List all subuser images available for installation
   subusers 
       List all installed subusers
 
@@ -38,7 +38,7 @@ def list(sysargs):
   Listing available images lists the images along with their default permissions.
 
   >>> list.list(["available"])
-  Images available for instalation from the repo: default
+  Images available for installation from the repo: default
   foo:
    Description: 
    Maintainer: 
