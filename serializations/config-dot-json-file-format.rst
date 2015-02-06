@@ -1,7 +1,7 @@
 The config.json file format
 ===========================
 
-In the context of subuser, a ``config.json`` file is a file which subuser settings.
+In the context of subuser, a ``config.json`` file is a file with subuser settings.
 
 The ``config.json`` files are to be arranged into a fallback-hierarchy.  Subuser will first look up properties in the file ``~/.subuser/config.json`` falling back to:
 
