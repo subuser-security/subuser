@@ -5,7 +5,7 @@ Subuser repositories are used to package and distribute subuser image sources. S
 
 Subuser repositories reside within git repositories.
 
-In a subuser repository, ther is one subdirectory per subuser image source. These subdirectories reside at the ``subuser-repository-root`` which is the root of the git repository by default.
+In a subuser repository, there is one subdirectory per subuser image source. These subdirectories reside at the ``subuser-repository-root`` which is the root of the git repository by default.
 
 Image source directories
 ------------------------
