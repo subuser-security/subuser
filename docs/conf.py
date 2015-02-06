@@ -45,7 +45,7 @@ master_doc = 'index'
 module_name = 'subuser'
 project = u'Subuser'
 author = u'Timothy Hobbs'
-copyright = u'Createive Commons Attribution - Timothy Hobbs'
+copyright = u'Creative Commons Attribution - Timothy Hobbs'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the

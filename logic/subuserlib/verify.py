@@ -9,7 +9,7 @@ This is one of the most important modules in subuser.  This module has one funct
  - Removing an old subuser
  - Updating repositories
  - Adding repositories
- - Repairing the instalation
+ - Repairing the installation
 """
 
 #external imports
