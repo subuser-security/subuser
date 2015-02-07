@@ -15,8 +15,9 @@ def parseCliArgs(sysargs):
 - EXAMPLE
     Add a new repository named foo with the URI http://www.example.com/repo.git.
 
-    $subuser repository add foo http://www.example.com/repo.git
-
+    $ subuser repository add foo http://www.example.com/repo.git
+    $ #You can also add a local repository:
+    $ subuser repository add local-foo file:///home/timothy/my-local-repo/
 
 - EXAMPLE
     Remove the repository named foo.
