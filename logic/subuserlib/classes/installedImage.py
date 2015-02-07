@@ -9,9 +9,9 @@ Each user has a set of images that have been installed.
 #external imports
 import os,json
 #internal imports
-import subuserlib.classes.userOwnedObject
+import subuserlib.classes.userOwnedObject,subuserlib.classes.describable
 
-class InstalledImage(subuserlib.classes.userOwnedObject.UserOwnedObject):
+class InstalledImage(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.classes.describable.Describable):
   __imageId = None
   __lastUpdateTime = None
   __imageSourceName = None
@@ -65,3 +65,12 @@ class InstalledImage(subuserlib.classes.userOwnedObject.UserOwnedObject):
       Remove the image from the Docker daemon's image store.
     """
     self.getUser().getDockerDaemon().removeImage(self.getImageId())
+
+  def describe(self):
+    print("Image Id: "+self.getImageId())
+    try:
+      print("Image source: "+self.getImageSource().getIdentifier())
+    except KeyError:
+      print("Image is broken, image source does not exist!")
+    print("Last update time: "+self.getLastUpdateTime())
+
