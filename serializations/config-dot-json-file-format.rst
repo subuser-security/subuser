@@ -41,6 +41,10 @@ The defaults settings for these properties may be found in ``$SUBUSERDIR/config.
 
   ``type``: string - path to json file
 
+ * ``runtime-cache``: path of the runtime-cache directory
+
+  ``type``: string - path to a directory
+
  * ``locked-subusers-path``: path to locked-subusers.json file.
 
   ``type``: path to json file.
