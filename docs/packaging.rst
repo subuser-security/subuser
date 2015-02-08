@@ -113,7 +113,7 @@ Example `SubuserImagefile`::
 
 Example2::
 
-  FROM-SUBUSER-IMAGE libx11
+  FROM-SUBUSER-IMAGE libx11@default
   RUN apt-get update && apt-get install -yyq iceweasel
 
 Example3::
