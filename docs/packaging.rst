@@ -38,7 +38,7 @@ b. Create an `permissions.json` file. More on this later.
 
 ::
 
-  $ vi permissons.json
+  $ vi permissions.json
 
 c. Create a `SubuserImagefile` file. More on this later.
 
@@ -58,7 +58,7 @@ c. Create a `SubuserImagefile` file. More on this later.
 
 ::
 
-  $ subuser subuser add my-new-subuser my-new-subuser@file:///home/timothy/my-subuser-programs/
+  $ subuser subuser add my-new-subuser my-subuser-image@file:///home/timothy/my-subuser-programs/
 
 5. Test your image.
 
@@ -70,7 +70,7 @@ c. Create a `SubuserImagefile` file. More on this later.
 
 ::
 
-  $ subuser subuser add subuser-name my-subuser-program@https://github.com/timthelion/my-subuser-programs.git
+  $ subuser subuser add subuser-name my-subuser-image@https://github.com/timthelion/my-subuser-programs.git
 
 Creating a `permissions.json` file
 ---------------------------------
@@ -80,22 +80,12 @@ Here is an example::
   {
     "description"                : "Simple universal text editor."
     ,"maintainer"                : "Timothy Hobbs <timothyhobbs (at) seznam dot cz>"
-    // Path to executable within the docker image.
     ,"executable"                : "/usr/bin/vim"
-    // A list of directories the program should have Read/Write access to.
-    // Paths are relative to your home. Ex: "Downloads" will access "$HOME/Downloads".
-    ,"user-dirs"                 : [ 'Downloads', 'Documents' ]  // Default: []
-    // Allowed the program to display x11 windows.
-    ,"x11"                       : true        // Default: false
-    // Allow the program access to your sound playing and recording.
-    ,"sound-card"                : true        // Default: false
-    // Allow the program access to Read/Write access to the directory from which it was initialized.
-    ,"access-working-directory" : true        // Default: false
-    // Allow the program access to the internet.
-    ,"allow-network-access"      : true        // Default: false
+    ,"access-working-directory"  : true
+    ,"basic-common-permissions"  : true
   }
 
-**Note**: Listing every permission is not necessary.
+**Note**: Listing every permission is not necessary. When a permission is not listed, it is denied by default.
 
 You can find a full specification for the `permissions.json` file format :doc:`here <subuser-standard/permissions-dot-json-file-format>`.
 
