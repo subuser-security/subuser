@@ -26,6 +26,7 @@ permissionDefaults = {
  ,"inherit-timezone": False
  # Moderate permissions
  ,"user-dirs": []
+ ,"inherit-envvars": []
  ,"sound-card": False
  ,"webcam": False
  ,"access-working-directory": False
