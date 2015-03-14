@@ -26,11 +26,10 @@ def removeOldImages(user,dryrun):
 
   for installedImageId,installedImage in user.getInstalledImages().items():
     if not installedImageId in installedImagesThatAreInUse:
+      user.getRegistry().log("Removing unneeded image "+installedImage.getImageId() + " : " + installedImage.getImageSource().getIdentifier())
       if not dryrun:
         installedImage.removeCachedRuntimes()
         installedImage.removeDockerImage()
-      elif dryrun:
-        print(installedImage.getImageId() + " : " + installedImage.getImageSource().getIdentifier())
 
   if not dryrun:
     subuserlib.verify.verify(user)

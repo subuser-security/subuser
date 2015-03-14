@@ -80,11 +80,12 @@ def removeOldImages(realArgs):
   >>> remove_old_images.removeOldImages(["--dry-run"])
   The following images are uneeded and would be deleted.
   DOCKER-ID : SUBUSER-ID
-  6 : bar@file:///home/travis/remote-test-repo
+  Removing unneeded image 6 : bar@file:///home/travis/remote-test-repo
 
   Now we use ``remove-old-images`` to clean up our installed images.
 
   >>> remove_old_images.removeOldImages([])
+  Removing unneeded image 6 : bar@file:///home/travis/remote-test-repo
   Verifying subuser configuration.
   Verifying registry consistency...
   Unregistering any non-existant installed images.

@@ -64,7 +64,10 @@ class InstalledImage(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserl
     """
       Remove the image from the Docker daemon's image store.
     """
-    self.getUser().getDockerDaemon().removeImage(self.getImageId())
+    try:
+      self.getUser().getDockerDaemon().removeImage(self.getImageId())
+    except subuserlib.classes.dockerDaemon.ImageDoesNotExistsException:
+      pass
 
   def describe(self):
     print("Image Id: "+self.getImageId())
