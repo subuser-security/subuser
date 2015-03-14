@@ -68,6 +68,8 @@ class Permissions(collections.OrderedDict,subuserlib.classes.userOwnedObject.Use
       print(" Moderate permissions(These are probably safe):")
       if not self["user-dirs"]==[]:
         print("  Has access to the following user directories: '~/"+"' '~/".join(self["user-dirs"])+"'")
+      if not self["inherit-envvars"]==[]:
+        print("  Has access to the following environment variables: "+" ".join(self["inherit-envvars"]))
       if self["sound-card"]:
         print("  Has access to your soundcard, can play sounds/record sound.")
       if self["webcam"]:

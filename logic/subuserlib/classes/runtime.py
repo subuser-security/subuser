@@ -78,6 +78,7 @@ class Runtime(subuserlib.classes.userOwnedObject.UserOwnedObject):
      ("inherit-timezone", lambda p : self.passOnEnvVar("TZ")+["-v=/etc/localtime:/etc/localtime:r"] if p else []),
      # Moderate permissions
      ("user-dirs", lambda userDirs : ["-v="+os.path.join(self.getSubuser().getUser().homeDir,userDir)+":"+os.path.join("/userdirs/",userDir)+":rw" for userDir in userDirs]),
+     ("inherit-envvars", lambda envVars: [arg for var in envVars for arg in self.passOnEnvVar (var)]),
      ("sound-card", lambda p: self.getSoundArgs() if p else []),
      ("webcam", lambda p: ["--device=/dev/"+device for device in os.listdir("/dev/") if device.startswith("video")] if p else []),
      ("access-working-directory", lambda p: ["-v="+os.getcwd()+":/pwd:rw","--workdir=/pwd"] if p else ["--workdir="+self.getSubuser().getDockersideHome()]),
