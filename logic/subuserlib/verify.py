@@ -70,7 +70,7 @@ def trimUnneededTempRepos(user):
     else:
       keep = True
     if not keep:
-      user.getRegistry().logChange("Removing uneeded temporary repository: "+repo.getGitOriginURI())
+      user.getRegistry().logChange("Removing uneeded temporary repository: "+repo.getDisplayName())
       repo.removeGitRepo()
       reposToRemove.append(repoId)
   for repoId in reposToRemove:

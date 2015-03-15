@@ -28,10 +28,7 @@ class ImageSource(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.
     """
     Return a standard human readable identifier for an ImageSource.
     """
-    if self.getRepository().isTemporary():
-      return self.getName() + "@" + self.getRepository().getGitOriginURI()
-    else:
-      return self.getName() + "@" + self.getRepository().getName()
+    return self.getName() + "@" + self.getRepository().getDisplayName()
 
   def getRepository(self):
     """

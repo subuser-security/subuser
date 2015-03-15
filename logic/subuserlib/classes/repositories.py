@@ -45,10 +45,19 @@ class Repositories(collections.Mapping,subuserlib.classes.userOwnedObject.UserOw
           gitCommitHash = repositoryStates[repoName]["git-commit-hash"]
         else:
           gitCommitHash = "master"
-        temporary=False
         if "temporary" in repoAttributes:
-          temporary=repoAttributes["temporary"]
-        repositories[repoName] = subuserlib.classes.repository.Repository(self.getUser(),name=repoName,gitOriginURI=repoAttributes["git-origin"],gitCommitHash=gitCommitHash,temporary=temporary)
+          temporary = repoAttributes["temporary"]
+        else:
+          temporary=False
+        if "git-origin" in repoAttributes:
+          gitOriginURI = repoAttributes["git-origin"]
+        else:
+          gitOriginURI = None
+        if "source-dir" in repoAttributes:
+          sourceDir = repoAttributes["source-dir"]
+        else:
+          sourceDir = None
+        repositories[repoName] = subuserlib.classes.repository.Repository(self.getUser(),name=repoName,gitOriginURI=gitOriginURI,gitCommitHash=gitCommitHash,temporary=temporary,sourceDir=sourceDir)
       return repositories
 
     self.systemRepositories = loadRepositoryDict(self.systemRepositoryListPaths)
@@ -93,7 +102,10 @@ class Repositories(collections.Mapping,subuserlib.classes.userOwnedObject.UserOw
     userRepositoryListDict = {}
     for name,repository in self.userRepositories.items():
       userRepositoryListDict[name] = {}
-      userRepositoryListDict[name]["git-origin"] = repository.getGitOriginURI()
+      if repository.getGitOriginURI():
+        userRepositoryListDict[name]["git-origin"] = repository.getGitOriginURI()
+      else:
+        userRepositoryListDict[name]["source-dir"] = repository.getRepoPath()
       userRepositoryListDict[name]["temporary"] = repository.isTemporary()
     with open(self.userRepositoryListPath, 'w') as file_f:
       json.dump(userRepositoryListDict, file_f, indent=1, separators=(',', ': '))

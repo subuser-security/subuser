@@ -16,13 +16,18 @@ class Repository(dict,subuserlib.classes.userOwnedObject.UserOwnedObject):
   __gitOriginURI = None
   __lastGitCommitHash = None
   __temporary = False
+  __sourceDir = None
 
-  def __init__(self,user,name,gitOriginURI,gitCommitHash,temporary=False):
+  def __init__(self,user,name,gitOriginURI=None,gitCommitHash=None,temporary=False,sourceDir=None):
+    """
+    Repositories can either be managed by git, or simply be normal directories on the user's computer. If ``sourceDir`` is not set to None, then ``gitOriginURI`` is ignored and the repository is assumed to be a simple directory.
+    """
     subuserlib.classes.userOwnedObject.UserOwnedObject.__init__(self,user)
     self.__name = name
     self.__gitOriginURI = gitOriginURI
     self.__lastGitCommitHash = gitCommitHash
     self.__temporary=temporary
+    self.__sourceDir=sourceDir
     self.checkoutGitCommit(gitCommitHash)
     self.loadProgamSources()
 
@@ -37,13 +42,19 @@ class Repository(dict,subuserlib.classes.userOwnedObject.UserOwnedObject):
     How should we refer to this repository when communicating with the user?
     """
     if self.isTemporary():
-      return self.getGitOriginURI()
+      if self.__sourceDir:
+        return self.__sourceDir
+      else:
+        return self.getGitOriginURI()
     else:
       return self.getName()
 
   def getRepoPath(self):
     """ Get the path of the repo's sources on disk. """
-    return os.path.join(self.getUser().getConfig().getRepositoriesDir(),str(self.getName()))
+    if self.__sourceDir:
+      return self.__sourceDir
+    else:
+      return os.path.join(self.getUser().getConfig().getRepositoriesDir(),str(self.getName()))
 
   def getRepoConfigPath(self):
     return os.path.join(self.getRepoPath(),".subuser.json")
@@ -79,10 +90,13 @@ class Repository(dict,subuserlib.classes.userOwnedObject.UserOwnedObject):
     """
      Remove the downloaded git repo associated with this repository from disk.
     """
-    shutil.rmtree(self.getRepoPath())
+    if not self.__sourceDir:
+      shutil.rmtree(self.getRepoPath())
 
   def updateSources(self):
     """ Pull(or clone) the repo's ImageSources from git origin. """
+    if self.__sourceDir:
+      return
     if not os.path.exists(self.getRepoPath()):
       subuserlib.git.runGit(["clone",self.getGitOriginURI(),self.getRepoPath()])
     else:
@@ -103,6 +117,8 @@ class Repository(dict,subuserlib.classes.userOwnedObject.UserOwnedObject):
     """
     Checkout a given git commit if it is not already checked out.
     """
+    if self.__sourceDir:
+      return
     if not os.path.exists(self.getRepoPath()):
       self.updateSources()
     if not gitCommitHash == self.getGitCommitHash():
@@ -112,5 +128,7 @@ class Repository(dict,subuserlib.classes.userOwnedObject.UserOwnedObject):
     """
     Get the hash of the local repository's currently checked out git commit.
     """
+    if self.__sourceDir:
+      return None
     return subuserlib.git.runGitCollectOutput(["show-ref","-s","--head"],cwd=self.getRepoPath()).split("\n")[0]
 

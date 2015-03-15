@@ -26,6 +26,7 @@ def parseCliArgs(sysargs):
 
   """
   parser=optparse.OptionParser(usage=usage,description=description,formatter=subuserlib.commandLineArguments.HelpFormatterThatDoesntReformatDescription())
+  parser.add_option("--no-git",dest="noGit",action="store_true",default=False,help="When adding a repository, add it as an in place folder rather than as an external git repository. This is useful when developing and testing as well as when using low maintinence local repos.")
   return parser.parse_args(args=sysargs)
 
 def repository(sysargs):
@@ -66,6 +67,30 @@ def repository(sysargs):
   >>> user = subuserlib.classes.user.User()
   >>> set(user.getRegistry().getRepositories().keys()) == set([u'default'])
   True
+
+
+  Add a new no-git repository named ``remote-repo-no-git``.
+
+  >>> repository.repository(["add","--no-git","remote-repo-no-git","/home/travis/remote-test-repo"])
+  Adding new repository remote-repo-no-git
+
+  See that it was actually successfully added.
+
+  >>> user = subuserlib.classes.user.User()
+  >>> set(user.getRegistry().getRepositories().keys()) == set([u'default', 'remote-repo-no-git'])
+  True
+
+  Remove the ``remote-repo-no-git`` repository.
+
+  >>> repository.repository(["remove","remote-repo-no-git"])
+  Removing repository remote-repo-no-git
+
+  See that it was actually removed.
+
+  >>> user = subuserlib.classes.user.User()
+  >>> set(user.getRegistry().getRepositories().keys()) == set([u'default'])
+  True
+
   """
   options,args = parseCliArgs(sysargs)
   user = subuserlib.classes.user.User()
@@ -75,7 +100,7 @@ def repository(sysargs):
       sys.exit("Use subuser repository --help for help.")
     name = args[1]
     url = args[2]
-    subuserlib.repository.add(user,name,url)
+    subuserlib.repository.add(user,name,url,options.noGit)
   elif action == "remove":
     if not len(args) == 2:
       sys.exit("Use subuser repository --help for help.")
