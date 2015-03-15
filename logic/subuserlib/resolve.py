@@ -80,7 +80,7 @@ def lookupRepositoryByPath(user,path):
   If a repository with this path exists, return that repository.  Otherwise, return None.
   """
   for _,repository in user.getRegistry().getRepositories().items():
-    if repository.isLocal() and path == repository.getSourceDir():
+    if repository.isLocal() and path == repository.getRepoPath():
       return repository
   return None
 
