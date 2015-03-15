@@ -105,6 +105,14 @@ Moderate permissions
 
   **Default**: ``[]``
 
+ * ``inherit-envvars`: A list of environment variables which the image will inherit from the host environment when started.
+
+  Ex::
+
+     ,"inherit-envvars"           : ["PGUSER","PGHOST"]
+
+  **Default**: ``[]``
+
  * ``sound-card``:  The subuser is allowed to access the soundcard on the host.
 
   .. warning:: This means, not only can the subuser play sounds, but it may listen to your microphone too!
