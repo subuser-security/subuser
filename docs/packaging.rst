@@ -46,7 +46,15 @@ c. Create a `SubuserImagefile` file. More on this later.
 
   $ vi docker-image/SubuserImagefile
 
-3. Commit your changes.
+3. Test your new image by installing it from the local folder. Note, you must specify a full path to the repository.
+
+::
+
+  $ subuser subuser add my-new-subuser my-subuser-image@/home/timothy/my-subuser-programs/
+  $ subuser run my-new-subuser
+  $ subuser subuser remove my-new-subuser
+
+4. Commit your changes.
 
 ::
 
@@ -54,19 +62,7 @@ c. Create a `SubuserImagefile` file. More on this later.
   $ git add .
   $ git commit
 
-4. Install your subuser image.
-
-::
-
-  $ subuser subuser add my-new-subuser my-subuser-image@file:///home/timothy/my-subuser-programs/
-
-5. Test your image.
-
-::
-
-  $ subuser run my-new-subuser
-
-6. If you publish your new git repository to a website such as `Gitorious <https://gitorious.org>`_, `Bitbucket <https://bitbucket.org>`_, or `Github <https://github.com>`_, others will be able to install your images with a command similar to the one bellow.
+5. If you publish your new git repository to a website such as `Gitorious <https://gitorious.org>`_, `Bitbucket <https://bitbucket.org>`_, or `Github <https://github.com>`_, others will be able to install your images with a command similar to the one bellow.
 
 ::
 
