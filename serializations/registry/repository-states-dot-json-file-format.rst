@@ -22,7 +22,7 @@ The value is a json object with the following properties:
 Properties
 ----------
 
- * ``git-commit-hash``: The hash of the currently checked out commit of the subuser repository.  Specifically, this is the output of ``git show-ref -s HEAD`` when run within the given repository's git repository.
+ * ``git-commit-hash``: The hash of the currently checked out commit of the subuser repository.  Specifically, this is the output of ``git show-ref -s HEAD`` when run within the given repository's git repository. If the repository is not managed by git, this attribute may be set to ``nil``.
 
   Ex::
 

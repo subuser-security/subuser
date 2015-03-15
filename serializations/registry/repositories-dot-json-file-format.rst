@@ -30,6 +30,13 @@ Properties
 
     "git-origin" : "https://github.com/subuser-security/subuser-default-repository.git/"
 
+ * ``source-dir``: When maintaining a repository, it is not desireable to have to commit your changes to git before being able to test them out. For this reason, it is possible to have repositories which are not in git, which refer directly to a source directory on your local machine. If ``source-dir`` is specified, than the repository is assumed to be such a development repo and ``git-origin`` is ignored.
+
+ Ex::
+
+    "source-dir" : "/home/timothy/current/subuser-repo"
+
+
  * ``temporary`` : Is this a temporary repository?
   .. note:: this property defaults to false and is not mandatory.  In fact it looks cleaner if you don't include it when false ;).
 
