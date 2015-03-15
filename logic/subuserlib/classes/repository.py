@@ -42,7 +42,7 @@ class Repository(dict,subuserlib.classes.userOwnedObject.UserOwnedObject):
     How should we refer to this repository when communicating with the user?
     """
     if self.isTemporary():
-      if self.__sourceDir:
+      if self.isLocal():
         return self.__sourceDir
       else:
         return self.getGitOriginURI()
@@ -51,7 +51,7 @@ class Repository(dict,subuserlib.classes.userOwnedObject.UserOwnedObject):
 
   def getRepoPath(self):
     """ Get the path of the repo's sources on disk. """
-    if self.__sourceDir:
+    if self.isLocal():
       return self.__sourceDir
     else:
       return os.path.join(self.getUser().getConfig().getRepositoriesDir(),str(self.getName()))
@@ -86,16 +86,21 @@ class Repository(dict,subuserlib.classes.userOwnedObject.UserOwnedObject):
   def isTemporary(self):
     return self.__temporary
 
+  def isLocal(self):
+    if self.__sourceDir:
+      return True
+    return False
+
   def removeGitRepo(self):
     """
      Remove the downloaded git repo associated with this repository from disk.
     """
-    if not self.__sourceDir:
+    if not self.isLocal():
       shutil.rmtree(self.getRepoPath())
 
   def updateSources(self):
     """ Pull(or clone) the repo's ImageSources from git origin. """
-    if self.__sourceDir:
+    if self.isLocal():
       return
     if not os.path.exists(self.getRepoPath()):
       subuserlib.git.runGit(["clone",self.getGitOriginURI(),self.getRepoPath()])
@@ -117,7 +122,7 @@ class Repository(dict,subuserlib.classes.userOwnedObject.UserOwnedObject):
     """
     Checkout a given git commit if it is not already checked out.
     """
-    if self.__sourceDir:
+    if self.isLocal():
       return
     if not os.path.exists(self.getRepoPath()):
       self.updateSources()
@@ -128,7 +133,7 @@ class Repository(dict,subuserlib.classes.userOwnedObject.UserOwnedObject):
     """
     Get the hash of the local repository's currently checked out git commit.
     """
-    if self.__sourceDir:
+    if self.isLocal():
       return None
     return subuserlib.git.runGitCollectOutput(["show-ref","-s","--head"],cwd=self.getRepoPath()).split("\n")[0]
 

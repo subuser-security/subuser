@@ -89,6 +89,42 @@ def subuser(sysargs):
   >>> set(user.getRegistry().getSubusers().keys()) == set([u'foo'])
   True
 
+  We add another subuser named ``bar`` using a local folder rather than from a git repo.
+
+  >>> subuser.subuser(["add","bar","bar@/home/travis/remote-test-repo"])
+  Adding subuser bar bar@/home/travis/remote-test-repo
+  Adding new temporary repository /home/travis/remote-test-repo
+  Verifying subuser configuration.
+  Verifying registry consistency...
+  Unregistering any non-existant installed images.
+  Checking if images need to be updated or installed...
+  Installing bar ...
+  Installed new image for subuser bar
+  Running garbage collector on temporary repositories...
+
+  Now we have two subusers.
+
+  >>> user = subuserlib.classes.user.User()
+  >>> set(user.getRegistry().getSubusers().keys()) == set([u'foo', 'bar'])
+  True
+
+  We remove ``bar``.
+
+  >>> subuser.subuser(["remove","bar"])
+  Removing subuser bar
+   If you wish to remove the subusers image, issue the command $ subuser remove-old-images
+  Verifying subuser configuration.
+  Verifying registry consistency...
+  Unregistering any non-existant installed images.
+  Checking if images need to be updated or installed...
+  Running garbage collector on temporary repositories...
+
+  Now we only have one subuser.
+
+  >>> user = subuserlib.classes.user.User()
+  >>> set(user.getRegistry().getSubusers().keys()) == set([u'foo'])
+  True
+
   If we try adding a subuser which fails to install do to a bad ``SubuserImagefile`` an error is displayed, a cleanup process occures, and nothing terribly bad happens.
 
   This works for syntax errors.

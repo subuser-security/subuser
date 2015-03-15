@@ -77,9 +77,9 @@ class Repositories(collections.Mapping,subuserlib.classes.userOwnedObject.UserOw
 
   def addRepository(self,repository):
     if not repository.isTemporary():
-      self.getUser().getRegistry().logChange("Adding new repository "+repository.getName())
+      self.getUser().getRegistry().logChange("Adding new repository "+repository.getDisplayName())
     else:
-      self.getUser().getRegistry().logChange("Adding new temporary repository "+repository.getGitOriginURI())
+      self.getUser().getRegistry().logChange("Adding new temporary repository "+repository.getDisplayName())
     self.userRepositories[repository.getName()] = repository
 
   def removeRepository(self,name):
@@ -90,7 +90,7 @@ class Repositories(collections.Mapping,subuserlib.classes.userOwnedObject.UserOw
     if not repository.isTemporary():
       self.getUser().getRegistry().logChange("Removing repository "+name)
     else:
-      self.getUser().getRegistry().logChange("Removing temporary repository "+self[name].getGitOriginURI())
+      self.getUser().getRegistry().logChange("Removing temporary repository "+self[name].getDisplayName())
     del self.userRepositories[name]
 
   def save(self):
