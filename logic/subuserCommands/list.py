@@ -18,6 +18,8 @@ def parseCliArgs(sysargs):
       List all installed subusers
   installed-images
       List all installed images. The --short option prints with the format "<image-source> <image-id>"
+  repositories
+      List all repositories. The --short option only lists their names(or their paths in case they are temporary).
 
   EXAMPLES:
 
@@ -71,6 +73,12 @@ def list(sysargs):
   Image source: foo@default
   Last update time: 0
 
+  > list.list(["repositories"])
+  Repository: default
+  ------------
+  Cloned from: file:///home/travis/default-test-repo
+  Currently at commit: 72e7d9c17192d47b2b2344d9eb8a325262d738fe
+
   In all cases, there is a ``--short`` option.
 
   >>> list.list(["subusers","--short"])
@@ -81,6 +89,9 @@ def list(sysargs):
 
   >>> list.list(["installed-images","--short"])
   foo@default 2
+
+  >>> list.list(["repositories","--short"])
+  default
 
   """
   options,args = parseCliArgs(sysargs)
@@ -124,6 +135,15 @@ def list(sysargs):
       else:
         print("------------------")
         installedImage.describe()
+
+  if 'repositories' in args:
+    for name,repo in user.getRegistry().getRepositories().items():
+      if options.short:
+        print(repo.getDisplayName())
+      else:
+        repo.describe()
+        print("")
+      
 
 if __name__ == "__main__":
   list(sys.argv[1:])

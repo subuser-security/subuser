@@ -9,9 +9,9 @@ A repository is a collection of ``ImageSource`` s which are published in a git r
 #external imports
 import os,shutil,io,json
 #internal imports
-import subuserlib.git,subuserlib.classes.userOwnedObject,subuserlib.classes.imageSource,subuserlib.subprocessExtras
+import subuserlib.git,subuserlib.classes.userOwnedObject,subuserlib.classes.imageSource,subuserlib.subprocessExtras,subuserlib.classes.describable
 
-class Repository(dict,subuserlib.classes.userOwnedObject.UserOwnedObject):
+class Repository(dict,subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.classes.describable.Describable):
   __name = None
   __gitOriginURI = None
   __lastGitCommitHash = None
@@ -49,6 +49,20 @@ class Repository(dict,subuserlib.classes.userOwnedObject.UserOwnedObject):
     else:
       return self.getName()
 
+  def describe(self):
+    print("Repository: "+self.getDisplayName())
+    print("------------")
+    if self.isLocal():
+      print("Is a local(non-git) repository.")
+      if not self.isTemporary():
+        print("Located at: " + self.getRepoPath())
+    if self.isTemporary():
+      print("Is a temporary repository.")
+    else:
+      if not self.isLocal():
+        print("Cloned from: "+self.getGitOriginURI())
+        print("Currently at commit: "+self.getGitCommitHash())
+    
   def getRepoPath(self):
     """ Get the path of the repo's sources on disk. """
     if self.isLocal():
