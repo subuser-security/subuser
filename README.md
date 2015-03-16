@@ -36,6 +36,8 @@ Subuser turns a docker container into a normal program.  But this program is not
   // A list of directories the program should have Read/Write access to.
   // Paths are relative to your home. Ex: "Downloads" will access "$HOME/Downloads".
   ,"user-dirs"                 : [ 'Downloads', 'Documents' ]  // Default: []
+  // "Inherited environment variables"
+  ,"inherit-envvars"           : [ "PG_USER", "PG_HOST" ]  // Default: []
   // Allowed the program to display x11 windows.
   ,"x11"                       : true        // Default: false
   // Allow the program access to your sound playing and recording.
