@@ -62,17 +62,13 @@ Subuser turns a docker container into a normal program.  But this program is not
   {
     "description"                : "Simple universal text editor."
     ,"maintainer"                : "Timothy Hobbs <timothyhobbs (at) seznam dot cz>"
-    // Path to executable within the docker image.
     ,"executable"                : "/usr/bin/vim"
-    // A list of directories the program should have Read/Write access to.
-    // Paths are relative to your home. Ex: "Downloads" will access "$HOME/Downloads".
-    ,"user-dirs"                 : [ 'Downloads', 'Documents' ]  // Default: []
-    // Allowed the program to display x11 windows.
-    ,"x11"                       : true        // Default: false
-    // Allow the program access to your sound playing and recording.
-    ,"sound-card"                : true        // Default: false
-    // Allow the program access to Read/Write access to the directory from which it was initialized.
-    ,"access-working-directory" : true        // Default: false
-    // Allow the program access to the internet.
-    ,"allow-network-access"      : true        // Default: false
+    ,"user-dirs"                 : [ "Downloads", "Documents" ]
+    ,"x11"                       : true
+    ,"sound-card"                : true
+    ,"access-working-directory"  : true
+    ,"allow-network-access"      : true
   }
+
+For a list of all permissions supported by subuser, please see `the subuser standard <http://subuser.org/subuser-standard/permissions-dot-json-file-format.html>`_ .
+
