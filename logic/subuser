@@ -24,4 +24,7 @@ if not commandExecutablePath:
   printHelp()
   sys.exit(1)
 
-sys.exit(subprocess.call([commandExecutablePath]+sys.argv[2:]))
+try:
+  sys.exit(subprocess.call([commandExecutablePath]+sys.argv[2:]))
+except KeyboardInterrupt:
+  sys.exit(0)

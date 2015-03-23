@@ -112,25 +112,28 @@ class Runtime(subuserlib.classes.userOwnedObject.UserOwnedObject):
     return "docker '"+"' '".join(command)+"'"
   
   def run(self,args):
-    if not self.getSubuser().getPermissions()["executable"]:
-      sys.exit("Cannot run subuser, no executable configured in permissions.json file.")
-    def setupSymlinks():
-      symlinkPath = os.path.join(self.getSubuser().getHomeDirOnHost(),"Userdirs")
-      destinationPath = "/userdirs"
-      if not os.path.exists(symlinkPath):
-        try:
-          os.makedirs(self.getSubuser().getHomeDirOnHost())
-        except OSError:
-          pass
-        try:
-          os.symlink(destinationPath,symlinkPath) #Arg, why are source and destination switched?
-        #os.symlink(where does the symlink point to, where is the symlink)
-        #I guess it's to be like cp...
-        except OSError:
-          pass
+    try:
+      if not self.getSubuser().getPermissions()["executable"]:
+        sys.exit("Cannot run subuser, no executable configured in permissions.json file.")
+      def setupSymlinks():
+        symlinkPath = os.path.join(self.getSubuser().getHomeDirOnHost(),"Userdirs")
+        destinationPath = "/userdirs"
+        if not os.path.exists(symlinkPath):
+          try:
+            os.makedirs(self.getSubuser().getHomeDirOnHost())
+          except OSError:
+            pass
+          try:
+            os.symlink(destinationPath,symlinkPath) #Arg, why are source and destination switched?
+          #os.symlink(where does the symlink point to, where is the symlink)
+          #I guess it's to be like cp...
+          except OSError:
+            pass
+    
+      if self.getSubuser().getPermissions()["stateful-home"]:
+        setupSymlinks()
   
-    if self.getSubuser().getPermissions()["stateful-home"]:
-      setupSymlinks()
-  
-    self.getUser().getDockerDaemon().execute(self.getCommand(args))
+      self.getUser().getDockerDaemon().execute(self.getCommand(args))
+    except KeyboardInterrupt:
+      sys.exit(0)
 
