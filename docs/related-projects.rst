@@ -9,7 +9,11 @@ Related projects
 
  Bedrock Linux is a project that I learned about long after I started working on subuser. Like subuser, it allows you to install software packaged for a variety of Linux distributions. Unlike subuser, which installs and runs programs in isolated environments running within a base system, Bedrock Linux mixes everything together at the same level without any segregation.
 
- * `zero-install <http://zero-install.sourceforge.net/>`_, `Portable Linux Apps <http://portablelinuxapps.org/>`_, `Autopackage <https://en.wikipedia.org/wiki/Autopackage>`_, `Listaller <http://listaller.tenstral.net/>`_, and to a lesser extent: `PPAs <http://www.ubuntu.com/news/launchpad-ppa>`_ and `One Click Install <http://en.opensuse.org/openSUSE:One_Click_Install>`_
+ * `Gnome sandboxes <https://wiki.gnome.org/Projects/SandboxedApps>`_
+
+ This is a project started after Subuser was already around for a while. While this seems in some abstract sence to be quite similar to subuser it seems to be very Gnome specific.
+
+ * `zero-install <http://zero-install.sourceforge.net/>`_, `Portable Linux Apps <http://portablelinuxapps.org/>`_, `Autopackage <https://en.wikipedia.org/wiki/Autopackage>`_, `Listaller <http://listaller.tenstral.net/>`_, `Limba <http://blog.tenstral.net/2015/03/limba-project-progress.html>`_, and to a lesser extent: `PPAs <http://www.ubuntu.com/news/launchpad-ppa>`_ and `One Click Install <http://en.opensuse.org/openSUSE:One_Click_Install>`_
 
  These allow one to package software "universally" so that the software may be installed and run on any distribution.  They have two flaws:
 
