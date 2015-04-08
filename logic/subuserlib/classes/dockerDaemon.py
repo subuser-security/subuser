@@ -7,14 +7,18 @@ The DockerDaemon object allows us to communicate with the Docker daemon via the 
 """
 
 #external imports
-import urllib,tarfile,os,tempfile,fnmatch,re,json,io,sys
+import urllib,tarfile,os,tempfile,fnmatch,re,json,sys
 try:
  import httplib
 except ImportError:
  import http.client
  httplib = http.client
+try:
+ import StringIO
+except ImportError:
+ import io
 #internal imports
-import subuserlib.subprocessExtras,subuserlib.classes.userOwnedObject,subuserlib.classes.uhttpConnection,subuserlib.docker,subuserlib.test,subuserlib.classes.mockDockerDaemon
+import subuserlib.subprocessExtras,subuserlib.classes.userOwnedObject,subuserlib.classes.uhttpConnection,subuserlib.docker,subuserlib.test
 
 def archiveBuildContext(archive,directoryWithDockerfile,excludePatterns,dockerfile=None):
   """
@@ -41,16 +45,19 @@ def archiveBuildContext(archive,directoryWithDockerfile,excludePatterns,dockerfi
         contexttarfile.add(os.path.join(directoryWithDockerfile,fileNameInArchive), arcname=fileNameInArchive,recursive=False) # Explicit setting of recursive is not strictly necessary.
   # Add the provided Dockerfile if necessary
   if not dockerfile == None:
-    dockerfileFileObject = io.StringIO(dockerfile)
+    try:
+      dockerfileFileObject = StringIO.StringIO(dockerfile)
+    except NameError:
+      dockerfileFileObject = io.BytesIO(bytes(dockerfile,"UTF-8"))
     tarinfo = tarfile.TarInfo(name="Dockerfile")
-    dockerfileFileObject.seek(0, os.SEEK_END) # TODO either I am doing this wrong, or python3 sucks.
+    dockerfileFileObject.seek(0, os.SEEK_END)
     tarinfo.size = dockerfileFileObject.tell()
     dockerfileFileObject.seek(0)
     contexttarfile.addfile(tarinfo,dockerfileFileObject)
   contexttarfile.close()
   archive.seek(0)
 
-def readAndPrintStreamingBuildStatus(response,dontPrint):
+def readAndPrintStreamingBuildStatus(user,response):
   jsonSegment = ""
   output = ""
   byte = response.read(1)
@@ -61,11 +68,9 @@ def readAndPrintStreamingBuildStatus(response,dontPrint):
     try:
       lineDict = json.loads(jsonSegment)
       if "stream" in lineDict:
-        if not dontPrint:
-          sys.stdout.write(lineDict["stream"])
+        user.getRegistry().log(lineDict["stream"])
       elif "status" in lineDict:
-        if not dontPrint:
-          sys.stdout.write(lineDict["status"])
+        user.getRegistry().log(lineDict["status"])
       elif "errorDetail" in lineDict:
         raise ImageBuildException("Build error:"+lineDict["errorDetail"]["message"]+"\n"+response.read())
       else:
@@ -129,7 +134,10 @@ class DockerDaemon(subuserlib.classes.userOwnedObject.UserOwnedObject):
       }
     if tag:
       queryParameters["tag"] = tag
-    queryParametersString = urllib.urlencode(queryParameters)
+    try:
+      queryParametersString = urllib.urlencode(queryParameters)
+    except AttributeError:
+      queryParametersString = urllib.parse.urlencode(queryParameters) # Python 3
     excludePatterns = []
     if directoryWithDockerfile:
       dockerignore = os.path.join(directoryWithDockerfile, '.dockerignore')
@@ -148,15 +156,21 @@ class DockerDaemon(subuserlib.classes.userOwnedObject.UserOwnedObject):
       if quietClient:
         response.read()
       else:
-        readAndPrintStreamingBuildStatus(response,dontPrint=False)
+        readAndPrintStreamingBuildStatus(self.getUser(), response)
       raise ImageBuildException("Building image failed.\n"
                      +"status: "+str(response.status)+"\n"
                      +"Reason: "+response.reason+"\n")
 
-    output = readAndPrintStreamingBuildStatus(response,dontPrint=quietClient)
-    # Now we move to regex code stolen from the official python Docker bindings.
-    search = r'Successfully built ([0-9a-f]+)'
-    match = re.search(search, output)
+    if quietClient:
+      output = response.read()
+    else:
+      output = readAndPrintStreamingBuildStatus(self.getUser(),response)
+    # Now we move to regex code stolen from the official python Docker bindings. This is REALLY UGLY!
+    outputLines = output.split("\n")
+    search = r'Successfully built ([0-9a-f]+)' #This is REALLY ugly!
+    match = re.search(search, outputLines[-1]) #This is REALLY ugly!
+    if not match:
+      match = re.search(search, outputLines[-2]) #This is REALLY ugly!
     if not match:
       raise ImageBuildException("Unexpected server response when building image:\n"+output)
     shortId = match.group(1) #This is REALLY ugly!
@@ -171,6 +185,9 @@ class ImageBuildException(Exception):
 class ImageDoesNotExistsException(Exception):
   pass
 
+
 if subuserlib.test.testing:
+  import subuserlib.classes.mockDockerDaemon
+  RealDockerDaemon = DockerDaemon
   DockerDaemon = subuserlib.classes.mockDockerDaemon.MockDockerDaemon
 

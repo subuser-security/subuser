@@ -5,9 +5,21 @@ if "--help" in sys.argv:
   print("Run the subuser test suit.  Please do this before sending pull requests.")
   sys.exit()
 
+class MockRegistry():
+  def __init__(self):
+    pass
+  def log(self,message):
+    print(message)
+
+class MockUser():
+  def __init__(self):
+    pass
+  def getRegistry(self):
+    return MockRegistry()
+
 if subuserlib.docker.getDockerExecutable():
   import subuserlib.classes.dockerDaemon
-  dockerDaemon = subuserlib.classes.dockerDaemon.DockerDaemon(None)
+  dockerDaemon = subuserlib.classes.dockerDaemon.DockerDaemon(MockUser())
   testDockerfileNames = ["Dockerfile-debian-python2",
                         "Dockerfile-arch-python3"]
   for testDockerfileName in testDockerfileNames:
@@ -15,7 +27,9 @@ if subuserlib.docker.getDockerExecutable():
       dockerfileContents = dockerfile.read()
     try:
       dockerDaemon.build(directoryWithDockerfile=subuserlib.basicPaths.getSubuserDir(),useCache=True,dockerfile=dockerfileContents)
-    except subuserlib.classes.dockerDaemon.ImageBuildException:
+    except subuserlib.classes.dockerDaemon.ImageBuildException as e:
+      print("Tests failed!")
+      print(str(e))
       exit(1)
   exit()
 

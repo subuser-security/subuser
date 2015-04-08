@@ -10,11 +10,13 @@ In order to make our test suit work, we must use a MockDockerDaemon rather than 
 #external imports
 import json,os
 #internal imports
-import subuserlib.classes.userOwnedObject
+import subuserlib.classes.userOwnedObject, subuserlib.classes.dockerDaemon
 
 class MockDockerDaemon(subuserlib.classes.userOwnedObject.UserOwnedObject):
   images = {}
   nextImageId = 1
+  dockerDaemon = None
+  connection = None
 
   def __load(self):
     with open(self.imagesPath,"r") as imagesFile:
@@ -24,12 +26,19 @@ class MockDockerDaemon(subuserlib.classes.userOwnedObject.UserOwnedObject):
     with open(self.imagesPath,"w") as imagesFile:
       json.dump(self.images,imagesFile)
 
+  def getConnection(self):
+    return self.connection
+
   def __init__(self,user):
     subuserlib.classes.userOwnedObject.UserOwnedObject.__init__(self,user)
     self.imagesPath = "/root/subuser/test/docker/images.json"
     if not os.path.exists(self.imagesPath):
       self.imagesPath = "/home/travis/build/subuser-security/subuser/test/docker/images.json"
     self.__load()
+    self.dockerDaemon = subuserlib.classes.dockerDaemon.RealDockerDaemon(user)
+    self.connection = MockConnection(self)
+    self.dockerDaemon.getConnection = self.getConnection
+    self.dockerDaemon.getImageProperties = self.getImageProperties
 
   def getImageProperties(self,imageTagOrId):
     """
@@ -46,13 +55,14 @@ class MockDockerDaemon(subuserlib.classes.userOwnedObject.UserOwnedObject):
     """
     while str(self.nextImageId) in self.images:
       self.nextImageId = self.nextImageId+1
-    newId = str(self.nextImageId)
+    self.newId = str(self.nextImageId)
     parent = dockerfile.split("\n")[0].split(" ")[1].rstrip()
     if "debian" in dockerfile:
       parent = ""
-    self.images[newId] = {"Id":newId,"Parent":parent}
+    self.images[self.newId] = {"Id":self.newId,"Parent":parent}
     self.__save()
-    return newId
+    self.dockerDaemon.build(directoryWithDockerfile,useCache,rm,forceRm,quiet,tag,dockerfile,quietClient)
+    return self.newId
 
   def removeImage(self,imageId):
     del self.images[imageId]
@@ -60,3 +70,31 @@ class MockDockerDaemon(subuserlib.classes.userOwnedObject.UserOwnedObject):
 
   def execute(self,args,cwd=None):
     pass
+
+class MockResponse():
+  def __init__(self,mockDockerDaemon):
+    self.mockDockerDaemon = mockDockerDaemon
+    self.status = 200
+    self.body = """{"stream":"Building..."}
+{"stream":"Building..."}
+{"stream":"Building..."}
+{"stream":"Successfully built """+mockDockerDaemon.newId +"\"}"
+
+  def read(self,bytes=None):
+    if bytes:
+      value = self.body[:bytes]
+      self.body = self.body[bytes:]
+      return value
+    else:
+      return self.body
+
+class MockConnection():
+
+  def __init__(self,mockDockerDaemon):
+    self.mockDockerDaemon=mockDockerDaemon
+   
+  def request(self,method,url,body=None,headers=None):
+    pass
+
+  def getresponse(self):
+    return MockResponse(self.mockDockerDaemon)
