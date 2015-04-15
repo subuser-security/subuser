@@ -75,10 +75,7 @@ class MockResponse():
   def __init__(self,mockDockerDaemon):
     self.mockDockerDaemon = mockDockerDaemon
     self.status = 200
-    self.body = """{"stream":"Building..."}
-{"stream":"Building..."}
-{"stream":"Building..."}
-{"stream":"Successfully built """+mockDockerDaemon.newId +"\"}"
+    self.body = b"{\"stream\":\"Building...\"}\n{\"stream\":\"Building...\"}\n{\"stream\":\"Building...\"}\n{\"stream\":\"Successfully built "+mockDockerDaemon.newId.encode("ascii")+b"\"}"
 
   def read(self,bytes=None):
     if bytes:

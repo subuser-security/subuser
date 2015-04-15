@@ -62,8 +62,8 @@ def readAndPrintStreamingBuildStatus(user,response):
   output = ""
   byte = response.read(1)
   while byte:
-    jsonSegment += byte
-    output += byte
+    jsonSegment += byte.decode("ascii") # Decoding as utf-8 *might* be better, however we cannot do that one byte at a time. I was not able to find any way to do that properly unfortunately.
+    output += byte.decode("ascii")
     byte = response.read(1)
     try:
       lineDict = json.loads(jsonSegment)
@@ -107,7 +107,7 @@ class DockerDaemon(subuserlib.classes.userOwnedObject.UserOwnedObject):
       response.read() # Read the response and discard it to prevent the server from getting locked up: http://stackoverflow.com/questions/3231543/python-httplib-responsenotready
       return None
     else:
-      return json.loads(response.read())
+      return json.loads(response.read().decode("ascii"))
 
   def removeImage(self,imageId):
     self.getConnection().request("DELETE","/v1.13/images/"+imageId)
@@ -144,13 +144,21 @@ class DockerDaemon(subuserlib.classes.userOwnedObject.UserOwnedObject):
       if os.path.exists(dockerignore):
         with open(dockerignore, 'r') as f:
           exclude = list(filter(bool, f.read().split('\n')))
-    with tempfile.TemporaryFile() as tmpArchive:
-      archiveBuildContext(tmpArchive,directoryWithDockerfile,excludePatterns,dockerfile=dockerfile)
-      self.getConnection().request("POST","/v1.13/build?"+queryParametersString,body=tmpArchive)
-      try:
-        response = self.getConnection().getresponse()
-      except httplib.ResponseNotReady as rnr:
-        raise ImageBuildException(rnr)
+    # Python 2.x ONLY works with unnamed temporary files.
+    # Python 3.x ONLY works with named temporary files
+    if sys.version_info[0] == 2:
+      with tempfile.TemporaryFile() as tmpArchive:
+        archiveBuildContext(tmpArchive,directoryWithDockerfile,excludePatterns,dockerfile=dockerfile)
+        self.getConnection().request("POST","/v1.13/build?"+queryParametersString,body=tmpArchive)
+    if sys.version_info[0] == 3:
+      with tempfile.NamedTemporaryFile() as tmpArchive:
+        archiveBuildContext(tmpArchive,directoryWithDockerfile,excludePatterns,dockerfile=dockerfile)
+        self.getConnection().request("POST","/v1.13/build?"+queryParametersString,body=tmpArchive)
+
+    try:
+      response = self.getConnection().getresponse()
+    except httplib.ResponseNotReady as rnr:
+      raise ImageBuildException(rnr)
 
     if response.status != 200:
       if quietClient:
@@ -162,7 +170,7 @@ class DockerDaemon(subuserlib.classes.userOwnedObject.UserOwnedObject):
                      +"Reason: "+response.reason+"\n")
 
     if quietClient:
-      output = response.read()
+      output = response.read().decode("ascii")
     else:
       output = readAndPrintStreamingBuildStatus(self.getUser(),response)
     # Now we move to regex code stolen from the official python Docker bindings. This is REALLY UGLY!
