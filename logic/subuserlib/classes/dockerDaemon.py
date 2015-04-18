@@ -58,15 +58,15 @@ def archiveBuildContext(archive,directoryWithDockerfile,excludePatterns,dockerfi
   archive.seek(0)
 
 def readAndPrintStreamingBuildStatus(user,response):
-  jsonSegment = ""
-  output = ""
+  jsonSegmentBytes = b''
+  output = b''
   byte = response.read(1)
   while byte:
-    jsonSegment += byte.decode("ascii") # Decoding as utf-8 *might* be better, however we cannot do that one byte at a time. I was not able to find any way to do that properly unfortunately.
-    output += byte.decode("ascii")
+    jsonSegmentBytes += byte
+    output += byte
     byte = response.read(1)
     try:
-      lineDict = json.loads(jsonSegment)
+      lineDict = json.loads(jsonSegmentBytes.decode("utf-8"))
       if "stream" in lineDict:
         user.getRegistry().log(lineDict["stream"])
       elif "status" in lineDict:
@@ -74,11 +74,11 @@ def readAndPrintStreamingBuildStatus(user,response):
       elif "errorDetail" in lineDict:
         raise ImageBuildException("Build error:"+lineDict["errorDetail"]["message"]+"\n"+response.read())
       else:
-        raise ImageBuildException("Build error:"+jsonSegment+"\n"+response.read())
-      jsonSegment = ""
+        raise ImageBuildException("Build error:"+jsonSegmentBytes.decode("utf-8")+"\n"+response.read())
+      jsonSegmentBytes = b''
     except ValueError:
       pass
-  return output
+  return output.decode("utf-8")
 
 class DockerDaemon(subuserlib.classes.userOwnedObject.UserOwnedObject):
   __connection = None
@@ -107,7 +107,7 @@ class DockerDaemon(subuserlib.classes.userOwnedObject.UserOwnedObject):
       response.read() # Read the response and discard it to prevent the server from getting locked up: http://stackoverflow.com/questions/3231543/python-httplib-responsenotready
       return None
     else:
-      return json.loads(response.read().decode("ascii"))
+      return json.loads(response.read().decode("utf-8"))
 
   def removeImage(self,imageId):
     self.getConnection().request("DELETE","/v1.13/images/"+imageId)
@@ -170,7 +170,7 @@ class DockerDaemon(subuserlib.classes.userOwnedObject.UserOwnedObject):
                      +"Reason: "+response.reason+"\n")
 
     if quietClient:
-      output = response.read().decode("ascii")
+      output = response.read().decode("utf-8")
     else:
       output = readAndPrintStreamingBuildStatus(self.getUser(),response)
     # Now we move to regex code stolen from the official python Docker bindings. This is REALLY UGLY!
