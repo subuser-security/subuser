@@ -27,7 +27,12 @@ Installation
 
 .. note:: You will need to change the path to ``subuser/logic`` to refer to the location to which you downloaded subuser.
 
-4. Log out and then back in again.
+4. Run 
+  ::
+  
+  $ source ~/.bashrc
+  
+  Or just log out and then back again.
 
 5. Done!
 
