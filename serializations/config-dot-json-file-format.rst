@@ -53,3 +53,7 @@ The defaults settings for these properties may be found in ``$SUBUSERDIR/config.
 
   ``type``: string - path to directory
 
+ * ``lock-dir``: Path to directory which contains lock files. (Currently, the only lock fike is the ``registry.lock`` file which is present when a subuser process is modifying the registry.
+
+  ``type``: string - path to directory
+
