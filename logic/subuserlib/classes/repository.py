@@ -68,7 +68,7 @@ class Repository(dict,subuserlib.classes.userOwnedObject.UserOwnedObject,subuser
     if self.isLocal():
       return self.__sourceDir
     else:
-      return os.path.join(self.getUser().getConfig().getRepositoriesDir(),str(self.getName()))
+      return os.path.join(self.getUser().getConfig()["repositories-dir"],str(self.getName()))
 
   def getRepoConfigPath(self):
     return os.path.join(self.getRepoPath(),".subuser.json")

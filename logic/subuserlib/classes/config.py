@@ -10,8 +10,7 @@ import os
 #internal imports
 import subuserlib.classes.userOwnedObject,subuserlib.loadMultiFallbackJsonConfigFile,subuserlib.paths
 
-class Config(subuserlib.classes.userOwnedObject.UserOwnedObject):
-  __config = None
+class Config(subuserlib.classes.userOwnedObject.UserOwnedObject, dict):
 
   def _getSubuserConfigPaths(self):
     """ Returns a list of paths to config.json files in order that they should be looked in. """
@@ -29,47 +28,12 @@ class Config(subuserlib.classes.userOwnedObject.UserOwnedObject):
     configFileHierarchy = self._getSubuserConfigPaths()
     config = subuserlib.loadMultiFallbackJsonConfigFile.getConfig(configFileHierarchy)
     self._expandPathsInConfig(config)
-    self.__config = config
+    for key,entry in config.items():
+      self[key] = entry
 
   def __init__(self,user):
     subuserlib.classes.userOwnedObject.UserOwnedObject.__init__(self,user)
     self._loadConfig()
-
-  def getBinDir(self):
-    """ Get the directory where the executables for subusers are to be stored. """
-    return self.__config["bin-dir"]
-
-  def getRepositoriesDir(self):
-    """ Get the directory where the subuser repositories are stored. """
-    return self.__config["repositories-dir"]
-
-  def getRegistryPath(self):
-    """ Get the path to the user's registry where subusers and installed docker images are registered. """
-    return self.__config["registry-dir"]
-
-  def getInstalledImagesDotJsonPath(self):
-    """ Get the path to the installed-images.json file where installed docker images are registered. """
-    return self.__config["installed-images-list"]
-
-  def getLockedSubusersDotJsonPath(self):
-    """ Get the path to the locked-subusers.json file where attributes of locked subusers are stored. """
-    return self.__config["locked-subusers-path"]
-
-  def getRuntimeCache(self):
-    """
-    Return the path to the directory where runtime specific configurations are cached.
-    """
-    return self.__config["runtime-cache"]
-
-  def getSubusersDotJsonPath(self):
-    """ Get the path to the subusers.json file where subusers are registered. """
-    return os.path.join(self.getRegistryPath(),"subusers.json")
-
-  def getUserSetPermissionsDir(self):
-    """ Get the path to the directory where user set, subuser specific, permissions are stored. """
-    return self.__config["user-set-permissions-dir"]
-
-  def getSubuserHomeDirsDir(self):
-    """ Get the path to the directory where the home directories of each subuser are stored. """
-    return self.__config["subuser-home-dirs-dir"]
+    self.__delitem__ = None
+    self.__setitem__ = None
 

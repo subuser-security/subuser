@@ -49,7 +49,7 @@ class InstalledImage(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserl
     """
     Remove cached runtime environments.
     """
-    pathToImagesRuntimeCacheDir = os.path.join(self.getUser().getConfig().getRuntimeCache(),self.getImageId())
+    pathToImagesRuntimeCacheDir = os.path.join(self.getUser().getConfig()["runtime-cache"],self.getImageId())
     try:
       for permissionsSpecificCacheInfoFileName in os.listdir(pathToImagesRuntimeCacheDir):
         permissionsSpecificCacheInfoFilePath = os.path.join(pathToImagesRuntimeCacheDir,permissionsSpecificCacheInfoFileName)

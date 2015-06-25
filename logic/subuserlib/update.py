@@ -22,11 +22,11 @@ def updateAll(user):
   user.getRegistry().commit()
 
 def showLog(user):
-  subuserlib.git.runGit(["log"],cwd=user.getConfig().getRegistryPath())
+  subuserlib.git.runGit(["log"],cwd=user.getConfig()["registry-dir"])
 
 def checkoutNoCommit(user,commit):
-  subuserlib.subprocessExtras.subprocessCheckedCall(["rm","-rf","*"],cwd=user.getConfig().getRegistryPath())
-  subuserlib.git.runGit(["checkout",commit,"."],cwd=user.getConfig().getRegistryPath())
+  subuserlib.subprocessExtras.subprocessCheckedCall(["rm","-rf","*"],cwd=user.getConfig()["registry-dir"])
+  subuserlib.git.runGit(["checkout",commit,"."],cwd=user.getConfig()["registry-dir"])
   user.reloadRegistry()
 
 def rollback(user,commit):
@@ -41,7 +41,7 @@ def lockSubuser(user,subuserName,commit):
   """
   checkoutNoCommit(user,commit)
   subuserObject = user.getRegistry().getSubusers()[subuserName]
-  if not os.path.exists(os.path.join(user.getConfig().getUserSetPermissionsDir(),subuserName,"permissions.json")):
+  if not os.path.exists(os.path.join(user.getConfig()["user-set-permissions-dir"],subuserName,"permissions.json")):
     subuserObject.getPermissions().save()
   checkoutNoCommit(user,"master")
   user.getRegistry().logChange("Locking subuser "+subuserName+" to commit: "+commit)

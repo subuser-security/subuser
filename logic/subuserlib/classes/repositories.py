@@ -68,7 +68,7 @@ class Repositories(collections.Mapping,subuserlib.classes.userOwnedObject.UserOw
     Load the repository states from disk.
     Return them as a dictionary object.
     """
-    repositoryStatesDotJsonPath = os.path.join(self.getUser().getConfig().getRegistryPath(),"repository-states.json")
+    repositoryStatesDotJsonPath = os.path.join(self.getUser().getConfig()["registry-dir"],"repository-states.json")
     if os.path.exists(repositoryStatesDotJsonPath):
       with open(repositoryStatesDotJsonPath,mode="r") as repositoryStatesDotJsonFile:
         return json.load(repositoryStatesDotJsonFile)
@@ -109,7 +109,7 @@ class Repositories(collections.Mapping,subuserlib.classes.userOwnedObject.UserOw
       userRepositoryListDict[name]["temporary"] = repository.isTemporary()
     with open(self.userRepositoryListPath, 'w') as file_f:
       json.dump(userRepositoryListDict, file_f, indent=1, separators=(',', ': '))
-    repositoryStatesDotJsonPath = os.path.join(self.getUser().getConfig().getRegistryPath(),"repository-states.json")
+    repositoryStatesDotJsonPath = os.path.join(self.getUser().getConfig()["registry-dir"],"repository-states.json")
     repositoryStates = {}
     for repoName,repository in self.items():
       repositoryStates[repoName] = {}
@@ -123,7 +123,7 @@ class Repositories(collections.Mapping,subuserlib.classes.userOwnedObject.UserOw
     """
     idAsInt=0
     for _,repo in self.items():
-      if repo.getName() == str(idAsInt) or os.path.exists(os.path.join(self.getUser().getConfig().getRepositoriesDir(),str(idAsInt))):
+      if repo.getName() == str(idAsInt) or os.path.exists(os.path.join(self.getUser().getConfig()["repositories-dir"],str(idAsInt))):
         idAsInt = idAsInt + 1
     return str(idAsInt)
 
@@ -132,6 +132,6 @@ class Repositories(collections.Mapping,subuserlib.classes.userOwnedObject.UserOw
     self.systemRepositoryListPaths = ["/etc/subuser/repositories.json"
        ,os.path.join(user.homeDir,".subuser","repositories.json")
        ,os.path.join(subuserlib.paths.getSubuserDir(),"repositories.json")] # TODO how does this work on windows?
-    self.userRepositoryListPath = os.path.join(self.getUser().getConfig().getRegistryPath(),"repositories.json")
+    self.userRepositoryListPath = os.path.join(self.getUser().getConfig()["registry-dir"],"repositories.json")
     self.reloadRepositoryLists()
 

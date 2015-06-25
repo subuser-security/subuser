@@ -38,7 +38,7 @@ class Subuser(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.clas
     self.__executableShortcutInstalled = installed
 
   def getPermissions(self):
-    permissionsDotJsonWritePath = os.path.join(self.getUser().getConfig().getUserSetPermissionsDir(),self.getName(),"permissions.json")
+    permissionsDotJsonWritePath = os.path.join(self.getUser().getConfig()["user-set-permissions-dir"],self.getName(),"permissions.json")
     permissionsDotJsonReadPath = permissionsDotJsonWritePath
     if not os.path.exists(permissionsDotJsonReadPath):
       permissionsDotJsonReadPath = os.path.join(self.getImageSource().getSourceDir(),"permissions.json")
@@ -63,7 +63,7 @@ class Subuser(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.clas
     """
     Returns the subuser's Runtime object for it's current permissions, creating it if necessary.
     """
-    pathToCurrentImagesRuntimeCacheDir = os.path.join(self.getUser().getConfig().getRuntimeCache(),self.getImageId())
+    pathToCurrentImagesRuntimeCacheDir = os.path.join(self.getUser().getConfig()["runtime-cache"],self.getImageId())
     pathToRuntimeCacheFile = os.path.join(pathToCurrentImagesRuntimeCacheDir,self.getPermissions().getHash()+".json")
     if os.path.exists(pathToRuntimeCacheFile):
       with open(pathToRuntimeCacheFile,mode="r") as runtimeCacheFileHandle:
@@ -99,7 +99,7 @@ class Subuser(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.clas
     Returns the path to the subuser's home dir. Unless the subuser is configured to have a stateless home, in which case returns None.
     """
     if self.getPermissions()["stateful-home"]:
-      return os.path.join(self.getUser().getConfig().getSubuserHomeDirsDir(),self.getName())
+      return os.path.join(self.getUser().getConfig()["subuser-home-dirs-dir"],self.getName())
     else:
       return None
 
@@ -122,7 +122,7 @@ class Subuser(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.clas
     redirect="""#!/bin/bash
   subuser run """+self.getName()+""" $@
   """
-    executablePath=os.path.join(self.getUser().getConfig().getBinDir(), self.getName())
+    executablePath=os.path.join(self.getUser().getConfig()["bin-dir"], self.getName())
     with open(executablePath, 'w') as file_f:
       file_f.write(redirect)
       st = os.stat(executablePath)

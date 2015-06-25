@@ -38,9 +38,9 @@ class Registry(subuserlib.classes.userOwnedObject.UserOwnedObject):
     self._ensureGitRepoInitialized()
 
   def _ensureGitRepoInitialized(self):
-    if not os.path.exists(self.getUser().getConfig().getRegistryPath()):
-      os.makedirs(self.getUser().getConfig().getRegistryPath())
-      subuserlib.git.runGit(["init"],cwd=self.getUser().getConfig().getRegistryPath())
+    if not os.path.exists(self.getUser().getConfig()["registry-dir"]):
+      os.makedirs(self.getUser().getConfig()["registry-dir"])
+      subuserlib.git.runGit(["init"],cwd=self.getUser().getConfig()["registry-dir"])
       self.logChange("Initial commit.")
       self.commit()
 
@@ -69,10 +69,10 @@ class Registry(subuserlib.classes.userOwnedObject.UserOwnedObject):
     if self.__changed:
       self.getRepositories().save()
       self.getSubusers().save()
-      subuserlib.git.runGit(["add","subusers.json","repository-states.json"],cwd=self.getUser().getConfig().getRegistryPath())
-      if os.path.exists(os.path.join(self.getUser().getConfig().getRegistryPath(),"repositories.json")):
-        subuserlib.git.runGit(["add","repositories.json"],cwd=self.getUser().getConfig().getRegistryPath())
-      subuserlib.git.runGit(["commit","-m",self.__changeLog],cwd=self.getUser().getConfig().getRegistryPath())
+      subuserlib.git.runGit(["add","subusers.json","repository-states.json"],cwd=self.getUser().getConfig()["registry-dir"])
+      if os.path.exists(os.path.join(self.getUser().getConfig()["registry-dir"],"repositories.json")):
+        subuserlib.git.runGit(["add","repositories.json"],cwd=self.getUser().getConfig()["registry-dir"])
+      subuserlib.git.runGit(["commit","-m",self.__changeLog],cwd=self.getUser().getConfig()["registry-dir"])
       self.__changed = False
       self.__changeLog = ""
 

@@ -17,7 +17,7 @@ class InstalledImages(dict,subuserlib.classes.userOwnedObject.UserOwnedObject,su
     """ Reload the installed images list from disk, discarding the current in-memory version. """
     self.clear()
 
-    installedImagesPath = self.getUser().getConfig().getInstalledImagesDotJsonPath()
+    installedImagesPath = self.getUser().getConfig()["installed-images-list"]
     if os.path.exists(installedImagesPath):
       with open(installedImagesPath, 'r') as file_f:
         try:
@@ -48,7 +48,7 @@ class InstalledImages(dict,subuserlib.classes.userOwnedObject.UserOwnedObject,su
       installedImagesDict[installedImage.getImageId()] = imageAttributes
 
     # Write that dictionary to disk.
-    installedImagesPath = self.getUser().getConfig().getInstalledImagesDotJsonPath()
+    installedImagesPath = self.getUser().getConfig()["installed-images-list"]
     with open(installedImagesPath, 'w') as file_f:
       json.dump(installedImagesDict, file_f, indent=1, separators=(',', ': '))
 

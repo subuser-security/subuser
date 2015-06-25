@@ -58,9 +58,9 @@ class Subusers(dict,subuserlib.classes.userOwnedObject.UserOwnedObject,subuserli
         serializedLockedSubusersDict[subuserName] = serializedSubuser
       else:
         serializedUnlockedSubusersDict[subuserName] = serializedSubuser
-    with open(os.path.join(self.getUser().getConfig().getSubusersDotJsonPath()), 'w') as file_f:
+    with open(os.path.join(self.getUser().getConfig()["registry-dir"],"subusers.json"), 'w') as file_f:
       json.dump(serializedUnlockedSubusersDict, file_f, indent=1, separators=(',', ': '))
-    with open(os.path.join(self.getUser().getConfig().getLockedSubusersDotJsonPath()), 'w') as file_f:
+    with open(os.path.join(self.getUser().getConfig()["locked-subusers-path"]), 'w') as file_f:
       json.dump(serializedLockedSubusersDict, file_f, indent=1, separators=(',', ': '))
 
   def _loadSerializedSubusersDict(self,serializedSubusersPath,locked):
@@ -87,6 +87,6 @@ class Subusers(dict,subuserlib.classes.userOwnedObject.UserOwnedObject,subuserli
 
   def __init__(self,user):
     subuserlib.classes.userOwnedObject.UserOwnedObject.__init__(self,user)
-    self._loadSerializedSubusersDict(self.getUser().getConfig().getLockedSubusersDotJsonPath(),locked=True)
-    self._loadSerializedSubusersDict(self.getUser().getConfig().getSubusersDotJsonPath(),locked=False)
+    self._loadSerializedSubusersDict(self.getUser().getConfig()["locked-subusers-path"],locked=True)
+    self._loadSerializedSubusersDict(os.path.join(self.getUser().getConfig()["registry-dir"],"subusers.json"),locked=False)
 
