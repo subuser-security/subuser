@@ -112,11 +112,15 @@ def removeOldImages(realArgs):
 
   user = subuserlib.classes.user.User()
 
-  if options.dryrun:
-    print("The following images are uneeded and would be deleted.")
-    print("DOCKER-ID : SUBUSER-ID")
+  try:
+    with user.getRegistry().getLock() as lockFileHandler:
+      if options.dryrun:
+        print("The following images are uneeded and would be deleted.")
+        print("DOCKER-ID : SUBUSER-ID")
 
-  subuserlib.removeOldImages.removeOldImages(user=user,dryrun=options.dryrun)
+      subuserlib.removeOldImages.removeOldImages(user=user,dryrun=options.dryrun)
+  except subuserlib.portalocker.portalocker.LockException:
+    sys.exit("Another subuser process is currently running and has a lock on the registry. Please try again later.")
 
 #################################################################################################
 

@@ -182,16 +182,34 @@ def subuser(sysargs):
       sys.exit("Wrong number of arguments to add.  See `subuser subuser -h`.")
     name = args[1]
     imageSourceId = args[2]
-    subuserlib.subuser.add(user,name,imageSourceId)
+    try:
+      with user.getRegistry().getLock():
+        subuserlib.subuser.add(user,name,imageSourceId)
+    except subuserlib.portalocker.portalocker.LockException:
+      sys.exit("Another subuser process is currently running and has a lock on the registry. Please try again later.")
+
   elif action == "remove":
     name = args[1]
-    subuserlib.subuser.remove(user,name)
+    try:
+      with user.getRegistry().getLock():
+        subuserlib.subuser.remove(user,name)
+    except subuserlib.portalocker.portalocker.LockException:
+      sys.exit("Another subuser process is currently running and has a lock on the registry. Please try again later.")
+ 
   elif action == "create-shortcut":
     name = args[1]
-    subuserlib.subuser.setExecutableShortcutInstalled(user,name,True)
+    try:
+      with user.getRegistry().getLock():
+        subuserlib.subuser.setExecutableShortcutInstalled(user,name,True)
+    except subuserlib.portalocker.portalocker.LockException:
+      sys.exit("Another subuser process is currently running and has a lock on the registry. Please try again later.")
   elif action == "remove-shortcut":
     name = args[1]
-    subuserlib.subuser.setExecutableShortcutInstalled(user,name,False)
+    try:
+      with user.getRegistry().getLock():
+        subuserlib.subuser.setExecutableShortcutInstalled(user,name,False)
+    except subuserlib.portalocker.portalocker.LockException:
+      sys.exit("Another subuser process is currently running and has a lock on the registry. Please try again later.")
   else:
     sys.exit("Action "+args[0]+" does not exist. Try:\n subuser subuser --help")
 #################################################################################################

@@ -22,9 +22,13 @@ This is usefull when migrating from one machine to another.  You can copy your ~
 def verify(realArgs):
   options,arguments=parseCliArgs(realArgs)
   user = subuserlib.classes.user.User()
-  subuserlib.verify.verify(user)
-  user.getRegistry().commit()
-
+  try:
+    with user.getRegistry().getLock() as LockFileHandle:
+      subuserlib.verify.verify(user)
+      user.getRegistry().commit()
+  except subuserlib.portalocker.portalocker.LockException:
+    sys.exit("Another subuser process is currently running and has a lock on the registry. Please try again later.")
+  
 if __name__ == "__main__":
   verify(sys.argv[1:])
 

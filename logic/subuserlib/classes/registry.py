@@ -7,7 +7,9 @@ Each user's settings are stored in a "registry". This is a git repository with a
 """
 
 #external imports
-import os
+import os,errno,sys
+#semi-external imports
+import subuserlib.portalocker.utils
 #internal imports
 import subuserlib.classes.subusers, subuserlib.classes.userOwnedObject, subuserlib.git
 
@@ -75,4 +77,15 @@ class Registry(subuserlib.classes.userOwnedObject.UserOwnedObject):
       subuserlib.git.runGit(["commit","-m",self.__changeLog],cwd=self.getUser().getConfig()["registry-dir"])
       self.__changed = False
       self.__changeLog = ""
+
+  def getLock(self):
+    """
+    To be used with with.
+    """
+    try:
+      os.makedirs(self.getUser().getConfig()["lock-dir"])
+    except OSError as exception:
+      if exception.errno != errno.EEXIST:
+        raise
+    return subuserlib.portalocker.utils.Lock(os.path.join(self.getUser().getConfig()["lock-dir"],"registry.lock"),timeout=0,check_interval=0)
 

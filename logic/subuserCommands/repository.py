@@ -99,12 +99,21 @@ def repository(sysargs):
       sys.exit("Use subuser repository --help for help.")
     name = args[1]
     url = args[2]
-    subuserlib.repository.add(user,name,url)
+    try:
+      with user.getRegistry().getLock():
+        subuserlib.repository.add(user,name,url)
+    except subuserlib.portalocker.portalocker.LockException:
+      sys.exit("Another subuser process is currently running and has a lock on the registry. Please try again later.")
   elif action == "remove":
     if not len(args) == 2:
       sys.exit("Use subuser repository --help for help.")
     name = args[1]
-    subuserlib.repository.remove(user,name)
+    try:
+      with user.getRegistry().getLock():
+        subuserlib.repository.remove(user,name)
+    except subuserlib.portalocker.portalocker.LockException:
+      sys.exit("Another subuser process is currently running and has a lock on the registry. Please try again later.")
+
   else:
      sys.exit("Action "+args[0]+" not supported. Please see:\n subuser repository --help")
 
