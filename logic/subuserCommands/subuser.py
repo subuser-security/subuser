@@ -24,6 +24,10 @@ Remove the subuser named foo.
 
     $ subuser subuser remove foo
 
+Remove subusers foo and bar.
+
+    $ subuser subuser remove foo bar
+
 Create a launcher for the subuser named foo.
 
     $ subuser subuser create-shorcut foo
@@ -189,10 +193,10 @@ def subuser(sysargs):
       sys.exit("Another subuser process is currently running and has a lock on the registry. Please try again later.")
 
   elif action == "remove":
-    name = args[1]
+    names = args[1:]
     try:
       with user.getRegistry().getLock():
-        subuserlib.subuser.remove(user,name)
+        subuserlib.subuser.remove(user,names)
     except subuserlib.portalocker.portalocker.LockException:
       sys.exit("Another subuser process is currently running and has a lock on the registry. Please try again later.")
  

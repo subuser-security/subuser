@@ -28,22 +28,26 @@ def add(user,subuserName,imageSourceIdentifier):
     print(str(e))
     subuserlib.update.checkoutNoCommit(user,"HEAD")
 
-def remove(user,subuserName):
-  if subuserName in user.getRegistry().getSubusers():
-    user.getRegistry().logChange("Removing subuser "+subuserName)
-    try:
-      subuserHome = user.getRegistry().getSubusers()[subuserName].getHomeDirOnHost()
-      if subuserHome:
-        user.getRegistry().logChange(" If you wish to remove the subusers home directory, issule the command $ rm -r "+subuserHome)
-    except:
-      pass
-    user.getRegistry().logChange(" If you wish to remove the subusers image, issue the command $ subuser remove-old-images")
-    del user.getRegistry().getSubusers()[subuserName]
+def remove(user,subuserNames):
+  didSomething = False
+  for subuserName in subuserNames:
+    if subuserName in user.getRegistry().getSubusers():
+      user.getRegistry().logChange("Removing subuser "+str(subuserName))
+      try:
+        subuserHome = user.getRegistry().getSubusers()[subuserName].getHomeDirOnHost()
+        if subuserHome:
+          user.getRegistry().logChange(" If you wish to remove the subusers home directory, issule the command $ rm -r "+subuserHome)
+      except:
+        pass
+      user.getRegistry().logChange(" If you wish to remove the subusers image, issue the command $ subuser remove-old-images")
+      del user.getRegistry().getSubusers()[subuserName]
+      didSomething = True
+    else:
+      print("Cannot remove: subuser "+subuserName+" does not exist.")
+  if didSomething:
     subuserlib.verify.verify(user)
     user.getRegistry().commit()
-  else:
-    sys.exit("Cannot remove: subuser "+subuserName+" does not exist.")
-
+  
 def setExecutableShortcutInstalled(user,subuserName,installed):
   if installed:
     user.getRegistry().logChange("Creating shortcut for subuser "+subuserName)
