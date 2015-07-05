@@ -1,7 +1,7 @@
 Runtime cache
 -------------
 
-The ``runtime-cache`` directory caches infomration used by subuser while prepairing subusers to be run.
+The ``runtime-cache`` directory caches information used by subuser while prepairing subusers to be run.
 
 The directory contains a set of subdirectories each named with the Docker image Id of a given installed-image.
 
