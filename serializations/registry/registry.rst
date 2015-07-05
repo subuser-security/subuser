@@ -5,6 +5,7 @@ Each user is to have a registry of subusers, repositories, and repository states
 
 .. toctree::
 
+  registry-dot-lock
   subusers-dot-json-file-format
   repositories-dot-json-file-format
   repository-states-dot-json-file-format
