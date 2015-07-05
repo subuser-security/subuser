@@ -34,5 +34,8 @@ html: command-docs pylint community.rst developers/contributing.rst developers/i
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
 
+deploy:
+	./deploy.sh
+
 clean:
 	rm -rf _build/
