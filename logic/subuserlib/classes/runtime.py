@@ -3,13 +3,14 @@
 # If it is not, please file a bug report.
 
 """
-Runtime environements which are prepared for subusers to run in.
+Runtime environments which are prepared for subusers to run in.
 """
 
 #external imports
 import sys,collections,os
 #internal imports
-import subuserlib.classes.userOwnedObject
+from subuserlib.classes.userOwnedObject import userOwnedObject
+
 
 def getRecursiveDirectoryContents(directory):
   files = []
@@ -18,7 +19,8 @@ def getRecursiveDirectoryContents(directory):
       files.append(os.path.join(directory,fileName))
   return files
 
-class Runtime(subuserlib.classes.userOwnedObject.UserOwnedObject):
+
+class Runtime(UserOwnedObject):
   __runReadyImageId = None
   __subuser = None
   __environment = None
@@ -136,4 +138,3 @@ class Runtime(subuserlib.classes.userOwnedObject.UserOwnedObject):
       self.getUser().getDockerDaemon().execute(self.getCommand(args))
     except KeyboardInterrupt:
       sys.exit(0)
-
