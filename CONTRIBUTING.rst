@@ -20,8 +20,6 @@ Coding guidelines
 
  * Tabs are forbidden.
 
- * Code blocks should not be stacked more than 4-5 levels deep.  That is a ``dev`` plus three ``if``'s or other keyword.
-
  * Use human readable names for things.
 
  * Do not shorten words/leave out vowels.
