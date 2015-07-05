@@ -21,7 +21,7 @@ Will launch the subuser named iceweasel
 #################################################################################################
 
 def run(args):
-  if len(args) == 1 or args[1] == "--help":
+  if len(args) == 1 or args[1] == "-h" or args[1] == "--help":
     print(helpString)
     sys.exit()
 
