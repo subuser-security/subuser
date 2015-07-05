@@ -9,7 +9,7 @@ Runtime environments which are prepared for subusers to run in.
 #external imports
 import sys,collections,os
 #internal imports
-from subuserlib.classes.userOwnedObject import userOwnedObject
+import subuserlib.classes.userOwnedObject
 
 
 def getRecursiveDirectoryContents(directory):
@@ -20,7 +20,7 @@ def getRecursiveDirectoryContents(directory):
   return files
 
 
-class Runtime(UserOwnedObject):
+class Runtime(subuserlib.classes.userOwnedObject.UserOwnedObject):
   __runReadyImageId = None
   __subuser = None
   __environment = None
