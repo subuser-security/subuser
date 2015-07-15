@@ -5,6 +5,10 @@ Related projects
 
  Qubes OS aims to be the more secure, more resource intensive, big brother to subuser.  It divides your computer into security domains which each run on their own separate virtual machine.  If you want rock solid NSA proof security, I strongly recommend you check it out.
 
+ * `Subgraph OS <https://subgraph.com/>`_
+
+ Subgraph OS, like subuser, aims to securely partition the operating system at the application level. Subgraph's goals are purely security based, where-as subuser focuses on portability and maintainability as well. Subgraph is able to take advantage of specialized kernel features like grsec and thus has a level of security which excedes that of subuser. However, unlike subuser, the user of subgraph must specially configure their operating system/kernel for use with subgraph. In the security by isolation spectrum, subgraph is one step bellow QubesOS. It is less resource intensive and less secure than Qubes. Subuser is one step bellow subgraph. Subuser is more portable and less secure than subgraph.
+
  * `Bedrock linux <http://bedrocklinux.org>`_ 
 
  Bedrock Linux is a project that I learned about long after I started working on subuser. Like subuser, it allows you to install software packaged for a variety of Linux distributions. Unlike subuser, which installs and runs programs in isolated environments running within a base system, Bedrock Linux mixes everything together at the same level without any segregation.
