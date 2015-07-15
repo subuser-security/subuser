@@ -7,11 +7,17 @@ This is the list of subusers controlled by a given user.
 """
 
 #external imports
-import os,json,collections,sys
+import os
+import json
+import collections
+import sys
 #internal imports
-import subuserlib.classes.fileBackedObject, subuserlib.classes.userOwnedObject, subuserlib.classes.subuser, subuserlib.classes.imageSource
+from subuserlib.classes.fileBackedObject import FileBackedObject
+from subuserlib.classes.userOwnedObject import UserOwnedObject
+import subuserlib.classes.subuser
+import subuserlib.classes.imageSource
 
-class Subusers(dict,subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.classes.fileBackedObject.FileBackedObject):
+class Subusers(dict,UserOwnedObject,FileBackedObject):
   """
   A subusers object stores the set of all subusers owned by a given user.
 
@@ -86,7 +92,7 @@ class Subusers(dict,subuserlib.classes.userOwnedObject.UserOwnedObject,subuserli
       self[subuserName] = subuserlib.classes.subuser.Subuser(self.getUser(),subuserName,imageSource,imageId=imageId,executableShortcutInstalled=executableShortcutInstalled,locked=locked)
 
   def __init__(self,user):
-    subuserlib.classes.userOwnedObject.UserOwnedObject.__init__(self,user)
+    UserOwnedObject.__init__(self,user)
     self._loadSerializedSubusersDict(self.getUser().getConfig()["locked-subusers-path"],locked=True)
     self._loadSerializedSubusersDict(os.path.join(self.getUser().getConfig()["registry-dir"],"subusers.json"),locked=False)
 

@@ -11,7 +11,8 @@ import sys
 import collections
 import os
 #internal imports
-from subuserlib.classes import userOwnedObject
+
+from subuserlib.classes.userOwnedObject import UserOwnedObject
 
 
 def getRecursiveDirectoryContents(directory):
@@ -22,13 +23,13 @@ def getRecursiveDirectoryContents(directory):
   return files
 
 
-class Runtime(userOwnedObject.UserOwnedObject):
+class Runtime(UserOwnedObject):
   __runReadyImageId = None
   __subuser = None
   __environment = None
 
   def __init__(self,user,subuser,runReadyImageId,environment):
-    userOwnedObject.UserOwnedObject.__init__(self,user)
+    UserOwnedObject.__init__(self,user)
     self.__subuser = subuser
     self.__runReadyImageId = runReadyImageId
 
