@@ -23,6 +23,7 @@ class Registry(userOwnedObject.UserOwnedObject):
   __repositories = None
   __changed = False
   __changeLog = ""
+  __logOutputVerbosity = 2
 
   def getSubusers(self):
     if not self.__subusers:
@@ -51,12 +52,19 @@ class Registry(userOwnedObject.UserOwnedObject):
       self.logChange("Initial commit.")
       self.commit()
 
+  def setLogOutputVerbosity(self,level):
+    self.__logOutputVerbosity = level
+
+  def getLogOutputVerbosity(self):
+    return self.__logOutputVerbosity
+
   def log(self,message):
     """
     Add a log message to the registry's change log and print it to the screen, but do not mark the registry as changed.
     """
     self.__changeLog = self.__changeLog + message+"\n"
-    print(message)
+    if self.getLogOutputVerbosity() > 0:
+      print(message)
 
   def logChange(self,message):
     """

@@ -14,14 +14,21 @@ import json
 from subuserlib.classes.userOwnedObject import UserOwnedObject
 from subuserlib.classes.permissions import Permissions
 from subuserlib.classes.describable import Describable
-from subuserlib.runReadyImages import buildRunReadyImageForSubuser
-from subuserlib.classes.runtime import Runtime
+from subuserlib.classes.subuserSubmodules.run.runtime import Runtime
+from subuserlib.classes.subuserSubmodules.run.x11Bridge import X11Bridge
+from subuserlib.classes.subuserSubmodules.run.runReadyImage import RunReadyImage
+from subuserlib.classes.subuserSubmodules.run.runtimeCache import RuntimeCache
 
 class Subuser(UserOwnedObject, Describable):
   __name = None
   __imageSource = None
   __imageId = None
   __executableShortcutInstalled = None
+  __x11Bridge = None
+  __runReadyImage = None
+  __runtime = None
+  __runtimeCache = None
+  __permissions = None
 
   def __init__(self,user,name,imageSource,imageId,executableShortcutInstalled,locked):
     UserOwnedObject.__init__(self,user)
@@ -44,14 +51,16 @@ class Subuser(UserOwnedObject, Describable):
     self.__executableShortcutInstalled = installed
 
   def getPermissions(self):
-    permissionsDotJsonWritePath = os.path.join(self.getUser().getConfig()["user-set-permissions-dir"],self.getName(),"permissions.json")
-    permissionsDotJsonReadPath = permissionsDotJsonWritePath
-    if not os.path.exists(permissionsDotJsonReadPath):
-      permissionsDotJsonReadPath = os.path.join(self.getImageSource().getSourceDir(),"permissions.json")
-    if not os.path.exists(permissionsDotJsonReadPath):
-      permissionsDotJsonReadPath = None
-    return Permissions(self.getUser(),readPath=permissionsDotJsonReadPath,writePath=permissionsDotJsonWritePath)
-
+    if self.__permissions is None:
+      permissionsDotJsonWritePath = os.path.join(self.getUser().getConfig()["user-set-permissions-dir"],self.getName(),"permissions.json")
+      permissionsDotJsonReadPath = permissionsDotJsonWritePath
+      if not os.path.exists(permissionsDotJsonReadPath):
+        permissionsDotJsonReadPath = os.path.join(self.getImageSource().getSourceDir(),"permissions.json")
+      if not os.path.exists(permissionsDotJsonReadPath):
+        permissionsDotJsonReadPath = None
+      self.__permissions = Permissions(self.getUser(),readPath=permissionsDotJsonReadPath,writePath=permissionsDotJsonWritePath)
+    return self.__permissions
+  
   def getImageId(self):
     """
      Get the Id of the Docker image associated with this subuser.
@@ -65,29 +74,31 @@ class Subuser(UserOwnedObject, Describable):
     """
     self.__imageId = imageId
 
+  def getRunReadyImage(self):
+    if not self.__runReadyImage:
+      self.__runReadyImage = RunReadyImage(self.getUser(),self)
+    return self.__runReadyImage
+
+  def getX11Bridge(self):
+    """
+    Return the X11 bridge object for this subuser.
+    """
+    if not self.__x11Bridge:
+      self.__x11Bridge = X11Bridge(self.getUser(),self)
+    return self.__x11Bridge
+
   def getRuntime(self,environment):
     """
     Returns the subuser's Runtime object for it's current permissions, creating it if necessary.
     """
-    if self.getImageId():
-      pathToCurrentImagesRuntimeCacheDir = os.path.join(self.getUser().getConfig()["runtime-cache"],self.getImageId())
-    else:
-      return None
-    pathToRuntimeCacheFile = os.path.join(pathToCurrentImagesRuntimeCacheDir,self.getPermissions().getHash()+".json")
-    if os.path.exists(pathToRuntimeCacheFile):
-      with open(pathToRuntimeCacheFile,mode="r") as runtimeCacheFileHandle:
-        runtimeCacheInfo = json.load(runtimeCacheFileHandle)
-        return Runtime(self.getUser(),subuser=self,runReadyImageId=runtimeCacheInfo['run-ready-image-id'],environment=environment)
-    try:
-      os.makedirs(pathToCurrentImagesRuntimeCacheDir)
-    except OSError:
-      pass
-    runReadyImageId = buildRunReadyImageForSubuser(self)
-    runtimeInfo = {}
-    runtimeInfo['run-ready-image-id'] = runReadyImageId
-    with open(pathToRuntimeCacheFile,mode='w') as runtimeCacheFileHandle:
-      json.dump(runtimeInfo,runtimeCacheFileHandle,indent=1,separators=(',',': '))
-    return Runtime(self.getUser(),subuser=self,runReadyImageId=runReadyImageId,environment=environment)
+    if not self.__runtime:
+      self.__runtime = Runtime(self.getUser(),subuser=self,environment=environment)
+    return self.__runtime
+
+  def getRuntimeCache(self):
+    if not self.__runtimeCache:
+      self.__runtimeCache = RuntimeCache(self.getUser(),self)
+    return self.__runtimeCache
 
   def locked(self):
     """

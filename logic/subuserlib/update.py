@@ -13,12 +13,22 @@ import subuserlib.verify,subuserlib.git,subuserlib.subprocessExtras
 #####################################################################################
 def updateAll(user):
   """
-  This command updates all or some of the installed subuser images.
+  This command updates(if needed) all of the installed subuser images.
   """
   user.getRegistry().log("Updating...")
   for _,repository in user.getRegistry().getRepositories().items():
     repository.updateSources()
   subuserlib.verify.verify(user,checkForUpdatesExternally=True)
+  user.getRegistry().commit()
+
+def updateSubusers(user,subuserNames):
+  """
+  This command updates the specified subusers' images.
+  """
+  user.getRegistry().log("Updating...")
+  for _,repository in user.getRegistry().getRepositories().items():
+    repository.updateSources()
+  subuserlib.verify.verify(user,subuserNames=subuserNames,checkForUpdatesExternally=True)
   user.getRegistry().commit()
 
 def showLog(user):

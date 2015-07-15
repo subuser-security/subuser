@@ -14,7 +14,7 @@ import sys
 #internal imports
 from subuserlib.classes.fileBackedObject import FileBackedObject
 from subuserlib.classes.userOwnedObject import UserOwnedObject
-import subuserlib.classes.subuser
+from subuserlib.classes.subuser import Subuser
 import subuserlib.classes.imageSource
 
 class Subusers(dict,UserOwnedObject,FileBackedObject):
@@ -89,7 +89,7 @@ class Subusers(dict,UserOwnedObject,FileBackedObject):
         imageId = None
       executableShortcutInstalled = subuserAttributes["executable-shortcut-installed"]
       imageSource = subuserlib.classes.imageSource.ImageSource(user=self.getUser(),name=name,repo=repo)
-      self[subuserName] = subuserlib.classes.subuser.Subuser(self.getUser(),subuserName,imageSource,imageId=imageId,executableShortcutInstalled=executableShortcutInstalled,locked=locked)
+      self[subuserName] = Subuser(self.getUser(),subuserName,imageSource,imageId=imageId,executableShortcutInstalled=executableShortcutInstalled,locked=locked)
 
   def __init__(self,user):
     UserOwnedObject.__init__(self,user)

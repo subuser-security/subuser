@@ -25,6 +25,7 @@ permissionDefaults = {
  ,"inherit-locale": False
  ,"inherit-timezone": False
  # Moderate permissions
+ ,"gui": None
  ,"user-dirs": []
  ,"inherit-envvars": []
  ,"sound-card": False
@@ -33,6 +34,7 @@ permissionDefaults = {
  ,"allow-network-access": False
  # Liberal permissions
  ,"x11": False
+ ,"system-dirs": {}
  ,"graphics-card": False
  ,"serial-devices":False
  ,"system-dbus": False
@@ -40,6 +42,12 @@ permissionDefaults = {
  ,"sudo": False
  # Anarchistic permissions
  ,"privileged": False
+ }
+
+guiPermissionDefaults = {
+ "clipboard": False,
+ "system-tray": False,
+ "cursors": False
  }
 
 basicCommonPermissions = ["stateful-home","inherit-locale","inherit-timezone"]
@@ -55,7 +63,11 @@ def getPermissions(permissionsFilePath):
     # Validate that the permissions are supported by this version of subuser.
     for permission in permissions.keys():
       if not permission in permissionDefaults:
-        sys.exit("Error: the permission \""+permission+"\" is not supported by your version of subuser.  Try updating first.")
+         sys.exit("Error: the permission \""+permission+"\" is not supported by your version of subuser.  Try updating first.")
+    if "gui" in permissions and not permissions["gui"] is None:
+      for guiPermission in permissions["gui"].keys():
+       if not guiPermission in guiPermissionDefaults:
+         sys.exit("Error: the gui permission \""+guiPermission+"\" is not supported by your version of subuser.  Try updating first.")
     # Set permission defaults for permissions that are not explicitly specified in the permissions.json file
     if "basic-common-permissions" in permissions and permissions["basic-common-permissions"]:
       for basicCommonPermission in basicCommonPermissions:
@@ -64,6 +76,12 @@ def getPermissions(permissionsFilePath):
     for permission,defaultValue in permissionDefaults.items():
       if not permission in permissions:
         permissions[permission] = defaultValue
+    # gui permissions
+    if not permissions["gui"] is None:
+      for permission,defaultValue in guiPermissionDefaults.items():
+        if not permission in permissions["gui"]:
+          permissions["gui"][permission] = defaultValue
+  
     return permissions
 
 def getPermissonsJSONString(permissions):

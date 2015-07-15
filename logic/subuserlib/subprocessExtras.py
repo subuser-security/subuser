@@ -41,6 +41,16 @@ def subprocessCallPlus(args,cwd=None):
   (stdout,stderr) = process.communicate()
   return process.returncode
 
+def subprocessCallBackground(args,cwd=None):
+  """
+  Same as subprocess.call except here you can specify the cwd.
+  Returns imediately with the subprocesses pid.
+  """
+  devnull = open(os.devnull,"a")
+  process = subprocess.Popen(args,cwd=cwd,stdout=devnull,stderr=devnull,close_fds=True)
+  return process.pid
+
+
 
 def subprocessCheckedCallCollectOutput(args,errorContext="",cwd=None):
   """

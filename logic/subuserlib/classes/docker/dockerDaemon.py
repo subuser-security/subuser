@@ -18,7 +18,12 @@ try:
 except ImportError:
  import io
 #internal imports
-import subuserlib.subprocessExtras,subuserlib.classes.userOwnedObject,subuserlib.classes.uhttpConnection,subuserlib.docker,subuserlib.test
+import subuserlib.subprocessExtras
+from subuserlib.classes.userOwnedObject import UserOwnedObject
+from subuserlib.classes.uhttpConnection import UHTTPConnection
+import subuserlib.docker
+import subuserlib.test
+from subuserlib.classes.docker.container import Container
 
 def archiveBuildContext(archive,directoryWithDockerfile,excludePatterns,dockerfile=None):
   """
@@ -80,11 +85,11 @@ def readAndPrintStreamingBuildStatus(user,response):
       pass
   return output.decode("utf-8")
 
-class DockerDaemon(subuserlib.classes.userOwnedObject.UserOwnedObject):
+class DockerDaemon(UserOwnedObject):
   __connection = None
 
   def __init__(self,user):
-    subuserlib.classes.userOwnedObject.UserOwnedObject.__init__(self,user)
+    UserOwnedObject.__init__(self,user)
 
   def getConnection(self):
     """
@@ -94,8 +99,11 @@ class DockerDaemon(subuserlib.classes.userOwnedObject.UserOwnedObject):
     """
     if not self.__connection:
       subuserlib.docker.getAndVerifyDockerExecutable()
-      self.__connection = subuserlib.classes.uhttpConnection.UHTTPConnection("/var/run/docker.sock")
+      self.__connection = UHTTPConnection("/var/run/docker.sock")
     return self.__connection
+
+  def getContainer(self,containerId):
+    return Container(self.getUser(),containerId)
 
   def getImageProperties(self,imageTagOrId):
     """
@@ -188,8 +196,16 @@ class DockerDaemon(subuserlib.classes.userOwnedObject.UserOwnedObject):
     shortId = match.group(1) #This is REALLY ugly!
     return self.getImageProperties(shortId)["Id"]
 
-  def execute(self,args,cwd=None):
-    return subuserlib.docker.runDocker(args,cwd=cwd)
+  def execute(self,args,cwd=None,background=False):
+    """
+    Execute the docker client.
+    If the background argument is True, return emediately with the docker client's pid.
+    Otherwise, wait for the process to finish and return the docker client's exit code.
+    """
+    if background:
+      return subuserlib.docker.runDockerBackground(args,cwd=cwd)
+    else:
+      return subuserlib.docker.runDocker(args,cwd=cwd)
 
 class ImageBuildException(Exception):
   pass

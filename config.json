@@ -7,5 +7,7 @@
   "runtime-cache" : "$HOME/.subuser/runtime-cache",
   "locked-subusers-path" : "$HOME/.subuser/locked-subusers.json",
   "repositories-dir" : "$HOME/.subuser/repositories",
-  "lock-dir" : "$HOME/.subuser/locks"
+  "lock-dir" : "$HOME/.subuser/locks",
+  "volumes-dir" : "$HOME/.subuser/volumes",
+  "x11-bridge" : "xpra"
 }

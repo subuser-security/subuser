@@ -1,8 +1,6 @@
 How secure is subuser?
 ======================
 
-.. warning:: Right now, subuser 0.2 is really alpha software.  Running x11 applications with subuser 0.2 is **NOT** secure.
-
 Subuser provides security via isolation.  It isolates programs from one another so that one malicious or faulty program cannot harm the rest of the system.  Some paranoid people have been wondering just how secure/insecure subuser is.  It has been rightfully pointed out that Docker is not a specialized security solution and that there is a high likelyhood that exploits for Docker will continue to appear at a relatively high rate.
 
 Subuser is not, and will never be, completely secure.  However, there are degrees of security.  Some attacks can be blocked, while others get through.

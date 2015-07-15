@@ -63,9 +63,17 @@ class Permissions(collections.OrderedDict,subuserlib.classes.userOwnedObject.Use
       if self["inherit-timezone"]:
         print("  Can find out your current timezone.")
 
-    moderatePermissions = ["user-dirs","sound-card","webcam","access-working-directory","allow-network-access"]
+    moderatePermissions = ["gui","user-dirs","sound-card","webcam","access-working-directory","allow-network-access"]
     if areAnyOfThesePermitted(moderatePermissions):
       print(" Moderate permissions(These are probably safe):")
+      if not self["gui"] is None:
+        print("  Is able to display windows.")
+        if self["gui"]["clipboard"]:
+          print("  Is able to access the host's clipboard.")
+        if self["gui"]["system-tray"]:
+          print("  Is able to create system tray icons.")
+        if self["gui"]["cursors"]:
+          print("  Is able to change the mouse's cursor icon.")
       if not self["user-dirs"]==[]:
         print("  Has access to the following user directories: '~/"+"' '~/".join(self["user-dirs"])+"'")
       if not self["inherit-envvars"]==[]:
@@ -79,11 +87,15 @@ class Permissions(collections.OrderedDict,subuserlib.classes.userOwnedObject.Use
       if self["allow-network-access"]:
         print("  Can access the network/internet.")
 
-    liberalPermissions = ["x11","graphics-card","serial-devices","system-dbus","as-root"]
+    liberalPermissions = ["x11","system-dirs","graphics-card","serial-devices","system-dbus","as-root"]
     if areAnyOfThesePermitted(liberalPermissions):
       print(" Liberal permissions(These may pose a security risk):")
       if self["x11"]:
         print("  Can display X11 windows and interact with your X11 server directly(log keypresses, read over your shoulder ect.)")
+      if self["system-dirs"]:
+        print("  Can read and write the following directories:")
+        for source,dest in self["system-dirs"].items():
+          print("   "+source+"(mounted as "+dest+")")
       if self["graphics-card"]:
         print(" Can access your graphics-card directly for OpenGL tasks.")
       if self["serial-devices"]:

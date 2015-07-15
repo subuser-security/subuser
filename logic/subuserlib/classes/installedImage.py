@@ -9,9 +9,11 @@ Each user has a set of images that have been installed.
 #external imports
 import os,json
 #internal imports
-import subuserlib.classes.userOwnedObject,subuserlib.classes.describable
+from subuserlib.classes.userOwnedObject import UserOwnedObject
+from subuserlib.classes.describable import Describable
+import subuserlib.classes.docker.dockerDaemon as dockerDaemon
 
-class InstalledImage(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.classes.describable.Describable):
+class InstalledImage(UserOwnedObject,Describable):
   __imageId = None
   __imageSourceHash = None
   __imageSourceName = None
@@ -19,7 +21,7 @@ class InstalledImage(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserl
   __alreadyCheckedForUpdates = None
 
   def __init__(self,user,imageId,imageSourceName,sourceRepoId,imageSourceHash):
-    subuserlib.classes.userOwnedObject.UserOwnedObject.__init__(self,user)
+    UserOwnedObject.__init__(self,user)
     self.__imageId = imageId
     self.__imageSourceHash = imageSourceHash
     self.__imageSourceName = imageSourceName
@@ -59,10 +61,10 @@ class InstalledImage(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserl
           try:
             try:
               self.getUser().getDockerDaemon().removeImage(permissionsSpecificCacheInfo['run-ready-image-id'])
-            except subuserlib.classes.dockerDaemon.ImageDoesNotExistsException:
+            except dockerDaemon.ImageDoesNotExistsException:
               pass
             os.remove(permissionsSpecificCacheInfoFilePath)
-          except subuserlib.classes.dockerDaemon.ContainerDependsOnImageException:
+          except dockerDaemon.ContainerDependsOnImageException:
             pass
     except OSError:
       pass
@@ -73,7 +75,7 @@ class InstalledImage(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserl
     """
     try:
       self.getUser().getDockerDaemon().removeImage(self.getImageId())
-    except (subuserlib.classes.dockerDaemon.ImageDoesNotExistsException,subuserlib.classes.dockerDaemon.ContainerDependsOnImageException,subuserlib.classes.dockerDaemon.ServerErrorException):
+    except (dockerDaemon.ImageDoesNotExistsException,dockerDaemon.ContainerDependsOnImageException,dockerDaemon.ServerErrorException):
       pass
 
   def describe(self):
@@ -89,6 +91,7 @@ class InstalledImage(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserl
     if self.__alreadyCheckedForUpdates:
       return False
     self.__alreadyCheckedForUpdates = True
+    self.getUser().getRegistry().log("Checking for updates to: " + self.getImageSource().getIdentifier())
     if self.getUser().getDockerDaemon().execute(["run",self.getImageId(),"test","-e","/subuser/check-for-updates"]) == 0:
       returnCode = self.getUser().getDockerDaemon().execute(["run",self.getImageId(),"/subuser/check-for-updates"])
       if returnCode == 0:

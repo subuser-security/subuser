@@ -5,9 +5,6 @@ Design flaws/bugs in subuser
 
 * Certain things involving sharing of data between applications, like the clipboard in `vim`, just won't work.
 
-* The security advantages of running x11 apps in docker is *very* iffy at best.
- - This will be fixed in the very near future.
-
 * DBUS/gsettings don't work between subusers.
 
 * Inheriting the $PWD is a generally shitty idea.  If I run `vim` in my home dir, it can see and edit all of my files.  The only security advantage is if I run `vim` in some subdirectory.

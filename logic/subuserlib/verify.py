@@ -16,8 +16,9 @@ This is one of the most important modules in subuser.  This module has one funct
 import shutil,os
 #internal imports
 import subuserlib.install
+import subuserlib.classes.docker.dockerDaemon as dockerDaemon
 
-def verify(user,checkForUpdatesExternally=False):
+def verify(user,checkForUpdatesExternally=False,subuserNames=None):
   """
    Ensure that:
       - Registry is consistent; warns the user about subusers that point to non-existant source images.
@@ -29,7 +30,9 @@ def verify(user,checkForUpdatesExternally=False):
   verifyRegistryConsistency(user)
   user.getRegistry().log("Unregistering any non-existant installed images.")
   user.getInstalledImages().unregisterNonExistantImages()
-  ensureImagesAreInstalledAndUpToDate(user,checkForUpdatesExternally=checkForUpdatesExternally)
+  if subuserNames is None:
+    subuserNames = user.getRegistry().getSubusers().keys()
+  ensureImagesAreInstalledAndUpToDate(user,subuserNames=subuserNames,checkForUpdatesExternally=checkForUpdatesExternally)
   user.getInstalledImages().save()
   trimUnneededTempRepos(user)
   rebuildBinDir(user)
@@ -40,14 +43,15 @@ def verifyRegistryConsistency(user):
     if not subuser.getImageSource().getName() in subuser.getImageSource().getRepository():
       user.getRegistry().log("WARNING: "+subuser.getName()+" is no longer present in it's source repository. Support for this progam may have been dropped.")
 
-def ensureImagesAreInstalledAndUpToDate(user,checkForUpdatesExternally=False):
+def ensureImagesAreInstalledAndUpToDate(user,subuserNames,checkForUpdatesExternally=False):
   user.getRegistry().log("Checking if images need to be updated or installed...")
   subusersWhosImagesFailedToBuild = []
-  for _,subuser in user.getRegistry().getSubusers().items():
+  for subuserName in subuserNames:
+    subuser = user.getRegistry().getSubusers()[subuserName]
     if not subuser.locked(): # TODO: We should install images for locked subusers if their images have dissappered.
       try:
         subuserlib.install.ensureSubuserImageIsInstalledAndUpToDate(subuser,checkForUpdatesExternally=checkForUpdatesExternally)
-      except subuserlib.classes.dockerDaemon.ImageBuildException as e:
+      except dockerDaemon.ImageBuildException as e:
         user.getRegistry().log(str(e))
         subusersWhosImagesFailedToBuild.append(subuser)
   if subusersWhosImagesFailedToBuild:

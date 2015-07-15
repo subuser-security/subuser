@@ -25,6 +25,12 @@ def parseCliArgs(realArgs):
 
   EXAMPLE:
     $ subuser update all
+
+  subusers
+      Updates the specified subusers
+
+  EXAMPLE:
+    $ subuser update subuser iceweasel git
  
   log
       Prints a log of recent updates.
@@ -281,6 +287,12 @@ def update(realArgs):
     try:
       with user.getRegistry().getLock():
         subuserlib.update.updateAll(user)
+    except subuserlib.portalocker.portalocker.LockException:
+      sys.exit("Another subuser process is currently running and has a lock on the registry. Please try again later.")
+  elif "subusers" == args[0]:
+    try:
+      with user.getRegistry().getLock():
+        subuserlib.update.updateSubusers(user,args[1:])
     except subuserlib.portalocker.portalocker.LockException:
       sys.exit("Another subuser process is currently running and has a lock on the registry. Please try again later.")
   elif ["log"] == args:

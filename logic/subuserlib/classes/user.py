@@ -14,7 +14,7 @@ import sys
 from subuserlib.classes import registry
 from subuserlib.classes import config
 from subuserlib.classes import installedImages
-from subuserlib.classes import dockerDaemon
+from subuserlib.classes.docker import dockerDaemon
 from subuserlib import test
 from subuserlib import paths
 

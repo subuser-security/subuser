@@ -9,9 +9,16 @@ High level operations on subusers.
 #external imports
 import sys
 #internal imports
-import subuserlib.classes.user,subuserlib.resolve,subuserlib.classes.subuser,subuserlib.verify,subuserlib.update
+import subuserlib.classes.user
+import subuserlib.resolve
+import subuserlib.classes.subuser
+import subuserlib.verify
+import subuserlib.update
+import subuserlib.classes.docker.dockerDaemon as dockerDaemon
 
 def add(user,subuserName,imageSourceIdentifier):
+  if subuserName.startswith("!"):
+    sys.exit("A subusers may not have names beginning with ! as these names are reserved for internal use.")
   if subuserName in user.getRegistry().getSubusers():
     sys.exit("A subuser named "+subuserName+" already exists.")
   user.getRegistry().logChange("Adding subuser "+subuserName+" "+imageSourceIdentifier)
@@ -26,7 +33,7 @@ def addFromImageSource(user,subuserName,imageSource):
     addFromImageSourceNoVerify(user,subuserName,imageSource)
     subuserlib.verify.verify(user)
     user.getRegistry().commit()
-  except subuserlib.classes.dockerDaemon.ImageBuildException as e:
+  except dockerDaemon.ImageBuildException as e:
     print("Adding subuser failed.")
     print(str(e))
     subuserlib.update.checkoutNoCommit(user,"HEAD")

@@ -28,7 +28,8 @@ class Repository(dict,subuserlib.classes.userOwnedObject.UserOwnedObject,subuser
     self.__lastGitCommitHash = gitCommitHash
     self.__temporary=temporary
     self.__sourceDir=sourceDir
-    self.checkoutGitCommit(gitCommitHash)
+    if not gitCommitHash is None:
+      self.checkoutGitCommit(gitCommitHash)
     self.loadProgamSources()
 
   def getName(self):

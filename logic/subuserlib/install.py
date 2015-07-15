@@ -8,7 +8,9 @@ Implements functions involved in building/installing/updating subuser images.
 #external imports
 import sys,os,stat,uuid,io
 #internal imports
-import subuserlib.classes.installedImage, subuserlib.installedImages,subuserlib.classes.dockerDaemon,subuserlib.verify
+import subuserlib.classes.installedImage
+import subuserlib.installedImages
+import subuserlib.verify
 
 def cleanUpAndExitOnError(user,error):
   user.getRegistry().log(str(error))
@@ -164,6 +166,7 @@ def ensureSubuserImageIsInstalledAndUpToDate(subuser, useCache=False, checkForUp
   Otherwise, do nothing.
   """
   # get dependency list as a list of ImageSources
+  subuser.getUser().getRegistry().log("Checking if subuser "+subuser.getName()+" is up to date.")
   sourceLineage = getImageSourceLineage(subuser.getImageSource())
   parentId=None
   while len(sourceLineage) > 0:
@@ -171,10 +174,10 @@ def ensureSubuserImageIsInstalledAndUpToDate(subuser, useCache=False, checkForUp
     latestInstalledImage = imageSource.getLatestInstalledImage()
     if not latestInstalledImage or not isInstalledImageUpToDate(latestInstalledImage,checkForUpdatesExternally=checkForUpdatesExternally):
       subuser.setImageId(installLineage([imageSource]+sourceLineage,parent=parentId))
-      subuser.getUser().getRegistry().logChange("Installed new image for subuser "+subuser.getName())
+      subuser.getUser().getRegistry().logChange("Installed new image <"+subuser.getImageId()+"> for subuser "+subuser.getName())
       return
     parentId=latestInstalledImage.getImageId()
   if not subuser.getImageId() == parentId:
     subuser.setImageId(parentId)
-    subuser.getUser().getRegistry().logChange("Installed new image for subuser "+subuser.getName())
+    subuser.getUser().getRegistry().logChange("Installed new image <"+subuser.getImageId()+"> for subuser "+subuser.getName())
 

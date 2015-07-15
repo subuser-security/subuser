@@ -23,7 +23,7 @@ class Config(userOwnedObject.UserOwnedObject, dict):
 
   def _expandPathsInConfig(self,config):
     """ Go through a freshly loaded config file and expand any environment variables in the paths. """
-    loadMultiFallbackJsonConfigFile.expandPathsInDict(self.getUser().homeDir,["bin-dir","registry-dir","installed-images-list","locked-subusers-path","user-set-permissions-dir","subuser-home-dirs-dir","repositories-dir","runtime-cache","lock-dir"],config)
+    loadMultiFallbackJsonConfigFile.expandPathsInDict(self.getUser().homeDir,["bin-dir","registry-dir","installed-images-list","locked-subusers-path","user-set-permissions-dir","subuser-home-dirs-dir","repositories-dir","runtime-cache","lock-dir","volumes-dir"],config)
 
   def _loadConfig(self):
     """ Loads the subuser config: a dictionary of settings used by subuser. """
