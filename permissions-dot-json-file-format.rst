@@ -5,8 +5,10 @@ A permissions.json file is a file which describes the rights or permissions of a
 
 Each permissions.json file is to be a valid `json <http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf>`_ file containing a single json object.
 
-The json object MUST have the following fields:
------------------------------------------------
+Prelude
+-------
+
+The permissions object always begins with the following permissions:
 
  * ``description``: This field describes what the subuser is/what it does.
 
@@ -20,10 +22,20 @@ The json object MUST have the following fields:
   
     ,"maintainer"                : "Timothy Hobbs <timothyhobbs (at) seznam dot cz>"
 
-The json object MAY at your option contain the following additional fields:
----------------------------------------------------------------------------
+ * ``executable``: This field denotes the absolute path within the Docker image where the given image's executable resides. This value is optional. if it is not present, than the subuser image cannot be run (but may be depended upon by other subuser images).
 
-**Note on optional fields**: Setting an optional field to an empty string is not a valid way of requesting it's default value.  If you want the default value, don't include the field at all.
+  Ex::
+
+    ,"executable"                : "/usr/bin/vim"
+
+  **Default**: The image has no executable and cannot be run(but it can be depended upon, as a library).
+
+Permissions
+-----------
+
+All permissions are optional. If they are not included in the ``permissions.json`` file, than they are set to their default (and most restrictive) setting.
+
+Setting a permission to an empty string is not a valid way of requesting it's default value.  If you want the default value, don't include the permission at all.
 
 Permissions are categorized into 4 levels of permissiveness:
 
@@ -34,20 +46,6 @@ Permissions are categorized into 4 levels of permissiveness:
 
 Conservative permissions
 ------------------------
-
- * ``last-update-time``: This field records the last time the image, or it's ``Dockerfile`` were known to be updated.  The purpose of this field is telling ``subuser`` if a image has been updated and must be re-installed.  It is important that this string be comparable with python's built in string comparison algorithm.
-
-  Ex::
-
-    ,"last-update-time"          : "2014-02-12-12:59"
-
- * ``executable``: This field denotes the absolute path within the Docker image where the given image's executable resides.
-
-  Ex::
-
-    ,"executable"                : "/usr/bin/vim"
-
-  **Default**: The image has no executable and cannot be run(but it can be depended upon, as a library).
 
  * ``basic-common-permissions``: This flag allows you to enable a set of basic, safe, and common permissions without having to list them individualy.  The basic common permissions are:
 
@@ -105,7 +103,7 @@ Moderate permissions
 
   **Default**: ``[]``
 
- * ``inherit-envvars`: A list of environment variables which the image will inherit from the host environment when started.
+ * ``inherit-envvars``: A list of environment variables which the image will inherit from the host environment when started.
 
   Ex::
 
@@ -169,4 +167,14 @@ Anarchistic permissions
   .. warning:: Completely insecure!
 
   **Default**: ``false``
+
+Depricated
+----------------------
+
+ * ``last-update-time``: This field records the last time the image, or it's ``Dockerfile`` were known to be updated.  The purpose of this field is telling ``subuser`` if a image has been updated and must be re-installed.  It is important that this string be comparable with python's built in string comparison algorithm.
+
+  Ex::
+
+    ,"last-update-time"          : "2014-02-12-12:59"
+
 

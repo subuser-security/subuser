@@ -9,6 +9,7 @@ This standard is organized in order from most stable to least stable.  The forma
 
   image-source-identifiers
   permissions-dot-json-file-format
+  special-files
   repositories
   serializations
 
