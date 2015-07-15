@@ -8,14 +8,6 @@ Each installed-images.json file is to be a valid `json <http://www.ecma-internat
 This object maps 
 image ids to json objects which have the following attributes:
 
- * ``last-update-time``: This is the ``last-update-time`` that was listed in the permissions.json file of the image source when the image was installed, or the last time the image was updated.
-
-  Ex::
-
-    ,"last-update-time"                : "2014-02-12-12:59"
-
-  **Note**: If the source image's ``permissions.json`` file listed no ``last-update-time`` this will be the actual clock time at which the image was installed.
-
  * ``source-repo``: Id of the subuser repository from which the image was installed.
 
   Ex::
@@ -31,3 +23,20 @@ image ids to json objects which have the following attributes:
   Ex::
 
     "source-image" : "firefox"
+
+ * ``image-source-hash``: SHA-2 hash of the ``docker-image`` directory of the image source.
+
+  Ex::
+
+    "image-source-hash" : "51bcf28bcd4c01200ab7abd97d22a325e940fbd6"
+
+Depricated:
+-----------
+
+ * ``last-update-time``: This is the ``last-update-time`` that was listed in the permissions.json file of the image source when the image was installed, or the last time the image was updated.
+
+  Ex::
+
+    ,"last-update-time"                : "2014-02-12-12:59"
+
+  **Note**: If the source image's ``permissions.json`` file listed no ``last-update-time`` this will be the actual clock time at which the image was installed.
