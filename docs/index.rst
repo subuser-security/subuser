@@ -1,5 +1,5 @@
 
-Subuser - Securing the linux desktop with Docker
+Subuser - Portability, Security, Maintainability
 ================================================
 
 .. raw :: html
