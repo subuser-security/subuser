@@ -3,7 +3,7 @@
 # If it is not, please file a bug report.
 
 """
-This is the list of subusers controled by a given user.
+This is the list of subusers controlled by a given user.
 """
 
 #external imports

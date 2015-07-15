@@ -4,9 +4,12 @@
 
 import pathConfig
 #external imports
-import sys,optparse
+import sys
+import optparse
 #internal imports
-import subuserlib.classes.user,subuserlib.commandLineArguments,subuserlib.subuser
+import subuserlib.classes.user
+import subuserlib.commandLineArguments
+import subuserlib.subuser
 
 def parseCliArgs(sysargs):
   usage = "usage: subuser %prog [add|remove|create-shortcut] NAME IMAGESOURCE"

@@ -4,9 +4,13 @@
 
 import pathConfig
 #external modules
-import optparse,sys
+import sys
+import optparse
 #internal modules
-import subuserlib.installTime,subuserlib.commandLineArguments,subuserlib.classes.permissions,subuserlib.classes.user
+import subuserlib.installTime
+import subuserlib.commandLineArguments
+import subuserlib.classes.permissions
+import subuserlib.classes.user
 
 def parseCliArgs(sysargs):
   usage = "usage: subuser %prog permissions.json_file(s)"

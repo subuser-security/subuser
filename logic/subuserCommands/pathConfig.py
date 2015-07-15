@@ -1,4 +1,7 @@
-import sys,os,inspect,site
+import sys
+import os
+import inspect
+import site
 
 def getSubuserDir():
   """ Get the toplevel directory for subuser. """

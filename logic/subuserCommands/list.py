@@ -4,17 +4,20 @@
 
 import pathConfig
 #external imports
-import sys,os,optparse
+import sys
+import os
+import optparse
 #internal imports
-import subuserlib.classes.user,subuserlib.commandLineArguments
+import subuserlib.classes.user
+import subuserlib.commandLineArguments
 
 def parseCliArgs(sysargs):
   usage = "usage: subuser %prog WHAT_TO_LIST [options]"
   description = """   List subuser-images.  You can use this command to list images that are:
 
-  available 
+  available
       List all subuser images available for instalation
-  subusers 
+  subusers
       List all installed subusers
   installed-images
       List all installed images. The --short option prints with the format "<image-source> <image-id>"

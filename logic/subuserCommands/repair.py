@@ -4,9 +4,12 @@
 
 import pathConfig
 #external imports
-import optparse,sys
+import sys
+import optparse
 #internal imports
-import subuserlib.classes.user,subuserlib.verify,subuserlib.commandLineArguments
+import subuserlib.classes.user
+import subuserlib.verify
+import subuserlib.commandLineArguments
 
 ####################################################
 def parseCliArgs(realArgs):
