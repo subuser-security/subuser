@@ -9,7 +9,7 @@ Images in subuser are built from ImageSource objects.
 #external imports
 import os,io
 #internal imports
-import subuserlib.classes.userOwnedObject,subuserlib.classes.describable,subuserlib.subprocessExtras,subuserlib.resolve
+import subuserlib.classes.userOwnedObject,subuserlib.classes.describable,subuserlib.subprocessExtras,subuserlib.resolve, subuserlib.hashDirectory
 
 class ImageSource(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.classes.describable.Describable):
   __name = None
@@ -70,12 +70,13 @@ class ImageSource(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.
     Get the most up-to-date InstalledImage based on this ImageSource.
     Returns None if no images have been installed from this ImageSource.
     """
-    lastUpdateTime=''
+    imageCreationDateTimeBestSoFar=''
     mostUpToDateImage = None
     for installedImage in self.getInstalledImages():
-      if installedImage.getLastUpdateTime() > lastUpdateTime:
+      thisImagesCreationDateTime = installedImage.getCreationDateTime()
+      if thisImagesCreationDateTime > imageCreationDateTimeBestSoFar:
         mostUpToDateImage = installedImage
-        lastUpdateTime = installedImage.getLastUpdateTime()
+        imageCreationDateTimeBestSoFar = thisImagesCreationDateTime
     return mostUpToDateImage
 
   def getInstalledImages(self):
@@ -151,6 +152,10 @@ class ImageSource(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.
           raise SyntaxError("Error in SubuserImagefile one line "+str(lineNumber)+"\n Subuser image does not exist: \""+imageURI+"\"")
       lineNumber+=1
     return None
+
+  def getHash(self):
+    """ Return the hash of the ``docker-image`` directory. """
+    return subuserlib.hashDirectory.getHashOfDirs(os.path.join(self.getSourceDir(),"docker-image"))
 
 class SyntaxError(Exception):
   """

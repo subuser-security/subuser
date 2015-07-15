@@ -28,12 +28,16 @@ class InstalledImages(dict,subuserlib.classes.userOwnedObject.UserOwnedObject,su
       installedImagesDict = {}
     # Create the InstalledImage objects.
     for imageId,imageAttributes in installedImagesDict.items():
+      try:
+        imageSourceHash = imageAttributes["image-source-hash"]
+      except KeyError:
+        imageSourceHash = ""
       image = subuserlib.classes.installedImage.InstalledImage(
         user=self.getUser(),
         imageId=imageId,
         imageSourceName=imageAttributes["image-source"],
         sourceRepoId=imageAttributes["source-repo"],
-        lastUpdateTime=imageAttributes["last-update-time"])
+        imageSourceHash=imageSourceHash)
       self[imageId]=image
 
   def save(self):
@@ -42,7 +46,7 @@ class InstalledImages(dict,subuserlib.classes.userOwnedObject.UserOwnedObject,su
     installedImagesDict = {}
     for _,installedImage in self.items():
       imageAttributes = {}
-      imageAttributes["last-update-time"] = installedImage.getLastUpdateTime()
+      imageAttributes["image-source-hash"] = installedImage.getImageSourceHash()
       imageAttributes["image-source"] = installedImage.getImageSourceName()
       imageAttributes["source-repo"] = installedImage.getSourceRepoId()
       installedImagesDict[installedImage.getImageId()] = imageAttributes

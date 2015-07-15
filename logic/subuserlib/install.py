@@ -8,7 +8,7 @@ Implements functions involved in building/installing/updating subuser images.
 #external imports
 import sys,os,stat,uuid,io
 #internal imports
-import subuserlib.classes.installedImage, subuserlib.installedImages,subuserlib.classes.dockerDaemon,subuserlib.installTime,subuserlib.verify
+import subuserlib.classes.installedImage, subuserlib.installedImages,subuserlib.classes.dockerDaemon,subuserlib.verify
 
 def cleanUpAndExitOnError(user,error):
   user.getRegistry().log(str(error))
@@ -79,16 +79,12 @@ def installImage(imageSource, useCache=False,parent=None):
   else:
     cleanUpAndExitOnError(imageSource.getUser(),"No buildfile found: There needs to be a 'SubuserImagefile' or a 'BuildImage.sh' in the docker-image directory.")
 
-  lastUpdateTime = imageSource.getPermissions()["last-update-time"]
-  if lastUpdateTime == None:
-    lastUpdateTime = subuserlib.installTime.currentTimeString()
-
   subuserSetupDockerFile = ""
   subuserSetupDockerFile += "FROM "+imageId+"\n"
   subuserSetupDockerFile += "RUN mkdir /subuser ; echo "+str(uuid.uuid4())+" > /subuser/uuid\n" # This ensures that all images have unique Ids.  Even images that are otherwise the same.
   imageId = imageSource.getUser().getDockerDaemon().build(dockerfile=subuserSetupDockerFile)
   
-  imageSource.getUser().getInstalledImages()[imageId] = subuserlib.classes.installedImage.InstalledImage(imageSource.getUser(),imageId,imageSource.getName(),imageSource.getRepository().getName(),lastUpdateTime)
+  imageSource.getUser().getInstalledImages()[imageId] = subuserlib.classes.installedImage.InstalledImage(imageSource.getUser(),imageId,imageSource.getName(),imageSource.getRepository().getName(),imageSource.getHash())
   imageSource.getUser().getInstalledImages().save()
   return imageId
 
@@ -117,8 +113,8 @@ def installLineage(imageSourceLineage,parent=None):
 def doImagesMatch(installedImage,imageSource):
   return installedImage.getImageSourceName() == imageSource.getName() and installedImage.getSourceRepoId() == imageSource.getRepository().getName()
 
-def doLastUpdateTimesMatch(installedImage,imageSource):
-  return installedImage.getLastUpdateTime() == imageSource.getPermissions()["last-update-time"] or not imageSource.getPermissions()["last-update-time"]
+def doImageSourceHashesMatch(installedImage,imageSource):
+  return installedImage.getImageSourceHash() == imageSource.getHash()
 
 def compareSourceLineageAndInstalledImageLineage(user,sourceLineage,installedImageLineage):
   if not len(sourceLineage) == len(installedImageLineage):
@@ -134,12 +130,12 @@ def compareSourceLineageAndInstalledImageLineage(user,sourceLineage,installedIma
   lineage = zip(sourceLineage,installedImageLineage)
   for imageSource,installedImage in lineage:
     imagesMatch =  doImagesMatch(installedImage,imageSource)
-    lastUpdateTimesMatch = doLastUpdateTimesMatch(installedImage,imageSource)
-    if not (imagesMatch and lastUpdateTimesMatch):
+    imageSourceHashesMatch = doImageSourceHashesMatch(installedImage,imageSource)
+    if not (imagesMatch and imageSourceHashesMatch):
       if not imagesMatch:
         user.getRegistry().log("Dependency changed for image from "+installedImage.getImageSourceName()+"@"+installedImage.getSourceRepoId()+" to "+imageSource.getName()+"@"+imageSource.getRepository().getName())
-      elif not lastUpdateTimesMatch:
-        user.getRegistry().log("Installed image "+installedImage.getImageSourceName()+"@"+installedImage.getSourceRepoId()+" is out of date.\nInstalled version:\n "+installedImage.getLastUpdateTime()+"\nCurrent version:\n "+str(imageSource.getPermissions()["last-update-time"])+"\n")
+      elif not imageSourceHashesMatch:
+        user.getRegistry().log("Installed image "+installedImage.getImageSourceName()+"@"+installedImage.getSourceRepoId()+" is out of date.\nCurrently installed from image source:\n "+installedImage.getImageSourceHash()+"\nCurrent version:\n "+str(imageSource.getPermissions()["last-update-time"])+"\n")
       return False
   return True
 
@@ -151,6 +147,10 @@ def isInstalledImageUpToDate(installedImage):
     topImageSource = installedImage.getUser().getRegistry().getRepositories()[installedImage.getSourceRepoId()][installedImage.getImageSourceName()]
   except KeyError: # Image source not found, therefore updating would be pointless.
     return True
+
+  # Check for updates externally using the images' built in check-for-updates script.
+  if installedImage.checkForUpdates():
+    return False
 
   sourceLineage = getImageSourceLineage(topImageSource)
   installedImageLineage = subuserlib.installedImages.getImageLineage(installedImage.getUser(),installedImage.getImageId())

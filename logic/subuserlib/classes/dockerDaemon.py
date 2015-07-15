@@ -185,7 +185,7 @@ class DockerDaemon(subuserlib.classes.userOwnedObject.UserOwnedObject):
     return self.getImageProperties(shortId)["Id"]
 
   def execute(self,args,cwd=None):
-    subuserlib.docker.runDocker(args,cwd=cwd)
+    return subuserlib.docker.runDocker(args,cwd=cwd)
 
 class ImageBuildException(Exception):
   pass

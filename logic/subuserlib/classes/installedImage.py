@@ -13,14 +13,14 @@ import subuserlib.classes.userOwnedObject,subuserlib.classes.describable
 
 class InstalledImage(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.classes.describable.Describable):
   __imageId = None
-  __lastUpdateTime = None
+  __imageSourceHash = None
   __imageSourceName = None
   __sourceRepoId = None
 
-  def __init__(self,user,imageId,imageSourceName,sourceRepoId,lastUpdateTime):
+  def __init__(self,user,imageId,imageSourceName,sourceRepoId,imageSourceHash):
     subuserlib.classes.userOwnedObject.UserOwnedObject.__init__(self,user)
     self.__imageId = imageId
-    self.__lastUpdateTime = lastUpdateTime
+    self.__imageSourceHash = imageSourceHash
     self.__imageSourceName = imageSourceName
     self.__sourceRepoId = sourceRepoId
 
@@ -36,8 +36,8 @@ class InstalledImage(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserl
   def getImageSource(self):
     return self.getUser().getRegistry().getRepositories()[self.getSourceRepoId()][self.getImageSourceName()]
 
-  def getLastUpdateTime(self):
-    return self.__lastUpdateTime
+  def getImageSourceHash(self):
+    return self.__imageSourceHash
 
   def isDockerImageThere(self):
     """
@@ -77,3 +77,18 @@ class InstalledImage(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserl
       print("Image is broken, image source does not exist!")
     print("Last update time: "+self.getLastUpdateTime())
 
+  def checkForUpdates(self):
+    """ Check for updates using the image's built in check-for-updates script. This launches the script as root in a privilageless container. Returns True if the image needs to be updated. """
+    returnCode = self.getUser().getDockerDaemon().execute(["run",self.getImageId(),"/subuser/check-for-updates"])
+    if returnCode == 0:
+      return True
+    else:
+      return False
+
+  def getCreationDateTime(self):
+    """ Return the creation date/time of the installed docker image. Or None if the image does not exist. """
+    imageProperties = self.getUser().getDockerDaemon().getImageProperties(self.getImageId())
+    if not imageProperties is None:
+      return imageProperties["Created"]
+    else:
+      return None
