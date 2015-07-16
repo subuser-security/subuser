@@ -79,11 +79,11 @@ class InstalledImage(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserl
 
   def checkForUpdates(self):
     """ Check for updates using the image's built in check-for-updates script. This launches the script as root in a privilageless container. Returns True if the image needs to be updated. """
-    returnCode = self.getUser().getDockerDaemon().execute(["run",self.getImageId(),"/subuser/check-for-updates"])
-    if returnCode == 0:
-      return True
-    else:
-      return False
+    if self.getUser().getDockerDaemon().execute(["run",self.getImageId(),"test","-e","/subuser/check-for-updates"]) == 0:
+      returnCode = self.getUser().getDockerDaemon().execute(["run",self.getImageId(),"/subuser/check-for-updates"])
+      if returnCode == 0:
+        return True
+    return False
 
   def getCreationDateTime(self):
     """ Return the creation date/time of the installed docker image. Or None if the image does not exist. """
