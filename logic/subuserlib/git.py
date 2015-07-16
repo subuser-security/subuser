@@ -18,6 +18,7 @@ def commit(message,cwd=None):
   """ Run git commit with the given commit message. """
   with tempfile.NamedTemporaryFile("w") as tempFile:
     tempFile.write(message)
+    tempFile.flush()
     return subuserlib.subprocessExtras.subprocessCheckedCall(["git","commit","--file",tempFile.name],cwd=cwd)
 
 def runGitCollectOutput(args,cwd=None):
