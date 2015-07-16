@@ -71,7 +71,7 @@ def list(sysargs):
   ------------------
   Image Id: 2
   Image source: foo@default
-  Last update time: 0
+  Last update time: 1
 
   > list.list(["repositories"])
   Repository: default

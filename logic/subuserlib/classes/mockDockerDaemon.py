@@ -59,7 +59,7 @@ class MockDockerDaemon(subuserlib.classes.userOwnedObject.UserOwnedObject):
     parent = dockerfile.split("\n")[0].split(" ")[1].rstrip()
     if "debian" in dockerfile:
       parent = ""
-    self.images[self.newId] = {"Id":self.newId,"Parent":parent}
+    self.images[self.newId] = {"Id":self.newId,"Parent":parent,"Created":str(len(self.images))}
     self.__save()
     self.dockerDaemon.build(directoryWithDockerfile,useCache,rm,forceRm,quiet,tag,dockerfile,quietClient)
     return self.newId

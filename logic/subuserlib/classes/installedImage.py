@@ -76,7 +76,7 @@ class InstalledImage(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserl
       print("Image source: "+self.getImageSource().getIdentifier())
     except KeyError:
       print("Image is broken, image source does not exist!")
-    print("Last update time: "+self.getLastUpdateTime())
+    print("Last update time: "+self.getCreationDateTime())
 
   def checkForUpdates(self):
     """ Check for updates using the image's built in check-for-updates script. This launches the script as root in a privilageless container. Returns True if the image needs to be updated. """
