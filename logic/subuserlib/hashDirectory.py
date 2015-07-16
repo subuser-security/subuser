@@ -8,6 +8,12 @@
 #   -2 -> General error (see stack traceback)
 
 def getHashOfDirs(directory, verbose=0):
+  """
+  Return the SHA1 hash of the directory. Going through the files in the order returned by python's os.walk command. Return the hash as a hexidecimal string.
+
+  >>> getHashOfDirs("/home/travis/hashtest")
+  '69858e09f8b90498023c308a1700dcb842e55a0a'
+  """
   import hashlib, os
   SHAhash = hashlib.sha1()
   if not os.path.exists (directory):

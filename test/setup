@@ -13,3 +13,4 @@ cd /home/travis/default-test-repo
 git init
 git add .
 git commit -m 'test'
+cp -r $1/test/hashtest/ /home/travis/hashtest/
