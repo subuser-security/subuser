@@ -16,6 +16,7 @@ class InstalledImage(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserl
   __imageSourceHash = None
   __imageSourceName = None
   __sourceRepoId = None
+  __alreadyCheckedForUpdates = None
 
   def __init__(self,user,imageId,imageSourceName,sourceRepoId,imageSourceHash):
     subuserlib.classes.userOwnedObject.UserOwnedObject.__init__(self,user)
@@ -79,6 +80,9 @@ class InstalledImage(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserl
 
   def checkForUpdates(self):
     """ Check for updates using the image's built in check-for-updates script. This launches the script as root in a privilageless container. Returns True if the image needs to be updated. """
+    if self.__alreadyCheckedForUpdates:
+      return False
+    self.__alreadyCheckedForUpdates = True
     if self.getUser().getDockerDaemon().execute(["run",self.getImageId(),"test","-e","/subuser/check-for-updates"]) == 0:
       returnCode = self.getUser().getDockerDaemon().execute(["run",self.getImageId(),"/subuser/check-for-updates"])
       if returnCode == 0:
