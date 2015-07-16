@@ -17,7 +17,7 @@ import shutil,os
 #internal imports
 import subuserlib.install
 
-def verify(user):
+def verify(user,checkForUpdatesExternally=False):
   """
    Ensure that:
       - Registry is consistent; warns the user about subusers that point to non-existant source images.
@@ -29,7 +29,7 @@ def verify(user):
   verifyRegistryConsistency(user)
   user.getRegistry().log("Unregistering any non-existant installed images.")
   user.getInstalledImages().unregisterNonExistantImages()
-  ensureImagesAreInstalledAndUpToDate(user)
+  ensureImagesAreInstalledAndUpToDate(user,checkForUpdatesExternally=checkForUpdatesExternally)
   user.getInstalledImages().save()
   trimUnneededTempRepos(user)
   rebuildBinDir(user)
@@ -40,13 +40,13 @@ def verifyRegistryConsistency(user):
     if not subuser.getImageSource().getName() in subuser.getImageSource().getRepository():
       user.getRegistry().log("WARNING: "+subuser.getName()+" is no longer present in it's source repository. Support for this progam may have been dropped.")
 
-def ensureImagesAreInstalledAndUpToDate(user):
+def ensureImagesAreInstalledAndUpToDate(user,checkForUpdatesExternally=False):
   user.getRegistry().log("Checking if images need to be updated or installed...")
   subusersWhosImagesFailedToBuild = []
   for _,subuser in user.getRegistry().getSubusers().items():
     if not subuser.locked(): # TODO: We should install images for locked subusers if their images have dissappered.
       try:
-        subuserlib.install.ensureSubuserImageIsInstalledAndUpToDate(subuser)
+        subuserlib.install.ensureSubuserImageIsInstalledAndUpToDate(subuser,checkForUpdatesExternally=checkForUpdatesExternally)
       except subuserlib.classes.dockerDaemon.ImageBuildException as e:
         user.getRegistry().log(str(e))
         subusersWhosImagesFailedToBuild.append(subuser)

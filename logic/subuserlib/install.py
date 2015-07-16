@@ -139,7 +139,7 @@ def compareSourceLineageAndInstalledImageLineage(user,sourceLineage,installedIma
       return False
   return True
 
-def isInstalledImageUpToDate(installedImage):
+def isInstalledImageUpToDate(installedImage,checkForUpdatesExternally=False):
   """
   Returns True if the installed image(including all of its dependencies, is up to date.  False otherwise.
   """
@@ -149,14 +149,15 @@ def isInstalledImageUpToDate(installedImage):
     return True
 
   # Check for updates externally using the images' built in check-for-updates script.
-  if installedImage.checkForUpdates():
-    return False
+  if checkForUpdatesExternally:
+    if installedImage.checkForUpdates():
+      return False
 
   sourceLineage = getImageSourceLineage(topImageSource)
   installedImageLineage = subuserlib.installedImages.getImageLineage(installedImage.getUser(),installedImage.getImageId())
   return compareSourceLineageAndInstalledImageLineage(installedImage.getUser(),sourceLineage,installedImageLineage)
 
-def ensureSubuserImageIsInstalledAndUpToDate(subuser, useCache=False):
+def ensureSubuserImageIsInstalledAndUpToDate(subuser, useCache=False, checkForUpdatesExternally=False):
   """
   Ensure that the Docker image associated with the subuser is installed and up to date.
   If the image is already installed, but is out of date, or it's dependencies are out of date, build it again.
@@ -168,7 +169,7 @@ def ensureSubuserImageIsInstalledAndUpToDate(subuser, useCache=False):
   while len(sourceLineage) > 0:
     imageSource = sourceLineage.pop(0)
     latestInstalledImage = imageSource.getLatestInstalledImage()
-    if not latestInstalledImage or not isInstalledImageUpToDate(latestInstalledImage):
+    if not latestInstalledImage or not isInstalledImageUpToDate(latestInstalledImage,checkForUpdatesExternally=checkForUpdatesExternally):
       subuser.setImageId(installLineage([imageSource]+sourceLineage,parent=parentId))
       subuser.getUser().getRegistry().logChange("Installed new image for subuser "+subuser.getName())
       return
