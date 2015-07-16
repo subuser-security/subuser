@@ -319,5 +319,8 @@ def update(realArgs):
     sys.exit(" ".join(args) + " is not a valid update subcommand. Please use subuser update -h for help.")
 
 if __name__ == "__main__":
-  update(sys.argv[1:])
+  try:
+    update(sys.argv[1:])
+  except KeyboardInterrupt:
+    pass
 
