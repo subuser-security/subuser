@@ -6,9 +6,12 @@
 
 import pathConfig
 #external imports
-import optparse,sys
+import sys
+import optparse
 #internal imports
-import subuserlib.commandLineArguments,subuserlib.classes.user,subuserlib.update
+import subuserlib.commandLineArguments
+import subuserlib.classes.user
+import subuserlib.update
 
 
 #####################################################################################

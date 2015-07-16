@@ -4,9 +4,13 @@
 
 import pathConfig
 #external imports
-import optparse,sys
+import sys
+import optparse
 #internal imports
-import subuserlib.classes.user,subuserlib.resolve,subuserlib.install,subuserlib.commandLineArguments
+import subuserlib.classes.user
+import subuserlib.resolve
+import subuserlib.install
+import subuserlib.commandLineArguments
 
 def parseCliArgs(realArgs):
   usage = "usage: subuser %prog IMAGE_NAME(s) SETS_OF_IMAGES"

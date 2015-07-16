@@ -7,18 +7,24 @@ A subuser is an entity that runs within a Docker container and has a home direct
 """
 
 #external imports
-import os,stat,json
+import os
+import stat
+import json
 #internal imports
-import subuserlib.classes.userOwnedObject,subuserlib.classes.imageSource,subuserlib.classes.permissions,subuserlib.classes.describable,subuserlib.runReadyImages,subuserlib.classes.runtime
+from subuserlib.classes.userOwnedObject import UserOwnedObject
+from subuserlib.classes.permissions import Permissions
+from subuserlib.classes.describable import Describable
+from subuserlib.runReadyImages import buildRunReadyImageForSubuser
+from subuserlib.classes.runtime import Runtime
 
-class Subuser(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.classes.describable.Describable):
+class Subuser(UserOwnedObject, Describable):
   __name = None
   __imageSource = None
   __imageId = None
   __executableShortcutInstalled = None
 
   def __init__(self,user,name,imageSource,imageId,executableShortcutInstalled,locked):
-    subuserlib.classes.userOwnedObject.UserOwnedObject.__init__(self,user)
+    UserOwnedObject.__init__(self,user)
     self.__name = name
     self.__imageSource = imageSource
     self.__imageId = imageId
@@ -44,7 +50,7 @@ class Subuser(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.clas
       permissionsDotJsonReadPath = os.path.join(self.getImageSource().getSourceDir(),"permissions.json")
     if not os.path.exists(permissionsDotJsonReadPath):
       permissionsDotJsonReadPath = None
-    return subuserlib.classes.permissions.Permissions(self.getUser(),readPath=permissionsDotJsonReadPath,writePath=permissionsDotJsonWritePath)
+    return Permissions(self.getUser(),readPath=permissionsDotJsonReadPath,writePath=permissionsDotJsonWritePath)
 
   def getImageId(self):
     """
@@ -68,17 +74,17 @@ class Subuser(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.clas
     if os.path.exists(pathToRuntimeCacheFile):
       with open(pathToRuntimeCacheFile,mode="r") as runtimeCacheFileHandle:
         runtimeCacheInfo = json.load(runtimeCacheFileHandle)
-        return subuserlib.classes.runtime.Runtime(self.getUser(),subuser=self,runReadyImageId=runtimeCacheInfo['run-ready-image-id'],environment=environment)
+        return Runtime(self.getUser(),subuser=self,runReadyImageId=runtimeCacheInfo['run-ready-image-id'],environment=environment)
     try:
       os.makedirs(pathToCurrentImagesRuntimeCacheDir)
     except OSError:
       pass
-    runReadyImageId = subuserlib.runReadyImages.buildRunReadyImageForSubuser(self)
+    runReadyImageId = buildRunReadyImageForSubuser(self)
     runtimeInfo = {}
     runtimeInfo['run-ready-image-id'] = runReadyImageId
     with open(pathToRuntimeCacheFile,mode='w') as runtimeCacheFileHandle:
       json.dump(runtimeInfo,runtimeCacheFileHandle,indent=1,separators=(',',': '))
-    return subuserlib.classes.runtime.Runtime(self.getUser(),subuser=self,runReadyImageId=runReadyImageId,environment=environment)
+    return Runtime(self.getUser(),subuser=self,runReadyImageId=runReadyImageId,environment=environment)
 
   def locked(self):
     """

@@ -7,13 +7,18 @@ Each user's settings are stored in a "registry". This is a git repository with a
 """
 
 #external imports
-import os,errno,sys
+import os
+import errno
+import sys
 #semi-external imports
 import subuserlib.portalocker.utils
 #internal imports
-import subuserlib.classes.subusers, subuserlib.classes.userOwnedObject, subuserlib.git
+from subuserlib.classes import repositories
+from subuserlib.classes import subusers
+from subuserlib.classes import userOwnedObject
+from subuserlib import git
 
-class Registry(subuserlib.classes.userOwnedObject.UserOwnedObject):
+class Registry(userOwnedObject.UserOwnedObject):
   __subusers = None
   __repositories = None
   __changed = False
@@ -21,7 +26,7 @@ class Registry(subuserlib.classes.userOwnedObject.UserOwnedObject):
 
   def getSubusers(self):
     if not self.__subusers:
-      self.__subusers = subuserlib.classes.subusers.Subusers(self.getUser())
+      self.__subusers = subusers.Subusers(self.getUser())
     return self.__subusers
 
   def reloadSubusersFromDisk(self):
@@ -32,17 +37,17 @@ class Registry(subuserlib.classes.userOwnedObject.UserOwnedObject):
 
   def getRepositories(self):
     if not self.__repositories:
-      self.__repositories =      subuserlib.classes.repositories.Repositories(self.getUser())
+      self.__repositories = repositories.Repositories(self.getUser())
     return self.__repositories
 
   def __init__(self,user):
-    subuserlib.classes.userOwnedObject.UserOwnedObject.__init__(self,user)
+    userOwnedObject.UserOwnedObject.__init__(self,user)
     self._ensureGitRepoInitialized()
 
   def _ensureGitRepoInitialized(self):
     if not os.path.exists(self.getUser().getConfig()["registry-dir"]):
       os.makedirs(self.getUser().getConfig()["registry-dir"])
-      subuserlib.git.runGit(["init"],cwd=self.getUser().getConfig()["registry-dir"])
+      git.runGit(["init"],cwd=self.getUser().getConfig()["registry-dir"])
       self.logChange("Initial commit.")
       self.commit()
 
@@ -71,10 +76,10 @@ class Registry(subuserlib.classes.userOwnedObject.UserOwnedObject):
     if self.__changed:
       self.getRepositories().save()
       self.getSubusers().save()
-      subuserlib.git.runGit(["add","subusers.json","repository-states.json"],cwd=self.getUser().getConfig()["registry-dir"])
+      git.runGit(["add","subusers.json","repository-states.json"],cwd=self.getUser().getConfig()["registry-dir"])
       if os.path.exists(os.path.join(self.getUser().getConfig()["registry-dir"],"repositories.json")):
-        subuserlib.git.runGit(["add","repositories.json"],cwd=self.getUser().getConfig()["registry-dir"])
-      subuserlib.git.commit(self.__changeLog,cwd=self.getUser().getConfig()["registry-dir"])
+        git.runGit(["add","repositories.json"],cwd=self.getUser().getConfig()["registry-dir"])
+      git.commit(self.__changeLog,cwd=self.getUser().getConfig()["registry-dir"])
       self.__changed = False
       self.__changeLog = ""
 

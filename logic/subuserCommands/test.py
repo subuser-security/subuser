@@ -1,5 +1,13 @@
 #!/usr/bin/python
-import pathConfig,subuserlib.docker,os,subuserlib.basicPaths,sys,io
+
+import pathConfig
+#external imports
+import sys
+import os
+import io
+#internal imports
+import subuserlib.docker
+import subuserlib.basicPaths
 
 if "--help" in sys.argv:
   print("Run the subuser test suit.  Please do this before sending pull requests.")
@@ -20,8 +28,10 @@ class MockUser():
 if subuserlib.docker.getDockerExecutable():
   import subuserlib.classes.dockerDaemon
   dockerDaemon = subuserlib.classes.dockerDaemon.DockerDaemon(MockUser())
-  testDockerfileNames = ["Dockerfile-debian-python2",
-                        "Dockerfile-arch-python3"]
+  testDockerfileNames = [
+   "Dockerfile-debian-python2",
+   "Dockerfile-arch-python3",
+  ]
   for testDockerfileName in testDockerfileNames:
     with io.open(os.path.join(subuserlib.basicPaths.getSubuserDir(),"test",testDockerfileName),encoding="utf-8",mode="r") as dockerfile:
       dockerfileContents = dockerfile.read()
@@ -58,22 +68,22 @@ print_dependency_info = __import__("print-dependency-info")
 remove_old_images = __import__("remove-old-images")
 
 modules = [
- # classes
- subuserlib.classes.user
- ,subuserlib.classes.subusers
- # subuserlib modules
- ,subuserlib.resolve
- ,subuserlib.hashDirectory
- # subuser commands
- ,dry_run
- ,list
- ,describe
- ,print_dependency_info
- ,remove_old_images
- ,repository
- ,subuser
- ,update
- ]
+  # classes
+  subuserlib.classes.user
+  ,subuserlib.classes.subusers
+  # subuserlib modules
+  ,subuserlib.resolve
+  ,subuserlib.hashDirectory
+  # subuser commands
+  ,dry_run
+  ,list
+  ,describe
+  ,print_dependency_info
+  ,remove_old_images
+  ,repository
+  ,subuser
+  ,update
+  ]
 
 for module in modules:
   print("Testing module: " + module.__name__)

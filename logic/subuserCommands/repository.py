@@ -4,9 +4,13 @@
 
 import pathConfig
 #external imports
-import optparse,sys
+import sys
+import optparse
 #internal imports
-import subuserlib.classes.user,subuserlib.resolve,subuserlib.repository,subuserlib.commandLineArguments
+import subuserlib.classes.user
+import subuserlib.resolve
+import subuserlib.repository
+import subuserlib.commandLineArguments
 
 def parseCliArgs(sysargs):
   usage = "usage: subuser %prog [options] [add|remove] NAME <URL>"

@@ -7,9 +7,17 @@ The ``User`` object is the base object which owns all other objects in a running
 """
 
 #external imports
-import getpass, os, sys
+import getpass
+import os
+import sys
 #internal imports
-import subuserlib.classes.registry, subuserlib.classes.repositories, subuserlib.classes.config, subuserlib.classes.installedImages, subuserlib.classes.dockerDaemon, subuserlib.test, subuserlib.paths
+from subuserlib.classes import registry
+from subuserlib.classes import config
+from subuserlib.classes import installedImages
+from subuserlib.classes import dockerDaemon
+from subuserlib import test
+from subuserlib import paths
+
 
 class User(object):
   """
@@ -38,7 +46,7 @@ class User(object):
   __runtimeCache = None
 
   def __init__(self,name=None,homeDir=None):
-    if os.path.exists(os.path.join(subuserlib.paths.getSubuserDir(),"installed-images.json")):
+    if os.path.exists(os.path.join(paths.getSubuserDir(),"installed-images.json")):
       sys.exit("""Hey, it looks like you are using an old version of subuser.  First of, thanks for being an early adopter!  That really means a lot to me :)  Subuser has recently undergone a major re-write.  Unfortunately, you'll have to set up everything all over again.  You can find your subuser home dirs in subuser/homes.  The new version of subuser keeps them in ~/.subuser/homes.  You can find out all about the different locations subuser serializes to by looking in the enw config.json file.  I hope I'll have some docs up soon at subuser.org.  Sorry for the inconvenience.
 
 To disable this message delete your subuser/installed-programs.json file.
@@ -55,7 +63,7 @@ To disable this message delete your subuser/installed-programs.json file.
     if homeDir:
       self.homeDir = homeDir
     else:
-      if subuserlib.test.testing:
+      if test.testing:
         self.homeDir = "/home/travis/test-home"
       else:
         self.homeDir = os.path.expanduser("~")
@@ -67,7 +75,7 @@ To disable this message delete your subuser/installed-programs.json file.
     Note: the user's config will be loaded the first time this is called.
     """
     if self.__config == None:
-      self.__config = subuserlib.classes.config.Config(self)
+      self.__config = config.Config(self)
     return self.__config
 
   def getRegistry(self):
@@ -77,7 +85,7 @@ To disable this message delete your subuser/installed-programs.json file.
     Note: the registry will be loaded the first time this is called.
     """
     if self.__registry == None:
-      self.__registry = subuserlib.classes.registry.Registry(self)
+      self.__registry = registry.Registry(self)
     return self.__registry
 
   def reloadRegistry(self):
@@ -93,7 +101,7 @@ To disable this message delete your subuser/installed-programs.json file.
     Note: the installed images list will be loaded the first time this is called.
     """
     if self.__installedImages == None:
-      self.__installedImages = subuserlib.classes.installedImages.InstalledImages(self)
+      self.__installedImages = installedImages.InstalledImages(self)
     return self.__installedImages
 
   def getDockerDaemon(self):
@@ -101,6 +109,5 @@ To disable this message delete your subuser/installed-programs.json file.
     Get the :doc:`DockerDaemon <docker>` object.  You will use this to communicate with the Docker daemon.
     """
     if self.__dockerDaemon == None:
-      self.__dockerDaemon = subuserlib.classes.dockerDaemon.DockerDaemon(self)
+      self.__dockerDaemon = dockerDaemon.DockerDaemon(self)
     return self.__dockerDaemon
-
