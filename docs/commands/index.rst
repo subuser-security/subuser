@@ -22,5 +22,4 @@ You can get help for a specific command by running::
   print-dependency-info
   test
   repository
-  mark-as-updated
 
