@@ -74,7 +74,7 @@ class Registry(subuserlib.classes.userOwnedObject.UserOwnedObject):
       subuserlib.git.runGit(["add","subusers.json","repository-states.json"],cwd=self.getUser().getConfig()["registry-dir"])
       if os.path.exists(os.path.join(self.getUser().getConfig()["registry-dir"],"repositories.json")):
         subuserlib.git.runGit(["add","repositories.json"],cwd=self.getUser().getConfig()["registry-dir"])
-      subuserlib.git.runGit(["commit","-m",self.__changeLog],cwd=self.getUser().getConfig()["registry-dir"])
+      subuserlib.git.commit(self.__changeLog,cwd=self.getUser().getConfig()["registry-dir"])
       self.__changed = False
       self.__changeLog = ""
 

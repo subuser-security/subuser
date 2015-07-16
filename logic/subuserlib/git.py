@@ -8,11 +8,17 @@ Just some helper functions for running git.
 #external imports
 #import ...
 #internal imports
-import subuserlib.subprocessExtras
+import subuserlib.subprocessExtras,tempfile
 
 def runGit(args,cwd=None):
   """ Run git with the given command line arguments. """
   return subuserlib.subprocessExtras.subprocessCheckedCall(["git"]+args,cwd=cwd)
+
+def commit(message,cwd=None):
+  """ Run git commit with the given commit message. """
+  with tempfile.NamedTemporaryFile("w") as tempFile:
+    tempFile.write(message)
+    return subuserlib.subprocessExtras.subprocessCheckedCall(["git","commit","--file",tempFile.name],cwd=cwd)
 
 def runGitCollectOutput(args,cwd=None):
   """ Run git with the given command line arguments and return its output. """
