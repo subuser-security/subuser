@@ -18,8 +18,9 @@ def commit(message,cwd=None):
   """ Run git commit with the given commit message. """
   try:
     tempFile = tempfile.NamedTemporaryFile("w",encoding="utf-8")
-  except TypeError: 
+  except TypeError: # Older versions of python have broken tempfile implementation for which you cannot set the encoding.
     tempFile = tempfile.NamedTemporaryFile("w")
+    message = message.encode('ascii', 'ignore').decode('ascii')
 
   with tempFile as tempFile:
     tempFile.write(message)
