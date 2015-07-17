@@ -123,6 +123,7 @@ class Repository(dict,subuserlib.classes.userOwnedObject.UserOwnedObject,subuser
       subuserlib.git.runGit(["pull"],cwd=self.getRepoPath())
       if not self.__lastGitCommitHash == self.getGitCommitHash():
         self.getUser().getRegistry().logChange("Updated repository "+self.getDisplayName())
+        self.loadProgamSources()
 
   def loadProgamSources(self):
     """
