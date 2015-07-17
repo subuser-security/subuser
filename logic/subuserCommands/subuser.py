@@ -161,7 +161,7 @@ def subuser(sysargs):
   Verifying registry consistency...
   Unregistering any non-existant installed images.
   Checking if images need to be updated or installed...
-  Error while building image: Error in SubuserImagefile one line 0
+  Error while building image: Error in broken-syntax's SubuserImagefile on line 0
    Subuser image does not exist: ""
   Cleaning up.
 
@@ -174,7 +174,7 @@ def subuser(sysargs):
   Verifying registry consistency...
   Unregistering any non-existant installed images.
   Checking if images need to be updated or installed...
-  Error while building image: Error in SubuserImagefile one line 0
+  Error while building image: Error in broken-non-existant-dependency's SubuserImagefile on line 0
    Subuser image does not exist: "non-existant-I-do-not-exist!!!!!"
   Cleaning up.
   """
