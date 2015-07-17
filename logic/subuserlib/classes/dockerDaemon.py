@@ -112,8 +112,12 @@ class DockerDaemon(subuserlib.classes.userOwnedObject.UserOwnedObject):
   def removeImage(self,imageId):
     self.getConnection().request("DELETE","/v1.13/images/"+imageId)
     response = self.getConnection().getresponse()
-    if not response.status == 200:
+    if response.status == 404:
       raise ImageDoesNotExistsException("The image "+imageId+" could not be deleted.\n"+response.read())
+    elif response.status == 409:
+      raise ContainerDependsOnImageException("The image "+imageId+" could not be deleted.\n"+response.read())
+    elif response.status == 500:
+      raise ServerErrorException("The image "+imageId+" could not be deleted.\n"+response.read())
     else:
       response.read()
 
@@ -193,6 +197,11 @@ class ImageBuildException(Exception):
 class ImageDoesNotExistsException(Exception):
   pass
 
+class ContainerDependsOnImageException(Exception):
+  pass
+
+class ServerErrorException(Exception):
+  pass
 
 if subuserlib.test.testing:
   import subuserlib.classes.mockDockerDaemon

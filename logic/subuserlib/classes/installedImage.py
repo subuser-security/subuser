@@ -56,8 +56,14 @@ class InstalledImage(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserl
         permissionsSpecificCacheInfoFilePath = os.path.join(pathToImagesRuntimeCacheDir,permissionsSpecificCacheInfoFileName)
         with open(permissionsSpecificCacheInfoFilePath,mode='r') as permissionsSpecificCacheInfoFileHandle:
           permissionsSpecificCacheInfo = json.load(permissionsSpecificCacheInfoFileHandle)
-          self.getUser().getDockerDaemon().removeImage(permissionsSpecificCacheInfo['run-ready-image-id'])
-          os.remove(permissionsSpecificCacheInfoFilePath)
+          try:
+            try:
+              self.getUser().getDockerDaemon().removeImage(permissionsSpecificCacheInfo['run-ready-image-id'])
+            except subuserlib.classes.dockerDaemon.ImageDoesNotExistsException:
+              pass
+            os.remove(permissionsSpecificCacheInfoFilePath)
+          except subuserlib.classes.dockerDaemon.ContainerDependsOnImageException:
+            pass
     except OSError:
       pass
   
@@ -67,7 +73,7 @@ class InstalledImage(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserl
     """
     try:
       self.getUser().getDockerDaemon().removeImage(self.getImageId())
-    except subuserlib.classes.dockerDaemon.ImageDoesNotExistsException:
+    except (subuserlib.classes.dockerDaemon.ImageDoesNotExistsException,subuserlib.classes.dockerDaemon.ContainerDependsOnImageException,subuserlib.classes.dockerDaemon.ServerErrorException):
       pass
 
   def describe(self):
