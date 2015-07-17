@@ -26,7 +26,9 @@ def testImages(user,sourceRepoId,imageSourceNames):
     raw_input("Running "+subuserName+" press enter to continue:")
     subuser = user.getRegistry().getSubusers()[subuserName]
     if subuser.getPermissions()["executable"]:
-      subuser.getRuntime(os.environ).run([])
+      runtime = subuser.getRuntime(os.environ)
+      if runtime:
+        runtime.run([])
   # Remove the subusers
   subuserlib.subuser.remove(user,subuserNames)
 

@@ -69,7 +69,10 @@ class Subuser(UserOwnedObject, Describable):
     """
     Returns the subuser's Runtime object for it's current permissions, creating it if necessary.
     """
-    pathToCurrentImagesRuntimeCacheDir = os.path.join(self.getUser().getConfig()["runtime-cache"],self.getImageId())
+    if self.getImageId():
+      pathToCurrentImagesRuntimeCacheDir = os.path.join(self.getUser().getConfig()["runtime-cache"],self.getImageId())
+    else:
+      return None
     pathToRuntimeCacheFile = os.path.join(pathToCurrentImagesRuntimeCacheDir,self.getPermissions().getHash()+".json")
     if os.path.exists(pathToRuntimeCacheFile):
       with open(pathToRuntimeCacheFile,mode="r") as runtimeCacheFileHandle:

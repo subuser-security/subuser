@@ -30,7 +30,11 @@ def run(args):
 
   user = subuserlib.classes.user.User()
   if subuserName in user.getRegistry().getSubusers():
-    user.getRegistry().getSubusers()[subuserName].getRuntime(os.environ).run(argsToPassToImage)
+    runtime = user.getRegistry().getSubusers()[subuserName].getRuntime(os.environ)
+    if runtime:
+      runtime.run(argsToPassToImage)
+    else:
+      sys.exit("The subuser's image failed to build. Please use the subuser update log and subuser repair commands for more information.")
   else:
     sys.exit(subuserName + " not found.\n"+helpString)
 
