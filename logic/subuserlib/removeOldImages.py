@@ -21,11 +21,21 @@ def getInstalledImagesThatAreInUse(user):
         installedImagesThatAreInUse[inUseInstalledImage.getImageId()] = inUseInstalledImage
   return installedImagesThatAreInUse
 
-def removeOldImages(user,dryrun):
+def removeOldImages(user,dryrun,sourceRepoId=None,imageSourceName=None):
   installedImagesThatAreInUse = getInstalledImagesThatAreInUse(user)
 
   for installedImageId,installedImage in user.getInstalledImages().items():
-    if not installedImageId in installedImagesThatAreInUse:
+    filterOut = False
+    # If a sourceRepoId or sourceImageId have been specified, only remove images from that repo/soure
+    if sourceRepoId:
+      filterOut = True
+      if installedImage.getSourceRepoId() == sourceRepoId:
+        filterOut = False
+        if imageSourceName:
+          filterOut = True
+          if installedImage.getImageSourceName() == imageSourceName:
+            filterOut = False
+    if not installedImageId in installedImagesThatAreInUse and not filterOut:
       user.getRegistry().log("Removing unneeded image "+installedImage.getImageId() + " : " + installedImage.getImageSource().getIdentifier())
       if not dryrun:
         installedImage.removeCachedRuntimes()

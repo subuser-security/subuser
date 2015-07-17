@@ -16,17 +16,23 @@ def add(user,subuserName,imageSourceIdentifier):
     sys.exit("A subuser named "+subuserName+" already exists.")
   user.getRegistry().logChange("Adding subuser "+subuserName+" "+imageSourceIdentifier)
   try:
-    try:
-      imageSource = subuserlib.resolve.resolveImageSource(user,imageSourceIdentifier)
-    except KeyError as keyError:
-      sys.exit("Could not add subuser.  The image source "+imageSourceIdentifier+" does not exist.")
-    user.getRegistry().getSubusers()[subuserName] = subuserlib.classes.subuser.Subuser(user,subuserName,imageSource,None,False,False)
+    imageSource = subuserlib.resolve.resolveImageSource(user,imageSourceIdentifier)
+  except KeyError as keyError:
+    sys.exit("Could not add subuser.  The image source "+imageSourceIdentifier+" does not exist.")
+  addFromImageSource(user,subuserName,imageSource)
+
+def addFromImageSource(user,subuserName,imageSource):
+  try:
+    addFromImageSourceNoVerify(user,subuserName,imageSource)
     subuserlib.verify.verify(user)
     user.getRegistry().commit()
   except subuserlib.classes.dockerDaemon.ImageBuildException as e:
     print("Adding subuser failed.")
     print(str(e))
     subuserlib.update.checkoutNoCommit(user,"HEAD")
+
+def addFromImageSourceNoVerify(user,subuserName,imageSource):
+    user.getRegistry().getSubusers()[subuserName] = subuserlib.classes.subuser.Subuser(user,subuserName,imageSource,None,False,False)
 
 def remove(user,subuserNames):
   didSomething = False

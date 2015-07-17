@@ -11,15 +11,16 @@ You can get help for a specific command by running::
 
 .. toctree::
 
-  list
-  subuser
   run
-  dry-run
+  subuser
+  repository
+  list
   update
   repair
   remove-old-images
   describe
-  print-dependency-info
   test
-  repository
+  test-images
+  print-dependency-info
+  dry-run
 

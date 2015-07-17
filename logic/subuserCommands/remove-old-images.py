@@ -16,6 +16,7 @@ def parseCliArgs(realArgs):
   description = """ Remove old, no longer used, installed images.  Note, once you do this, you will no longer be able to return to previous configuration states with subuser update checkout."""
   parser=optparse.OptionParser(usage=usage,description=description,formatter=subuserlib.commandLineArguments.HelpFormatterThatDoesntReformatDescription())
   parser.add_option("--dry-run", dest="dryrun",action="store_true",default=False,help="Don't actually delete the images. Print which images would be deleted.")
+  parser.add_option("--repo", dest="repo",default=None,help="Only remove images from the given repository.")
   return parser.parse_args(args=realArgs)
 
 def removeOldImages(realArgs):
@@ -121,7 +122,7 @@ def removeOldImages(realArgs):
         print("The following images are uneeded and would be deleted.")
         print("DOCKER-ID : SUBUSER-ID")
 
-      subuserlib.removeOldImages.removeOldImages(user=user,dryrun=options.dryrun)
+      subuserlib.removeOldImages.removeOldImages(user=user,dryrun=options.dryrun,sourceRepoId=options.repo)
   except subuserlib.portalocker.portalocker.LockException:
     sys.exit("Another subuser process is currently running and has a lock on the registry. Please try again later.")
 
