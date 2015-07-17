@@ -149,7 +149,7 @@ class ImageSource(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.
         except IndexError:
           raise SyntaxError("Syntax error in SubuserImagefile one line "+str(lineNumber)+":\n"+line)
         except KeyError:
-          raise SyntaxError("Error in SubuserImagefile one line "+str(lineNumber)+"\n Subuser image does not exist: \""+imageURI+"\"")
+          raise SyntaxError("Error in "+self.getName()+"'s SubuserImagefile on line "+str(lineNumber)+"\n Subuser image does not exist: \""+imageURI+"\"")
       lineNumber+=1
     return None
 
