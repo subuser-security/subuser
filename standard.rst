@@ -8,6 +8,7 @@ This standard is organized in order from most stable to least stable.  The forma
 .. toctree::
 
   image-source-identifiers
+  subuser-names
   permissions-dot-json-file-format
   special-files
   repositories
