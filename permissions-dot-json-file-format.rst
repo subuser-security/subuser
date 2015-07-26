@@ -98,7 +98,7 @@ Moderate permissions
 
      ,"user-dirs"                 : ["Downloads"]
 
-  In this example, the subuser is able to access the ``~/Downloads`` directory on the host. 
+  In this example, the subuser is able to access the ``~/Downloads`` directory on the host by visiting the ``~/Userdirs/Downloads`` directory within the container. 
 
 
   **Default**: ``[]``
@@ -137,6 +137,14 @@ Liberal permissions
   .. note:: Known to be insecure!
 
   **Default**: ``false``
+
+ * ``system-dirs``: A list of absolute paths to directories which are to be shared between the host and the given image. The subuser is given read-write access to any user directories listed.
+
+  Ex::
+
+     ,"system-dirs"                 : {"/var/log":"/host/var/log"}
+
+  In this example, the subuser is able to access the ``/var/log`` directory on the host by visiting the ``/host/var/log`` directory within the container.
 
  * ``graphics-card``: The subuser is allowed to access the graphics-card directly(OpenGL).
 
