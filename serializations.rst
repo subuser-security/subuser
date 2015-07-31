@@ -8,5 +8,6 @@ The subuser program serialzes data about which subusers are installed, which rep
   serializations/config-dot-json-file-format
   serializations/installed-images-dot-json-file-format
   serializations/runtime-cache
+  serializations/service-lock-files
   serializations/registry/registry
 

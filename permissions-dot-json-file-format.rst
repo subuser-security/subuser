@@ -72,8 +72,6 @@ Moderate permissions
 
  * ``gui``: Is the subuser allowed to display a graphical user interface?  This permission has the following sub-permissions:
 
-  .. note:: The gui permission has not yet been implemented in the subuser program.  You can use the non-secure x11 permission instead.
-
   - ``clipboard``: Is the subuser allowed to read and write to the clipboard?
   - ``system-tray``: Is this subuser allowed to display system-tray icons?
   - ``cursors``: Is this subuser allowed to change the way the mouse cursor is displayed?

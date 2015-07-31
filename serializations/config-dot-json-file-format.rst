@@ -57,3 +57,12 @@ The defaults settings for these properties may be found in ``$SUBUSERDIR/config.
 
   ``type``: string - path to directory
 
+ * ``x11-bridge``: The type of bridge to use to securely connect desktop applications to the host's x11 server.
+
+  ``type``: string - multiple choice
+
+  The choices are: xpra (there is currently only one.)
+
+ * ``volumes-dir``: Path to directory which contains docker volumes which are managed by subuser.
+
+  ``type``: string - path to directory
