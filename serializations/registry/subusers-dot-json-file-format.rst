@@ -39,3 +39,11 @@ This object maps subuser names to json objects which have the following attribut
 
   **type**: boolean
 
+ * ``service-subusers``: List of service subusers that bellong to this subuser.
+
+  Ex::
+
+    ,"service-subusers" : ["!service-subuser-firefox-xpra-server","!service-subuser-firefox-xpra-client"]
+
+  **type**: List of strings(subuser names).
+
