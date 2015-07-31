@@ -149,15 +149,16 @@ def isInstalledImageUpToDate(installedImage,checkForUpdatesExternally=False):
     topImageSource = installedImage.getUser().getRegistry().getRepositories()[installedImage.getSourceRepoId()][installedImage.getImageSourceName()]
   except KeyError: # Image source not found, therefore updating would be pointless.
     return True
-
+  # Check for updates to image sources
+  sourceLineage = getImageSourceLineage(topImageSource)
+  installedImageLineage = subuserlib.installedImages.getImageLineage(installedImage.getUser(),installedImage.getImageId())
+  if not compareSourceLineageAndInstalledImageLineage(installedImage.getUser(),sourceLineage,installedImageLineage):
+    return False
   # Check for updates externally using the images' built in check-for-updates script.
   if checkForUpdatesExternally:
     if installedImage.checkForUpdates():
       return False
-
-  sourceLineage = getImageSourceLineage(topImageSource)
-  installedImageLineage = subuserlib.installedImages.getImageLineage(installedImage.getUser(),installedImage.getImageId())
-  return compareSourceLineageAndInstalledImageLineage(installedImage.getUser(),sourceLineage,installedImageLineage)
+  return True
 
 def ensureSubuserImageIsInstalledAndUpToDate(subuser, useCache=False, checkForUpdatesExternally=False):
   """
