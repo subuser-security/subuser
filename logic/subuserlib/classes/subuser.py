@@ -83,7 +83,7 @@ class Subuser(UserOwnedObject, Describable):
     return self.__serviceSubusers
 
   def addServiceSubuser(self,name):
-    self.__serviceSubusers += name
+    self.__serviceSubusers.append(name)
 
   def getRunReadyImage(self):
     if not self.__runReadyImage:
