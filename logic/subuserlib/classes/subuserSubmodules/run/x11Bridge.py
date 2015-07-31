@@ -96,11 +96,10 @@ class XpraX11Bridge(Service):
     subuserlib.subuser.addFromImageSource(self.getUser(),self.getClientSubuserName(),self.getUser().getRegistry().getRepositories()["default"]["subuser-internal-xpra-client"])
     self.getSubuser().addServiceSubuser(self.getClientSubuserName())
 
-  def start(self,serviceStatus):
+  def cleanUp(self):
     """
-    Start the bridge.
+    Clear special volumes. This ensures statelessness of stateless subusers.
     """
-    # Clear special volumes. This ensures statelessness of stateless subusers.
     try:
       shutil.rmtree(self.getServerSideX11Path(), ignore_errors=True)
     except OSError:
@@ -110,6 +109,11 @@ class XpraX11Bridge(Service):
     except OSError:
       pass
 
+  def start(self,serviceStatus):
+    """
+    Start the bridge.
+    """
+    self.cleanUp()
     # Create and setup special volumes.
     try:
       os.makedirs(self.getServerSideX11Path())
@@ -167,13 +171,7 @@ class XpraX11Bridge(Service):
     """
     self.getUser().getDockerDaemon().getContainer(serviceStatus["xpra-client-service-cid"]).stop()
     self.getUser().getDockerDaemon().getContainer(serviceStatus["xpra-server-service-cid"]).stop()
-
-  def remove(self):
-    """
-    Destroy the bridge, removing any left over artifacts.
-    Note, this does not run verify.
-    """
-    subuserlib.subuser.remove(self.getUser(),[self.getServerSubuserName(),self.getClientSubuserName])
+    self.cleanUp()
 
 def X11Bridge(user,subuser):
   return bridges[user.getConfig()["x11-bridge"]](user,subuser)
