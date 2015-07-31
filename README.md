@@ -29,13 +29,12 @@ Subuser turns a docker container into a normal program.  But this program is not
 
 ````json
 {
-  "description"                : "Simple universal text editor."
+  "description"                : "A web browser."
   ,"maintainer"                : "Timothy Hobbs <timothyhobbs (at) seznam dot cz>"
-  ,"executable"                : "/usr/bin/vim"
-  ,"user-dirs"                 : [ "Downloads", "Documents" ]
-  ,"x11"                       : true
+  ,"executable"                : "/usr/bin/firefox"
+  ,"user-dirs"                 : [ "Downloads"]
+  ,"gui"                       : {"clipboard":true,"cursors":true}
   ,"sound-card"                : true
-  ,"access-working-directory"  : true
   ,"allow-network-access"      : true
 }
 ````

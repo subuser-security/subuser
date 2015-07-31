@@ -60,13 +60,12 @@ Right now I'm editing this file in `vim`.  `vim` is not installed on my computer
 Subuser turns a docker container into a normal program.  But this program is not fully privileged.  It can only access the directory from which it was called, `not my entire home dir <http://xkcd.com/1200/>`_.  Each subuser is assigned a specific set of permissions, just like in Android.  You can see an example `permissions.json` file below::
 
   {
-    "description"                : "Simple universal text editor."
+    "description"                : "A web browser."
     ,"maintainer"                : "Timothy Hobbs <timothyhobbs (at) seznam dot cz>"
-    ,"executable"                : "/usr/bin/vim"
-    ,"user-dirs"                 : [ "Downloads", "Documents" ]
-    ,"x11"                       : true
+    ,"executable"                : "/usr/bin/firefox"
+    ,"user-dirs"                 : [ "Downloads"]
+    ,"gui"                       : {"clipboard":true,"cursors":true}
     ,"sound-card"                : true
-    ,"access-working-directory"  : true
     ,"allow-network-access"      : true
   }
 
