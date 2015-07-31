@@ -32,6 +32,7 @@ def parseCliArgs(sysargs):
 """
   parser=optparse.OptionParser(usage=usage,description=description,formatter=subuserlib.commandLineArguments.HelpFormatterThatDoesntReformatDescription())
   parser.add_option("--short",dest="short",action="store_true",default=False,help="Only display the names of the images to be listed, and no other information.")
+  parser.add_option("--internal",dest="internal",action="store_true",default=False,help="Include internal subusers in the list. These are subusers which are automatically created and used by subuser internally.")
   parser.add_option("--broken",dest="broken",action="store_true",default=False,help="When listing installed images with the --short option, list the Ids of broken/orphaned images. Otherwise has no effect. Without this option, broken/orphaned images are simply not listed in the --short mode.")
   return parser.parse_args(args=sysargs)
 
@@ -118,10 +119,11 @@ def list(sysargs):
     if not options.short:
       print("The following subusers are registered.")
     for name,subuser in user.getRegistry().getSubusers().items():
-      if options.short:
-        print(name)
-      else:
-        subuser.describe()
+      if options.internal or not name.startswith("!"):
+        if options.short:
+          print(name)
+        else:
+          subuser.describe()
 
   if 'installed-images' in args:
     if not options.short:

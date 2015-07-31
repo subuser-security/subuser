@@ -77,7 +77,7 @@ class XpraX11Bridge(Service):
     return os.path.join(self.getUser().getConfig()["volumes-dir"],"xpra",self.getSubuser().getName(),"xpra-home")
 
   def getServerSubuserName(self):
-    return "!"+self.getSubuser().getName()+"-xpra-server"
+    return "!service-subuser-"+self.getSubuser().getName()+"-xpra-server"
 
   def getServerSubuser(self):
     return self.getUser().getRegistry().getSubusers()[self.getServerSubuserName()]
@@ -86,7 +86,7 @@ class XpraX11Bridge(Service):
     subuserlib.subuser.addFromImageSource(self.getUser(),self.getServerSubuserName(),self.getUser().getRegistry().getRepositories()["default"]["subuser-internal-xpra-server"])
 
   def getClientSubuserName(self):
-    return "!"+self.getSubuser().getName()+"-xpra-client"
+    return "!service-subuser-"+self.getSubuser().getName()+"-xpra-client"
 
   def getClientSubuser(self):
     return self.getUser().getRegistry().getSubusers()[self.getClientSubuserName()]
