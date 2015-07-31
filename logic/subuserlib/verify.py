@@ -31,7 +31,9 @@ def verify(user,checkForUpdatesExternally=False,subuserNames=None):
   user.getRegistry().log("Unregistering any non-existant installed images.")
   user.getInstalledImages().unregisterNonExistantImages()
   if subuserNames is None:
-    subuserNames = user.getRegistry().getSubusers().keys()
+    subuserNames = list(user.getRegistry().getSubusers().keys())
+  # Sorting makes the whole thing much more reprodible which is good for testing.
+  subuserNames.sort()
   ensureImagesAreInstalledAndUpToDate(user,subuserNames=subuserNames,checkForUpdatesExternally=checkForUpdatesExternally)
   user.getInstalledImages().save()
   trimUnneededTempRepos(user)

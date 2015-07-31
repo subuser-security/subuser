@@ -220,7 +220,7 @@ class ServerErrorException(Exception):
   pass
 
 if subuserlib.test.testing:
-  import subuserlib.classes.mockDockerDaemon
+  from subuserlib.classes.docker.mockDockerDaemon import MockDockerDaemon
   RealDockerDaemon = DockerDaemon
-  DockerDaemon = subuserlib.classes.mockDockerDaemon.MockDockerDaemon
+  DockerDaemon = MockDockerDaemon
 

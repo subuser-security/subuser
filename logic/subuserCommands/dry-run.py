@@ -8,7 +8,6 @@ import sys
 import os
 #internal imports
 import subuserlib.classes.user
-import subuserlib.runReadyImages
 
 ##############################################################
 helpString = """
@@ -47,7 +46,7 @@ def dryRun(args):
   RUN test -d /home/travis || mkdir /home/travis && chown travis /home/travis
   <BLANKLINE>
   The command to launch the image is:
-  docker 'run' '-i' '-t' '--rm' '-e' 'HOME=/home/travis/test-home' '--workdir=/home/travis/test-home' '--net=none' '--user=1000' '3' '/usr/bin/foo'
+  docker 'run' '--rm' '-i' '-t' '-e' 'HOME=/home/travis/test-home' '--workdir=/home/travis/test-home' '--net=none' '--user=1000' '3' '/usr/bin/foo'
 
   Running subusers installed through temporary repositories works as well.  Here, we add a subuser named bar, run it, and then remove it again.
  
@@ -58,6 +57,7 @@ def dryRun(args):
   Verifying registry consistency...
   Unregistering any non-existant installed images.
   Checking if images need to be updated or installed...
+  Checking if subuser bar is up to date.
   Installing bar ...
   Building...
   Building...
@@ -67,7 +67,8 @@ def dryRun(args):
   Building...
   Building...
   Successfully built 5
-  Installed new image for subuser bar
+  Installed new image <5> for subuser bar
+  Checking if subuser foo is up to date.
   Running garbage collector on temporary repositories...
 
   The actual dry-run call.
@@ -79,7 +80,7 @@ def dryRun(args):
   RUN test -d /home/travis || mkdir /home/travis && chown travis /home/travis
   <BLANKLINE>
   The command to launch the image is:
-  docker 'run' '-i' '-t' '--rm' '-e' 'HOME=/home/travis/test-home' '--workdir=/home/travis/test-home' '--net=none' '--user=1000' '6' '/usr/bin/bar'
+  docker 'run' '--rm' '-i' '-t' '-e' 'HOME=/home/travis/test-home' '--workdir=/home/travis/test-home' '--net=none' '--user=1000' '6' '/usr/bin/bar'
 
   Cleanup.
 
@@ -90,6 +91,7 @@ def dryRun(args):
   Verifying registry consistency...
   Unregistering any non-existant installed images.
   Checking if images need to be updated or installed...
+  Checking if subuser foo is up to date.
   Running garbage collector on temporary repositories...
   >>> remove_old_images.removeOldImages([])
   Removing unneeded image 5 : bar@file:///home/travis/remote-test-repo
@@ -97,6 +99,7 @@ def dryRun(args):
   Verifying registry consistency...
   Unregistering any non-existant installed images.
   Checking if images need to be updated or installed...
+  Checking if subuser foo is up to date.
   Running garbage collector on temporary repositories...
   Removing uneeded temporary repository: file:///home/travis/remote-test-repo
   """
@@ -111,7 +114,7 @@ def dryRun(args):
   if subuserName in user.getRegistry().getSubusers():
     subuser = user.getRegistry().getSubusers()[subuserName]
     print("The image will be prepared using the Dockerfile:")
-    print(subuserlib.runReadyImages.generateImagePreparationDockerfile(subuser))
+    print(subuser.getRunReadyImage().generateImagePreparationDockerfile())
     print("The command to launch the image is:")
     print(subuser.getRuntime(os.environ).getPrettyCommand(argsToPassToImage))
   else:

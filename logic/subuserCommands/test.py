@@ -26,8 +26,9 @@ class MockUser():
     return MockRegistry()
 
 if subuserlib.docker.getDockerExecutable():
-  import subuserlib.classes.dockerDaemon
-  dockerDaemon = subuserlib.classes.dockerDaemon.DockerDaemon(MockUser())
+  from subuserlib.classes.docker.dockerDaemon import DockerDaemon
+  import subuserlib.classes.docker.dockerDaemon
+  dockerDaemon = DockerDaemon(MockUser())
   testDockerfileNames = [
    "Dockerfile-debian-python2",
    "Dockerfile-arch-python3",
@@ -37,7 +38,7 @@ if subuserlib.docker.getDockerExecutable():
       dockerfileContents = dockerfile.read()
     try:
       dockerDaemon.build(directoryWithDockerfile=subuserlib.basicPaths.getSubuserDir(),useCache=True,dockerfile=dockerfileContents)
-    except subuserlib.classes.dockerDaemon.ImageBuildException as e:
+    except subuserlib.classes.docker.dockerDaemon.ImageBuildException as e:
       print("Tests failed!")
       print(str(e))
       exit(1)
