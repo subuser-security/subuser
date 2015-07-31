@@ -61,6 +61,7 @@ class Subusers(dict,UserOwnedObject,FileBackedObject):
       serializedSubuser["image-source"] = subuser.getImageSource().getName()
       serializedSubuser["executable-shortcut-installed"] = subuser.isExecutableShortcutInstalled()
       serializedSubuser["docker-image"] = subuser.getImageId()
+      serializedSubuser["service-subusers"] = subuser.getServiceSubuserNames()
       if subuser.locked():
         serializedLockedSubusersDict[subuserName] = serializedSubuser
       else:
@@ -88,9 +89,13 @@ class Subusers(dict,UserOwnedObject,FileBackedObject):
         imageId = subuserAttributes["docker-image"]
       else:
         imageId = None
+      if "service-subusers" in subuserAttributes:
+        serviceSubusers = subuserAttributes["service-subusers"]
+      else:
+        serviceSubusers = []
       executableShortcutInstalled = subuserAttributes["executable-shortcut-installed"]
       imageSource = subuserlib.classes.imageSource.ImageSource(user=self.getUser(),name=name,repo=repo)
-      self[subuserName] = Subuser(self.getUser(),subuserName,imageSource,imageId=imageId,executableShortcutInstalled=executableShortcutInstalled,locked=locked)
+      self[subuserName] = Subuser(self.getUser(),subuserName,imageSource,imageId=imageId,executableShortcutInstalled=executableShortcutInstalled,locked=locked,serviceSubusers=serviceSubusers)
 
   def __init__(self,user):
     UserOwnedObject.__init__(self,user)

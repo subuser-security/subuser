@@ -29,14 +29,16 @@ class Subuser(UserOwnedObject, Describable):
   __runtime = None
   __runtimeCache = None
   __permissions = None
+  __serviceSubusers = None
 
-  def __init__(self,user,name,imageSource,imageId,executableShortcutInstalled,locked):
+  def __init__(self,user,name,imageSource,imageId,executableShortcutInstalled,locked,serviceSubusers):
     UserOwnedObject.__init__(self,user)
     self.__name = name
     self.__imageSource = imageSource
     self.__imageId = imageId
     self.__executableShortcutInstalled = executableShortcutInstalled
     self.__locked = locked
+    self.__serviceSubusers = serviceSubusers
 
   def getName(self):
     return self.__name
@@ -73,6 +75,15 @@ class Subuser(UserOwnedObject, Describable):
     Set the installed image associated with this subuser.
     """
     self.__imageId = imageId
+
+  def getServiceSubuserNames(self):
+    """
+    Get this subuser's service subusers.
+    """
+    return self.__serviceSubusers
+
+  def addServiceSubuser(self,name):
+    self.__serviceSubusers += name
 
   def getRunReadyImage(self):
     if not self.__runReadyImage:

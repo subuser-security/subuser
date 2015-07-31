@@ -84,6 +84,7 @@ class XpraX11Bridge(Service):
 
   def addServerSubuser(self):
     subuserlib.subuser.addFromImageSource(self.getUser(),self.getServerSubuserName(),self.getUser().getRegistry().getRepositories()["default"]["subuser-internal-xpra-server"])
+    self.getSubuser().addServiceSubuser(self.getServerSubuserName())
 
   def getClientSubuserName(self):
     return "!service-subuser-"+self.getSubuser().getName()+"-xpra-client"
@@ -93,6 +94,7 @@ class XpraX11Bridge(Service):
 
   def addClientSubuser(self):
     subuserlib.subuser.addFromImageSource(self.getUser(),self.getClientSubuserName(),self.getUser().getRegistry().getRepositories()["default"]["subuser-internal-xpra-client"])
+    self.getSubuser().addServiceSubuser(self.getClientSubuserName())
 
   def start(self,serviceStatus):
     """

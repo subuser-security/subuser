@@ -39,7 +39,7 @@ def addFromImageSource(user,subuserName,imageSource):
     subuserlib.update.checkoutNoCommit(user,"HEAD")
 
 def addFromImageSourceNoVerify(user,subuserName,imageSource):
-    user.getRegistry().getSubusers()[subuserName] = subuserlib.classes.subuser.Subuser(user,subuserName,imageSource,None,False,False)
+    user.getRegistry().getSubusers()[subuserName] = subuserlib.classes.subuser.Subuser(user,subuserName,imageSource,None,False,False,[])
 
 def remove(user,subuserNames):
   didSomething = False
@@ -53,6 +53,9 @@ def remove(user,subuserNames):
       except:
         pass
       user.getRegistry().logChange(" If you wish to remove the subusers image, issue the command $ subuser remove-old-images")
+      subuser = user.getRegistry().getSubusers()[subuserName]
+      for serviceSubuser in subuser.getServiceSubuserNames():
+        del user.getRegistry().getSubusers()[serviceSubuser]
       del user.getRegistry().getSubusers()[subuserName]
       didSomething = True
     else:
