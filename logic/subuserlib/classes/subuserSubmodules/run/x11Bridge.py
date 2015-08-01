@@ -101,11 +101,7 @@ class XpraX11Bridge(Service):
     Clear special volumes. This ensures statelessness of stateless subusers.
     """
     try:
-      shutil.rmtree(self.getServerSideX11Path(), ignore_errors=True)
-    except OSError:
-      pass
-    try:
-      shutil.rmtree(self.getXpraDir(), ignore_errors=True)
+      shutil.rmtree(os.path.join(self.getUser().getConfig()["volumes-dir"],"xpra",self.getSubuser().getName()))
     except OSError:
       pass
 
