@@ -8,6 +8,8 @@ High level operations on subusers.
 
 #external imports
 import sys
+import os
+import shutil
 #internal imports
 import subuserlib.classes.user
 import subuserlib.resolve
@@ -59,6 +61,8 @@ def remove(user,subuserNames):
           del user.getRegistry().getSubusers()[serviceSubuser]
         except KeyError:
           pass
+      # Remove service locks
+      shutil.rmtree(os.path.join(user.getConfig()["lock-dir"],"services",subuserName))
       del user.getRegistry().getSubusers()[subuserName]
       didSomething = True
     else:
