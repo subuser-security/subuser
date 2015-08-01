@@ -1,0 +1,54 @@
+0.3 - Xpra X11 bridge + New update system
+=========================================
+
+It has been almost a year since the 0.2 release. I haven't been increasing the version number because subuser is so young and has been changing so quickly that making releases hardly seemed meaningful. Today I am happy to announce the 0.3 release.
+
+The 0.3 release marks a stabilization of the code base and the completion of the basic subuser security features. 
+
+The XPRA X11 bridge
+-------------------
+
+Since the start of application containerization, X11 has been a sore point for security enthusiasts. There is a general feeling, that everyone is waiting on Wayland to solve this problem. Recently, a new project `OZ <https://github.com/subgraph/oz>`_ came out and demonstrating that XPRA may be used as a secure bridge between a containers X server and the host. Of course, Wayland is cool, but we have XPRA now. 
+
+With the 0.3 release, subuser follows OZ's lead and uses XPRA to create a secure X11 bridge.
+
+.. image:: ./images/x11-bridge.png
+
+Each graphical application running in subuser gets it's own container. It shairs an X11 unix socket with an XPRA server. This allows xpra to transmit the graphical session on to the host, without requiring the application container to have xpra installed. This ensures that subuser images are simple.
+
+.. image:: ./images/iceweasel.png
+
+It is hard to tell when I am running iceweasel in subuser and when I'm running it on the host. For the most part, everything just works, including full screen video. The only thing that is obviously different is the file system access. When iceweasel is running in subuser it can only see my Downloads directory and not my full home dir.
+
+Future of the X11 bridge
+------------------------
+
+The fact that xpra does not run in the application container also future proofs subuser as it allows subuser images to be used with any type of X11 bridge, not just XPRA. This will allow subuser users to seamlessly migrate to Wayland or Mir. Subuser images do not need to change for this transition, only the bridge needs to change.
+
+.. image:: ./images/wayland.png
+
+Another future possibility is running subuser on Windows or Mac. XPRA can carry graphics across virtual machine boundaries.
+
+.. image:: ./images/virtualbox.png
+
+The Update system
+-----------------
+
+Another sore spot for Docker security is image up-dating. It is estimated that as of May `30% <http://www.banyanops.com/blog/analyzing-docker-hub/>`_ of official docker images contained a known security vulnerability due to being out of date. Subuser allows the user to automatically check if their subuser images are out of date and rebuild them if necessary. The system is very simple.
+
+Each subuser image may contain a ``/subuser/check-for-updates`` script.  This script is run when the ``subuser update all`` command is issued. If that script returns a non-zero exit code the image is rebuilt. This is a somewhat slow process, when you have a large number of subuser images, however it is effective at keeping your images up-to-date.
+
+Release stats and thanks
+------------------------
+
+There have been some 179 commits since the 0.2 release. 7 contributors have contributed during this time:
+
+- `peter1000 <https://github.com/peter1000>`_
+- `Robin Schneider <https://github.com/ypid>`_
+- `Christian Berendt <https://github.com/berendt>`_
+- `Marc Laporte <https://github.com/marclaporte>`_
+- `Dan Muresan <https://github.com/danmbox>`_
+- `Evstifeev Roman <https://github.com/Fak3>`_
+- `Thomas Kluyver <https://github.com/takluyver>`_
+
+Thank you for your contributions!

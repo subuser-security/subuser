@@ -24,12 +24,21 @@ pylint:
 
 images-dir:
 	mkdir developers/images ; echo IMAGES DIR CREATED
+	mkdir news/images ; echo IMAGES DIR CREATED
 
 developers/images/object-hierarchy.png: developers/object-hierarchy.uxf images-dir
 	umlet -action=convert -format=png -filename=developers/object-hierarchy.uxf -output=developers/images/object-hierarchy
 
+news/images/x11-bridge.png: news/x11-bridge.uxf images-dir
+	umlet -action=convert -format=png -filename=news/x11-bridge.uxf -output=news/images/x11-bridge
 
-html: command-docs pylint community.rst developers/contributing.rst developers/images/object-hierarchy.png
+news/images/virtualbox.png: news/virtualbox.uxf images-dir
+	umlet -action=convert -format=png -filename=news/virtualbox.uxf -output=news/images/virtualbox
+
+news/images/wayland.png: news/wayland.uxf images-dir
+	umlet -action=convert -format=png -filename=news/wayland.uxf -output=news/images/wayland
+
+html: command-docs pylint community.rst developers/contributing.rst developers/images/object-hierarchy.png news/images/x11-bridge.png  news/images/virtualbox.png  news/images/wayland.png
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) . $(BUILDDIR)/html
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
