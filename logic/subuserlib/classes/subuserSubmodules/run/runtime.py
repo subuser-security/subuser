@@ -31,6 +31,7 @@ class Runtime(UserOwnedObject):
     UserOwnedObject.__init__(self,user)
     self.__subuser = subuser
     self.__environment = environment
+    self.__extraFlags = []
 
   def getSubuser(self):
     return self.__subuser
