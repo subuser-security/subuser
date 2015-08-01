@@ -62,7 +62,10 @@ def remove(user,subuserNames):
         except KeyError:
           pass
       # Remove service locks
-      shutil.rmtree(os.path.join(user.getConfig()["lock-dir"],"services",subuserName))
+      try:
+        shutil.rmtree(os.path.join(user.getConfig()["lock-dir"],"services",subuserName))
+      except OSError:
+        pass
       del user.getRegistry().getSubusers()[subuserName]
       didSomething = True
     else:
