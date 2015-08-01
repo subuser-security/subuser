@@ -14,11 +14,19 @@ from subuserlib.classes.userOwnedObject import UserOwnedObject
 import subuserlib.classes.docker.dockerDaemon
 
 class MockDockerDaemon(UserOwnedObject):
-  images = {}
-  nextImageId = 1
-  dockerDaemon = None
-  connection = None
-
+  def __init__(self,user):
+    self.images = {}
+    self.nextImageId = 1
+    UserOwnedObject.__init__(self,user)
+    self.imagesPath = "/root/subuser/test/docker/images.json"
+    if not os.path.exists(self.imagesPath):
+      self.imagesPath = "/home/travis/build/subuser-security/subuser/test/docker/images.json"
+    self.__load()
+    self.dockerDaemon = subuserlib.classes.docker.dockerDaemon.RealDockerDaemon(user)
+    self.connection = MockConnection(self)
+    self.dockerDaemon.getConnection = self.getConnection
+    self.dockerDaemon.getImageProperties = self.getImageProperties
+ 
   def __load(self):
     with open(self.imagesPath,"r") as imagesFile:
       self.images = json.load(imagesFile)
@@ -29,17 +37,6 @@ class MockDockerDaemon(UserOwnedObject):
 
   def getConnection(self):
     return self.connection
-
-  def __init__(self,user):
-    UserOwnedObject.__init__(self,user)
-    self.imagesPath = "/root/subuser/test/docker/images.json"
-    if not os.path.exists(self.imagesPath):
-      self.imagesPath = "/home/travis/build/subuser-security/subuser/test/docker/images.json"
-    self.__load()
-    self.dockerDaemon = subuserlib.classes.docker.dockerDaemon.RealDockerDaemon(user)
-    self.connection = MockConnection(self)
-    self.dockerDaemon.getConnection = self.getConnection
-    self.dockerDaemon.getImageProperties = self.getImageProperties
 
   def getImageProperties(self,imageTagOrId):
     """

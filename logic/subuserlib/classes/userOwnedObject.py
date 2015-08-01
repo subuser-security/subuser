@@ -12,7 +12,6 @@ All objects in subuser are owned by the C{subuserlib.classes.user.User} object.
 #import ...
 
 class UserOwnedObject(object):
-  __user = None
   def __init__(self,user):
     self.__user = user
 

@@ -12,12 +12,10 @@ import sys,os,getpass
 from subuserlib.classes.userOwnedObject import UserOwnedObject
 
 class RunReadyImage(UserOwnedObject):
-  __id = None
-  __subuser = None
-
   def __init__(self,user,subuser):
-    UserOwnedObject.__init__(self,user)
     self.__subuser = subuser
+    self.__id = None
+    UserOwnedObject.__init__(self,user)
     try:
       self.__id = subuser.getRuntimeCache()["run-ready-image-id"]
     except KeyError:

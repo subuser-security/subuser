@@ -20,25 +20,19 @@ from subuserlib.classes.subuserSubmodules.run.runReadyImage import RunReadyImage
 from subuserlib.classes.subuserSubmodules.run.runtimeCache import RuntimeCache
 
 class Subuser(UserOwnedObject, Describable):
-  __name = None
-  __imageSource = None
-  __imageId = None
-  __executableShortcutInstalled = None
-  __x11Bridge = None
-  __runReadyImage = None
-  __runtime = None
-  __runtimeCache = None
-  __permissions = None
-  __serviceSubusers = None
-
   def __init__(self,user,name,imageSource,imageId,executableShortcutInstalled,locked,serviceSubusers):
-    UserOwnedObject.__init__(self,user)
     self.__name = name
     self.__imageSource = imageSource
     self.__imageId = imageId
     self.__executableShortcutInstalled = executableShortcutInstalled
     self.__locked = locked
     self.__serviceSubusers = serviceSubusers
+    self.__x11Bridge = None
+    self.__runReadyImage = None
+    self.__runtime = None
+    self.__runtimeCache = None
+    self.__permissions = None
+    UserOwnedObject.__init__(self,user)
 
   def getName(self):
     return self.__name

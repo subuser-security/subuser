@@ -12,6 +12,9 @@ import os,json,collections,sys
 import subuserlib.classes.installedImage,subuserlib.classes.fileBackedObject, subuserlib.classes.userOwnedObject
 
 class InstalledImages(dict,subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.classes.fileBackedObject.FileBackedObject):
+  def __init__(self,user):
+    subuserlib.classes.userOwnedObject.UserOwnedObject.__init__(self,user)
+    self.reloadInstalledImagesList()
 
   def reloadInstalledImagesList(self):
     """ Reload the installed images list from disk, discarding the current in-memory version. """
@@ -55,10 +58,6 @@ class InstalledImages(dict,subuserlib.classes.userOwnedObject.UserOwnedObject,su
     installedImagesPath = self.getUser().getConfig()["installed-images-list"]
     with open(installedImagesPath, 'w') as file_f:
       json.dump(installedImagesDict, file_f, indent=1, separators=(',', ': '))
-
-  def __init__(self,user):
-    subuserlib.classes.userOwnedObject.UserOwnedObject.__init__(self,user)
-    self.reloadInstalledImagesList()
 
   def unregisterNonExistantImages(self):
     """

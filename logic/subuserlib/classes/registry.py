@@ -19,11 +19,14 @@ from subuserlib.classes import userOwnedObject
 from subuserlib import git
 
 class Registry(userOwnedObject.UserOwnedObject):
-  __subusers = None
-  __repositories = None
-  __changed = False
-  __changeLog = ""
-  __logOutputVerbosity = 2
+  def __init__(self,user):
+    self.__subusers = None
+    self.__repositories = None
+    self.__changed = False
+    self.__changeLog = ""
+    self.__logOutputVerbosity = 2
+    userOwnedObject.UserOwnedObject.__init__(self,user)
+    self._ensureGitRepoInitialized()
 
   def getSubusers(self):
     if not self.__subusers:
@@ -40,10 +43,6 @@ class Registry(userOwnedObject.UserOwnedObject):
     if not self.__repositories:
       self.__repositories = repositories.Repositories(self.getUser())
     return self.__repositories
-
-  def __init__(self,user):
-    userOwnedObject.UserOwnedObject.__init__(self,user)
-    self._ensureGitRepoInitialized()
 
   def _ensureGitRepoInitialized(self):
     if not os.path.exists(self.getUser().getConfig()["registry-dir"]):

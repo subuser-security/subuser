@@ -49,6 +49,11 @@ class Subusers(dict,UserOwnedObject,FileBackedObject):
   'foo'
   """
 
+  def __init__(self,user):
+    UserOwnedObject.__init__(self,user)
+    self._loadSerializedSubusersDict(self.getUser().getConfig()["locked-subusers-path"],locked=True)
+    self._loadSerializedSubusersDict(os.path.join(self.getUser().getConfig()["registry-dir"],"subusers.json"),locked=False)
+
   def save(self):
     """
      Save the list of subusers to disk.
@@ -97,8 +102,4 @@ class Subusers(dict,UserOwnedObject,FileBackedObject):
       imageSource = subuserlib.classes.imageSource.ImageSource(user=self.getUser(),name=name,repo=repo)
       self[subuserName] = Subuser(self.getUser(),subuserName,imageSource,imageId=imageId,executableShortcutInstalled=executableShortcutInstalled,locked=locked,serviceSubusers=serviceSubusers)
 
-  def __init__(self,user):
-    UserOwnedObject.__init__(self,user)
-    self._loadSerializedSubusersDict(self.getUser().getConfig()["locked-subusers-path"],locked=True)
-    self._loadSerializedSubusersDict(os.path.join(self.getUser().getConfig()["registry-dir"],"subusers.json"),locked=False)
 

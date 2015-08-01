@@ -39,11 +39,9 @@ import subuserlib.verify as verify
 import subuserlib.subuser
 
 class XpraX11Bridge(Service):
-  __subuser = None
-
   def __init__(self,user,subuser):
-    Service.__init__(self,user,subuser)
     self.__subuser = subuser
+    Service.__init__(self,user,subuser)
 
   def getName(self):
     return "xpra"

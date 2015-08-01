@@ -13,6 +13,11 @@ from subuserlib import loadMultiFallbackJsonConfigFile
 from subuserlib import paths
 
 class Config(userOwnedObject.UserOwnedObject, dict):
+  def __init__(self,user):
+    self.__delitem__ = None
+    self.__setitem__ = None
+    userOwnedObject.UserOwnedObject.__init__(self,user)
+    self._loadConfig()
 
   def _getSubuserConfigPaths(self):
     """ Returns a list of paths to config.json files in order that they should be looked in. """
@@ -32,10 +37,3 @@ class Config(userOwnedObject.UserOwnedObject, dict):
     self._expandPathsInConfig(config)
     for key,entry in config.items():
       self[key] = entry
-
-  def __init__(self,user):
-    userOwnedObject.UserOwnedObject.__init__(self,user)
-    self._loadConfig()
-    self.__delitem__ = None
-    self.__setitem__ = None
-

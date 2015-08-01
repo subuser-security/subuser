@@ -12,14 +12,12 @@ import os,io
 import subuserlib.classes.userOwnedObject,subuserlib.classes.describable,subuserlib.subprocessExtras,subuserlib.resolve, subuserlib.hashDirectory
 
 class ImageSource(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.classes.describable.Describable):
-  __name = None
-  __repo = None
-  __permissions = None
 
   def __init__(self,user,repo,name):
-    subuserlib.classes.userOwnedObject.UserOwnedObject.__init__(self,user)
     self.__name = name
     self.__repo = repo
+    self.__permissions = None
+    subuserlib.classes.userOwnedObject.UserOwnedObject.__init__(self,user)
 
   def getName(self):
     return self.__name

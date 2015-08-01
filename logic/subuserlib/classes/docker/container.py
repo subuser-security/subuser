@@ -12,11 +12,9 @@ import json
 from subuserlib.classes.userOwnedObject import UserOwnedObject
 
 class Container(UserOwnedObject):
-  __containerId = None
-
   def __init__(self,user,containerId):
-    UserOwnedObject.__init__(self,user)
     self.__containerId = containerId
+    UserOwnedObject.__init__(self,user)
 
   def inspect(self):
     """

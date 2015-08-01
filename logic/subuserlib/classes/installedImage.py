@@ -14,18 +14,14 @@ from subuserlib.classes.describable import Describable
 import subuserlib.classes.docker.dockerDaemon as dockerDaemon
 
 class InstalledImage(UserOwnedObject,Describable):
-  __imageId = None
-  __imageSourceHash = None
-  __imageSourceName = None
-  __sourceRepoId = None
-  __alreadyCheckedForUpdates = None
 
   def __init__(self,user,imageId,imageSourceName,sourceRepoId,imageSourceHash):
-    UserOwnedObject.__init__(self,user)
     self.__imageId = imageId
     self.__imageSourceHash = imageSourceHash
     self.__imageSourceName = imageSourceName
     self.__sourceRepoId = sourceRepoId
+    self.__alreadyCheckedForUpdates = None
+    UserOwnedObject.__init__(self,user)
 
   def getImageId(self):
     return self.__imageId

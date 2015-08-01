@@ -13,19 +13,16 @@ from subuserlib.classes.userOwnedObject import UserOwnedObject
 from subuserlib.classes.fileBackedObject import FileBackedObject
 
 class RuntimeCache(dict,UserOwnedObject,FileBackedObject):
-  __subuser = None
-  __pathToRuntimeCacheFile = None
-
-  def getPathToCurrentImagesRuntimeCacheDir(self):
-    return os.path.join(self.getUser().getConfig()["runtime-cache"],self.getSubuser().getImageId())
-
   def __init__(self,user,subuser):
-    UserOwnedObject.__init__(self,user)
     self.__subuser = subuser
+    UserOwnedObject.__init__(self,user)
     if not self.getSubuser().getImageId():
       raise NoRuntimeCacheForSubusersWhichDontHaveExistantImagesException
     self.__pathToRuntimeCacheFile = os.path.join(self.getPathToCurrentImagesRuntimeCacheDir(),self.getSubuser().getPermissions().getHash()+".json")
     self.load()
+
+  def getPathToCurrentImagesRuntimeCacheDir(self):
+    return os.path.join(self.getUser().getConfig()["runtime-cache"],self.getSubuser().getImageId())
 
   def getSubuser(self):
     return self.__subuser

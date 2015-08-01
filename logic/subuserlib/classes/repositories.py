@@ -12,8 +12,16 @@ import os,collections,json,sys
 import subuserlib.paths, subuserlib.classes.fileBackedObject, subuserlib.classes.userOwnedObject, subuserlib.classes.repository,subuserlib.loadMultiFallbackJsonConfigFile
 
 class Repositories(collections.Mapping,subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.classes.fileBackedObject.FileBackedObject):
-  systemRepositories = {} # TODO rename and document these variables
-  userRepositories = {}
+  def __init__(self,user):
+    self.systemRepositories = {} # TODO rename and document these variables
+    self.userRepositories = {}
+    subuserlib.classes.userOwnedObject.UserOwnedObject.__init__(self,user)
+    self.systemRepositoryListPaths = ["/etc/subuser/repositories.json"
+       ,os.path.join(user.homeDir,".subuser","repositories.json")
+       ,os.path.join(subuserlib.paths.getSubuserDir(),"repositories.json")] # TODO how does this work on windows?
+    self.userRepositoryListPath = os.path.join(self.getUser().getConfig()["registry-dir"],"repositories.json")
+    self.reloadRepositoryLists()
+
 
   def _getAllRepositories(self):
     allRepos = {}
@@ -127,11 +135,4 @@ class Repositories(collections.Mapping,subuserlib.classes.userOwnedObject.UserOw
         idAsInt = idAsInt + 1
     return str(idAsInt)
 
-  def __init__(self,user):
-    subuserlib.classes.userOwnedObject.UserOwnedObject.__init__(self,user)
-    self.systemRepositoryListPaths = ["/etc/subuser/repositories.json"
-       ,os.path.join(user.homeDir,".subuser","repositories.json")
-       ,os.path.join(subuserlib.paths.getSubuserDir(),"repositories.json")] # TODO how does this work on windows?
-    self.userRepositoryListPath = os.path.join(self.getUser().getConfig()["registry-dir"],"repositories.json")
-    self.reloadRepositoryLists()
 

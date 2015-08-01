@@ -22,16 +22,12 @@ def getRecursiveDirectoryContents(directory):
   return files
 
 class Runtime(UserOwnedObject):
-  __subuser = None
-  __environment = None
-  __background = False
-  __extraFlags = []
-
   def __init__(self,user,subuser,environment):
-    UserOwnedObject.__init__(self,user)
     self.__subuser = subuser
     self.__environment = environment
     self.__extraFlags = []
+    self.__background = False
+    UserOwnedObject.__init__(self,user)
 
   def getSubuser(self):
     return self.__subuser

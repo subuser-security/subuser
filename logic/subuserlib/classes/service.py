@@ -23,7 +23,10 @@ import subuserlib.classes.userOwnedObject
 
 class Service(subuserlib.classes.userOwnedObject.UserOwnedObject):
   __metaclass__ = abc.ABCMeta
-  __subuser = None
+
+  def __init__(self,user,subuser):
+    self.__subuser = subuser
+    subuserlib.classes.userOwnedObject.UserOwnedObject.__init__(self,user)
 
   @abc.abstractmethod
   def start(self,serviceStatus):
@@ -38,10 +41,6 @@ class Service(subuserlib.classes.userOwnedObject.UserOwnedObject):
   @abc.abstractmethod
   def getName(self):
     pass
-
-  def __init__(self,user,subuser):
-    subuserlib.classes.userOwnedObject.UserOwnedObject.__init__(self,user)
-    self.__subuser = subuser
 
   def getLockfileDir(self):
     return os.path.join(self.getUser().getConfig()["lock-dir"],"services",self.__subuser.getName())

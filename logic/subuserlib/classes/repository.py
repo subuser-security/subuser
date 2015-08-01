@@ -12,22 +12,16 @@ import os,shutil,io,json
 import subuserlib.git,subuserlib.classes.userOwnedObject,subuserlib.classes.imageSource,subuserlib.subprocessExtras,subuserlib.classes.describable
 
 class Repository(dict,subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.classes.describable.Describable):
-  __name = None
-  __gitOriginURI = None
-  __lastGitCommitHash = None
-  __temporary = False
-  __sourceDir = None
-
   def __init__(self,user,name,gitOriginURI=None,gitCommitHash=None,temporary=False,sourceDir=None):
     """
     Repositories can either be managed by git, or simply be normal directories on the user's computer. If ``sourceDir`` is not set to None, then ``gitOriginURI`` is ignored and the repository is assumed to be a simple directory.
     """
-    subuserlib.classes.userOwnedObject.UserOwnedObject.__init__(self,user)
     self.__name = name
     self.__gitOriginURI = gitOriginURI
     self.__lastGitCommitHash = gitCommitHash
     self.__temporary=temporary
     self.__sourceDir=sourceDir
+    subuserlib.classes.userOwnedObject.UserOwnedObject.__init__(self,user)
     if not gitCommitHash is None:
       self.checkoutGitCommit(gitCommitHash)
     self.loadProgamSources()

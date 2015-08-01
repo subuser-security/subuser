@@ -86,9 +86,8 @@ def readAndPrintStreamingBuildStatus(user,response):
   return output.decode("utf-8")
 
 class DockerDaemon(UserOwnedObject):
-  __connection = None
-
   def __init__(self,user):
+    self.__connection = None
     UserOwnedObject.__init__(self,user)
 
   def getConnection(self):
