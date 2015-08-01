@@ -40,6 +40,7 @@ Remove the launcher (if one exists) for the subuser named foo.
     $ subuser subuser remove-shortcut foo
 """
   parser=optparse.OptionParser(usage=usage,description=description,formatter=subuserlib.commandLineArguments.HelpFormatterThatDoesntReformatDescription())
+  parser.add_option("--prefix",dest="prefix",default=None,help="When removing subusers, remove all subusers who's names start with prefix.")
   return parser.parse_args(args=sysargs)
 
 def subuser(sysargs):
@@ -205,6 +206,9 @@ def subuser(sysargs):
 
   elif action == "remove":
     names = args[1:]
+    if not options.prefix is None:
+      allSubuserNames = user.getRegistry().getSubusers().keys()
+      names.extend([subuserName for subuserName in allSubuserNames if subuserName.startswith(options.prefix)])
     try:
       with user.getRegistry().getLock():
         subuserlib.subuser.remove(user,names)
