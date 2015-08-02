@@ -10,7 +10,7 @@ In a subuser repository, there is one subdirectory per subuser image source. The
 Image source directories
 ------------------------
 
-Each image source directory contains a :doc:`permissions.json permissions-dot-json-file-format` file.
+Each image source directory contains a :doc:`permissions.json <permissions-dot-json-file-format>` file.
 
 It also contains a ``docker-image`` directory.
 
