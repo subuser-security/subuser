@@ -10,4 +10,5 @@ The subuser program serialzes data about which subusers are installed, which rep
   serializations/runtime-cache
   serializations/service-lock-files
   serializations/registry/registry
+  serializations/locked-subusers-dot-json-file-format
 
