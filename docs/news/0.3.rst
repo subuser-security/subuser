@@ -1,5 +1,5 @@
-0.3 - Xpra X11 bridge + New update system
-=========================================
+Subuser 0.3 - Xpra X11 bridge + New update system
+==================================================
 
 It has been almost a year since the 0.2 release. I haven't been increasing the version number because subuser is so young and has been changing so quickly that making releases hardly seemed meaningful. Today I am happy to announce the 0.3 release.
 
