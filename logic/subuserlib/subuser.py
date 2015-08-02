@@ -11,7 +11,6 @@ import sys
 import os
 import shutil
 #internal imports
-import subuserlib.classes.user
 import subuserlib.resolve
 import subuserlib.classes.subuser
 import subuserlib.verify
