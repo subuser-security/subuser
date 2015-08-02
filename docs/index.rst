@@ -65,6 +65,7 @@ Index
   :maxdepth: 2
 
   what-is-subuser
+  news
   security
   installation
   tutorial-use
