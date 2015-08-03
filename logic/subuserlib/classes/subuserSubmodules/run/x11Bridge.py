@@ -54,6 +54,14 @@ class XpraX11Bridge(Service):
     serverSubuserInstalled = self.getServerSubuserName() in self.getUser().getRegistry().getSubusers()
     return clientSubuserInstalled and serverSubuserInstalled
 
+  def setupServerPermissions(self):
+    self.getServerSubuser().getPermissions()["system-dirs"] = {self.getServerSideX11Path():"/tmp/.X11-unix",self.getXpraHomeDir():os.getenv("HOME")}
+    self.getServerSubuser().getPermissions().save()
+
+  def setupClientPermissions(self,serverHostname):
+    self.getClientSubuser().getPermissions()["system-dirs"] = {self.getXpraSocket(serverHostname):os.path.join(os.getenv("HOME"),".xpra","server-100")}
+    self.getClientSubuser().getPermissions().save()
+ 
   def setup(self):
     """
     Do any setup required in order to create a functional bridge: Creating subusers building images ect.
@@ -64,16 +72,15 @@ class XpraX11Bridge(Service):
       self.addClientSubuser()
       newSubuserNames = [self.getServerSubuserName(),self.getClientSubuserName()]
       verify.verify(self.getUser(),subuserNames=newSubuserNames)
-      self.getServerSubuser().getPermissions()["system-dirs"] = {self.getServerSideX11Path():"/tmp/.X11-unix",self.getXpraDir():os.path.join(os.getenv("HOME"))}
-      self.getServerSubuser().getPermissions().save()
-      self.getClientSubuser().getPermissions()["system-dirs"] = {self.getXpraDir():os.path.join(os.getenv("HOME"))}
-      self.getClientSubuser().getPermissions().save()
-  
+ 
   def getServerSideX11Path(self):
     return os.path.join(self.getUser().getConfig()["volumes-dir"],"xpra",self.getSubuser().getName(),"tmp",".X11-unix")
 
-  def getXpraDir(self):
+  def getXpraHomeDir(self):
     return os.path.join(self.getUser().getConfig()["volumes-dir"],"xpra",self.getSubuser().getName(),"xpra-home")
+
+  def getXpraSocket(self,serverHostname):
+    return os.path.join(self.getXpraHomeDir(),".xpra",serverHostname+"-100")
 
   def getServerSubuserName(self):
     return "!service-subuser-"+self.getSubuser().getName()+"-xpra-server"
@@ -104,22 +111,24 @@ class XpraX11Bridge(Service):
     except OSError:
       pass
 
-  def start(self,serviceStatus):
-    """
-    Start the bridge.
-    """
-    self.cleanUp()
-    # Create and setup special volumes.
+  def createAndSetupSpecialVolumes(self):
     try:
       os.makedirs(self.getServerSideX11Path())
     except OSError:
       pass
     try:
-      os.makedirs(self.getXpraDir())
+      os.makedirs(self.getXpraHomeDir())
     except OSError:
       pass
     os.chmod(self.getServerSideX11Path(),1023)
 
+  def start(self,serviceStatus):
+    """
+    Start the bridge.
+    """
+    self.cleanUp()
+    self.createAndSetupSpecialVolumes()
+    self.setupServerPermissions()
     permissionDict = {
      "system-tray": ("--system-tray" , "--no-system-tray"),
      "cursors": ("--cursors", "--no-cursors"),
@@ -145,11 +154,12 @@ class XpraX11Bridge(Service):
     if serverContainerInfo is None:
       exit("The xpra server container failed to launch. Container id:" + serverContainer.getId())
     # Launch xpra client
+    self.setupClientPermissions(serverContainerInfo["Config"]["Hostname"])
     clientArgs = ["attach","--no-tray","--compress=0","--encoding=rgb"]
     clientArgs.extend(commonArgs)
     clientArgs.extend(permissionArgs)
     clientRuntime = self.getClientSubuser().getRuntime(os.environ)
-    clientRuntime.setEnvVar("XPRA_SOCKET_HOSTNAME",serverContainerInfo["Config"]["Hostname"])
+    clientRuntime.setEnvVar("XPRA_SOCKET_HOSTNAME","server")
     clientRuntime.setBackground(True)
     serviceStatus["xpra-client-service-cid"] = clientRuntime.run(args=clientArgs).getId()
     return serviceStatus
