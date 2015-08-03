@@ -68,7 +68,6 @@ def dryRun(args):
   Building...
   Successfully built 5
   Installed new image <5> for subuser bar
-  Checking if subuser foo is up to date.
   Running garbage collector on temporary repositories...
 
   The actual dry-run call.

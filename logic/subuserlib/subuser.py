@@ -32,7 +32,7 @@ def add(user,subuserName,imageSourceIdentifier):
 def addFromImageSource(user,subuserName,imageSource):
   try:
     addFromImageSourceNoVerify(user,subuserName,imageSource)
-    subuserlib.verify.verify(user)
+    subuserlib.verify.verify(user,subuserNames=[subuserName])
     user.getRegistry().commit()
   except dockerDaemon.ImageBuildException as e:
     print("Adding subuser failed.")

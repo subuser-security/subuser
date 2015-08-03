@@ -81,7 +81,6 @@ def subuser(sysargs):
   Building...
   Successfully built 7
   Installed new image <7> for subuser bar
-  Checking if subuser foo is up to date.
   Running garbage collector on temporary repositories...
 
   Now we have two subusers.
@@ -128,7 +127,6 @@ def subuser(sysargs):
   Building...
   Successfully built 9
   Installed new image <9> for subuser bar
-  Checking if subuser foo is up to date.
   Running garbage collector on temporary repositories...
 
   Now we have two subusers.

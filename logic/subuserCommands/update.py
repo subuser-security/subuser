@@ -106,7 +106,6 @@ def update(realArgs):
   Building...
   Successfully built 15
   Installed new image <15> for subuser dependent
-  Checking if subuser foo is up to date.
   Running garbage collector on temporary repositories...
 
   Check that our new subuser was successfully added.

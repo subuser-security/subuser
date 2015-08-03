@@ -58,7 +58,6 @@ def removeOldImages(realArgs):
   Building...
   Successfully built 6
   Installed new image <6> for subuser bar
-  Checking if subuser foo is up to date.
   Running garbage collector on temporary repositories...
 
   Check to see if subuser ``bar`` was successfully added.
