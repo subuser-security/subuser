@@ -18,7 +18,9 @@ def updateAll(user):
   user.getRegistry().log("Updating...")
   for _,repository in user.getRegistry().getRepositories().items():
     repository.updateSources()
-  subuserlib.verify.verify(user,checkForUpdatesExternally=True)
+  subuserNames = list(user.getRegistry().getSubusers().keys())
+  subuserNames.sort()
+  subuserlib.verify.verify(user,checkForUpdatesExternally=True,subuserNames=subuserNames)
   user.getRegistry().commit()
 
 def updateSubusers(user,subuserNames):
@@ -66,6 +68,6 @@ def unlockSubuser(user,subuserName):
   """
   user.getRegistry().logChange("Unlocking subuser "+subuserName)
   user.getRegistry().getSubusers()[subuserName].setLocked(False)
-  subuserlib.verify.verify(user)
+  subuserlib.verify.verify(user,subuserNames=[subuserName],checkForUpdatesExternally=True)
   user.getRegistry().commit()
  

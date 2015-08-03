@@ -47,7 +47,7 @@ def subprocessCallBackground(args,cwd=None):
   Returns imediately with the subprocesses pid.
   """
   devnull = open(os.devnull,"a")
-  process = subprocess.Popen(args,cwd=cwd,stdout=devnull,stderr=devnull,close_fds=True)
+  process = subprocess.Popen(args,cwd=cwd)#,stdout=devnull,stderr=devnull,close_fds=True)
   return process.pid
 
 

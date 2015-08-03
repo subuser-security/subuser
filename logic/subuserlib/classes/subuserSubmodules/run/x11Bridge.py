@@ -62,7 +62,8 @@ class XpraX11Bridge(Service):
       self.getUser().getRegistry().setLogOutputVerbosity(0)
       self.addServerSubuser()
       self.addClientSubuser()
-      verify.verify(self.getUser())
+      newSubuserNames = [self.getServerSubuserName(),self.getClientSubuserName()]
+      verify.verify(self.getUser(),subuserNames=newSubuserNames)
       self.getServerSubuser().getPermissions()["system-dirs"] = {self.getServerSideX11Path():"/tmp/.X11-unix",self.getXpraDir():os.path.join(os.getenv("HOME"))}
       self.getServerSubuser().getPermissions().save()
       self.getClientSubuser().getPermissions()["system-dirs"] = {self.getXpraDir():os.path.join(os.getenv("HOME"))}

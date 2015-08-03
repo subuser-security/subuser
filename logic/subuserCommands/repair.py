@@ -27,7 +27,9 @@ def verify(realArgs):
   user = subuserlib.classes.user.User()
   try:
     with user.getRegistry().getLock() as LockFileHandle:
-      subuserlib.verify.verify(user)
+      subuserNames = list(user.getRegistry().getSubusers().keys())
+      subuserNames.sort()
+      subuserlib.verify.verify(user,subuserNames=subuserNames)
       user.getRegistry().commit()
   except subuserlib.portalocker.portalocker.LockException:
     sys.exit("Another subuser process is currently running and has a lock on the registry. Please try again later.")

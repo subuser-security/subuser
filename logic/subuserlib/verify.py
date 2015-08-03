@@ -18,7 +18,7 @@ import shutil,os
 import subuserlib.install
 import subuserlib.classes.docker.dockerDaemon as dockerDaemon
 
-def verify(user,checkForUpdatesExternally=False,subuserNames=None):
+def verify(user,checkForUpdatesExternally=False,subuserNames=[]):
   """
    Ensure that:
       - Registry is consistent; warns the user about subusers that point to non-existant source images.
@@ -30,11 +30,8 @@ def verify(user,checkForUpdatesExternally=False,subuserNames=None):
   verifyRegistryConsistency(user)
   user.getRegistry().log("Unregistering any non-existant installed images.")
   user.getInstalledImages().unregisterNonExistantImages()
-  if subuserNames is None:
-    subuserNames = list(user.getRegistry().getSubusers().keys())
-  # Sorting makes the whole thing much more reprodible which is good for testing.
-  subuserNames.sort()
-  ensureImagesAreInstalledAndUpToDate(user,subuserNames=subuserNames,checkForUpdatesExternally=checkForUpdatesExternally)
+  if subuserNames:
+    ensureImagesAreInstalledAndUpToDate(user,subuserNames=subuserNames,checkForUpdatesExternally=checkForUpdatesExternally)
   user.getInstalledImages().save()
   trimUnneededTempRepos(user)
   rebuildBinDir(user)

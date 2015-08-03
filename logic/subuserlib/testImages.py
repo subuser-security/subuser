@@ -12,11 +12,14 @@ def testImages(user,sourceRepoId,imageSourceNames):
   """
   Build, run, and remove the given images.
   """
+  subuserNames = []
   subuserNamePrefix = "!test-image-subuser" + str(uuid.uuid4())
   # Build the images
   for imageSourceName in imageSourceNames:
-    subuserlib.subuser.addFromImageSourceNoVerify(user,subuserNamePrefix+imageSourceName,user.getRegistry().getRepositories()[sourceRepoId][imageSourceName])
-  subuserlib.verify.verify(user)
+    subuserName = subuserNamePrefix+imageSourceName
+    subuserNames.append(subuserName)
+    subuserlib.subuser.addFromImageSourceNoVerify(user,subuserName,user.getRegistry().getRepositories()[sourceRepoId][imageSourceName])
+  subuserlib.verify.verify(user,subuserNames=subuserNames)
   # Create a list of the names of the new subusers
   subuserNames = []
   for imageSourceName in imageSourceNames:

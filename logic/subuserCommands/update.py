@@ -150,7 +150,6 @@ def update(realArgs):
 
   Now we change the ImageSource for the ``dependent`` image.
 
-
   >>> with open(user.getRegistry().getRepositories()[u'1']["intermediary"].getSubuserImagefilePath(),mode="w") as subuserImagefile:
   ...   _ = subuserImagefile.write("FROM-SUBUSER-IMAGE dependency2")
 
@@ -216,8 +215,6 @@ def update(realArgs):
   Verifying subuser configuration.
   Verifying registry consistency...
   Unregistering any non-existant installed images.
-  Checking if images need to be updated or installed...
-  Checking if subuser foo is up to date.
   Running garbage collector on temporary repositories...
 
   >>> with open(user.getRegistry().getRepositories()[u'1']["intermediary"].getSubuserImagefilePath(),mode="w") as subuserImagefile:
@@ -284,7 +281,6 @@ def update(realArgs):
   Building...
   Successfully built 27
   Installed new image <27> for subuser dependent
-  Checking if subuser foo is up to date.
   Running garbage collector on temporary repositories...
 
   >>> user = subuserlib.classes.user.User()
