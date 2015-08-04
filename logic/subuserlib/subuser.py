@@ -40,7 +40,10 @@ def addFromImageSource(user,subuserName,imageSource):
     subuserlib.update.checkoutNoCommit(user,"HEAD")
 
 def addFromImageSourceNoVerify(user,subuserName,imageSource):
-    user.getRegistry().getSubusers()[subuserName] = subuserlib.classes.subuser.Subuser(user,subuserName,imageSource,None,False,False,[])
+    subuser = subuserlib.classes.subuser.Subuser(user,subuserName,imageSource,None,False,False,[])
+    if not subuser.getPermissions()["gui"] is None:
+      subuser.getX11Bridge().setup(verify=False)
+    user.getRegistry().getSubusers()[subuserName] = subuser
 
 def remove(user,subuserNames):
   didSomething = False

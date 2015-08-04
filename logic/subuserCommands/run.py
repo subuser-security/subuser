@@ -29,6 +29,7 @@ def run(args):
   argsToPassToImage = args[2:]
 
   user = subuserlib.classes.user.User()
+  user.getRegistry().setLogOutputVerbosity(0)
   if subuserName in user.getRegistry().getSubusers():
     runtime = user.getRegistry().getSubusers()[subuserName].getRuntime(os.environ)
     if runtime:

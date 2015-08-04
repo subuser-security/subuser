@@ -62,16 +62,16 @@ class XpraX11Bridge(Service):
     self.getClientSubuser().getPermissions()["system-dirs"] = {self.getXpraSocket(serverHostname):os.path.join(os.getenv("HOME"),".xpra","server-100")}
     self.getClientSubuser().getPermissions().save()
  
-  def setup(self):
+  def setup(self,verify=True):
     """
     Do any setup required in order to create a functional bridge: Creating subusers building images ect.
     """
     if not self.isSetup():
-      self.getUser().getRegistry().setLogOutputVerbosity(0)
       self.addServerSubuser()
       self.addClientSubuser()
       newSubuserNames = [self.getServerSubuserName(),self.getClientSubuserName()]
-      verify.verify(self.getUser(),subuserNames=newSubuserNames)
+      if verify:
+        verify.verify(self.getUser(),subuserNames=newSubuserNames)
  
   def getServerSideX11Path(self):
     return os.path.join(self.getUser().getConfig()["volumes-dir"],"xpra",self.getSubuser().getName(),"tmp",".X11-unix")
