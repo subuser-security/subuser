@@ -41,11 +41,10 @@ class Repositories(collections.Mapping,subuserlib.classes.userOwnedObject.UserOw
   def reloadRepositoryLists(self):
     """ Load the repository list from disk, discarding the current in-memory version. """
     repositoryStates = self._loadRepositoryStates()
-    def loadRepositoryDict(paths):
+    def loadRepositoryDict(repositoryDict):
       """
        From a list of paths to repository lists load a single unified repository dict.
       """
-      repositoryDict = subuserlib.loadMultiFallbackJsonConfigFile.getConfig(paths)
       repositories = {}
       for repoName,repoAttributes in repositoryDict.items():
         if repoName in repositoryStates:
@@ -67,18 +66,19 @@ class Repositories(collections.Mapping,subuserlib.classes.userOwnedObject.UserOw
         repositories[repoName] = subuserlib.classes.repository.Repository(self.getUser(),name=repoName,gitOriginURI=gitOriginURI,gitCommitHash=gitCommitHash,temporary=temporary,sourceDir=sourceDir)
       return repositories
 
-    self.systemRepositories = loadRepositoryDict(self.systemRepositoryListPaths)
-    self.userRepositories = loadRepositoryDict([self.userRepositoryListPath])
+    self.systemRepositories = loadRepositoryDict(subuserlib.loadMultiFallbackJsonConfigFile.getConfig(self.systemRepositoryListPaths))
+    if "repositories.json" in self.getUser().getRegistry().getGitRepository().lsFiles(self.getUser().getRegistry().getGitReadHash(),"./"):
+      self.userRepositories = loadRepositoryDict(json.loads(self.getUser().getRegistry().getGitRepository().show(self.getUser().getRegistry().getGitReadHash(),"repositories.json")))
+    else:
+      self.userRepositories = {}
 
   def _loadRepositoryStates(self):
     """
     Load the repository states from disk.
     Return them as a dictionary object.
     """
-    repositoryStatesDotJsonPath = os.path.join(self.getUser().getConfig()["registry-dir"],"repository-states.json")
-    if os.path.exists(repositoryStatesDotJsonPath):
-      with open(repositoryStatesDotJsonPath,mode="r") as repositoryStatesDotJsonFile:
-        return json.load(repositoryStatesDotJsonFile)
+    if "repository-states.json" in self.getUser().getRegistry().getGitRepository().lsFiles(self.getUser().getRegistry().getGitReadHash(),"./"):
+      return json.loads(self.getUser().getRegistry().getGitRepository().show(self.getUser().getRegistry().getGitReadHash(),"repository-states.json"))
     else:
       return {}
 

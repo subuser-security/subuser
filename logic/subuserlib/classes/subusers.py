@@ -26,7 +26,6 @@ class Subusers(dict,UserOwnedObject,FileBackedObject):
   >>> import subuserlib.subuser
   >>> u = subuserlib.classes.user.User()
   >>> subuserlib.subuser.add(u,"foo","foo@default")
-  Initial commit.
   Adding subuser foo foo@default
   Verifying subuser configuration.
   Verifying registry consistency...
@@ -51,8 +50,12 @@ class Subusers(dict,UserOwnedObject,FileBackedObject):
 
   def __init__(self,user):
     UserOwnedObject.__init__(self,user)
-    self._loadSerializedSubusersDict(self.getUser().getConfig()["locked-subusers-path"],locked=True)
-    self._loadSerializedSubusersDict(os.path.join(self.getUser().getConfig()["registry-dir"],"subusers.json"),locked=False)
+    if os.path.exists(self.getUser().getConfig()["locked-subusers-path"]):
+      with open(self.getUser().getConfig()["locked-subusers-path"],"r") as file:
+        self._loadSerializedSubusersDict(json.load(file, object_pairs_hook=collections.OrderedDict),locked=True)
+    if "subusers.json" in self.getUser().getRegistry().getGitRepository().lsFiles(self.getUser().getRegistry().getGitReadHash(),"./"):
+      serializedUnlockedSubusersDict = json.loads(self.getUser().getRegistry().getGitRepository().show(self.getUser().getRegistry().getGitReadHash(),"subusers.json"), object_pairs_hook=collections.OrderedDict)
+      self._loadSerializedSubusersDict(serializedUnlockedSubusersDict,locked=False)
 
   def save(self):
     """
@@ -76,15 +79,10 @@ class Subusers(dict,UserOwnedObject,FileBackedObject):
     with open(os.path.join(self.getUser().getConfig()["locked-subusers-path"]), 'w') as file_f:
       json.dump(serializedLockedSubusersDict, file_f, indent=1, separators=(',', ': '))
 
-  def _loadSerializedSubusersDict(self,serializedSubusersPath,locked):
+  def _loadSerializedSubusersDict(self,serializedSubusersDict,locked):
     """
     Load the serialzed subusers json file into memory.
     """
-    serializedSubusersDict = {}
-    if os.path.exists(serializedSubusersPath):
-      with open(serializedSubusersPath, 'r') as file_f:
-        serializedSubusersDict.update(json.load(file_f, object_pairs_hook=collections.OrderedDict))
-
     for subuserName, subuserAttributes in serializedSubusersDict.items():
       if not subuserAttributes["source-repo"] in self.getUser().getRegistry().getRepositories():
         sys.exit("ERROR: Registry inconsistent. Subuser "+str(subuserName)+" points to non-existant repository: "+str(subuserAttributes["source-repo"]))
@@ -101,5 +99,3 @@ class Subusers(dict,UserOwnedObject,FileBackedObject):
       executableShortcutInstalled = subuserAttributes["executable-shortcut-installed"]
       imageSource = subuserlib.classes.imageSource.ImageSource(user=self.getUser(),name=name,repo=repo)
       self[subuserName] = Subuser(self.getUser(),subuserName,imageSource,imageId=imageId,executableShortcutInstalled=executableShortcutInstalled,locked=locked,serviceSubusers=serviceSubusers)
-
-

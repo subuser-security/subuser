@@ -52,11 +52,11 @@ def lockSubuser(user,subuserName,commit):
   """
   Lock the subuser to the image and permissions that it had at a given registry commit.
   """
-  checkoutNoCommit(user,commit)
-  subuserObject = user.getRegistry().getSubusers()[subuserName]
+  from subuserlib.classes.registry import Registry
+  registryAtOldCommit = Registry(user,gitReadHash=commit)
+  subuserObject = registryAtOldCommit.getSubusers()[subuserName]
   if not os.path.exists(os.path.join(user.getConfig()["user-set-permissions-dir"],subuserName,"permissions.json")):
     subuserObject.getPermissions().save()
-  checkoutNoCommit(user,"master")
   user.getRegistry().logChange("Locking subuser "+subuserName+" to commit: "+commit)
   user.getRegistry().getSubusers()[subuserName] = subuserObject
   subuserObject.setLocked(True)

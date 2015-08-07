@@ -42,7 +42,8 @@ class GitRepository():
       subfolder = "./"
     (returncode,output) = self.runCollectOutput(["ls-tree","--name-only"]+extraArgs+[commitHash,subfolder])
     if returncode != 0:
-      raise OSError("Git ls-tree failed:"+output)
+      return [] # This commenting out is intentional. It is simpler to just return [] here than to check if the repository is properly initialized everywhere else.
+      #raise OSError("Git ls-tree failed:"+output+"\n args were:"+str(["ls-tree","--name-only"]+extraArgs+[commitHash,subfolder])+"\nCwd was:"+self.getPath())
     return output.splitlines()
 
   def lsFiles(self,commitHash,subfolder):

@@ -34,7 +34,7 @@ def dryRun(args):
 
   >>> dry_run = __import__("dry-run")
   >>> dry_run.dryRunTestSetup()
-  >>> import subuser,subuserlib.classes.user
+  >>> import subuser
   >>> remove_old_images = __import__("remove-old-images")
 
   If we dry run the basic foo test subuser, we will see the generated pre-run Dockerfile and also the docker command that will launch our subuser.
@@ -113,7 +113,7 @@ def dryRun(args):
     print("The command to launch the image is:")
     print(subuser.getRuntime(os.environ).getPrettyCommand(argsToPassToImage))
   else:
-    sys.exit(subuserName + " not found.\n"+helpString)
+    sys.exit(subuserName + " not found.\n"+helpString+"\n The following subusers are available for use:"+str(user.getRegistry().getSubusers().keys()))
 
 if __name__ == "__main__":
   dryRun(sys.argv[1:])

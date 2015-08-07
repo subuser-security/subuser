@@ -19,19 +19,23 @@ from subuserlib.classes import userOwnedObject
 from subuserlib.classes.gitRepository import GitRepository
 
 class Registry(userOwnedObject.UserOwnedObject):
-  def __init__(self,user):
+  def __init__(self,user,gitReadHash="master"):
     self.__subusers = None
     self.__changeLog = ""
     self.__changed = False
     self.__logOutputVerbosity = 2
     self.__repositories = None
     self.__gitRepository = None
+    self.__gitReadHash = gitReadHash
     userOwnedObject.UserOwnedObject.__init__(self,user)
     self.__gitRepository = GitRepository(self.getUser().getConfig()["registry-dir"])
     self._ensureGitRepoInitialized()
 
   def getGitRepository(self):
     return self.__gitRepository
+
+  def getGitReadHash(self):
+    return self.__gitReadHash
 
   def getSubusers(self):
     if not self.__subusers:
@@ -53,8 +57,6 @@ class Registry(userOwnedObject.UserOwnedObject):
     if not os.path.exists(self.getUser().getConfig()["registry-dir"]):
       os.makedirs(self.getUser().getConfig()["registry-dir"])
       self.getGitRepository().run(["init"])
-      self.logChange("Initial commit.")
-      self.commit()
 
   def setLogOutputVerbosity(self,level):
     self.__logOutputVerbosity = level
