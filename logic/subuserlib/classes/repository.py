@@ -81,7 +81,7 @@ class Repository(dict,UserOwnedObject,Describable):
     if self.isLocal() and os.path.exists(self.getRepoConfigPath()):
       with io.open(self.getRepoConfigPath(),"r",encoding="utf-8") as configFile:
         configFileContents = configFile.read()
-    elif ".subuser.json" in self.getGitRepository().lsFiles(self.getGitCommitHash(),"./"):
+    elif not self.isLocal() and ".subuser.json" in self.getGitRepository().lsFiles(self.getGitCommitHash(),"./"):
       configFileContents = self.getGitRepository().show(self.getGitCommitHash(),"./.subuser.json")
     else:
       return None
@@ -130,13 +130,16 @@ class Repository(dict,UserOwnedObject,Describable):
     if self.isLocal():
       return
     if not os.path.exists(self.getRepoPath()):
+      new = True
       subuserlib.subprocessExtras.call(["git","clone",self.getGitOriginURI(),self.getRepoPath()])
     else:
+      new = False
       self.getGitRepository().checkout("master")
       self.getGitRepository().run(["pull"])
-      if not self.__lastGitCommitHash == self.getGitCommitHash():
+    if self.updateGitCommitHash():
+      if not new:
         self.getUser().getRegistry().logChange("Updated repository "+self.getDisplayName())
-        self.loadProgamSources()
+      self.loadProgamSources()
 
   def loadProgamSources(self):
     """
@@ -153,11 +156,21 @@ class Repository(dict,UserOwnedObject,Describable):
     for imageName in imageNames:
       self[imageName] = ImageSource(self.getUser(),self,imageName)
 
-  def getGitCommitHash(self):
+  def updateGitCommitHash(self):
     """
-    Get the hash of the local repository's currently checked out git commit.
+    Update the internally stored git commit hash to the current git HEAD of the repository.
+    Returns True if the repository has been updated.
+    Otherwise false.
     """
     if self.isLocal():
       return None
     (returncode,output) = self.getGitRepository().runCollectOutput(["show-ref","-s","--head"])
-    return output.split("\n")[0]
+    if returncode != 0:
+      raise OSException("Running git in "+self.getGitRepository().getPath()+" with args "+str(["show-ref","-s","--head"])+" failed.")
+    newCommitHash = output.split("\n")[0]
+    updated = not newCommitHash == self.__lastGitCommitHash
+    self.__lastGitCommitHash = newCommitHash
+    return updated
+
+  def getGitCommitHash(self):
+    return self.__lastGitCommitHash
