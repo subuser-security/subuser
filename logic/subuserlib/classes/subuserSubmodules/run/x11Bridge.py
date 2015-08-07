@@ -35,7 +35,7 @@ import shutil
 #internal imports
 from subuserlib.classes.userOwnedObject import UserOwnedObject
 from subuserlib.classes.service import Service
-import subuserlib.verify as verify
+import subuserlib.verify
 import subuserlib.subuser
 
 class XpraX11Bridge(Service):
@@ -71,7 +71,7 @@ class XpraX11Bridge(Service):
       self.addClientSubuser()
       newSubuserNames = [self.getServerSubuserName(),self.getClientSubuserName()]
       if verify:
-        verify.verify(self.getUser(),subuserNames=newSubuserNames)
+        subuserlib.verify.verify(self.getUser(),subuserNames=newSubuserNames)
  
   def getServerSideX11Path(self):
     return os.path.join(self.getUser().getConfig()["volumes-dir"],"xpra",self.getSubuser().getName(),"tmp",".X11-unix")
