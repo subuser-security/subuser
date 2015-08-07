@@ -8,7 +8,8 @@ High level operations used for updating, rolling back, locking ect.
 #external imports
 import os
 #internal imports
-import subuserlib.verify,subuserlib.git,subuserlib.subprocessExtras
+import subuserlib.verify
+import subuserlib.subprocessExtras as subprocessExtras
 
 #####################################################################################
 def updateAll(user):
@@ -34,11 +35,11 @@ def updateSubusers(user,subuserNames):
   user.getRegistry().commit()
 
 def showLog(user):
-  subuserlib.git.runGit(["log"],cwd=user.getConfig()["registry-dir"])
+  user.getRegistry().getGitRepository().run(["log"])
 
 def checkoutNoCommit(user,commit):
-  subuserlib.subprocessExtras.subprocessCheckedCall(["rm","-rf","*"],cwd=user.getConfig()["registry-dir"])
-  subuserlib.git.runGit(["checkout",commit,"."],cwd=user.getConfig()["registry-dir"])
+  subprocessExtras.call(["rm","-rf","*"],cwd=user.getConfig()["registry-dir"])
+  user.getRegistry().getGitRepository().run(["checkout",commit,"."])
   user.reloadRegistry()
 
 def rollback(user,commit):
@@ -70,4 +71,3 @@ def unlockSubuser(user,subuserName):
   user.getRegistry().getSubusers()[subuserName].setLocked(False)
   subuserlib.verify.verify(user,subuserNames=[subuserName],checkForUpdatesExternally=True)
   user.getRegistry().commit()
- 

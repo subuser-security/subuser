@@ -12,11 +12,11 @@ import collections,hashlib
 import subuserlib.classes.userOwnedObject,subuserlib.classes.fileBackedObject,subuserlib.permissions
 
 class Permissions(collections.OrderedDict,subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.classes.fileBackedObject.FileBackedObject):
-  def __init__(self,user,readPath,writePath):
+  def __init__(self,user,initialPermissions,writePath):
     self.__writePath = writePath
     subuserlib.classes.userOwnedObject.UserOwnedObject.__init__(self,user)
     collections.OrderedDict.__init__(self)
-    self.update(subuserlib.permissions.getPermissions(readPath))
+    self.update(initialPermissions)
 
   def getWritePath(self):
     """

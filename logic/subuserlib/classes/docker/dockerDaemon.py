@@ -18,7 +18,6 @@ try:
 except ImportError:
  import io
 #internal imports
-import subuserlib.subprocessExtras
 from subuserlib.classes.userOwnedObject import UserOwnedObject
 from subuserlib.classes.uhttpConnection import UHTTPConnection
 import subuserlib.docker

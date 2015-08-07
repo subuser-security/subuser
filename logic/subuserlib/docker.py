@@ -10,7 +10,8 @@ This module helps us interact with the Docker executable directly.
 #external imports
 import sys,os,getpass,grp,subprocess
 #internal imports
-import subuserlib.subprocessExtras,subuserlib.executablePath
+import subuserlib.subprocessExtras as subprocessExtras
+import subuserlib.executablePath
 
 def getDockerExecutable():
   """ Return the name of the docker executable or None if docker is not installed. """
@@ -42,12 +43,8 @@ To learn how to become a member of the docker group please watch this video: <ht
 
 def runDocker(args,cwd=None):
   """ Run docker with the given command line arguments. Return Docker's exit code."""
-  return subuserlib.subprocessExtras.subprocessCallPlus([getAndVerifyDockerExecutable()]+args,cwd)
+  return subprocessExtras.call([getAndVerifyDockerExecutable()]+args,cwd)
 
 def runDockerBackground(args,cwd=None):
   """ Run docker with the given command line arguments. Return Docker's pid."""
-  return subuserlib.subprocessExtras.subprocessCallBackground([getAndVerifyDockerExecutable()]+args,cwd)
-
-def runDockerAndExitIfItFails(args,cwd=None):
-  """ Run docker with the given command line arguments.  If the command returns a non-zero exit code, exit with an error message. """
-  subuserlib.subprocessExtras.subprocessCheckedCall([getAndVerifyDockerExecutable()]+args,cwd=cwd)
+  return subprocessExtras.callBackground([getAndVerifyDockerExecutable()]+args,cwd)

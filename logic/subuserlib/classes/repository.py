@@ -9,9 +9,13 @@ A repository is a collection of ``ImageSource`` s which are published in a git r
 #external imports
 import os,shutil,io,json
 #internal imports
-import subuserlib.git,subuserlib.classes.userOwnedObject,subuserlib.classes.imageSource,subuserlib.subprocessExtras,subuserlib.classes.describable
+import subuserlib.subprocessExtras
+from subuserlib.classes.userOwnedObject import UserOwnedObject
+from subuserlib.classes.imageSource import ImageSource
+from subuserlib.classes.describable import Describable
+from subuserlib.classes.gitRepository import GitRepository
 
-class Repository(dict,subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.classes.describable.Describable):
+class Repository(dict,UserOwnedObject,Describable):
   def __init__(self,user,name,gitOriginURI=None,gitCommitHash=None,temporary=False,sourceDir=None):
     """
     Repositories can either be managed by git, or simply be normal directories on the user's computer. If ``sourceDir`` is not set to None, then ``gitOriginURI`` is ignored and the repository is assumed to be a simple directory.
@@ -21,9 +25,8 @@ class Repository(dict,subuserlib.classes.userOwnedObject.UserOwnedObject,subuser
     self.__lastGitCommitHash = gitCommitHash
     self.__temporary=temporary
     self.__sourceDir=sourceDir
-    subuserlib.classes.userOwnedObject.UserOwnedObject.__init__(self,user)
-    if not gitCommitHash is None:
-      self.checkoutGitCommit(gitCommitHash)
+    UserOwnedObject.__init__(self,user)
+    self.__gitRepository = GitRepository(self.getRepoPath())
     self.loadProgamSources()
 
   def getName(self):
@@ -31,6 +34,9 @@ class Repository(dict,subuserlib.classes.userOwnedObject.UserOwnedObject,subuser
 
   def getGitOriginURI(self):
     return self.__gitOriginURI
+
+  def getGitRepository(self):
+    return self.__gitRepository
 
   def getDisplayName(self):
     """
@@ -63,34 +69,46 @@ class Repository(dict,subuserlib.classes.userOwnedObject.UserOwnedObject,subuser
     if self.isLocal():
       return self.__sourceDir
     else:
-      return os.path.join(self.getUser().getConfig()["repositories-dir"],str(self.getName()))
+      return os.path.join(self.getUser().getConfig()["repositories-dir"],self.getName())
 
   def getRepoConfigPath(self):
     return os.path.join(self.getRepoPath(),".subuser.json")
 
   def getRepoConfig(self):
     """
-    Either returns the config as a dictionary or None.
+    Either returns the config as a dictionary or None if no configuration exists or can be parsed.
     """
-    if os.path.exists(self.getRepoConfigPath()):
+    if self.isLocal() and os.path.exists(self.getRepoConfigPath()):
       with io.open(self.getRepoConfigPath(),"r",encoding="utf-8") as configFile:
-        try:
-          return json.load(configFile)
-        except ValueError as ve:
-          self.getRegistry().log("Error parsing .subuser.json file for repository "+self.getName()+":\n"+str(ve))
-          return None
+        configFileContents = configFile.read()
+    elif ".subuser.json" in self.getGitRepository().lsFiles(self.getGitCommitHash(),"./"):
+      configFileContents = self.getGitRepository().show(self.getGitCommitHash(),"./.subuser.json")
     else:
+      return None
+    try:
+      return json.loads(configFileContents)
+    except ValueError as ve:
+      # TODO we should probably exit and tell the user loudly that something isn't right.
+      self.getRegistry().log("Error parsing .subuser.json file for repository "+self.getName()+":\n"+str(ve))
       return None
 
   def getSubuserRepositoryRoot(self):
-    """ Get the path of the repo's subuser root on disk on the host. """
+    """
+    Get the path of the repo's subuser root on disk on the host.
+    """
+    return os.path.join(self.getRepoPath(),self.getSubuserRepositoryRelativeRoot())
+
+  def getSubuserRepositoryRelativeRoot(self):
+    """
+    Get the path of the repo's subuser root on disk on the host.
+    """
     repoConfig = self.getRepoConfig()
     if repoConfig:
       if "subuser-repository-root" in repoConfig:
         if repoConfig["subuser-repository-root"].startswith("../"):
           raise ValueError("Paths in .subuser.json may not be relative to a higher directory.")
-        return os.path.join(self.getRepoPath(),repoConfig["subuser-repository-root"])
-    return self.getRepoPath()
+        return repoConfig["subuser-repository-root"]
+    return "./"
 
   def isTemporary(self):
     return self.__temporary
@@ -102,7 +120,7 @@ class Repository(dict,subuserlib.classes.userOwnedObject.UserOwnedObject,subuser
 
   def removeGitRepo(self):
     """
-     Remove the downloaded git repo associated with this repository from disk.
+    Remove the downloaded git repo associated with this repository from disk.
     """
     if not self.isLocal():
       shutil.rmtree(self.getRepoPath())
@@ -112,10 +130,10 @@ class Repository(dict,subuserlib.classes.userOwnedObject.UserOwnedObject,subuser
     if self.isLocal():
       return
     if not os.path.exists(self.getRepoPath()):
-      subuserlib.git.runGit(["clone",self.getGitOriginURI(),self.getRepoPath()])
+      subuserlib.subprocessExtras.call(["git","clone",self.getGitOriginURI(),self.getRepoPath()])
     else:
-      subuserlib.git.runGit(["checkout","master"],cwd=self.getRepoPath())
-      subuserlib.git.runGit(["pull"],cwd=self.getRepoPath())
+      self.getGitRepository().checkout("master")
+      self.getGitRepository().run(["pull"])
       if not self.__lastGitCommitHash == self.getGitCommitHash():
         self.getUser().getRegistry().logChange("Updated repository "+self.getDisplayName())
         self.loadProgamSources()
@@ -124,20 +142,16 @@ class Repository(dict,subuserlib.classes.userOwnedObject.UserOwnedObject,subuser
     """
     Load ProgamSources from disk into memory.
     """
-    imageNames = filter(lambda f: os.path.isdir(os.path.join(self.getSubuserRepositoryRoot(),f)) and not f == ".git",os.listdir(self.getSubuserRepositoryRoot()))
-    for imageName in imageNames:
-      self[imageName] = (subuserlib.classes.imageSource.ImageSource(self.getUser(),self,imageName))
-
-  def checkoutGitCommit(self,gitCommitHash):
-    """
-    Checkout a given git commit if it is not already checked out.
-    """
     if self.isLocal():
-      return
-    if not os.path.exists(self.getRepoPath()):
-      self.updateSources()
-    if not gitCommitHash == self.getGitCommitHash():
-      subuserlib.git.runGit(["checkout",gitCommitHash],cwd=self.getRepoPath())
+      imageNames = filter(lambda f: os.path.isdir(os.path.join(self.getSubuserRepositoryRoot(),f)) and not f == ".git",os.listdir(self.getSubuserRepositoryRoot()))
+    else:
+      if not os.path.exists(self.getRepoPath()):
+        self.updateSources()
+      imageNames = self.getGitRepository().lsFolders(self.getGitCommitHash(),self.getSubuserRepositoryRelativeRoot())
+      if self.getSubuserRepositoryRelativeRoot() != "./":
+        imageNames = [os.path.basename(path) for path in imageNames]
+    for imageName in imageNames:
+      self[imageName] = ImageSource(self.getUser(),self,imageName)
 
   def getGitCommitHash(self):
     """
@@ -145,5 +159,5 @@ class Repository(dict,subuserlib.classes.userOwnedObject.UserOwnedObject,subuser
     """
     if self.isLocal():
       return None
-    return subuserlib.git.runGitCollectOutput(["show-ref","-s","--head"],cwd=self.getRepoPath()).split("\n")[0]
-
+    (returncode,output) = self.getGitRepository().runCollectOutput(["show-ref","-s","--head"])
+    return output.split("\n")[0]

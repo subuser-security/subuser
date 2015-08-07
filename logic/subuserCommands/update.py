@@ -59,7 +59,7 @@ def update(realArgs):
   **Setup:**
 
   >>> import os
-  >>> import update,subuser,subuserlib.git,repository
+  >>> import update,subuser,subuserlib.classes.gitRepository,repository
 
   Check initial test environment:
 
@@ -155,7 +155,9 @@ def update(realArgs):
 
   And commit the changes to git.
 
-  >>> subuserlib.git.runGit(["commit","-a","-m","changed dependency for intermediate from dependency1 to dependency2"],cwd=user.getRegistry().getRepositories()[u'1'].getRepoPath())
+  >>> repo1 = subuserlib.classes.gitRepository.GitRepository(user.getRegistry().getRepositories()[u'1'].getRepoPath())
+  >>> repo1.run(["commit","-a","-m","changed dependency for intermediate from dependency1 to dependency2"])
+  0
 
   Running an update after a change installs new images and registers them with their subusers.  But it does not delete the old ones.
 
@@ -222,7 +224,8 @@ def update(realArgs):
 
   And commit the changes to git.
 
-  >>> subuserlib.git.runGit(["commit","-a","-m","changed dependency for intermediate from dependency2 to dependency3"],cwd=user.getRegistry().getRepositories()[u'1'].getRepoPath())
+  >>> repo1.run(["commit","-a","-m","changed dependency for intermediate from dependency2 to dependency3"])
+  0
 
   Running an update after a change does nothing because the affected subuser is locked.
 

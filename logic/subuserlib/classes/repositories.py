@@ -22,7 +22,6 @@ class Repositories(collections.Mapping,subuserlib.classes.userOwnedObject.UserOw
     self.userRepositoryListPath = os.path.join(self.getUser().getConfig()["registry-dir"],"repositories.json")
     self.reloadRepositoryLists()
 
-
   def _getAllRepositories(self):
     allRepos = {}
     allRepos.update(self.systemRepositories)
@@ -134,5 +133,3 @@ class Repositories(collections.Mapping,subuserlib.classes.userOwnedObject.UserOw
       if repo.getName() == str(idAsInt) or os.path.exists(os.path.join(self.getUser().getConfig()["repositories-dir"],str(idAsInt))):
         idAsInt = idAsInt + 1
     return str(idAsInt)
-
-

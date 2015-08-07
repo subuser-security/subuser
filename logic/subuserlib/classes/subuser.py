@@ -11,6 +11,7 @@ import os
 import stat
 import json
 #internal imports
+import subuserlib.permissions
 from subuserlib.classes.userOwnedObject import UserOwnedObject
 from subuserlib.classes.permissions import Permissions
 from subuserlib.classes.describable import Describable
@@ -50,11 +51,11 @@ class Subuser(UserOwnedObject, Describable):
     if self.__permissions is None:
       permissionsDotJsonWritePath = os.path.join(self.getUser().getConfig()["user-set-permissions-dir"],self.getName(),"permissions.json")
       permissionsDotJsonReadPath = permissionsDotJsonWritePath
-      if not os.path.exists(permissionsDotJsonReadPath):
-        permissionsDotJsonReadPath = os.path.join(self.getImageSource().getSourceDir(),"permissions.json")
-      if not os.path.exists(permissionsDotJsonReadPath):
-        permissionsDotJsonReadPath = None
-      self.__permissions = Permissions(self.getUser(),readPath=permissionsDotJsonReadPath,writePath=permissionsDotJsonWritePath)
+      if os.path.exists(permissionsDotJsonReadPath):
+        initialPermissions = subuserlib.permissions.getPermissions(permissionsDotJsonReadPath)
+      else:
+        initialPermissions = self.getImageSource().getPermissions()
+      self.__permissions = Permissions(self.getUser(),initialPermissions,writePath=permissionsDotJsonWritePath)
     return self.__permissions
   
   def getImageId(self):

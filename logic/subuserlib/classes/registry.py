@@ -16,17 +16,22 @@ import subuserlib.portalocker.utils
 from subuserlib.classes import repositories
 from subuserlib.classes import subusers
 from subuserlib.classes import userOwnedObject
-from subuserlib import git
+from subuserlib.classes.gitRepository import GitRepository
 
 class Registry(userOwnedObject.UserOwnedObject):
   def __init__(self,user):
     self.__subusers = None
-    self.__repositories = None
-    self.__changed = False
     self.__changeLog = ""
+    self.__changed = False
     self.__logOutputVerbosity = 2
+    self.__repositories = None
+    self.__gitRepository = None
     userOwnedObject.UserOwnedObject.__init__(self,user)
+    self.__gitRepository = GitRepository(self.getUser().getConfig()["registry-dir"])
     self._ensureGitRepoInitialized()
+
+  def getGitRepository(self):
+    return self.__gitRepository
 
   def getSubusers(self):
     if not self.__subusers:
@@ -47,7 +52,7 @@ class Registry(userOwnedObject.UserOwnedObject):
   def _ensureGitRepoInitialized(self):
     if not os.path.exists(self.getUser().getConfig()["registry-dir"]):
       os.makedirs(self.getUser().getConfig()["registry-dir"])
-      git.runGit(["init"],cwd=self.getUser().getConfig()["registry-dir"])
+      self.getGitRepository().run(["init"])
       self.logChange("Initial commit.")
       self.commit()
 
@@ -79,14 +84,16 @@ class Registry(userOwnedObject.UserOwnedObject):
     self.__changeLog = message + "\n" + self.__changeLog
 
   def commit(self):
-    """ git commit the changes to the registry files, installed-miages.json and subusers.json. """
+    """
+    Git commit the changes to the registry files, installed-miages.json and subusers.json.
+    """
     if self.__changed:
       self.getRepositories().save()
       self.getSubusers().save()
-      git.runGit(["add","subusers.json","repository-states.json"],cwd=self.getUser().getConfig()["registry-dir"])
+      self.getGitRepository().run(["add","subusers.json","repository-states.json"])
       if os.path.exists(os.path.join(self.getUser().getConfig()["registry-dir"],"repositories.json")):
-        git.runGit(["add","repositories.json"],cwd=self.getUser().getConfig()["registry-dir"])
-      git.commit(self.__changeLog,cwd=self.getUser().getConfig()["registry-dir"])
+        self.getGitRepository().run(["add","repositories.json"])
+      self.getGitRepository().commit(self.__changeLog)
       self.__changed = False
       self.__changeLog = ""
 
@@ -100,4 +107,3 @@ class Registry(userOwnedObject.UserOwnedObject):
       if exception.errno != errno.EEXIST:
         raise
     return subuserlib.portalocker.utils.Lock(os.path.join(self.getUser().getConfig()["lock-dir"],"registry.lock"),timeout=0,check_interval=0)
-

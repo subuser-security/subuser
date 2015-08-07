@@ -9,7 +9,7 @@ Images in subuser are built from ImageSource objects.
 #external imports
 import os,io
 #internal imports
-import subuserlib.classes.userOwnedObject,subuserlib.classes.describable,subuserlib.subprocessExtras,subuserlib.resolve, subuserlib.hashDirectory
+import subuserlib.classes.userOwnedObject,subuserlib.classes.describable,subuserlib.resolve, subuserlib.hashDirectory
 
 class ImageSource(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.classes.describable.Describable):
 
@@ -90,7 +90,12 @@ class ImageSource(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.
   def getPermissions(self):
     if not self.__permissions:
       permissionsPath=os.path.join(self.getSourceDir(),"permissions.json")
-      self.__permissions = subuserlib.classes.permissions.Permissions(self.getUser(),readPath=permissionsPath,writePath=permissionsPath)
+      if not self.getRepository().isLocal():
+        permissionsString = self.getRepository().getGitRepository().show(self.getRepository().getGitCommitHash(),os.path.join(self.getRepository().getSubuserRepositoryRelativeRoot(),self.getName(),"permissions.json"))
+        initialPermissions = subuserlib.permissions.getPermissions(permissionsString=permissionsString)
+      else:
+        initialPermissions = subuserlib.permissions.getPermissions(permissionsFilePath=permissionsPath)
+      self.__permissions = subuserlib.classes.permissions.Permissions(self.getUser(),initialPermissions,writePath=permissionsPath)
     return self.__permissions
 
   def describe(self):
