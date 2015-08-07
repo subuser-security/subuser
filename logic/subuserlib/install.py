@@ -17,46 +17,6 @@ def cleanUpAndExitOnError(user,error):
   user.getRegistry().log("Cleaning up.")
   sys.exit(1)
 
-def installFromBaseImage(imageSource):
-  """
-  Build a docker base image using a script and return the image's Id.
-  """
-  buildImageScriptPath = os.path.join(imageSource.getSourceDir(),"docker-image", "BuildImage.sh")
-  print("""\nATTENTION!
-
-  Installing <"""+imageSource.getName()+"""> requires that the following shell script be run on your computer: <"""+buildImageScriptPath+"""> If you do not trust this shell script do not run it as it may be faulty or malicious!
-
-  - Do you want to view the full contents of this shell script [v]?
-  - Do you want to continue? (Type "run" to run the shell script)
-  - To quit, press [q].
-
-  [v/run/Q]: """)
-  try:
-    userInput = sys.stdin.readline().strip()
-  except KeyboardInterrupt:
-    cleanUpAndExitOnError(imageSource.getUser(),"\nOperation aborted.  Exiting.")
-
-  if userInput == "v":
-    print('\n===================== SCRIPT CODE =====================\n')
-    with io.open(buildImageScriptPath, 'r',encoding="utf-8") as file_f:
-      print(file_f.read())
-    print('\n===================== END SCRIPT CODE =====================\n')
-    return installFromBaseImage(imageSource)
-
-  if userInput == "run":
-    #Build the image using the script
-    st = os.stat(buildImageScriptPath)
-    os.chmod(buildImageScriptPath, stat.S_IMODE(st.st_mode) | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
-    imageTag = "subuser-"+str(uuid.uuid4())
-    subuserlib.subprocessExtras.subprocessCheckedCall([buildImageScriptPath,imageTag])
-    # Return the Id of the newly created image
-    imageProperties = imageSource.getUser().getDockerDaemon().getImageProperties(imageTag)
-    if imageProperties == None:
-      cleanUpAndExitOnError(imageSource.getUser(),"Image failed to build.  The script exited successfully, but did not result in any Docker image being imported.")
-    else:
-      return imageProperties["Id"]
-  cleanUpAndExitOnError(imageSource.getUser(),"Will not run install script.  Nothing to do.  Exiting.")
-
 def installFromSubuserImagefile(imageSource, useCache=False,parent=None):
   """
   Returns the Id of the newly installed image.
@@ -76,8 +36,6 @@ def installImage(imageSource, useCache=False,parent=None):
   buildType = imageSource.getBuildType()
   if buildType == "SubuserImagefile":
     imageId = installFromSubuserImagefile(imageSource,useCache=useCache,parent=parent)
-  elif buildType == "BuildImage.sh":
-    imageId = installFromBaseImage(imageSource)
   else:
     cleanUpAndExitOnError(imageSource.getUser(),"No buildfile found: There needs to be a 'SubuserImagefile' or a 'BuildImage.sh' in the docker-image directory.")
 
