@@ -71,7 +71,7 @@ def lookupRepositoryByURI(user,uri):
   If a repository with this URI exists, return that repository.  Otherwise, return None.
   """
   for _,repository in user.getRegistry().getRepositories().items():
-    if uri == repository.getGitOriginURI():
+    if uri == repository.getURI():
       return repository
   return None
 

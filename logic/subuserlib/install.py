@@ -37,7 +37,7 @@ def installImage(imageSource, useCache=False,parent=None):
   if buildType == "SubuserImagefile":
     imageId = installFromSubuserImagefile(imageSource,useCache=useCache,parent=parent)
   else:
-    cleanUpAndExitOnError(imageSource.getUser(),"No buildfile found: There needs to be a 'SubuserImagefile' or a 'BuildImage.sh' in the docker-image directory.")
+    cleanUpAndExitOnError(imageSource.getUser(),"No buildfile found: There needs to be a 'SubuserImagefile' in the docker-image directory.")
 
   subuserSetupDockerFile = ""
   subuserSetupDockerFile += "FROM "+imageId+"\n"
@@ -52,23 +52,14 @@ def getImageSourceLineage(imageSource):
   """
   Return the lineage of the ProgrmSource, going from its base dependency up to itself.
   """
-  try:
-    dependency = imageSource.getDependency()
-  except subuserlib.classes.imageSource.SyntaxError as syntaxError:
-    cleanUpAndExitOnError(imageSource.getUser(),"Error while building image: "+ str(syntaxError))
-  if dependency:
-    return getImageSourceLineage(dependency) + [imageSource]
-  else:
-    return [imageSource]
-
-def installLineage(imageSourceLineage,parent=None):
-  """
-  Install the lineage of image sources.
-  Return the image id of the final installed image.
-  """
-  for imageSource in imageSourceLineage:
-    parent = installImage(imageSource,parent=parent)
-  return parent
+  sourceLineage = []
+  while imageSource:
+    sourceLineage.append(imageSource)
+    try:
+      imageSource = imageSource.getDependency()
+    except subuserlib.classes.imageSource.SyntaxError as syntaxError:
+      cleanUpAndExitOnError(imageSource.getUser(),"Error while building image: "+ str(syntaxError))
+  return reversed(sourceLineage)
 
 def doImagesMatch(installedImage,imageSource):
   return installedImage.getImageSourceName() == imageSource.getName() and installedImage.getSourceRepoId() == imageSource.getRepository().getName()
@@ -77,7 +68,7 @@ def doImageSourceHashesMatch(installedImage,imageSource):
   return installedImage.getImageSourceHash() == imageSource.getHash()
 
 def compareSourceLineageAndInstalledImageLineage(user,sourceLineage,installedImageLineage):
-  if not len(sourceLineage) == len(installedImageLineage):
+  if not len(list(sourceLineage)) == len(installedImageLineage):
     user.getRegistry().log("Number of dependencies changed from "+str(len(installedImageLineage))+" to "+str(len(sourceLineage)))
     print("Image sources:")
     for imageSource in sourceLineage:
@@ -124,19 +115,23 @@ def ensureSubuserImageIsInstalledAndUpToDate(subuser, useCache=False, checkForUp
   If the image is already installed, but is out of date, or it's dependencies are out of date, build it again.
   Otherwise, do nothing.
   """
-  # get dependency list as a list of ImageSources
   subuser.getUser().getRegistry().log("Checking if subuser "+subuser.getName()+" is up to date.")
+  # get dependency list as a list of ImageSources
   sourceLineage = getImageSourceLineage(subuser.getImageSource())
-  parentId=None
-  while len(sourceLineage) > 0:
-    imageSource = sourceLineage.pop(0)
+  # We go through the sourceLineage as if it where a todo list of dependencies to fulfill
+  aDependencyChangedReinstallEverythingFromNowOn = False
+  previousImageId = None
+  for imageSource in sourceLineage:
     latestInstalledImage = imageSource.getLatestInstalledImage()
-    if not latestInstalledImage or not isInstalledImageUpToDate(latestInstalledImage,checkForUpdatesExternally=checkForUpdatesExternally):
-      subuser.setImageId(installLineage([imageSource]+sourceLineage,parent=parentId))
-      subuser.getUser().getRegistry().logChange("Installed new image <"+subuser.getImageId()+"> for subuser "+subuser.getName())
-      return
-    parentId=latestInstalledImage.getImageId()
-  if not subuser.getImageId() == parentId:
-    subuser.setImageId(parentId)
+    if not aDependencyChangedReinstallEverythingFromNowOn:
+      if latestInstalledImage and isInstalledImageUpToDate(latestInstalledImage,checkForUpdatesExternally=checkForUpdatesExternally):
+        previousImageId = latestInstalledImage.getImageId()
+        continue
+      else:
+        aDependencyChangedReinstallEverythingFromNowOn = True
+    assert aDependencyChangedReinstallEverythingFromNowOn
+    previousImageId = installImage(imageSource,parent=previousImageId)
+  if not subuser.getImageId() == previousImageId:
+    subuser.setImageId(previousImageId)
     subuser.getUser().getRegistry().logChange("Installed new image <"+subuser.getImageId()+"> for subuser "+subuser.getName())
 

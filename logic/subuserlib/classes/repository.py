@@ -32,6 +32,15 @@ class Repository(dict,UserOwnedObject,Describable):
   def getName(self):
     return self.__name
 
+  def getURI(self):
+    if self.isLocal():
+      return self.getSourceDir()
+    else:
+      return self.getGitOriginURI()
+
+  def getSourceDir(self):
+    return self.__sourceDir
+
   def getGitOriginURI(self):
     return self.__gitOriginURI
 
