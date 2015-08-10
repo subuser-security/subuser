@@ -35,8 +35,11 @@ def removeOldImages(realArgs):
   Check our assumptions about what subusers are installed in the test environment.  We load a new user object each time we checked, because we are interested about whether the changes we want are present on disk.
 
   >>> user = subuserlib.classes.user.User()
-  >>> set(user.getRegistry().getSubusers().keys()) == set(["foo"])
-  True
+  >>> subuserList = list(user.getRegistry().getSubusers().keys())
+  >>> subuserList.sort()
+  >>> for sb in subuserList:
+  ...   print(sb)
+  foo
 
   Add a ``bar`` subuser, which we will then remove.  This will leave us with a leftover image.
 
@@ -63,13 +66,21 @@ def removeOldImages(realArgs):
   Check to see if subuser ``bar`` was successfully added.
 
   >>> user = subuserlib.classes.user.User()
-  >>> set(user.getRegistry().getSubusers().keys()) == set([u'foo', 'bar'])
-  True
+  >>> subuserList = list(user.getRegistry().getSubusers().keys())
+  >>> subuserList.sort()
+  >>> for sb in subuserList:
+  ...   print(sb)
+  bar
+  foo
 
   Check to see if the image for ``bar`` was also installed.
 
-  >>> set([i.getImageSourceName() for i in user.getInstalledImages().values()]) == set([u'foo', u'bar'])
-  True
+  >>> installedImages = list([i.getImageSourceName() for i in user.getInstalledImages().values()])
+  >>> installedImages.sort()
+  >>> for installedImage in installedImages:
+  ...   print(installedImage)
+  bar
+  foo
 
   Remove the ``bar`` subuser.
 
@@ -84,8 +95,12 @@ def removeOldImages(realArgs):
   See that the image for ``bar`` was indeed left behind.
 
   >>> user = subuserlib.classes.user.User()
-  >>> set([i.getImageSourceName() for i in user.getInstalledImages().values()]) == set([u'foo', u'bar'])
-  True
+  >>> installedImages = list([i.getImageSourceName() for i in user.getInstalledImages().values()])
+  >>> installedImages.sort()
+  >>> for installedImage in installedImages:
+  ...   print(installedImage)
+  bar
+  foo
 
   Use dry-run to see which images are to be deleted.
 
@@ -94,7 +109,90 @@ def removeOldImages(realArgs):
   DOCKER-ID : SUBUSER-ID
   Removing unneeded image 6 : bar@file:///home/travis/remote-test-repo
 
-  Now we use ``remove-old-images`` to clean up our installed images.
+  Check to see that dry-run didn't actually remove the un-needed image.
+
+  >>> user = subuserlib.classes.user.User()
+  >>> installedImages = list([i.getImageSourceName() for i in user.getInstalledImages().values()])
+  >>> installedImages.sort()
+  >>> for installedImage in installedImages:
+  ...   print(installedImage)
+  bar
+  foo
+
+  Add another subuser blah
+
+  >>> subuser.subuser(["add","blah","foo@/home/travis/local-test-repo"])
+  Adding subuser blah foo@/home/travis/local-test-repo
+  Adding new temporary repository /home/travis/local-test-repo
+  Verifying subuser configuration.
+  Verifying registry consistency...
+  Unregistering any non-existant installed images.
+  Checking if images need to be updated or installed...
+  Checking if subuser blah is up to date.
+  Installing foo ...
+  Building...
+  Building...
+  Building...
+  Successfully built 7
+  Building...
+  Building...
+  Building...
+  Successfully built 8
+  Installed new image <8> for subuser blah
+  Running garbage collector on temporary repositories...
+
+  Check to see if subuser ``blah`` was successfully added.
+
+  >>> user = subuserlib.classes.user.User()
+  >>> subuserList = list(user.getRegistry().getSubusers().keys())
+  >>> subuserList.sort()
+  >>> for sb in subuserList:
+  ...   print(sb)
+  blah
+  foo
+
+  Check to see if the image for ``blah`` was also installed.
+
+  >>> installedImageList = list([i.getImageSourceName() for i in user.getInstalledImages().values()])
+  >>> installedImageList.sort()
+  >>> for installedImage in installedImageList:
+  ...   print(installedImage)
+  bar
+  foo
+  foo
+
+  Remove the ``blah`` subuser.
+
+  >>> subuser.subuser(["remove","blah"])
+  Removing subuser blah
+   If you wish to remove the subusers image, issue the command $ subuser remove-old-images
+  Verifying subuser configuration.
+  Verifying registry consistency...
+  Unregistering any non-existant installed images.
+  Running garbage collector on temporary repositories...
+
+  See that the image for ``blah`` was indeed left behind.
+
+  >>> user = subuserlib.classes.user.User()
+  >>> installedImageList = list([i.getImageSourceName() for i in user.getInstalledImages().values()])
+  >>> installedImageList.sort()
+  >>> for installedImage in installedImageList:
+  ...   print(installedImage)
+  bar
+  foo
+  foo
+
+  Now we use ``remove-old-images`` to remove images which belong to the local repository.
+
+  >>> remove_old_images.removeOldImages(["--repo=/home/travis/local-test-repo"])
+  Removing unneeded image 8 : foo@/home/travis/local-test-repo
+  Verifying subuser configuration.
+  Verifying registry consistency...
+  Unregistering any non-existant installed images.
+  Running garbage collector on temporary repositories...
+  Removing uneeded temporary repository: /home/travis/local-test-repo
+
+  Now we use ``remove-old-images`` to clean up the rest of our un-needed installed images.
 
   >>> remove_old_images.removeOldImages([])
   Removing unneeded image 6 : bar@file:///home/travis/remote-test-repo
@@ -107,8 +205,11 @@ def removeOldImages(realArgs):
   And now the uneccesary ``bar`` image is gone.
 
   >>> user = subuserlib.classes.user.User()
-  >>> set([i.getImageSourceName() for i in user.getInstalledImages().values()]) == set([u'foo'])
-  True
+  >>> installedImages = list([i.getImageSourceName() for i in user.getInstalledImages().values()])
+  >>> installedImages.sort()
+  >>> for installedImage in installedImages:
+  ...   print(installedImage)
+  foo
  
   """
   options,args = parseCliArgs(realArgs)
@@ -121,7 +222,15 @@ def removeOldImages(realArgs):
         print("The following images are uneeded and would be deleted.")
         print("DOCKER-ID : SUBUSER-ID")
 
-      subuserlib.removeOldImages.removeOldImages(user=user,dryrun=options.dryrun,sourceRepoId=options.repo)
+      repoId = options.repo
+      if not repoId is None:
+        if not repoId in user.getRegistry().getRepositories():
+          repo = subuserlib.resolve.lookupRepositoryByURI(user,options.repo)
+          if repo is None:
+            sys.exit("The repository <"+repoId+"> does not exist.")
+          else:
+            repoId = repo.getName()
+      subuserlib.removeOldImages.removeOldImages(user=user,dryrun=options.dryrun,sourceRepoId=repoId)
   except subuserlib.portalocker.portalocker.LockException:
     sys.exit("Another subuser process is currently running and has a lock on the registry. Please try again later.")
 
