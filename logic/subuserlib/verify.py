@@ -62,7 +62,8 @@ def ensureServiceSubusersAreSetup(user,subuserNames):
   for subuserName in subuserNames:
     subuser = user.getRegistry().getSubusers()[subuserName]
     if not subuser.getPermissions()["gui"] is None:
-      newServiceSubusers += subuser.getX11Bridge().setup(verify=False)
+      if not subuser.getX11Bridge().isSetup():
+        newServiceSubusers += subuser.getX11Bridge().setup(verify=False)
   return newServiceSubusers
 
 def ensureImagesAreInstalledAndUpToDate(user,subuserNames,checkForUpdatesExternally=False):
