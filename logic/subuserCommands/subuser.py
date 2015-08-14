@@ -8,6 +8,7 @@ import sys
 import optparse
 #internal imports
 import subuserlib.classes.user
+from subuserlib.classes.permissionsAccepters.acceptPermissionsAtCLI import AcceptPermissionsAtCLI
 import subuserlib.commandLineArguments
 import subuserlib.subuser
 
@@ -41,6 +42,7 @@ Remove the launcher (if one exists) for the subuser named foo.
 """
   parser=optparse.OptionParser(usage=usage,description=description,formatter=subuserlib.commandLineArguments.HelpFormatterThatDoesntReformatDescription())
   parser.add_option("--prefix",dest="prefix",default=None,help="When removing subusers, remove all subusers who's names start with prefix.")
+  parser.add_option("--accept",dest="accept",action="store_true",default=False,help="Accept permissions without asking.")
   return parser.parse_args(args=sysargs)
 
 def subuser(sysargs):
@@ -63,7 +65,7 @@ def subuser(sysargs):
 
   We add another subuser named ``bar``.
 
-  >>> subuser.subuser(["add","bar","bar@file:///home/travis/remote-test-repo"])
+  >>> subuser.subuser(["add","--accept","bar","bar@file:///home/travis/remote-test-repo"])
   Adding subuser bar bar@file:///home/travis/remote-test-repo
   Adding new temporary repository file:///home/travis/remote-test-repo
   Verifying subuser configuration.
@@ -107,7 +109,7 @@ def subuser(sysargs):
 
   We add another subuser named ``bar`` using a local folder rather than from a git repo.
 
-  >>> subuser.subuser(["add","bar","bar@/home/travis/remote-test-repo"])
+  >>> subuser.subuser(["add","--accept","bar","bar@/home/travis/remote-test-repo"])
   Adding subuser bar bar@/home/travis/remote-test-repo
   Adding new temporary repository /home/travis/remote-test-repo
   Verifying subuser configuration.
@@ -154,13 +156,20 @@ def subuser(sysargs):
   This works for syntax errors.
 
   >>> try:
-  ...   subuser.subuser(["add","broken-syntax","broken-syntax@file:///home/travis/remote-test-repo"])
+  ...   subuser.subuser(["add","--accept","broken-syntax","broken-syntax@file:///home/travis/remote-test-repo"])
   ... except SystemExit:
   ...   pass
   Adding subuser broken-syntax broken-syntax@file:///home/travis/remote-test-repo
   Verifying subuser configuration.
   Verifying registry consistency...
   Unregistering any non-existant installed images.
+  broken-syntax would like to have the following permissions:
+   Description: 
+   Maintainer: 
+   Is a library.
+  A - Accept and apply changes
+  E - Apply changes and edit result
+  A
   Checking if images need to be updated or installed...
   Checking if subuser broken-syntax is up to date.
   Error while building image: Error in broken-syntax's SubuserImagefile on line 0
@@ -168,13 +177,20 @@ def subuser(sysargs):
   Cleaning up.
 
   >>> try:
-  ...   subuser.subuser(["add","broken-non-existant-dependency","broken-non-existant-dependency@file:///home/travis/remote-test-repo"])
+  ...   subuser.subuser(["add","--accept","broken-non-existant-dependency","broken-non-existant-dependency@file:///home/travis/remote-test-repo"])
   ... except SystemExit:
   ...   pass
   Adding subuser broken-non-existant-dependency broken-non-existant-dependency@file:///home/travis/remote-test-repo
   Verifying subuser configuration.
   Verifying registry consistency...
   Unregistering any non-existant installed images.
+  broken-non-existant-dependency would like to have the following permissions:
+   Description: 
+   Maintainer: 
+   Is a library.
+  A - Accept and apply changes
+  E - Apply changes and edit result
+  A
   Checking if images need to be updated or installed...
   Checking if subuser broken-non-existant-dependency is up to date.
   Error while building image: Error in broken-non-existant-dependency's SubuserImagefile on line 0
@@ -194,7 +210,8 @@ def subuser(sysargs):
     imageSourceId = args[2]
     try:
       with user.getRegistry().getLock():
-        subuserlib.subuser.add(user,name,imageSourceId)
+        permissionsAccepter = AcceptPermissionsAtCLI(user,alwaysAccept = options.accept)
+        subuserlib.subuser.add(user,name,imageSourceId,permissionsAccepter=permissionsAccepter)
     except subuserlib.portalocker.portalocker.LockException:
       sys.exit("Another subuser process is currently running and has a lock on the registry. Please try again later.")
 

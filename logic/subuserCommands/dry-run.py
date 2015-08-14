@@ -50,12 +50,19 @@ def dryRun(args):
 
   Running subusers installed through temporary repositories works as well.  Here, we add a subuser named bar, run it, and then remove it again.
  
-  >>> subuser.subuser(["add","bar","bar@file:///home/travis/remote-test-repo"])
+  >>> subuser.subuser(["add","bar","--accept","bar@file:///home/travis/remote-test-repo"])
   Adding subuser bar bar@file:///home/travis/remote-test-repo
   Adding new temporary repository file:///home/travis/remote-test-repo
   Verifying subuser configuration.
   Verifying registry consistency...
   Unregistering any non-existant installed images.
+  bar would like to have the following permissions:
+   Description: 
+   Maintainer: 
+   Executable: /usr/bin/bar
+  A - Accept and apply changes
+  E - Apply changes and edit result
+  A
   Checking if images need to be updated or installed...
   Checking if subuser bar is up to date.
   Installing bar ...

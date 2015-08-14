@@ -1,1 +1,8 @@
-{}
+{
+ "description":"a dependent",
+ "gui":{},
+ "sound-card":true,
+ "user-dirs":["Downloads"],
+ "system-dirs":{"/var/log":"/var/log"},
+ "privileged":true
+}

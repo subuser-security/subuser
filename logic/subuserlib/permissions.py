@@ -52,6 +52,47 @@ guiPermissionDefaults = {
 
 basicCommonPermissions = ["stateful-home","inherit-locale","inherit-timezone"]
 
+permissionsPrelude = ["description","maintainer","executable"]
+conservativePermissions = ["stateful-home","inherit-locale","inherit-timezone"]
+moderatePermissions = ["gui","user-dirs","sound-card","webcam","access-working-directory","allow-network-access"]
+liberalPermissions = ["x11","system-dirs","graphics-card","serial-devices","system-dbus","as-root"]
+anarchisticPermissions = ["privileged"]
+
+permissionDescriptions = {
+  # Prelude
+  "description":lambda description : ["Description: "+description]
+  ,"maintainer":lambda maintainer : ["Maintainer: "+maintainer]
+  ,"executable":lambda executable : ["Executable: "+executable] if executable else ["Is a library."]
+  # Conservative
+  ,"stateful-home": lambda p : ["To have its own home directory where it can save files and settings."] if p else []
+  ,"inherit-locale": lambda p : ["To find out language you speak and what region you live in."] if p else []
+  ,"inherit-timezone": lambda p : ["To find out your current timezone."] if p else []
+  # Moderate
+  ,"gui": lambda guiOptions : (["To be able to display windows."] + sum([guiPermissionDescriptions[permission](value) for permission,value in guiOptions.items()],[])) if guiOptions else []
+  ,"user-dirs": lambda userDirs : ["To access to the following user directories: '~/"+"' '~/".join(userDirs)+"'"] if userDirs else []
+  ,"inherit-envvars": lambda envVars : ["To access to the following environment variables: "+" ".join(envVars)] if envVars else []
+  ,"sound-card": lambda p : ["To access to your soundcard, can play sounds/record sound."] if p else []
+  ,"webcam": lambda p : ["To access your computer's webcam/can see you."] if p else []
+  ,"access-working-directory": lambda p: ["To access the directory from which it was launched."] if p else []
+  ,"allow-network-access": lambda p : ["To access the network/internet."] if p else []
+  # Liberal
+  ,"x11": lambda p : ["To display X11 windows and interact with your X11 server directly(log keypresses, read over your shoulder, steal your passwords, controll your computer ect.)"] if p else []
+  ,"system-dirs": lambda systemDirs : ["To read and write to the host's `"+source+"` directory, mounted in the container as:`"+dest+"`" for source,dest in systemDirs.items()]
+  ,"graphics-card": lambda p : ["To access your graphics-card directly for OpenGL tasks."] if p else []
+  ,"serial-devices": lambda p : ["To access serial devices such as programable micro-controlers and modems."] if p else []
+  ,"system-dbus": lambda p: ["To talk to the system dbus daemon."] if p else []
+  ,"sudo": lambda p: ["To be allowed to use the sudo command to run subproccesses as root in the container."] if p else []
+  ,"as-root": lambda p: ["To be allowed to run as root within the container."] if p else []
+  # Anarchistic
+  ,"privileged": lambda p: ["To have full access to your system.  To even do things as root outside of its container."] if p else []
+  }
+
+guiPermissionDescriptions = {
+  "clipboard": lambda p : ["Is able to access the host's clipboard."] if p else []
+  ,"system-tray": lambda p : ["Is able to create system tray icons."] if p else []
+  ,"cursors": lambda p : ["Is able to change the mouse's cursor icon."] if p else []}
+
+
 def getPermissions(permissionsFilePath=None,permissionsString=None):
   """ Return a dictionary of permissions from the given permissions.json file.  Permissions that are not specified are set to their default values."""
   if not permissionsString is None:
@@ -89,16 +130,28 @@ def getPermissions(permissionsFilePath=None,permissionsString=None):
         permissions["gui"][permission] = defaultValue
   return permissions
 
+def getNonDefaultPermissions(permissions):
+  """
+  Returns the dictionary of permissions which are NOT set to their default values.
+
+  >>> import subuserlib.permissions
+  >>> permissions = subuserlib.permissions.getPermissions(permissionsString='{"x11":true}')
+  >>> getNonDefaultPermissions(permissions) == {u'x11': True}
+  True
+
+  """
+  nonDefaultPermissions = {}
+  for permission,value in permissions.items():
+    if not value == permissionDefaults[permission]:
+      nonDefaultPermissions[permission] = value
+  return nonDefaultPermissions
+
 def getPermissonsJSONString(permissions):
   """
   Returns the given permissions as a JSON formated string.
   """
-  permissionsToSave = {}
-  for permission,value in permissions.items():
-    if not value == permissionDefaults[permission]:
-      permissionsToSave[permission] = value
+  permissionsToSave = getNonDefaultPermissions(permissions)
   return json.dumps(permissionsToSave,indent=1, separators=(',', ': '))
-
 
 def setPermissions(permissions,permissionsFilePath):
   """
@@ -112,3 +165,54 @@ def setPermissions(permissions,permissionsFilePath):
   with open(permissionsFilePath, 'w') as file_f:
     file_f.write(getPermissonsJSONString(permissions))
 
+def comparePermissions(oldDefaults={},newDefaults={},userApproved={}):
+  """
+  Analize permission sets for changes.
+  First, compare the old defaults to the user approved permissions.
+  By doing so, we aquire an understanding of which permissions have been set by the user, and which are still at their default values.
+  We will leave the user-set permissions alone.
+
+  Next, we compair the old non-user set permissions to the new defaults.
+
+  Finally, we return a list of permissions that have been removed as well as a dictionary of permissions which have been added or changed.
+
+  The return value is a tuple of the form: ([removed-permisions],{additions/changes})
+  """
+  return __comparePermissions(oldDefaults = getNonDefaultPermissions(oldDefaults), newDefaults = getNonDefaultPermissions(newDefaults) , userApproved = getNonDefaultPermissions(userApproved))
+
+def __comparePermissions(oldDefaults={},newDefaults={},userApproved={}):
+  """
+  Analize permission sets for changes.
+  First, compare the old defaults to the user approved permissions.
+  By doing so, we aquire an understanding of which permissions have been set by the user, and which are still at their default values.
+  We will leave the user-set permissions alone.
+
+  Next, we compair the old non-user set permissions to the new defaults.
+
+  Finally, we return a list of permissions that have been removed as well as a dictionary of permissions which have been added or changed. 
+
+  >>> import subuserlib.permissions
+  >>> subuserlib.permissions.__comparePermissions(oldDefaults={"a":1,"b":2,"c":3,"d":4,"e":5},newDefaults={"a":1,"b":3,"c":4,"f":4},userApproved={"a":1,"b":5,"e":5,"z":7}) == (["e"],{"f":4})
+  True
+  """
+  userSetPermissions = {}
+  for key,value in userApproved.items():
+    # Cleaver code is evil, but I have given into temptation in this case ^_^
+    if (not key in oldDefaults) or (oldDefaults[key] != value):
+      userSetPermissions[key] = value
+  for key,value in oldDefaults.items():
+    if (not key in userApproved):
+      userSetPermissions[key] = value
+
+  addedOrChangedPermissions = {}
+  for key,value in newDefaults.items():
+    #                                                         added  or  changed
+    if (not key in userSetPermissions) and ((not key in oldDefaults) or (key in oldDefaults and oldDefaults[key] != value)):
+      addedOrChangedPermissions[key] = value
+  
+  droppedPermissions = []
+  for key in oldDefaults.keys():
+    if (key not in userSetPermissions) and (key not in newDefaults):
+      droppedPermissions.append(key)
+
+  return (droppedPermissions,addedOrChangedPermissions)

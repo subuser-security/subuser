@@ -40,7 +40,6 @@ def describe(sysargs):
   foo:
    Description: 
    Maintainer: 
-   Last update time(version): 0
    Executable: /usr/bin/foo
 
   Describing an image prints the default permissions for that image.
@@ -49,7 +48,6 @@ def describe(sysargs):
   foo:
    Description: 
    Maintainer: 
-   Last update time(version): 0
    Executable: /usr/bin/foo
 
   Images can be refered to with their full paths as well.  Even remote images can be described.
@@ -58,7 +56,6 @@ def describe(sysargs):
   foo:
    Description: 
    Maintainer: 
-   Last update time(version): 0
    Executable: /usr/bin/foo
   """
   user = subuserlib.classes.user.User()

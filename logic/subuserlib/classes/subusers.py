@@ -24,12 +24,22 @@ class Subusers(dict,UserOwnedObject,FileBackedObject):
   >>> import subuserlib.classes.user
   >>> import subuserlib.classes.subusers
   >>> import subuserlib.subuser
+  >>> from subuserlib.classes.permissionsAccepters.acceptPermissionsAtCLI import AcceptPermissionsAtCLI
   >>> u = subuserlib.classes.user.User()
-  >>> subuserlib.subuser.add(u,"foo","foo@default")
+  >>> permissionsAccepter = AcceptPermissionsAtCLI(u,alwaysAccept=True)
+  
+  >>> subuserlib.subuser.add(u,"foo","foo@default",permissionsAccepter)
   Adding subuser foo foo@default
   Verifying subuser configuration.
   Verifying registry consistency...
   Unregistering any non-existant installed images.
+  foo would like to have the following permissions:
+   Description: 
+   Maintainer: 
+   Executable: /usr/bin/foo
+  A - Accept and apply changes
+  E - Apply changes and edit result
+  A
   Checking if images need to be updated or installed...
   Checking if subuser foo is up to date.
   Installing foo ...

@@ -101,6 +101,10 @@ class Runtime(UserOwnedObject):
   def setEnvVar(self,envVar,value):
     self.__extraFlags.append("-e")
     self.__extraFlags.append(envVar+"="+value)
+
+  def setHostname(self,hostname):
+    self.__extraFlags.append("-h")
+    self.__extraFlags.append(hostname)
   
   def getCommand(self,args):
     """

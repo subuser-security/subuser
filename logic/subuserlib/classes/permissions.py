@@ -9,12 +9,15 @@ Each subuser has a set of permissions which specify what parts of the host syste
 #external imports
 import collections,hashlib
 #internal imports
-import subuserlib.classes.userOwnedObject,subuserlib.classes.fileBackedObject,subuserlib.permissions
+from subuserlib.classes.userOwnedObject import UserOwnedObject
+from subuserlib.classes.fileBackedObject import FileBackedObject
+import subuserlib.permissions
 
-class Permissions(collections.OrderedDict,subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.classes.fileBackedObject.FileBackedObject):
+
+class Permissions(collections.OrderedDict,UserOwnedObject,FileBackedObject):
   def __init__(self,user,initialPermissions,writePath):
     self.__writePath = writePath
-    subuserlib.classes.userOwnedObject.UserOwnedObject.__init__(self,user)
+    UserOwnedObject.__init__(self,user)
     collections.OrderedDict.__init__(self)
     self.update(initialPermissions)
 
@@ -32,17 +35,29 @@ class Permissions(collections.OrderedDict,subuserlib.classes.userOwnedObject.Use
     hasher.update(subuserlib.permissions.getPermissonsJSONString(self).encode('utf-8'))
     return hasher.hexdigest()
 
+  def applyChanges(self,permissionsToRemove,permissionsToAddOrChange):
+    for permission in permissionsToRemove:
+      self[permission] = subuserlib.permissions.permissionDefaults[permission]
+    for permission,value in permissionsToAddOrChange.items():
+      self[permission] = value
+
   def save(self):
     subuserlib.permissions.setPermissions(self,self.__writePath)
 
   def describe(self):
-    print(" Description: "+self["description"])
-    print(" Maintainer: "+self["maintainer"])
-    print(" Last update time(version): "+str(self["last-update-time"]))
-    if self["executable"]:
-      print(" Executable: "+self["executable"])
-    else:
-      print(" Is a library")
+    def describePermissions(permissions):
+      for permission in permissions:
+        subPermissions = subuserlib.permissions.permissionDescriptions[permission](self[permission])
+        if not subPermissions:
+          continue
+        firstLine = "  - " + permission + ":"
+        multiline = len(subPermissions) > 1
+        if multiline:
+          print(firstLine)
+          for subPermission in subPermissions:
+            print("   * "+subPermission)
+        else:
+          print(firstLine + " " + subPermissions[0])
 
     def areAnyOfThesePermitted(permissions):
       permitted = False
@@ -51,58 +66,22 @@ class Permissions(collections.OrderedDict,subuserlib.classes.userOwnedObject.Use
           permitted = True
       return permitted
 
-    conservativePermissions = ["stateful-home","inherit-locale","inherit-timezone"]
-    if areAnyOfThesePermitted(conservativePermissions):
+    preludeDescriptions = sum([subuserlib.permissions.permissionDescriptions[permission](self[permission]) for permission in subuserlib.permissions.permissionsPrelude],[])
+    for description in preludeDescriptions:
+      print(" "+description)
+
+    if areAnyOfThesePermitted(subuserlib.permissions.conservativePermissions):
       print(" Conservative permissions(These are safe):")
-      if self["stateful-home"]:
-        print("  Has it's own home directory where it can save files and settings.")
-      if self["inherit-locale"]:
-        print("  Can find out language you speak and what region you live in.")
-      if self["inherit-timezone"]:
-        print("  Can find out your current timezone.")
+      describePermissions(subuserlib.permissions.conservativePermissions)
 
-    moderatePermissions = ["gui","user-dirs","sound-card","webcam","access-working-directory","allow-network-access"]
-    if areAnyOfThesePermitted(moderatePermissions):
+    if areAnyOfThesePermitted(subuserlib.permissions.moderatePermissions):
       print(" Moderate permissions(These are probably safe):")
-      if not self["gui"] is None:
-        print("  Is able to display windows.")
-        if self["gui"]["clipboard"]:
-          print("  Is able to access the host's clipboard.")
-        if self["gui"]["system-tray"]:
-          print("  Is able to create system tray icons.")
-        if self["gui"]["cursors"]:
-          print("  Is able to change the mouse's cursor icon.")
-      if not self["user-dirs"]==[]:
-        print("  Has access to the following user directories: '~/"+"' '~/".join(self["user-dirs"])+"'")
-      if not self["inherit-envvars"]==[]:
-        print("  Has access to the following environment variables: "+" ".join(self["inherit-envvars"]))
-      if self["sound-card"]:
-        print("  Has access to your soundcard, can play sounds/record sound.")
-      if self["webcam"]:
-        print("  Can access your computer's webcam/can see you.")
-      if self["access-working-directory"]:
-        print("  Can access the directory from which it was launched.")
-      if self["allow-network-access"]:
-        print("  Can access the network/internet.")
+      describePermissions(subuserlib.permissions.moderatePermissions)
 
-    liberalPermissions = ["x11","system-dirs","graphics-card","serial-devices","system-dbus","as-root"]
-    if areAnyOfThesePermitted(liberalPermissions):
+    if areAnyOfThesePermitted(subuserlib.permissions.liberalPermissions):
       print(" Liberal permissions(These may pose a security risk):")
-      if self["x11"]:
-        print("  Can display X11 windows and interact with your X11 server directly(log keypresses, read over your shoulder ect.)")
-      if self["system-dirs"]:
-        print("  Can read and write the following directories:")
-        for source,dest in self["system-dirs"].items():
-          print("   "+source+"(mounted as "+dest+")")
-      if self["graphics-card"]:
-        print(" Can access your graphics-card directly for OpenGL tasks.")
-      if self["serial-devices"]:
-        print(" Can access serial devices such as programable micro-controlers and modems.")
-      if self["system-dbus"]:
-        print(" Can talk to the system dbus daemon.")
-    anarchisticPermissions = ["privileged"]
-    if areAnyOfThesePermitted(anarchisticPermissions):
-      print("WARNING: this subuser has full access to your system when run.")
-      if self["privileged"]:
-        print(" Has full access to your system.  Can even do things as root outside of its container.")
+      describePermissions(subuserlib.permissions.liberalPermissions)
 
+    if areAnyOfThesePermitted(subuserlib.permissions.anarchisticPermissions):
+      print("WARNING: this subuser has full access to your system when run.")
+      describePermissions(subuserlib.permissions.anarchisticPermissions)

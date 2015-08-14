@@ -17,8 +17,9 @@ import shutil,os
 #internal imports
 import subuserlib.install
 import subuserlib.classes.docker.dockerDaemon as dockerDaemon
+import subuserlib.permissions
 
-def verify(user,checkForUpdatesExternally=False,subuserNames=[]):
+def verify(user,permissionsAccepter=None,checkForUpdatesExternally=False,subuserNames=[]):
   """
    Ensure that:
       - Registry is consistent; warns the user about subusers that point to non-existant source images.
@@ -31,6 +32,9 @@ def verify(user,checkForUpdatesExternally=False,subuserNames=[]):
   user.getRegistry().log("Unregistering any non-existant installed images.")
   user.getInstalledImages().unregisterNonExistantImages()
   if subuserNames:
+    user.getRegistry().setChanged(True)
+    approvePermissions(user,subuserNames,permissionsAccepter)
+    subuserNames += ensureServiceSubusersAreSetup(user,subuserNames)
     ensureImagesAreInstalledAndUpToDate(user,subuserNames=subuserNames,checkForUpdatesExternally=checkForUpdatesExternally)
   user.getInstalledImages().save()
   trimUnneededTempRepos(user)
@@ -41,6 +45,25 @@ def verifyRegistryConsistency(user):
   for _,subuser in user.getRegistry().getSubusers().items():
     if not subuser.getImageSource().getName() in subuser.getImageSource().getRepository():
       user.getRegistry().log("WARNING: "+subuser.getName()+" is no longer present in it's source repository. Support for this progam may have been dropped.")
+
+def approvePermissions(user,subuserNames,permissionsAccepter):
+  for subuserName in subuserNames:
+    subuser = user.getRegistry().getSubusers()[subuserName]
+    try:
+      userApproved = subuser.getPermissions()
+    except subuserlib.classes.subuser.SubuserHasNoPermissionsException:
+      userApproved = None
+    permissionsAccepter.accept(subuser=subuser,oldDefaults=subuser.getPermissionsTemplate(),newDefaults=subuser.getImageSource().getPermissions(),userApproved=userApproved)
+    subuser.getPermissionsTemplate().update(subuser.getImageSource().getPermissions())
+    subuser.getPermissionsTemplate().save()
+
+def ensureServiceSubusersAreSetup(user,subuserNames):
+  newServiceSubusers = []
+  for subuserName in subuserNames:
+    subuser = user.getRegistry().getSubusers()[subuserName]
+    if not subuser.getPermissions()["gui"] is None:
+      newServiceSubusers += subuser.getX11Bridge().setup(verify=False)
+  return newServiceSubusers
 
 def ensureImagesAreInstalledAndUpToDate(user,subuserNames,checkForUpdatesExternally=False):
   user.getRegistry().log("Checking if images need to be updated or installed...")
@@ -86,4 +109,3 @@ def rebuildBinDir(user):
   for _,subuser in user.getRegistry().getSubusers().items():
     if subuser.isExecutableShortcutInstalled():
       subuser.installExecutableShortcut()
-

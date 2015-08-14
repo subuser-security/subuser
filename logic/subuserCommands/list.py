@@ -52,7 +52,6 @@ def list(sysargs):
   foo:
    Description: 
    Maintainer: 
-   Last update time(version): 0
    Executable: /usr/bin/foo
 
   Similar result when listing subusers.
@@ -65,7 +64,6 @@ def list(sysargs):
   foo:
    Description: 
    Maintainer: 
-   Last update time(version): 0
    Executable: /usr/bin/foo
 
   And listing installed images:

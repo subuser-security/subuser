@@ -12,7 +12,7 @@ import optparse
 import subuserlib.commandLineArguments
 import subuserlib.classes.user
 import subuserlib.update
-
+from subuserlib.classes.permissionsAccepters.acceptPermissionsAtCLI import AcceptPermissionsAtCLI
 
 #####################################################################################
 
@@ -45,6 +45,7 @@ def parseCliArgs(realArgs):
       Subuser's undo function.  Roll back to an old version of your subuser configuration.  Find the commit hash using subuser update log.  Note: This command is less usefull than lock-subuser-to.
 """
   parser=optparse.OptionParser(usage=usage,description=description,formatter=subuserlib.commandLineArguments.HelpFormatterThatDoesntReformatDescription())
+  parser.add_option("--accept",dest="accept",action="store_true",default=False,help="Accept permissions without asking.")
   return parser.parse_args(args=realArgs)
 
 #################################################################################################
@@ -71,11 +72,26 @@ def update(realArgs):
 
   Add a subuser who's image has a lot of dependencies.
 
-  >>> subuser.subuser(["add","dependent","dependent@file:///home/travis/remote-test-repo"])
+  >>> subuser.subuser(["add","--accept","dependent","dependent@file:///home/travis/remote-test-repo"])
   Adding subuser dependent dependent@file:///home/travis/remote-test-repo
   Verifying subuser configuration.
   Verifying registry consistency...
   Unregistering any non-existant installed images.
+  dependent would like to have the following permissions:
+   Description: a dependent
+   Maintainer: 
+   Is a library.
+   Moderate permissions(These are probably safe):
+    - gui: To be able to display windows.
+    - user-dirs: To access to the following user directories: '~/Downloads'
+    - sound-card: To access to your soundcard, can play sounds/record sound.
+   Liberal permissions(These may pose a security risk):
+    - system-dirs: To read and write to the host's `/var/log` directory, mounted in the container as:`/var/log`
+  WARNING: this subuser has full access to your system when run.
+    - privileged: To have full access to your system.  To even do things as root outside of its container.
+  A - Accept and apply changes
+  E - Apply changes and edit result
+  A
   Checking if images need to be updated or installed...
   Checking if subuser dependent is up to date.
   Installing dependency1 ...
@@ -123,7 +139,7 @@ def update(realArgs):
 
   Running update, when there is nothing to be updated, does nothing.
 
-  >>> update.update(["all"])
+  >>> update.update(["all","--accept"])
   Updating...
   Verifying subuser configuration.
   Verifying registry consistency...
@@ -148,20 +164,53 @@ def update(realArgs):
   >>> set([i.getImageSourceName() for i in user.getInstalledImages().values()]) == set(installedImagesBeforeUpdate)
   True
 
-  Now we change the ImageSource for the ``dependent`` image.
+  However, if we change ``dependent``'s image source's permissions, the user is asked to approve the new permissions:
+
+  >>> permissions = user.getRegistry().getRepositories()[u'1']["dependent"].getPermissions()
+  >>> del permissions["sound-card"]
+  >>> permissions["user-dirs"] = ["Images","Downloads"]
+  >>> permissions.save()
+
+  >>> repo1 = subuserlib.classes.gitRepository.GitRepository(user.getRegistry().getRepositories()[u'1'].getRepoPath())
+  >>> repo1.run(["commit","-a","-m","changed dependent's permissions"])
+  0
+
+  >>> update.update(["all","--accept"])
+  Updating...
+  Updated repository file:///home/travis/remote-test-repo
+  Verifying subuser configuration.
+  Verifying registry consistency...
+  Unregistering any non-existant installed images.
+  dependent would like to add/change the following permissions:
+     - To access to the following user directories: '~/Images' '~/Downloads'
+  dependent no longer needs the following permissions:
+     - To access to your soundcard, can play sounds/record sound.
+  A - Accept and apply changes
+  E - Apply changes and edit result
+  e - Ignore request and edit permissions by hand
+  A
+  Checking if images need to be updated or installed...
+  Checking if subuser dependent is up to date.
+  Checking for updates to: dependency1@file:///home/travis/remote-test-repo
+  Checking for updates to: intermediary@file:///home/travis/remote-test-repo
+  Checking for updates to: dependent@file:///home/travis/remote-test-repo
+  Checking if subuser foo is up to date.
+  Checking for updates to: foo@default
+  Running garbage collector on temporary repositories...
+
+  Now we change the ImageSource for the ``intermediary`` image.
 
   >>> with open(user.getRegistry().getRepositories()[u'1']["intermediary"].getSubuserImagefilePath(),mode="w") as subuserImagefile:
   ...   _ = subuserImagefile.write("FROM-SUBUSER-IMAGE dependency2")
 
   And commit the changes to git.
 
-  >>> repo1 = subuserlib.classes.gitRepository.GitRepository(user.getRegistry().getRepositories()[u'1'].getRepoPath())
   >>> repo1.run(["commit","-a","-m","changed dependency for intermediate from dependency1 to dependency2"])
   0
 
   Running an update after a change installs new images and registers them with their subusers.  But it does not delete the old ones.
 
-  >>> update.update(["all"])
+  >>> update.update(["all","--accept"])
   Updating...
   Updated repository file:///home/travis/remote-test-repo
   Verifying subuser configuration.
@@ -229,7 +278,7 @@ def update(realArgs):
 
   Running an update after a change does nothing because the affected subuser is locked.
 
-  >>> update.update(["all"])
+  >>> update.update(["all","--accept"])
   Updating...
   Updated repository file:///home/travis/remote-test-repo
   Verifying subuser configuration.
@@ -249,7 +298,7 @@ def update(realArgs):
 
   When we unlock the subuser it gets updated imediately.
 
-  >>> update.update(["unlock-subuser","dependent"])
+  >>> update.update(["unlock-subuser","--accept","dependent"])
   Unlocking subuser dependent
   Verifying subuser configuration.
   Verifying registry consistency...
@@ -295,18 +344,19 @@ def update(realArgs):
   """
   options,args = parseCliArgs(realArgs)
   user = subuserlib.classes.user.User()
+  permissionsAccepter = AcceptPermissionsAtCLI(user,alwaysAccept = options.accept)
   if len(args) < 1:
     sys.exit("No arguments given. Please use subuser update -h for help.")
   elif ["all"] == args:
     try:
       with user.getRegistry().getLock():
-        subuserlib.update.updateAll(user)
+        subuserlib.update.updateAll(user,permissionsAccepter=permissionsAccepter)
     except subuserlib.portalocker.portalocker.LockException:
       sys.exit("Another subuser process is currently running and has a lock on the registry. Please try again later.")
   elif "subusers" == args[0]:
     try:
       with user.getRegistry().getLock():
-        subuserlib.update.updateSubusers(user,args[1:])
+        subuserlib.update.updateSubusers(user,args[1:],permissionsAccepter=permissionsAccepter)
     except subuserlib.portalocker.portalocker.LockException:
       sys.exit("Another subuser process is currently running and has a lock on the registry. Please try again later.")
   elif ["log"] == args:
@@ -329,7 +379,7 @@ def update(realArgs):
       sys.exit("Wrong number of arguments.  Expected a subuser's name. Try running\nsubuser update --help\nfor more information.")
     try:
       with user.getRegistry().getLock():
-        subuserlib.update.unlockSubuser(user,subuserName=subuserName)
+        subuserlib.update.unlockSubuser(user,subuserName=subuserName,permissionsAccepter=permissionsAccepter)
     except subuserlib.portalocker.portalocker.LockException:
       sys.exit("Another subuser process is currently running and has a lock on the registry. Please try again later.")
   elif "rollback" == args[0]:
@@ -352,4 +402,3 @@ if __name__ == "__main__":
     update(sys.argv[1:])
   except KeyboardInterrupt:
     pass
-

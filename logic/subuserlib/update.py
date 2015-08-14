@@ -12,7 +12,7 @@ import subuserlib.verify
 import subuserlib.subprocessExtras as subprocessExtras
 
 #####################################################################################
-def updateAll(user):
+def updateAll(user,permissionsAccepter):
   """
   This command updates(if needed) all of the installed subuser images.
   """
@@ -21,17 +21,17 @@ def updateAll(user):
     repository.updateSources()
   subuserNames = list(user.getRegistry().getSubusers().keys())
   subuserNames.sort()
-  subuserlib.verify.verify(user,checkForUpdatesExternally=True,subuserNames=subuserNames)
+  subuserlib.verify.verify(user,checkForUpdatesExternally=True,subuserNames=subuserNames,permissionsAccepter=permissionsAccepter)
   user.getRegistry().commit()
 
-def updateSubusers(user,subuserNames):
+def updateSubusers(user,subuserNames,permissionsAccepter):
   """
   This command updates the specified subusers' images.
   """
   user.getRegistry().log("Updating...")
   for _,repository in user.getRegistry().getRepositories().items():
     repository.updateSources()
-  subuserlib.verify.verify(user,subuserNames=subuserNames,checkForUpdatesExternally=True)
+  subuserlib.verify.verify(user,subuserNames=subuserNames,checkForUpdatesExternally=True,permissionsAccepter=permissionsAccepter)
   user.getRegistry().commit()
 
 def showLog(user):
@@ -55,19 +55,19 @@ def lockSubuser(user,subuserName,commit):
   from subuserlib.classes.registry import Registry
   registryAtOldCommit = Registry(user,gitReadHash=commit)
   subuserObject = registryAtOldCommit.getSubusers()[subuserName]
-  if not os.path.exists(os.path.join(user.getConfig()["user-set-permissions-dir"],subuserName,"permissions.json")):
-    subuserObject.getPermissions().save()
+  subuserObject.getPermissions().save()
+  subuserObject.getPermissionsTemplate().save()
   user.getRegistry().logChange("Locking subuser "+subuserName+" to commit: "+commit)
   user.getRegistry().getSubusers()[subuserName] = subuserObject
   subuserObject.setLocked(True)
   subuserlib.verify.verify(user)
   user.getRegistry().commit()
 
-def unlockSubuser(user,subuserName):
+def unlockSubuser(user,subuserName,permissionsAccepter):
   """
   Unlock the subuser, leaving it to have an up to date image.  Delete user set permissions if unlockPermissions is True.
   """
   user.getRegistry().logChange("Unlocking subuser "+subuserName)
   user.getRegistry().getSubusers()[subuserName].setLocked(False)
-  subuserlib.verify.verify(user,subuserNames=[subuserName],checkForUpdatesExternally=True)
+  subuserlib.verify.verify(user,subuserNames=[subuserName],checkForUpdatesExternally=True,permissionsAccepter=permissionsAccepter)
   user.getRegistry().commit()

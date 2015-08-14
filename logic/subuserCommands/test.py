@@ -61,7 +61,7 @@ subprocess.call([os.path.join(subuserDir,"test/setup"),subuserDir])
 # classes
 import subuserlib.classes.user,subuserlib.classes.subuser
 # libs
-import subuserlib.resolve, subuserlib.hashDirectory
+import subuserlib.resolve, subuserlib.hashDirectory, subuserlib.permissions
 # commands
 import list,describe,repository,subuser,update
 dry_run = __import__("dry-run")
@@ -73,6 +73,7 @@ modules = [
   subuserlib.classes.user
   ,subuserlib.classes.subusers
   # subuserlib modules
+  ,subuserlib.permissions
   ,subuserlib.resolve
   ,subuserlib.hashDirectory
   # subuser commands

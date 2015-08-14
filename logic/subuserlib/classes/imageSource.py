@@ -87,15 +87,17 @@ class ImageSource(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.
         installedImagesBasedOnThisImageSource.append(installedImage)
     return installedImagesBasedOnThisImageSource
 
+  def getPermissionsFilePath(self):
+    return os.path.join(self.getSourceDir(),"permissions.json")
+
   def getPermissions(self):
     if not self.__permissions:
-      permissionsPath=os.path.join(self.getSourceDir(),"permissions.json")
       if not self.getRepository().isLocal():
         permissionsString = self.getRepository().getGitRepository().show(self.getRepository().getGitCommitHash(),os.path.join(self.getRepository().getSubuserRepositoryRelativeRoot(),self.getName(),"permissions.json"))
         initialPermissions = subuserlib.permissions.getPermissions(permissionsString=permissionsString)
       else:
-        initialPermissions = subuserlib.permissions.getPermissions(permissionsFilePath=permissionsPath)
-      self.__permissions = subuserlib.classes.permissions.Permissions(self.getUser(),initialPermissions,writePath=permissionsPath)
+        initialPermissions = subuserlib.permissions.getPermissions(permissionsFilePath=self.getPermissionsFilePath())
+      self.__permissions = subuserlib.classes.permissions.Permissions(self.getUser(),initialPermissions,writePath=self.getPermissionsFilePath())
     return self.__permissions
 
   def describe(self):

@@ -17,7 +17,7 @@ import subuserlib.verify
 import subuserlib.update
 import subuserlib.classes.docker.dockerDaemon as dockerDaemon
 
-def add(user,subuserName,imageSourceIdentifier):
+def add(user,subuserName,imageSourceIdentifier,permissionsAccepter):
   if subuserName.startswith("!"):
     sys.exit("A subusers may not have names beginning with ! as these names are reserved for internal use.")
   if subuserName in user.getRegistry().getSubusers():
@@ -27,12 +27,12 @@ def add(user,subuserName,imageSourceIdentifier):
     imageSource = subuserlib.resolve.resolveImageSource(user,imageSourceIdentifier)
   except KeyError as keyError:
     sys.exit("Could not add subuser.  The image source "+imageSourceIdentifier+" does not exist.")
-  addFromImageSource(user,subuserName,imageSource)
+  addFromImageSource(user,subuserName,imageSource,permissionsAccepter)
 
-def addFromImageSource(user,subuserName,imageSource):
+def addFromImageSource(user,subuserName,imageSource,permissionsAccepter):
   try:
     addFromImageSourceNoVerify(user,subuserName,imageSource)
-    subuserlib.verify.verify(user,subuserNames=[subuserName])
+    subuserlib.verify.verify(user,subuserNames=[subuserName],permissionsAccepter=permissionsAccepter)
     user.getRegistry().commit()
   except dockerDaemon.ImageBuildException as e:
     print("Adding subuser failed.")
@@ -41,8 +41,6 @@ def addFromImageSource(user,subuserName,imageSource):
 
 def addFromImageSourceNoVerify(user,subuserName,imageSource):
     subuser = subuserlib.classes.subuser.Subuser(user,subuserName,imageSource,None,False,False,[])
-    if not subuser.getPermissions()["gui"] is None:
-      subuser.getX11Bridge().setup(verify=False)
     user.getRegistry().getSubusers()[subuserName] = subuser
 
 def remove(user,subuserNames):
@@ -52,7 +50,7 @@ def remove(user,subuserNames):
       user.getRegistry().logChange("Removing subuser "+str(subuserName))
       try:
         subuserHome = user.getRegistry().getSubusers()[subuserName].getHomeDirOnHost()
-        if subuserHome:
+        if subuserHome and os.path.exists(subuserHome):
           user.getRegistry().logChange(" If you wish to remove the subusers home directory, issule the command $ rm -r "+subuserHome)
       except:
         pass
@@ -60,6 +58,7 @@ def remove(user,subuserNames):
       subuser = user.getRegistry().getSubusers()[subuserName]
       for serviceSubuser in subuser.getServiceSubuserNames():
         try:
+          user.getRegistry().getSubusers()[serviceSubuser].removePermissions()
           del user.getRegistry().getSubusers()[serviceSubuser]
         except KeyError:
           pass
@@ -68,6 +67,8 @@ def remove(user,subuserNames):
         shutil.rmtree(os.path.join(user.getConfig()["lock-dir"],"services",subuserName))
       except OSError:
         pass
+      # Remove permission files
+      user.getRegistry().getSubusers()[subuserName].removePermissions()
       del user.getRegistry().getSubusers()[subuserName]
       didSomething = True
     else:

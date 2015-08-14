@@ -79,6 +79,9 @@ class Registry(userOwnedObject.UserOwnedObject):
     self.log(message)
     self.__changed = True
 
+  def setChanged(self,changed=True):
+    self.__changed = changed
+
   def logRenameCommit(self, message):
     """
     Add a new message to the top of the log.
@@ -92,9 +95,7 @@ class Registry(userOwnedObject.UserOwnedObject):
     if self.__changed:
       self.getRepositories().save()
       self.getSubusers().save()
-      self.getGitRepository().run(["add","subusers.json","repository-states.json"])
-      if os.path.exists(os.path.join(self.getUser().getConfig()["registry-dir"],"repositories.json")):
-        self.getGitRepository().run(["add","repositories.json"])
+      self.getGitRepository().run(["add","."])
       self.getGitRepository().commit(self.__changeLog)
       self.__changed = False
       self.__changeLog = ""

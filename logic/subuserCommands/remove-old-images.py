@@ -43,7 +43,7 @@ def removeOldImages(realArgs):
 
   Add a ``bar`` subuser, which we will then remove.  This will leave us with a leftover image.
 
-  >>> subuser.subuser(["add","bar","bar@file:///home/travis/remote-test-repo"])
+  >>> subuser.subuser(["add","--accept","bar","bar@file:///home/travis/remote-test-repo"])
   Adding subuser bar bar@file:///home/travis/remote-test-repo
   Adding new temporary repository file:///home/travis/remote-test-repo
   Verifying subuser configuration.
@@ -121,12 +121,19 @@ def removeOldImages(realArgs):
 
   Add another subuser blah
 
-  >>> subuser.subuser(["add","blah","foo@/home/travis/local-test-repo"])
+  >>> subuser.subuser(["add","--accept","blah","foo@/home/travis/local-test-repo"])
   Adding subuser blah foo@/home/travis/local-test-repo
   Adding new temporary repository /home/travis/local-test-repo
   Verifying subuser configuration.
   Verifying registry consistency...
   Unregistering any non-existant installed images.
+  blah would like to have the following permissions:
+   Description: 
+   Maintainer: 
+   Executable: /usr/bin/foo
+  A - Accept and apply changes
+  E - Apply changes and edit result
+  A
   Checking if images need to be updated or installed...
   Checking if subuser blah is up to date.
   Installing foo ...

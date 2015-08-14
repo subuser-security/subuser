@@ -33,6 +33,7 @@ class Subuser(UserOwnedObject, Describable):
     self.__runtime = None
     self.__runtimeCache = None
     self.__permissions = None
+    self.__permissionsTemplate = None
     UserOwnedObject.__init__(self,user)
 
   def getName(self):
@@ -47,17 +48,63 @@ class Subuser(UserOwnedObject, Describable):
   def setExecutableShortcutInstalled(self,installed):
     self.__executableShortcutInstalled = installed
 
+  def getPermissionsDir(self):
+    return os.path.join(self.getUser().getConfig()["registry-dir"],"permissions",self.getName())
+
+  def getRelativePermissionsDir(self):
+    """
+    Get the permissions directory as relative to the registry's git repository.
+    """
+    return os.path.join("permissions",self.getName())
+
+  def createPermissions(self,permissionsDict):
+    permissionsDotJsonWritePath = os.path.join(self.getPermissionsDir(),"permissions.json")
+    self.__permissions = Permissions(self.getUser(),initialPermissions=permissionsDict,writePath=permissionsDotJsonWritePath)
+    return self.__permissions
+
   def getPermissions(self):
     if self.__permissions is None:
-      permissionsDotJsonWritePath = os.path.join(self.getUser().getConfig()["user-set-permissions-dir"],self.getName(),"permissions.json")
-      permissionsDotJsonReadPath = permissionsDotJsonWritePath
-      if os.path.exists(permissionsDotJsonReadPath):
-        initialPermissions = subuserlib.permissions.getPermissions(permissionsDotJsonReadPath)
+      permissionsDotJsonWritePath = os.path.join(self.getPermissionsDir(),"permissions.json")
+      registryRepo = self.getUser().getRegistry().getGitRepository()
+      if os.path.join(self.getRelativePermissionsDir(),"permissions.json") in registryRepo.lsFiles(self.getUser().getRegistry().getGitReadHash(),self.getRelativePermissionsDir()):
+        initialPermissions = subuserlib.permissions.getPermissions(permissionsString=registryRepo.show(self.getUser().getRegistry().getGitReadHash(),os.path.join(self.getRelativePermissionsDir(),"permissions.json")))
       else:
-        initialPermissions = self.getImageSource().getPermissions()
+        raise SubuserHasNoPermissionsException("The subuser <"+self.getName()+"""> has no permissions.
+
+If you are updating sometime around August 2014, you should move ~/.subuser/permissions to ~/.subuser/registry/permissions and run:
+
+$ git add .
+$ git commit
+
+Otherwise, please run:
+
+$ subuser repair
+
+To repair your subuser installation.\n""")
       self.__permissions = Permissions(self.getUser(),initialPermissions,writePath=permissionsDotJsonWritePath)
     return self.__permissions
-  
+
+  def getPermissionsTemplate(self):
+    if self.__permissionsTemplate is None:
+      permissionsDotJsonWritePath = os.path.join(self.getPermissionsDir(),"permissions-template.json")
+      registryRepo = self.getUser().getRegistry().getGitRepository()
+      if os.path.join(self.getRelativePermissionsDir(),"permissions-template.json") in registryRepo.lsFiles(self.getUser().getRegistry().getGitReadHash(),self.getRelativePermissionsDir()):
+        initialPermissions = subuserlib.permissions.getPermissions(permissionsString=registryRepo.show(self.getUser().getRegistry().getGitReadHash(),os.path.join(self.getRelativePermissionsDir(),"permissions-template.json")))
+        save = False
+      else:
+        initialPermissions = self.getImageSource().getPermissions()
+        save = True
+      self.__permissionsTemplate = Permissions(self.getUser(),initialPermissions,writePath=permissionsDotJsonWritePath)
+      if save:
+        self.__permissionsTemplate.save()
+    return self.__permissionsTemplate
+
+  def removePermissions(self):
+    """
+    Remove the user set and template permission files.
+    """
+    self.getUser().getRegistry().getGitRepository().run(["rm",os.path.join(self.getRelativePermissionsDir(),"permissions.json"),os.path.join(self.getRelativePermissionsDir(),"permissions-template.json")])
+
   def getImageId(self):
     """
      Get the Id of the Docker image associated with this subuser.
@@ -154,3 +201,5 @@ class Subuser(UserOwnedObject, Describable):
       st = os.stat(executablePath)
       os.chmod(executablePath, stat.S_IMODE(st.st_mode) | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
 
+class SubuserHasNoPermissionsException(Exception):
+  pass
