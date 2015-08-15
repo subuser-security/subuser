@@ -1,0 +1,13 @@
+Subuser 0.4 - Revamped permissions code
+---------------------------------------
+
+Subuser 0.4 revamps subuser's permissions handling code allowing subuser to track changes to permissions files and ask for the user's consent to permissions.
+
+When you add a subuser, subuser will now ask you to either accept or edit the new subuser's permissions. When you update your subusers, any changed permissions can be edited or confirmed.
+
+There is also a new command::
+
+   subuser subuser edit-permissions subuser-name
+
+Which allows you to open a subuser's ``permissions.json`` file in a text editor and edit its permissions.
+
