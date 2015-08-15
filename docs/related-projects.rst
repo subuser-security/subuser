@@ -9,6 +9,10 @@ Related projects
 
  Subgraph OS, like subuser, aims to securely partition the operating system at the application level. Subgraph's goals are purely security based, where-as subuser focuses on portability and maintainability as well. Subgraph is able to take advantage of specialized kernel features like grsec and thus has a level of security which excedes that of subuser. However, unlike subuser, the user of subgraph must specially configure their operating system/kernel for use with subgraph. In the security by isolation spectrum, subgraph is one step bellow QubesOS. It is less resource intensive and less secure than Qubes. Subuser is one step bellow subgraph. Subuser is more portable and less secure than subgraph.
 
+ * `Apiary Desktop <https://www.usenix.org/conference/usenix-atc-10/apiary-easy-use-desktop-application-fault-containment-commodity-operating>`_
+
+ A 2010 accademic project which had a very similar design to subuser. No code has been published, however the talk is interesting.
+
  * `Bedrock linux <http://bedrocklinux.org>`_ 
 
  Bedrock Linux is a project that I learned about long after I started working on subuser. Like subuser, it allows you to install software packaged for a variety of Linux distributions. Unlike subuser, which installs and runs programs in isolated environments running within a base system, Bedrock Linux mixes everything together at the same level without any segregation.
@@ -58,3 +62,7 @@ Related projects
 
  There are many different chroot type setups.
 
+Papers and publications
+------
+
+ * Cliffe Schreuders Z, McGill T, Payne C, `The State of the Art of Application Restrictions and Sandboxes: A Survey of Application-oriented Access Controls and their Shortfalls, Computers & Security (2012) <http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.300.4042&rep=rep1&type=pdf>`_
