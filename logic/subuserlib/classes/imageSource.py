@@ -7,9 +7,12 @@ Images in subuser are built from ImageSource objects.
 """
 
 #external imports
-import os,io
+import os
+import io
+import uuid
 #internal imports
 import subuserlib.classes.userOwnedObject,subuserlib.classes.describable,subuserlib.resolve, subuserlib.hashDirectory
+import subuserlib.classes.docker.dockerDaemon
 
 class ImageSource(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.classes.describable.Describable):
 
@@ -44,24 +47,17 @@ class ImageSource(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.
         subusers.append(subuser)
     return subusers
 
+  def getDockerImageDir(self):
+    repoConfig = self.getRepository().getRepoConfig()
+    if repoConfig:
+      if "docker-image-dir" in repoConfig:
+        if repoConfig["docker-image-dir"].startswith("../"):
+          raise ValueError("Paths in .subuser.json may not be relative to a higher directory.")
+        return os.path.join(self.getSourceDir(),repoConfig["docker-image-dir"])
+    return os.path.join(self.getSourceDir(),"docker-image")
+
   def getSourceDir(self):
     return os.path.join(self.getRepository().getSubuserRepositoryRoot(),self.getName())
-
-  def getBuildType(self):
-    """
-     Return the build type for this image source.  Or None, if no valid build files are found.  Possible build types are:
-       - 'SubuserImagefile'
-       - 'BuildImage.sh'
-    """
-    dockerImageDir = os.path.join(self.getSourceDir(),"docker-image")
-    pathToBuildTypeMap = {
-      "SubuserImagefile" : os.path.join(dockerImageDir,"SubuserImagefile"),
-      "BuildImage.sh" : os.path.join(dockerImageDir,"BuildImage.sh")}
-    myBuildType = None
-    for buildType,path in pathToBuildTypeMap.items():
-      if os.path.isfile(path):
-        myBuildType = buildType
-    return myBuildType
 
   def getLatestInstalledImage(self):
     """
@@ -109,27 +105,41 @@ class ImageSource(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.
     print(self.getName()+":")
     self.getPermissions().describe()
 
+  def build(self,parent):
+    dockerImageDir = self.getDockerImageDir()
+    dockerFileContents = self.getDockerfileContents(parent=parent)
+    imageId = self.getUser().getDockerDaemon().build(directoryWithDockerfile=dockerImageDir,rm=True,dockerfile=dockerFileContents) 
+    subuserSetupDockerFile = ""
+    subuserSetupDockerFile += "FROM "+imageId+"\n"
+    subuserSetupDockerFile += "RUN mkdir /subuser ; echo "+str(uuid.uuid4())+" > /subuser/uuid\n" # This ensures that all images have unique Ids.  Even images that are otherwise the same.
+    return self.getUser().getDockerDaemon().build(dockerfile=subuserSetupDockerFile)
+
   def getSubuserImagefilePath(self):
     """
     Returns the path to the SubuserImagefile, whether it exists or not.
     """
-    dockerImageDir = os.path.join(self.getSourceDir(),"docker-image")
+    dockerImageDir = self.getDockerImageDir()
     return os.path.join(dockerImageDir,"SubuserImagefile")
 
   def getSubuserImagefileContents(self):
     """
-     Returns the contents of the SubuserImagefile.  If there is no SubuserImagefile, raises an exception.
+     Returns the contents of the SubuserImagefile.  If there is no SubuserImagefile return None.
     """
     if os.path.isfile(self.getSubuserImagefilePath()):
       with io.open(self.getSubuserImagefilePath(),mode="r",encoding="utf-8") as subuserImagefile:
         return subuserImagefile.read()
     else:
-      raise subuserlib.classes.dockerDaemon.ImageBuildException("This ImageSource does not build from a SubuserImagefile.")
+      return None
 
-  def generateDockerfileConents(self,parent=None):
+  def getDockerfileContents(self,parent=None):
     """
     Returns a string representing the Dockerfile that is to be used to build this ImageSource.
     """
+    dockerImageDir = self.getDockerImageDir()
+    dockerfilePath = os.path.join(dockerImageDir,"Dockerfile")
+    if os.path.isfile(dockerfilePath):
+      with open(dockerfilePath,"r") as dockerfile:
+        return dockerfile.read()
     subuserImagefileContents = self.getSubuserImagefileContents()
     dockerfileContents = ""
     for line in subuserImagefileContents.split("\n"):
@@ -145,6 +155,8 @@ class ImageSource(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.
      Or None if there is no dependency.
     """
     SubuserImagefileContents = self.getSubuserImagefileContents()
+    if self.getSubuserImagefileContents() == None:
+      return None
     lineNumber=0
     for line in SubuserImagefileContents.split("\n"):
       if line.startswith("FROM-SUBUSER-IMAGE"):
@@ -160,7 +172,7 @@ class ImageSource(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.
 
   def getHash(self):
     """ Return the hash of the ``docker-image`` directory. """
-    return subuserlib.hashDirectory.getHashOfDirs(os.path.join(self.getSourceDir(),"docker-image"))
+    return subuserlib.hashDirectory.getHashOfDirs(self.getDockerImageDir())
 
 class SyntaxError(Exception):
   """

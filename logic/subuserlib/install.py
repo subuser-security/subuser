@@ -6,7 +6,7 @@ Implements functions involved in building/installing/updating subuser images.
 """
 
 #external imports
-import sys,os,stat,uuid,io
+import sys,os,stat,io
 #internal imports
 import subuserlib.classes.installedImage
 import subuserlib.installedImages
@@ -17,15 +17,6 @@ def cleanUpAndExitOnError(user,error):
   user.getRegistry().log("Cleaning up.")
   sys.exit(1)
 
-def installFromSubuserImagefile(imageSource, useCache=False,parent=None):
-  """
-  Returns the Id of the newly installed image.
-  """
-  dockerFileContents = imageSource.generateDockerfileConents(parent=parent)
-  dockerImageDir = os.path.join(imageSource.getSourceDir(),"docker-image")
-  imageId = imageSource.getUser().getDockerDaemon().build(directoryWithDockerfile=dockerImageDir,rm=True,useCache=useCache,dockerfile=dockerFileContents)
-  return imageId
-
 def installImage(imageSource, useCache=False,parent=None):
   """
   Install a image by building the given ImageSource.
@@ -33,17 +24,7 @@ def installImage(imageSource, useCache=False,parent=None):
   Return the Id of the newly installedImage.
   """
   imageSource.getUser().getRegistry().logChange("Installing "+imageSource.getName()+" ...")
-  buildType = imageSource.getBuildType()
-  if buildType == "SubuserImagefile":
-    imageId = installFromSubuserImagefile(imageSource,useCache=useCache,parent=parent)
-  else:
-    cleanUpAndExitOnError(imageSource.getUser(),"No buildfile found: There needs to be a 'SubuserImagefile' in the docker-image directory.")
-
-  subuserSetupDockerFile = ""
-  subuserSetupDockerFile += "FROM "+imageId+"\n"
-  subuserSetupDockerFile += "RUN mkdir /subuser ; echo "+str(uuid.uuid4())+" > /subuser/uuid\n" # This ensures that all images have unique Ids.  Even images that are otherwise the same.
-  imageId = imageSource.getUser().getDockerDaemon().build(dockerfile=subuserSetupDockerFile)
-  
+  imageId = imageSource.build(parent)
   imageSource.getUser().getInstalledImages()[imageId] = subuserlib.classes.installedImage.InstalledImage(imageSource.getUser(),imageId,imageSource.getName(),imageSource.getRepository().getName(),imageSource.getHash())
   imageSource.getUser().getInstalledImages().save()
   return imageId
@@ -134,4 +115,3 @@ def ensureSubuserImageIsInstalledAndUpToDate(subuser, useCache=False, checkForUp
   if not subuser.getImageId() == previousImageId:
     subuser.setImageId(previousImageId)
     subuser.getUser().getRegistry().logChange("Installed new image <"+subuser.getImageId()+"> for subuser "+subuser.getName())
-
