@@ -24,3 +24,4 @@ Any git repository which contains a subuser repositry may contain a ``.subuser.j
 
  * ``subuser-repository-root``: The root of the subuser repository. A relative path to the directory where the subuser image source directories are stored.
 
+ * ``docker-image-dir``: The subdirectory of each image source directory in which the ``SubuserImagefile`` or ``Dockerfile`` may be found. Default: ``./docker-image``
