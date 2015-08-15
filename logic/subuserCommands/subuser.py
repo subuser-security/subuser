@@ -6,14 +6,16 @@ import pathConfig
 #external imports
 import sys
 import optparse
+import os
 #internal imports
 import subuserlib.classes.user
 from subuserlib.classes.permissionsAccepters.acceptPermissionsAtCLI import AcceptPermissionsAtCLI
 import subuserlib.commandLineArguments
 import subuserlib.subuser
+import subuserlib.verify
 
 def parseCliArgs(sysargs):
-  usage = "usage: subuser %prog [add|remove|create-shortcut] NAME IMAGESOURCE"
+  usage = "usage: subuser %prog [add|remove|create-shortcut|remove-shortcut|edit-permissions] NAME [IMAGESOURCE]"
   description = """
 
 Add and remove subusers.  Create shorcuts for launching subusers.
@@ -36,9 +38,17 @@ Create a launcher for the subuser named foo.
 
     $ subuser subuser create-shorcut foo
 
+You can now launch foo directly.
+
+    $ foo
+
 Remove the launcher (if one exists) for the subuser named foo.
 
     $ subuser subuser remove-shortcut foo
+
+Edit a subuser's permissions.
+
+    $ subuser subuser edit-permissions foo
 """
   parser=optparse.OptionParser(usage=usage,description=description,formatter=subuserlib.commandLineArguments.HelpFormatterThatDoesntReformatDescription())
   parser.add_option("--prefix",dest="prefix",default=None,help="When removing subusers, remove all subusers who's names start with prefix.")
@@ -217,6 +227,7 @@ def subuser(sysargs):
   except IndexError:
     parseCliArgs(["--help"])
   user = subuserlib.classes.user.User()
+  permissionsAccepter = AcceptPermissionsAtCLI(user,alwaysAccept = options.accept)
   if action == "add":
     if not len(args) == 3:
       sys.exit("Wrong number of arguments to add.  See `subuser subuser -h`.")
@@ -224,7 +235,6 @@ def subuser(sysargs):
     imageSourceId = args[2]
     try:
       with user.getRegistry().getLock():
-        permissionsAccepter = AcceptPermissionsAtCLI(user,alwaysAccept = options.accept)
         subuserlib.subuser.add(user,name,imageSourceId,permissionsAccepter=permissionsAccepter)
     except subuserlib.portalocker.portalocker.LockException:
       sys.exit("Another subuser process is currently running and has a lock on the registry. Please try again later.")
@@ -239,7 +249,6 @@ def subuser(sysargs):
         subuserlib.subuser.remove(user,names)
     except subuserlib.portalocker.portalocker.LockException:
       sys.exit("Another subuser process is currently running and has a lock on the registry. Please try again later.")
- 
   elif action == "create-shortcut":
     name = args[1]
     try:
@@ -252,6 +261,15 @@ def subuser(sysargs):
     try:
       with user.getRegistry().getLock():
         subuserlib.subuser.setExecutableShortcutInstalled(user,name,False)
+    except subuserlib.portalocker.portalocker.LockException:
+      sys.exit("Another subuser process is currently running and has a lock on the registry. Please try again later.")
+  elif action == "edit-permissions":
+    name = args[1]
+    try:
+      with user.getRegistry().getLock():
+        user.getRegistry().logChange("Edit "+name+"'s permissions.")
+        subuserlib.subprocessExtras.call([os.environ["EDITOR"],user.getRegistry().getSubusers()[name].getPermissions().getWritePath()])
+        subuserlib.verify.verify(user,subuserNames=[name],permissionsAccepter=permissionsAccepter)
     except subuserlib.portalocker.portalocker.LockException:
       sys.exit("Another subuser process is currently running and has a lock on the registry. Please try again later.")
   else:
