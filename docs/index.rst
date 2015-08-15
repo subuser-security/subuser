@@ -68,6 +68,7 @@ Index
   news
   security
   installation
+  Download source <https://github.com/subuser-security/subuser>
   tutorial-use
   commands/index
   packaging
