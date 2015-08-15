@@ -49,6 +49,13 @@ def removeOldImages(realArgs):
   Verifying subuser configuration.
   Verifying registry consistency...
   Unregistering any non-existant installed images.
+  bar would like to have the following permissions:
+   Description: 
+   Maintainer: 
+   Executable: /usr/bin/bar
+  A - Accept and apply changes
+  E - Apply changes and edit result
+  A
   Checking if images need to be updated or installed...
   Checking if subuser bar is up to date.
   Installing bar ...

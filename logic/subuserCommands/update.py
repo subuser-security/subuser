@@ -82,10 +82,10 @@ def update(realArgs):
    Maintainer: 
    Is a library.
    Moderate permissions(These are probably safe):
-    - gui: To be able to display windows.
     - user-dirs: To access to the following user directories: '~/Downloads'
     - sound-card: To access to your soundcard, can play sounds/record sound.
    Liberal permissions(These may pose a security risk):
+    - x11: To display X11 windows and interact with your X11 server directly(log keypresses, read over your shoulder, steal your passwords, controll your computer ect.)
     - system-dirs: To read and write to the host's `/var/log` directory, mounted in the container as:`/var/log`
   WARNING: this subuser has full access to your system when run.
     - privileged: To have full access to your system.  To even do things as root outside of its container.
