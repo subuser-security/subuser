@@ -12,7 +12,7 @@ BUILDDIR      = _build
 	touch .docs-build-environment
 
 shell: .docs-build-environment
-	docker run -i -t --user=1000 -v $(PWD)/..:/home/sphynx-user -w /home/sphynx-user/docs -e HOME=/home/sphynx-user/ docs-build-environment /bin/bash
+	docker run -i -t --rm --user=1000 -v $(PWD)/..:/home/sphynx-user -w /home/sphynx-user/docs -e HOME=/home/sphynx-user/ docs-build-environment /bin/bash
 
 command-docs:
 	cd commands ; ./generate-command-docs.py
