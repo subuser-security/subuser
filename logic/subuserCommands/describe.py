@@ -36,11 +36,11 @@ def describe(sysargs):
   >>> describe.describe(["subuser","foo"])
   Subuser: foo
   ------------------
-  Progam:
   foo:
    Description: 
    Maintainer: 
    Executable: /usr/bin/foo
+  <BLANKLINE>
 
   Describing an image prints the default permissions for that image.
 

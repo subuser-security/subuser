@@ -60,11 +60,11 @@ def list(sysargs):
   The following subusers are registered.
   Subuser: foo
   ------------------
-  Progam:
   foo:
    Description: 
    Maintainer: 
    Executable: /usr/bin/foo
+  <BLANKLINE>
 
   And listing installed images:
 

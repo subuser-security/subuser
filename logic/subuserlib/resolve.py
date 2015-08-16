@@ -13,7 +13,7 @@ import subuserlib.classes.subuser, subuserlib.classes.repository, subuserlib.cla
 
 def resolveImageSource(user,imageSourcePath,contextRepository=None,allowRefferingToRepositoriesByName=True):
   """
-  From a image source identifier path return a ProgamSource object.
+  From a image source identifier path return a ProgramSource object.
 
   >>> user = subuserlib.classes.user.User()
 
