@@ -102,7 +102,7 @@ class ImageSource(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.
 
     Prints to standard output.
     """
-    print(self.getName()+":")
+    print(self.getIdentifier())
     self.getPermissions().describe()
 
   def build(self,parent):

@@ -36,7 +36,7 @@ def describe(sysargs):
   >>> describe.describe(["subuser","foo"])
   Subuser: foo
   ------------------
-  foo:
+  foo@default
    Description: 
    Maintainer: 
    Executable: /usr/bin/foo
@@ -45,7 +45,7 @@ def describe(sysargs):
   Describing an image prints the default permissions for that image.
 
   >>> describe.describe(["image","foo"])
-  foo:
+  foo@default
    Description: 
    Maintainer: 
    Executable: /usr/bin/foo
@@ -53,7 +53,7 @@ def describe(sysargs):
   Images can be refered to with their full paths as well.  Even remote images can be described.
 
   >>> describe.describe(["image","foo@default"])
-  foo:
+  foo@default
    Description: 
    Maintainer: 
    Executable: /usr/bin/foo

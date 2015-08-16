@@ -49,7 +49,7 @@ def list(sysargs):
 
   >>> list.list(["available"])
   Images available for instalation from the repo: default
-  foo:
+  foo@default
    Description: 
    Maintainer: 
    Executable: /usr/bin/foo
@@ -60,7 +60,7 @@ def list(sysargs):
   The following subusers are registered.
   Subuser: foo
   ------------------
-  foo:
+  foo@default
    Description: 
    Maintainer: 
    Executable: /usr/bin/foo
