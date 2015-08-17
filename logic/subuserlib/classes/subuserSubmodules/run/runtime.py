@@ -161,9 +161,6 @@ class Runtime(UserOwnedObject):
   
       #Note, subusers with gui permission cannot be run in the background.
       # Make sure that everything is setup and ready to go.
-      self.getSubuser().getRunReadyImage()
-      if not self.getSubuser().getPermissions()["gui"] is None:
-        self.getSubuser().getX11Bridge().setup()
       if not self.getSubuser().getPermissions()["gui"] is None:
         self.getSubuser().getX11Bridge().addClient()
       command = self.getCommand(args)
@@ -176,7 +173,6 @@ class Runtime(UserOwnedObject):
         with open(self.getCidFile(),"r") as cidFile:
           containerId = cidFile.read()
           container = self.getUser().getDockerDaemon().getContainer(containerId)
-          
           if container is None:
             sys.exit("Container failed to start:"+containerId)
           os.remove(self.getCidFile())

@@ -74,6 +74,7 @@ def ensureImagesAreInstalledAndUpToDate(user,subuserNames,checkForUpdatesExterna
     if not subuser.locked(): # TODO: We should install images for locked subusers if their images have dissappered.
       try:
         subuserlib.install.ensureSubuserImageIsInstalledAndUpToDate(subuser,checkForUpdatesExternally=checkForUpdatesExternally)
+        subuser.getRunReadyImage().setup()
       except dockerDaemon.ImageBuildException as e:
         user.getRegistry().log(str(e))
         subusersWhosImagesFailedToBuild.append(subuser)

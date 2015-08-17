@@ -16,17 +16,19 @@ class RunReadyImage(UserOwnedObject):
     self.__subuser = subuser
     self.__id = None
     UserOwnedObject.__init__(self,user)
-    try:
-      self.__id = subuser.getRuntimeCache()["run-ready-image-id"]
-    except KeyError:
+
+  def setup(self):
+    if not "run-ready-image-id" in self.getSubuser().getRuntimeCache():
       self.__id = self.build()
-      subuser.getRuntimeCache()["run-ready-image-id"] = self.__id
-      subuser.getRuntimeCache().save()
+      self.getSubuser().getRuntimeCache()["run-ready-image-id"] = self.__id
+      self.getSubuser().getRuntimeCache().save()
 
   def getSubuser(self):
     return self.__subuser
 
   def getId(self):
+    if not self.__id:
+      self.__id = self.getSubuser().getRuntimeCache()["run-ready-image-id"]
     return self.__id
   
   def generateImagePreparationDockerfile(self):
