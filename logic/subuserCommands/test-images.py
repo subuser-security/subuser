@@ -10,6 +10,7 @@ import optparse
 import subuserlib.classes.user
 import subuserlib.commandLineArguments
 import subuserlib.testImages
+from subuserlib.classes.permissionsAccepters.acceptPermissionsAtCLI import AcceptPermissionsAtCLI
 
 def parseCliArgs(realArgs):
   usage = "usage: subuser %prog <repo-name> <image-source-names>"
@@ -33,6 +34,7 @@ def parseCliArgs(realArgs):
 
    """
   parser=optparse.OptionParser(usage=usage,description=description,formatter=subuserlib.commandLineArguments.HelpFormatterThatDoesntReformatDescription())
+  parser.add_option("--accept",dest="accept",action="store_true",default=False,help="Accept permissions without asking.")
   return parser.parse_args(args=realArgs)
 
 def testImages(realArgs):
@@ -42,10 +44,10 @@ def testImages(realArgs):
   options,args = parseCliArgs(realArgs)
 
   user = subuserlib.classes.user.User()
-
+  permissionsAccepter = AcceptPermissionsAtCLI(user,alwaysAccept = options.accept)
   try:
     with user.getRegistry().getLock() as lockFileHandler:
-      subuserlib.testImages.testImages(user=user,sourceRepoId=args[0],imageSourceNames=args[1:])
+      subuserlib.testImages.testImages(user=user,sourceRepoId=args[0],imageSourceNames=args[1:],permissionsAccepter=permissionsAccepter)
   except subuserlib.portalocker.portalocker.LockException:
     sys.exit("Another subuser process is currently running and has a lock on the registry. Please try again later.")
 

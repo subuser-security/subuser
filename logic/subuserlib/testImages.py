@@ -4,11 +4,14 @@
 
 import pathConfig
 #external imports
-import os,uuid
+import os
+import uuid
 #internal imports
-import subuserlib.verify,subuserlib.subuser,subuserlib.removeOldImages
+import subuserlib.verify
+import subuserlib.subuser
+import subuserlib.removeOldImages
 
-def testImages(user,sourceRepoId,imageSourceNames):
+def testImages(user,sourceRepoId,imageSourceNames,permissionsAccepter):
   """
   Build, run, and remove the given images.
   """
@@ -19,7 +22,7 @@ def testImages(user,sourceRepoId,imageSourceNames):
     subuserName = subuserNamePrefix+imageSourceName
     subuserNames.append(subuserName)
     subuserlib.subuser.addFromImageSourceNoVerify(user,subuserName,user.getRegistry().getRepositories()[sourceRepoId][imageSourceName])
-  subuserlib.verify.verify(user,subuserNames=subuserNames)
+  subuserlib.verify.verify(user,subuserNames=subuserNames,permissionsAccepter=permissionsAccepter)
   # Create a list of the names of the new subusers
   subuserNames = []
   for imageSourceName in imageSourceNames:
