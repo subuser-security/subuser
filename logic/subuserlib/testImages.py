@@ -30,12 +30,13 @@ def testImages(user,sourceRepoId,imageSourceNames,permissionsAccepter):
     subuserNames.append(subuserNamePrefix+imageSourceName)
   # Run the images
   for subuserName in subuserNames:
-    raw_input("Running "+subuserName+" press enter to continue:")
+    arguments = raw_input("Running "+subuserName+" enter arguments and press enter to continue:")
+    arguments = arguments.split(" ")
     subuser = user.getRegistry().getSubusers()[subuserName]
     if subuser.getPermissions()["executable"]:
       runtime = subuser.getRuntime(os.environ)
       if runtime:
-        runtime.run([])
+        runtime.run(arguments)
   # Remove the subusers
   subuserlib.subuser.remove(user,subuserNames)
 
