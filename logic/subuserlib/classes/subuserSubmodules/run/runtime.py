@@ -117,7 +117,7 @@ class Runtime(UserOwnedObject):
     for permission, flagGenerator in permissionFlagDict.items():
       flags.extend(flagGenerator(permissions[permission]))
   
-    return ["run"]+flags+[self.getRunReadyImageId()]+[self.getSubuser().getPermissions()["executable"]]+args
+    return ["run"]+flags+["--entrypoint"]+[self.getSubuser().getPermissions()["executable"]]+[self.getRunReadyImageId()]+args
   
   def getPrettyCommand(self,args):
     """
