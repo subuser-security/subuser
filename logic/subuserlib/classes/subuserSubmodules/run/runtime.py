@@ -33,7 +33,13 @@ class Runtime(UserOwnedObject):
     return self.__subuser
 
   def getRunReadyImageId(self):
-    return self.getSubuser().getRunReadyImage().getId()
+    try:
+      return self.getSubuser().getRunReadyImage().getId()
+    except KeyError:
+      sys.exit("""No run ready image is prepaired for this subuser. Please run:
+
+$ subuser repair
+""")
 
   def getEnvironment(self):
     return self.__environment
