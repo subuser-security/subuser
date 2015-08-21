@@ -270,6 +270,7 @@ def subuser(sysargs):
         user.getRegistry().logChange("Edit "+name+"'s permissions.")
         subuserlib.subprocessExtras.call([os.environ["EDITOR"],user.getRegistry().getSubusers()[name].getPermissions().getWritePath()])
         subuserlib.verify.verify(user,subuserNames=[name],permissionsAccepter=permissionsAccepter)
+        subuserlib.getRegistry().commit()
     except subuserlib.portalocker.portalocker.LockException:
       sys.exit("Another subuser process is currently running and has a lock on the registry. Please try again later.")
   else:
