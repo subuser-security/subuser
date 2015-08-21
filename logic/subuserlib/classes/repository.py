@@ -27,7 +27,7 @@ class Repository(dict,UserOwnedObject,Describable):
     self.__sourceDir=sourceDir
     UserOwnedObject.__init__(self,user)
     self.__gitRepository = GitRepository(self.getRepoPath())
-    self.loadProgramSources()
+    self.loadImageSources()
 
   def getName(self):
     return self.__name
@@ -148,11 +148,11 @@ class Repository(dict,UserOwnedObject,Describable):
     if self.updateGitCommitHash():
       if not new:
         self.getUser().getRegistry().logChange("Updated repository "+self.getDisplayName())
-      self.loadProgramSources()
+      self.loadImageSources()
 
-  def loadProgramSources(self):
+  def loadImageSources(self):
     """
-    Load ProgramSources from disk into memory.
+    Load ImageSources from disk into memory.
     """
     if self.isLocal():
       imageNames = filter(lambda f: os.path.isdir(os.path.join(self.getSubuserRepositoryRoot(),f)) and not f == ".git",os.listdir(self.getSubuserRepositoryRoot()))
