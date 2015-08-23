@@ -128,8 +128,8 @@ def removeOldImages(realArgs):
 
   Add another subuser blah
 
-  >>> subuser.subuser(["add","--accept","blah","foo@/home/travis/local-test-repo"])
-  Adding subuser blah foo@/home/travis/local-test-repo
+  >>> subuser.subuser(["add","--accept","blah","blah@/home/travis/local-test-repo"])
+  Adding subuser blah blah@/home/travis/local-test-repo
   Adding new temporary repository /home/travis/local-test-repo
   Verifying subuser configuration.
   Verifying registry consistency...
@@ -143,7 +143,7 @@ def removeOldImages(realArgs):
   A
   Checking if images need to be updated or installed...
   Checking if subuser blah is up to date.
-  Installing foo ...
+  Installing blah ...
   Building...
   Building...
   Building...
@@ -172,7 +172,7 @@ def removeOldImages(realArgs):
   >>> for installedImage in installedImageList:
   ...   print(installedImage)
   bar
-  foo
+  blah
   foo
 
   Remove the ``blah`` subuser.
@@ -193,13 +193,13 @@ def removeOldImages(realArgs):
   >>> for installedImage in installedImageList:
   ...   print(installedImage)
   bar
-  foo
+  blah
   foo
 
   Now we use ``remove-old-images`` to remove images which belong to the local repository.
 
   >>> remove_old_images.removeOldImages(["--repo=/home/travis/local-test-repo"])
-  Removing unneeded image 9 : foo@/home/travis/local-test-repo
+  Removing unneeded image 9 : blah@/home/travis/local-test-repo
   Verifying subuser configuration.
   Verifying registry consistency...
   Unregistering any non-existant installed images.

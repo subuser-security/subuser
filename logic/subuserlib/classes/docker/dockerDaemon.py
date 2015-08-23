@@ -24,40 +24,46 @@ import subuserlib.docker
 import subuserlib.test
 from subuserlib.classes.docker.container import Container
 
-def archiveBuildContext(archive,directoryWithDockerfile,excludePatterns,dockerfile=None):
+def archiveBuildContext(archive,relativeBuildContextPath,repositoryFileStructure,excludePatterns,dockerfile=None):
   """
   Archive files from directoryWithDockerfile into the FileObject archive excluding files who's paths(relative to directoryWithDockerfile) are in excludePatterns.
   If dockerfile is set to a string, include that string as the file Dockerfile in the archive.
   """
+  def getFileObject(contents):
+    """
+    Returns a FileObject from the given string. Works with both versions of python.
+    """
+    try:
+      return StringIO.StringIO(contents)
+    except NameError:
+      return io.BytesIO(bytes(contents,"UTF-8"))
+
+  def addFileFromContents(path,contents,mode=420):
+    fileObject = getFileObject(contents)
+    tarinfo = tarfile.TarInfo(name=path)
+    tarinfo.mode=mode
+    fileObject.seek(0, os.SEEK_END)
+    tarinfo.size = fileObject.tell()
+    fileObject.seek(0)
+    contexttarfile.addfile(tarinfo,fileObject)
   # Inspired by and partialy taken from https://github.com/docker/docker-py
   contexttarfile = tarfile.open(mode="w",fileobj=archive)
-  if directoryWithDockerfile:
-    fileList = os.walk(directoryWithDockerfile)
-  else:
-    fileList = []
-  for dirpath, _, filenames in fileList:
-    relpath = os.path.relpath(dirpath, directoryWithDockerfile)
-    if relpath == '.':
-      relpath = ''
-    for filename in filenames:
-      exclude = False
-      fileNameInArchive = os.path.join(relpath,filename)
-      for excludePattern in excludePatterns:
-        if fnmatch.fnmatch(fileNameInArchive,excludePattern):
-          exclude = True
-      if not exclude:
-        contexttarfile.add(os.path.join(directoryWithDockerfile,fileNameInArchive), arcname=fileNameInArchive,recursive=False) # Explicit setting of recursive is not strictly necessary.
+  if relativeBuildContextPath and repositoryFileStructure:
+    def addFolder(folder):
+      for filePathRelativeToRepository in repositoryFileStructure.lsFiles(folder):
+        filePathRelativeToBuildContext = os.path.relpath(filePathRelativeToRepository,relativeBuildContextPath)
+        exclude = False
+        for excludePattern in excludePatterns:
+          if fnmatch.fnmatch(filePathRelativeToBuildContext,excludePattern):
+            exclude = True
+        if not exclude:
+          addFileFromContents(path=filePathRelativeToRepository,contents=repositoryFileStructure.read(filePathRelativeToRepository),mode=repositoryFileStructure.getMode(filePathRelativeToRepository))
+      for folderPathRelativeToRepository in repositoryFileStructure.lsFolders(folder):
+         addFolder(folderPathRelativeToRepository)
+    addFolder(relativeBuildContextPath)
   # Add the provided Dockerfile if necessary
   if not dockerfile == None:
-    try:
-      dockerfileFileObject = StringIO.StringIO(dockerfile)
-    except NameError:
-      dockerfileFileObject = io.BytesIO(bytes(dockerfile,"UTF-8"))
-    tarinfo = tarfile.TarInfo(name="Dockerfile")
-    dockerfileFileObject.seek(0, os.SEEK_END)
-    tarinfo.size = dockerfileFileObject.tell()
-    dockerfileFileObject.seek(0)
-    contexttarfile.addfile(tarinfo,dockerfileFileObject)
+    addFileFromContents(path="./Dockerfile",contents=dockerfile)
   contexttarfile.close()
   archive.seek(0)
 
@@ -127,7 +133,7 @@ class DockerDaemon(UserOwnedObject):
     else:
       response.read()
 
-  def build(self,directoryWithDockerfile=None,useCache=True,rm=True,forceRm=True,quiet=False,tag=None,dockerfile=None,quietClient=False):
+  def build(self,relativeBuildContextPath=None,repositoryFileStructure=None,useCache=True,rm=True,forceRm=True,quiet=False,tag=None,dockerfile=None,quietClient=False):
     """
     Build a Docker image.  If a the dockerfile argument is set to a string, use that string as the Dockerfile.  Returns the newly created images Id or raises an exception if the build fails.
 
@@ -149,22 +155,20 @@ class DockerDaemon(UserOwnedObject):
     except AttributeError:
       queryParametersString = urllib.parse.urlencode(queryParameters) # Python 3
     excludePatterns = []
-    if directoryWithDockerfile:
-      dockerignore = os.path.join(directoryWithDockerfile, '.dockerignore')
-      if os.path.exists(dockerignore):
-        with open(dockerignore, 'r') as f:
-          exclude = list(filter(bool, f.read().split('\n')))
+    if relativeBuildContextPath and repositoryFileStructure:
+      dockerignore = "./.dockerignore"
+      if repositoryFileStructure.exists(dockerignore):
+        exclude = list(filter(bool, repositoryFileStructure.read(dockerignore).split('\n')))
     # Python 2.x ONLY works with unnamed temporary files.
     # Python 3.x ONLY works with named temporary files
     if sys.version_info[0] == 2:
       with tempfile.TemporaryFile() as tmpArchive:
-        archiveBuildContext(tmpArchive,directoryWithDockerfile,excludePatterns,dockerfile=dockerfile)
+        archiveBuildContext(tmpArchive,relativeBuildContextPath=relativeBuildContextPath,repositoryFileStructure=repositoryFileStructure,excludePatterns=excludePatterns,dockerfile=dockerfile)
         self.getConnection().request("POST","/v1.13/build?"+queryParametersString,body=tmpArchive)
     if sys.version_info[0] == 3:
       with tempfile.NamedTemporaryFile() as tmpArchive:
-        archiveBuildContext(tmpArchive,directoryWithDockerfile,excludePatterns,dockerfile=dockerfile)
+        archiveBuildContext(tmpArchive,relativeBuildContextPath=relativeBuildContextPath,repositoryFileStructure=repositoryFileStructure,excludePatterns=excludePatterns,dockerfile=dockerfile)
         self.getConnection().request("POST","/v1.13/build?"+queryParametersString,body=tmpArchive)
-
     try:
       response = self.getConnection().getresponse()
     except httplib.ResponseNotReady as rnr:
@@ -221,4 +225,3 @@ if subuserlib.test.testing:
   from subuserlib.classes.docker.mockDockerDaemon import MockDockerDaemon
   RealDockerDaemon = DockerDaemon
   DockerDaemon = MockDockerDaemon
-

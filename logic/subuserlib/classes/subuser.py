@@ -65,9 +65,9 @@ class Subuser(UserOwnedObject, Describable):
   def getPermissions(self):
     if self.__permissions is None:
       permissionsDotJsonWritePath = os.path.join(self.getPermissionsDir(),"permissions.json")
-      registryRepo = self.getUser().getRegistry().getGitRepository()
-      if os.path.join(self.getRelativePermissionsDir(),"permissions.json") in registryRepo.lsFiles(self.getUser().getRegistry().getGitReadHash(),self.getRelativePermissionsDir()):
-        initialPermissions = subuserlib.permissions.getPermissions(permissionsString=registryRepo.show(self.getUser().getRegistry().getGitReadHash(),os.path.join(self.getRelativePermissionsDir(),"permissions.json")))
+      registryFileStructure = self.getUser().getRegistry().getGitRepository().getFileStructureAtCommit(self.getUser().getRegistry().getGitReadHash())
+      if os.path.join(self.getRelativePermissionsDir(),"permissions.json") in registryFileStructure.lsFiles(self.getRelativePermissionsDir()):
+        initialPermissions = subuserlib.permissions.getPermissions(permissionsString=registryFileStructure.read(os.path.join(self.getRelativePermissionsDir(),"permissions.json")))
       else:
         raise SubuserHasNoPermissionsException("The subuser <"+self.getName()+"""> has no permissions.
 
@@ -87,9 +87,9 @@ To repair your subuser installation.\n""")
   def getPermissionsTemplate(self):
     if self.__permissionsTemplate is None:
       permissionsDotJsonWritePath = os.path.join(self.getPermissionsDir(),"permissions-template.json")
-      registryRepo = self.getUser().getRegistry().getGitRepository()
-      if os.path.join(self.getRelativePermissionsDir(),"permissions-template.json") in registryRepo.lsFiles(self.getUser().getRegistry().getGitReadHash(),self.getRelativePermissionsDir()):
-        initialPermissions = subuserlib.permissions.getPermissions(permissionsString=registryRepo.show(self.getUser().getRegistry().getGitReadHash(),os.path.join(self.getRelativePermissionsDir(),"permissions-template.json")))
+      registryFileStructure = self.getUser().getRegistry().getGitRepository().getFileStructureAtCommit(self.getUser().getRegistry().getGitReadHash())
+      if os.path.join(self.getRelativePermissionsDir(),"permissions-template.json") in registryFileStructure.lsFiles(self.getRelativePermissionsDir()):
+        initialPermissions = subuserlib.permissions.getPermissions(permissionsString=registryFileStructure.read(os.path.join(self.getRelativePermissionsDir(),"permissions-template.json")))
         save = False
       else:
         initialPermissions = self.getImageSource().getPermissions()

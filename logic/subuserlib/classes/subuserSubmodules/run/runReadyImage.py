@@ -52,4 +52,3 @@ class RunReadyImage(UserOwnedObject):
     Returns the Id of the Docker image to be run.
     """
     return self.getUser().getDockerDaemon().build(None,quietClient=True,useCache=True,forceRm=True,rm=True,dockerfile=self.generateImagePreparationDockerfile())
-

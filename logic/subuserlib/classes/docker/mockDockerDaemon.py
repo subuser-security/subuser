@@ -47,7 +47,7 @@ class MockDockerDaemon(UserOwnedObject):
     else:
       return None
 
-  def build(self,directoryWithDockerfile=None,useCache=True,rm=True,forceRm=True,quiet=False,quietClient=False,tag=None,dockerfile=None):
+  def build(self,relativeBuildContextPath=None,repositoryFileStructure=None,useCache=True,rm=True,forceRm=True,quiet=False,quietClient=False,tag=None,dockerfile=None):
     """
     Build a Docker image.  If a the dockerfile argument is set to a string, use that string as the Dockerfile.  Return the newly created images Id or raises an exception if the build fails.
     """
@@ -59,7 +59,7 @@ class MockDockerDaemon(UserOwnedObject):
       parent = ""
     self.images[self.newId] = {"Id":self.newId,"Parent":parent,"Created":str(len(self.images))}
     self.__save()
-    self.dockerDaemon.build(directoryWithDockerfile,useCache,rm,forceRm,quiet,tag,dockerfile,quietClient)
+    self.dockerDaemon.build(relativeBuildContextPath=relativeBuildContextPath,repositoryFileStructure=repositoryFileStructure,useCache=useCache,rm=rm,forceRm=forceRm,quiet=quiet,tag=tag,dockerfile=dockerfile,quietClient=quietClient)
     return self.newId
 
   def removeImage(self,imageId):

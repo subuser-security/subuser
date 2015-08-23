@@ -67,8 +67,9 @@ class Repositories(collections.Mapping,subuserlib.classes.userOwnedObject.UserOw
       return repositories
 
     self.systemRepositories = loadRepositoryDict(subuserlib.loadMultiFallbackJsonConfigFile.getConfig(self.systemRepositoryListPaths))
-    if "repositories.json" in self.getUser().getRegistry().getGitRepository().lsFiles(self.getUser().getRegistry().getGitReadHash(),"./"):
-      self.userRepositories = loadRepositoryDict(json.loads(self.getUser().getRegistry().getGitRepository().show(self.getUser().getRegistry().getGitReadHash(),"repositories.json")))
+    registryFileStructure = self.getUser().getRegistry().getGitRepository().getFileStructureAtCommit(self.getUser().getRegistry().getGitReadHash())
+    if "repositories.json" in registryFileStructure.lsFiles("./"):
+      self.userRepositories = loadRepositoryDict(json.loads(registryFileStructure.read("repositories.json")))
     else:
       self.userRepositories = {}
 
@@ -77,8 +78,9 @@ class Repositories(collections.Mapping,subuserlib.classes.userOwnedObject.UserOw
     Load the repository states from disk.
     Return them as a dictionary object.
     """
-    if "repository-states.json" in self.getUser().getRegistry().getGitRepository().lsFiles(self.getUser().getRegistry().getGitReadHash(),"./"):
-      return json.loads(self.getUser().getRegistry().getGitRepository().show(self.getUser().getRegistry().getGitReadHash(),"repository-states.json"))
+    gitFileStructure = self.getUser().getRegistry().getGitRepository().getFileStructureAtCommit(self.getUser().getRegistry().getGitReadHash())
+    if "repository-states.json" in gitFileStructure.lsFiles("./"):
+      return json.loads(gitFileStructure.read("repository-states.json"))
     else:
       return {}
 

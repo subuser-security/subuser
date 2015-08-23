@@ -13,5 +13,5 @@ cd /home/travis/default-test-repo
 git init
 git add .
 git commit -m 'test'
-cp -r  /home/travis/default-test-repo /home/travis/local-test-repo
+cp -r  $1/test/local-test-repo /home/travis/local-test-repo
 cp -r $1/test/hashtest/ /home/travis/hashtest/

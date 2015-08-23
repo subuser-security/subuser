@@ -15,7 +15,7 @@ import subuserlib.permissions
 
 
 class Permissions(collections.OrderedDict,UserOwnedObject,FileBackedObject):
-  def __init__(self,user,initialPermissions,writePath):
+  def __init__(self,user,initialPermissions,writePath=None):
     self.__writePath = writePath
     UserOwnedObject.__init__(self,user)
     collections.OrderedDict.__init__(self)

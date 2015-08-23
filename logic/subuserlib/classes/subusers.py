@@ -63,8 +63,9 @@ class Subusers(dict,UserOwnedObject,FileBackedObject):
     if os.path.exists(self.getUser().getConfig()["locked-subusers-path"]):
       with open(self.getUser().getConfig()["locked-subusers-path"],"r") as file:
         self._loadSerializedSubusersDict(json.load(file, object_pairs_hook=collections.OrderedDict),locked=True)
-    if "subusers.json" in self.getUser().getRegistry().getGitRepository().lsFiles(self.getUser().getRegistry().getGitReadHash(),"./"):
-      serializedUnlockedSubusersDict = json.loads(self.getUser().getRegistry().getGitRepository().show(self.getUser().getRegistry().getGitReadHash(),"subusers.json"), object_pairs_hook=collections.OrderedDict)
+    registryFileStructure = self.getUser().getRegistry().getGitRepository().getFileStructureAtCommit(self.getUser().getRegistry().getGitReadHash()) 
+    if "subusers.json" in registryFileStructure.lsFiles("./"):
+      serializedUnlockedSubusersDict = json.loads(registryFileStructure.read("subusers.json"), object_pairs_hook=collections.OrderedDict)
       self._loadSerializedSubusersDict(serializedUnlockedSubusersDict,locked=False)
 
   def save(self):

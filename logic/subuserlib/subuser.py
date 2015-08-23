@@ -26,7 +26,7 @@ def add(user,subuserName,imageSourceIdentifier,permissionsAccepter):
   try:
     imageSource = subuserlib.resolve.resolveImageSource(user,imageSourceIdentifier)
   except KeyError as keyError:
-    sys.exit("Could not add subuser.  The image source "+imageSourceIdentifier+" does not exist.")
+    sys.exit("Could not add subuser.  The image source "+imageSourceIdentifier+" does not exist.\n"+str(keyError))
   addFromImageSource(user,subuserName,imageSource,permissionsAccepter)
 
 def addFromImageSource(user,subuserName,imageSource,permissionsAccepter):

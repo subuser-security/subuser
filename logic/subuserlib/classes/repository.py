@@ -14,6 +14,7 @@ from subuserlib.classes.userOwnedObject import UserOwnedObject
 from subuserlib.classes.imageSource import ImageSource
 from subuserlib.classes.describable import Describable
 from subuserlib.classes.gitRepository import GitRepository
+from subuserlib.classes.fileStructure import BasicFileStructure
 
 class Repository(dict,UserOwnedObject,Describable):
   def __init__(self,user,name,gitOriginURI=None,gitCommitHash=None,temporary=False,sourceDir=None):
@@ -23,8 +24,9 @@ class Repository(dict,UserOwnedObject,Describable):
     self.__name = name
     self.__gitOriginURI = gitOriginURI
     self.__lastGitCommitHash = gitCommitHash
-    self.__temporary=temporary
-    self.__sourceDir=sourceDir
+    self.__temporary = temporary
+    self.__sourceDir = sourceDir
+    self.__fileStructure = None
     UserOwnedObject.__init__(self,user)
     self.__gitRepository = GitRepository(self.getRepoPath())
     self.loadImageSources()
@@ -47,13 +49,21 @@ class Repository(dict,UserOwnedObject,Describable):
   def getGitRepository(self):
     return self.__gitRepository
 
+  def getFileStructure(self):
+    if self.__fileStructure is None:
+      if self.isLocal():
+        self.__fileStructure = BasicFileStructure(self.getSourceDir())
+      else:
+        self.__fileStructure = self.getGitRepository().getFileStructureAtCommit(self.getGitCommitHash())
+    return self.__fileStructure
+
   def getDisplayName(self):
     """
     How should we refer to this repository when communicating with the user?
     """
     if self.isTemporary():
       if self.isLocal():
-        return self.__sourceDir
+        return self.getSourceDir()
       else:
         return self.getGitOriginURI()
     else:
@@ -76,26 +86,26 @@ class Repository(dict,UserOwnedObject,Describable):
   def getRepoPath(self):
     """ Get the path of the repo's sources on disk. """
     if self.isLocal():
-      return self.__sourceDir
+      return self.getSourceDir()
     else:
       return os.path.join(self.getUser().getConfig()["repositories-dir"],self.getName())
-
-  def getRepoConfigPath(self):
-    return os.path.join(self.getRepoPath(),".subuser.json")
 
   def getRepoConfig(self):
     """
     Either returns the config as a dictionary or None if no configuration exists or can be parsed.
     """
-    if self.isLocal() and os.path.exists(self.getRepoConfigPath()):
-      with io.open(self.getRepoConfigPath(),"r",encoding="utf-8") as configFile:
-        configFileContents = configFile.read()
-    elif not self.isLocal() and ".subuser.json" in self.getGitRepository().lsFiles(self.getGitCommitHash(),"./"):
-      configFileContents = self.getGitRepository().show(self.getGitCommitHash(),"./.subuser.json")
+    if self.getFileStructure().exists("./.subuser.json"):
+      configFileContents = self.getFileStructure().read("./.subuser.json")
     else:
       return None
     try:
-      return json.loads(configFileContents)
+      repoConfig = json.loads(configFileContents)
+      # Validate untrusted input
+      paths = ["subuser-repository-root","docker-image-dir"]
+      for path in paths:
+        if path in repoConfig and path.startswith("../"):
+          raise ValueError("Paths in .subuser.json may not be relative to a higher directory.")
+      return repoConfig
     except ValueError as ve:
       # TODO we should probably exit and tell the user loudly that something isn't right.
       self.getRegistry().log("Error parsing .subuser.json file for repository "+self.getName()+":\n"+str(ve))
@@ -112,12 +122,10 @@ class Repository(dict,UserOwnedObject,Describable):
     Get the path of the repo's subuser root on disk on the host.
     """
     repoConfig = self.getRepoConfig()
-    if repoConfig:
-      if "subuser-repository-root" in repoConfig:
-        if repoConfig["subuser-repository-root"].startswith("../"):
-          raise ValueError("Paths in .subuser.json may not be relative to a higher directory.")
-        return repoConfig["subuser-repository-root"]
-    return "./"
+    if repoConfig and "subuser-repository-root" in repoConfig:
+      return repoConfig["subuser-repository-root"]
+    else:
+      return "./"
 
   def isTemporary(self):
     return self.__temporary
@@ -154,14 +162,10 @@ class Repository(dict,UserOwnedObject,Describable):
     """
     Load ImageSources from disk into memory.
     """
-    if self.isLocal():
-      imageNames = filter(lambda f: os.path.isdir(os.path.join(self.getSubuserRepositoryRoot(),f)) and not f == ".git",os.listdir(self.getSubuserRepositoryRoot()))
-    else:
-      if not os.path.exists(self.getRepoPath()):
-        self.updateSources()
-      imageNames = self.getGitRepository().lsFolders(self.getGitCommitHash(),self.getSubuserRepositoryRelativeRoot())
-      if self.getSubuserRepositoryRelativeRoot() != "./":
-        imageNames = [os.path.basename(path) for path in imageNames]
+    if not os.path.exists(self.getRepoPath()):
+      self.updateSources()
+    imageNames = self.getFileStructure().lsFolders(self.getSubuserRepositoryRelativeRoot())
+    imageNames = [os.path.basename(path) for path in imageNames]
     for imageName in imageNames:
       self[imageName] = ImageSource(self.getUser(),self,imageName)
 
@@ -179,6 +183,7 @@ class Repository(dict,UserOwnedObject,Describable):
     newCommitHash = output.split("\n")[0]
     updated = not newCommitHash == self.__lastGitCommitHash
     self.__lastGitCommitHash = newCommitHash
+    self.__fileStructure = None
     return updated
 
   def getGitCommitHash(self):

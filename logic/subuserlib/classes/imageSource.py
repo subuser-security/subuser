@@ -11,7 +11,7 @@ import os
 import io
 import uuid
 #internal imports
-import subuserlib.classes.userOwnedObject,subuserlib.classes.describable,subuserlib.resolve, subuserlib.hashDirectory
+import subuserlib.classes.userOwnedObject,subuserlib.classes.describable,subuserlib.resolve
 import subuserlib.classes.docker.dockerDaemon
 
 class ImageSource(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.classes.describable.Describable):
@@ -49,15 +49,16 @@ class ImageSource(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.
 
   def getDockerImageDir(self):
     repoConfig = self.getRepository().getRepoConfig()
-    if repoConfig:
-      if "docker-image-dir" in repoConfig:
-        if repoConfig["docker-image-dir"].startswith("../"):
-          raise ValueError("Paths in .subuser.json may not be relative to a higher directory.")
-        return os.path.join(self.getSourceDir(),repoConfig["docker-image-dir"])
-    return os.path.join(self.getSourceDir(),"docker-image")
+    if repoConfig and "docker-image-dir" in repoConfig:
+      return os.path.join(self.getRelativeSourceDir(),repoConfig["docker-image-dir"])
+    else:
+      return os.path.join(self.getRelativeSourceDir(),"docker-image")
 
   def getSourceDir(self):
     return os.path.join(self.getRepository().getSubuserRepositoryRoot(),self.getName())
+
+  def getRelativeSourceDir(self):
+    return os.path.join(self.getRepository().getSubuserRepositoryRelativeRoot(),self.getName())
 
   def getLatestInstalledImage(self):
     """
@@ -88,11 +89,8 @@ class ImageSource(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.
 
   def getPermissions(self):
     if not self.__permissions:
-      if not self.getRepository().isLocal():
-        permissionsString = self.getRepository().getGitRepository().show(self.getRepository().getGitCommitHash(),os.path.join(self.getRepository().getSubuserRepositoryRelativeRoot(),self.getName(),"permissions.json"))
-        initialPermissions = subuserlib.permissions.getPermissions(permissionsString=permissionsString)
-      else:
-        initialPermissions = subuserlib.permissions.getPermissions(permissionsFilePath=self.getPermissionsFilePath())
+      permissionsString = self.getRepository().getFileStructure().read(os.path.join(self.getRepository().getSubuserRepositoryRelativeRoot(),self.getName(),"permissions.json"))
+      initialPermissions = subuserlib.permissions.getPermissions(permissionsString=permissionsString)
       self.__permissions = subuserlib.classes.permissions.Permissions(self.getUser(),initialPermissions,writePath=self.getPermissionsFilePath())
     return self.__permissions
 
@@ -106,17 +104,16 @@ class ImageSource(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.
     self.getPermissions().describe()
 
   def build(self,parent):
-    dockerImageDir = self.getDockerImageDir()
     dockerFileContents = self.getDockerfileContents(parent=parent)
-    imageId = self.getUser().getDockerDaemon().build(directoryWithDockerfile=dockerImageDir,rm=True,dockerfile=dockerFileContents) 
+    imageId = self.getUser().getDockerDaemon().build(relativeBuildContextPath=self.getDockerImageDir(),repositoryFileStructure=self.getRepository().getFileStructure(),rm=True,dockerfile=dockerFileContents)
     subuserSetupDockerFile = ""
     subuserSetupDockerFile += "FROM "+imageId+"\n"
     subuserSetupDockerFile += "RUN mkdir /subuser ; echo "+str(uuid.uuid4())+" > /subuser/uuid\n" # This ensures that all images have unique Ids.  Even images that are otherwise the same.
     return self.getUser().getDockerDaemon().build(dockerfile=subuserSetupDockerFile)
 
-  def getSubuserImagefilePath(self):
+  def getRelativeSubuserImagefilePath(self):
     """
-    Returns the path to the SubuserImagefile, whether it exists or not.
+    Returns the relative path to the SubuserImagefile, whether it exists or not.
     """
     dockerImageDir = self.getDockerImageDir()
     return os.path.join(dockerImageDir,"SubuserImagefile")
@@ -125,10 +122,9 @@ class ImageSource(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.
     """
      Returns the contents of the SubuserImagefile.  If there is no SubuserImagefile return None.
     """
-    if os.path.isfile(self.getSubuserImagefilePath()):
-      with io.open(self.getSubuserImagefilePath(),mode="r",encoding="utf-8") as subuserImagefile:
-        return subuserImagefile.read()
-    else:
+    try:
+      return self.getRepository().getFileStructure().read(self.getRelativeSubuserImagefilePath())
+    except OSError:
       return None
 
   def getDockerfileContents(self,parent=None):
@@ -137,9 +133,10 @@ class ImageSource(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.
     """
     dockerImageDir = self.getDockerImageDir()
     dockerfilePath = os.path.join(dockerImageDir,"Dockerfile")
-    if os.path.isfile(dockerfilePath):
-      with open(dockerfilePath,"r") as dockerfile:
-        return dockerfile.read()
+    try:
+      return self.getRepository().getFileStructure().read(dockerfilePath)
+    except (OSError,IOError):
+      pass
     subuserImagefileContents = self.getSubuserImagefileContents()
     dockerfileContents = ""
     for line in subuserImagefileContents.split("\n"):
@@ -172,7 +169,7 @@ class ImageSource(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.
 
   def getHash(self):
     """ Return the hash of the ``docker-image`` directory. """
-    return subuserlib.hashDirectory.getHashOfDirs(self.getDockerImageDir())
+    return self.getRepository().getFileStructure().hash(self.getDockerImageDir())
 
 class SyntaxError(Exception):
   """

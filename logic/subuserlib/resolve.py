@@ -43,9 +43,11 @@ def resolveImageSource(user,imageSourcePath,contextRepository=None,allowRefferin
     - If the repository does not exist
     - If the image is not in the repository
 
-  >>> resolveImageSource(user,"non-existant@default")
-  Traceback (most recent call last):
-  KeyError: 'non-existant'
+  >>> try:
+  ...   resolveImageSource(user,"non-existant@default")
+  ... except KeyError:
+  ...   print("KeyError")
+  KeyError
   """
   if not contextRepository:
     contextRepository = user.getRegistry().getRepositories()["default"]
@@ -64,7 +66,10 @@ def resolveImageSource(user,imageSourcePath,contextRepository=None,allowRefferin
   # "foo@https://github.com/subuser-security/some-repo.git"
   else:
     repository = getRepositoryFromURIOrPath(user,splitImageIdentifier[1])
-  return repository[imageName]
+  try:
+    return repository[imageName]
+  except KeyError:
+    raise KeyError(imageName + " could not be found in the repository. The following images exist in the repository: \"" + "\" \"".join(repository.keys())+"\"")
 
 def lookupRepositoryByURI(user,uri):
   """

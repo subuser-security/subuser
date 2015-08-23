@@ -200,7 +200,7 @@ def update(realArgs):
 
   Now we change the ImageSource for the ``intermediary`` image.
 
-  >>> with open(user.getRegistry().getRepositories()[u'1']["intermediary"].getSubuserImagefilePath(),mode="w") as subuserImagefile:
+  >>> with open("/home/travis/test-home/.subuser/repositories/1/images/intermediary/docker-image/SubuserImagefile",mode="w") as subuserImagefile:
   ...   _ = subuserImagefile.write("FROM-SUBUSER-IMAGE dependency2")
 
   And commit the changes to git.
@@ -268,7 +268,7 @@ def update(realArgs):
   Unregistering any non-existant installed images.
   Running garbage collector on temporary repositories...
 
-  >>> with open(user.getRegistry().getRepositories()[u'1']["intermediary"].getSubuserImagefilePath(),mode="w") as subuserImagefile:
+  >>> with open("/home/travis/test-home/.subuser/repositories/1/images/intermediary/docker-image/SubuserImagefile",mode="w") as subuserImagefile:
   ...   _ = subuserImagefile.write("FROM-SUBUSER-IMAGE dependency3")
 
   And commit the changes to git.
