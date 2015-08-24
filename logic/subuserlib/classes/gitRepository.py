@@ -60,6 +60,18 @@ class GitRepository():
 
 class GitFileStructure(FileStructure):
   def __init__(self,gitRepository,commit):
+    """
+    Initialize the file structure.
+
+    Here we setup test stuff:
+    >>> import subuserlib.subprocessExtras
+    >>> subuserlib.subprocessExtras.call(["git","init"],cwd="/home/travis/hashtest")
+    0
+    >>> subuserlib.subprocessExtras.call(["git","add","."],cwd="/home/travis/hashtest")
+    0
+    >>> subuserlib.subprocessExtras.call(["git","commit","-m","Initial commit"],cwd="/home/travis/hashtest")
+    0
+    """
     self.__gitRepository = gitRepository
     self.__commit = commit
 
@@ -95,6 +107,12 @@ class GitFileStructure(FileStructure):
     """
     Returns a list of file and folder paths.
     Paths are relative to the repository as a whole.
+    
+    >>> from subuserlib.classes.gitRepository import GitRepository
+    >>> gitRepository = GitRepository("/home/travis/hashtest")
+    >>> fileStructure = gitRepository.getFileStructureAtCommit("master")
+    >>> print(",".join(fileStructure.ls("./")))
+    bar,blah
     """
     items = self.lsTree(subfolder,extraArgs)
     paths = []
@@ -106,6 +124,12 @@ class GitFileStructure(FileStructure):
     """
     Returns a list of paths to files in the subfolder.
     Paths are relative to the repository as a whole.
+
+    >>> from subuserlib.classes.gitRepository import GitRepository
+    >>> gitRepository = GitRepository("/home/travis/hashtest")
+    >>> fileStructure = gitRepository.getFileStructureAtCommit("master")
+    >>> print(",".join(fileStructure.lsFiles("./")))
+    blah
     """
     return list(set(self.ls(subfolder)) - set(self.lsFolders(subfolder)))
 
@@ -113,10 +137,25 @@ class GitFileStructure(FileStructure):
     """
     Returns a list of paths to folders in the subfolder.
     Paths are relative to the repository as a whole.
+
+    >>> from subuserlib.classes.gitRepository import GitRepository
+    >>> gitRepository = GitRepository("/home/travis/hashtest")
+    >>> fileStructure = gitRepository.getFileStructureAtCommit("master")
+    >>> print(",".join(fileStructure.lsFolders("./")))
+    bar
     """
     return self.ls(subfolder,extraArgs=["-d"])
 
   def exists(self,path):
+    """
+    >>> from subuserlib.classes.gitRepository import GitRepository
+    >>> gitRepository = GitRepository("/home/travis/hashtest")
+    >>> fileStructure = gitRepository.getFileStructureAtCommit("master")
+    >>> fileStructure.exists("./blah")
+    True
+    >>> fileStructure.exists("./non-existant")
+    False
+    """
     try:
       self.read(path)
       return True
@@ -126,6 +165,13 @@ class GitFileStructure(FileStructure):
   def read(self,path):
     """
     Returns the contents of the given file at the given commit.
+
+    >>> from subuserlib.classes.gitRepository import GitRepository
+    >>> gitRepository = GitRepository("/home/travis/hashtest")
+    >>> fileStructure = gitRepository.getFileStructureAtCommit("master")
+    >>> print(fileStructure.read("./blah"))
+    blahblah
+    <BLANKLINE>
     """
     (errorcode,content) = self.getRepository().runCollectOutput(["show",self.getCommit()+":"+path])
     if errorcode != 0:
@@ -133,7 +179,14 @@ class GitFileStructure(FileStructure):
     return content
 
   def getMode(self,path):
+    """
+    >>> from subuserlib.classes.gitRepository import GitRepository
+    >>> gitRepository = GitRepository("/home/travis/hashtest")
+    >>> fileStructure = gitRepository.getFileStructureAtCommit("master")
+    >>> print(fileStructure.getModeString("./blah"))
+    100644
+    """
     allObjects = self.lsTree("./",extraArgs=["-r"])
     for treeObject in allObjects:
-      if treeObject[3] == path:
+      if os.path.normpath(treeObject[3]) == os.path.normpath(path):
         return int(treeObject[0],8)

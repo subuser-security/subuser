@@ -72,6 +72,7 @@ subprocess.call([os.path.join(subuserDir,"test/setup"),subuserDir])
 import subuserlib.classes.user
 import subuserlib.classes.subuser
 import subuserlib.classes.fileStructure
+import subuserlib.classes.gitRepository
 # libs
 import subuserlib.resolve
 import subuserlib.permissions
@@ -90,6 +91,7 @@ modules = [
   subuserlib.classes.user
   ,subuserlib.classes.subusers
   ,subuserlib.classes.fileStructure
+  ,subuserlib.classes.gitRepository
   # subuserlib modules
   ,subuserlib.permissions
   ,subuserlib.resolve

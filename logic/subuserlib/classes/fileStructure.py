@@ -85,7 +85,7 @@ class FileStructure():
     >>> from subuserlib.classes.fileStructure import FileStructure
     >>> fileStructure = BasicFileStructure("/home/travis/hashtest")
     >>> fileStructure.hash("./")
-    '4cba5c30617080083268f30b8a69fbbf45f8e767'
+    'c5c5368bf02e0105e98eca5f07eef6bb2907188e'
     """
     SHAhash = hashlib.sha1()
     # TODO - what about symlinks?
@@ -133,11 +133,12 @@ class BasicFileStructure(FileStructure):
     >>> from subuserlib.classes.fileStructure import FileStructure
     >>> fileStructure = BasicFileStructure("/home/travis/hashtest")
     >>> print(",".join(fileStructure.ls("./")))
-    ./blah,./bar
+    bar,blah
     """
     paths = []
     for path in os.listdir(self.getPathInStructure(subfolder)):
-      paths.append(os.path.join(subfolder,path))
+      paths.append(os.path.normpath(os.path.join(subfolder,path)))
+    paths.sort()
     return paths
 
   def lsFiles(self,subfolder):
@@ -146,12 +147,12 @@ class BasicFileStructure(FileStructure):
     >>> from subuserlib.classes.fileStructure import FileStructure
     >>> fileStructure = BasicFileStructure("/home/travis/hashtest")
     >>> print(",".join(fileStructure.lsFiles("./")))
-    ./blah
+    blah
     """
     files = []
     for path in self.ls(subfolder):
       if os.path.isfile(self.getPathInStructure(path)):
-        files.append(path)
+        files.append(os.path.normpath(path))
     return files
 
   def lsFolders(self,subfolder):
@@ -160,12 +161,12 @@ class BasicFileStructure(FileStructure):
     >>> from subuserlib.classes.fileStructure import FileStructure
     >>> fileStructure = BasicFileStructure("/home/travis/hashtest")
     >>> print(",".join(fileStructure.lsFolders("./")))
-    ./bar
+    bar
     """
     folders = []
     for path in self.ls(subfolder):
       if os.path.isdir(self.getPathInStructure(path)):
-        folders.append(path)
+        folders.append(os.path.normpath(path))
     return folders
 
   def exists(self,path):
