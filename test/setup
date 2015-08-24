@@ -15,5 +15,7 @@ git add .
 git commit -m 'test'
 cp -r  $1/test/local-test-repo /home/travis/local-test-repo
 cp -r $1/test/hashtest/ /home/travis/hashtest/
+echo User is $USER id $UID
+echo ls -la /home/travis/hashtest
 ls -la /home/travis/hashtest
 chmod -R 644 /home/travis/hashtest
