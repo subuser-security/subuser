@@ -58,6 +58,17 @@ class FileStructure():
   def getMode(self,path):
     pass
 
+  def getModeString(self,path):
+    """
+    Return the human readable mode string for the mode in octal notation.
+    """
+    octalMode = oct(self.getMode(path))
+    if sys.version_info[0] == 2:
+      octalMode = octalMode[1:]
+    if sys.version_info[0] == 3:
+      octalMode = octalMode[2:]
+    return octalMode
+
   def hash(self,path):
     """
     Return the SHA1 hash of the file or directory.
@@ -84,12 +95,7 @@ class FileStructure():
     # TODO - what about named pipes?
     def hashFile(path):
       SHAhash.update(path.encode("utf-8"))
-      octalMode = oct(self.getMode(path))
-      if sys.version_info[0] == 2:
-        octalMode = octalMode[1:]
-      if sys.version_info[0] == 3:
-        octalMode = octalMode[2:]
-      SHAhash.update(octalMode.encode("utf-8"))
+      SHAhash.update(self.getModeString(path).encode("utf-8"))
       SHAhash.update(self.read(path).encode("utf-8"))
     def hashDir(path):
       # Hash subdirectories
@@ -122,12 +128,26 @@ class BasicFileStructure(FileStructure):
     return os.path.join(self.getPath(),path)
 
   def ls(self, subfolder):
+    """
+
+    >>> from subuserlib.classes.fileStructure import FileStructure
+    >>> fileStructure = BasicFileStructure("/home/travis/hashtest")
+    >>> print(",".join(fileStructure.ls("./")))
+    ./blah,./bar
+    """
     paths = []
     for path in os.listdir(self.getPathInStructure(subfolder)):
       paths.append(os.path.join(subfolder,path))
     return paths
 
   def lsFiles(self,subfolder):
+    """
+
+    >>> from subuserlib.classes.fileStructure import FileStructure
+    >>> fileStructure = BasicFileStructure("/home/travis/hashtest")
+    >>> print(",".join(fileStructure.lsFiles("./")))
+    ./blah
+    """
     files = []
     for path in self.ls(subfolder):
       if os.path.isfile(self.getPathInStructure(path)):
@@ -135,6 +155,13 @@ class BasicFileStructure(FileStructure):
     return files
 
   def lsFolders(self,subfolder):
+    """
+
+    >>> from subuserlib.classes.fileStructure import FileStructure
+    >>> fileStructure = BasicFileStructure("/home/travis/hashtest")
+    >>> print(",".join(fileStructure.lsFolders("./")))
+    ./bar
+    """
     folders = []
     for path in self.ls(subfolder):
       if os.path.isdir(self.getPathInStructure(path)):
@@ -142,11 +169,34 @@ class BasicFileStructure(FileStructure):
     return folders
 
   def exists(self,path):
+    """
+
+    >>> from subuserlib.classes.fileStructure import FileStructure
+    >>> fileStructure = BasicFileStructure("/home/travis/hashtest")
+    >>> fileStructure.exists("./blah")
+    True
+    >>> fileStructure.exists("./non-existant")
+    False
+
+    """
     return os.path.exists(self.getPathInStructure(path))
 
   def read(self,path):
+    """
+    >>> from subuserlib.classes.fileStructure import FileStructure
+    >>> fileStructure = BasicFileStructure("/home/travis/hashtest")
+    >>> print(fileStructure.read("./blah"))
+    blahblah
+    <BLANKLINE>
+    """
     with open(self.getPathInStructure(path),"r") as fd:
       return fd.read()
 
   def getMode(self,path):
+    """
+    >>> from subuserlib.classes.fileStructure import FileStructure
+    >>> fileStructure = BasicFileStructure("/home/travis/hashtest")
+    >>> print(fileStructure.getModeString("./blah"))
+    100644
+    """
     return os.stat(self.getPathInStructure(path))[stat.ST_MODE]
