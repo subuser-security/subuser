@@ -11,16 +11,16 @@ import os
 import io
 import uuid
 #internal imports
-import subuserlib.classes.userOwnedObject,subuserlib.classes.describable,subuserlib.resolve
-import subuserlib.classes.docker.dockerDaemon
+from subuserlib.classes.userOwnedObject import UserOwnedObject
+from subuserlib.classes.describable import Describable
+import subuserlib.permissions
 
-class ImageSource(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.classes.describable.Describable):
-
+class ImageSource(UserOwnedObject,Describable):
   def __init__(self,user,repo,name):
     self.__name = name
     self.__repo = repo
     self.__permissions = None
-    subuserlib.classes.userOwnedObject.UserOwnedObject.__init__(self,user)
+    UserOwnedObject.__init__(self,user)
 
   def getName(self):
     return self.__name
@@ -158,6 +158,7 @@ class ImageSource(subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.
     for line in SubuserImagefileContents.split("\n"):
       if line.startswith("FROM-SUBUSER-IMAGE"):
         try:
+          import subuserlib.resolve
           imageURI = line.split(" ")[1]
           return subuserlib.resolve.resolveImageSource(self.getUser(),imageURI,contextRepository=self.getRepository(),allowRefferingToRepositoriesByName=False) #TODO, ImageSource names with spaces or other funny characters...
         except IndexError:

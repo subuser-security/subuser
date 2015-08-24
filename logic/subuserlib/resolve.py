@@ -9,13 +9,14 @@ This module is used to parse the image source identifiers used to identify image
 #external imports
 #import ...
 #internal imports
-import subuserlib.classes.subuser, subuserlib.classes.repository, subuserlib.classes.imageSource
+from subuserlib.classes.repository import Repository
 
 def resolveImageSource(user,imageSourcePath,contextRepository=None,allowRefferingToRepositoriesByName=True):
   """
   From a image source identifier path return a ImageSource object.
 
-  >>> user = subuserlib.classes.user.User()
+  >>> from subuserlib.classes.user import User
+  >>> user = User()
 
   Usually, the syntax is image-name@repository-name.
 
@@ -104,7 +105,7 @@ def getRepositoryFromURI(user,uri):
   if repository:
     return repository
   # If it doesn't, create a new repo and return it.
-  newTempRepo = subuserlib.classes.repository.Repository(user=user,name=user.getRegistry().getRepositories().getNewUniqueTempRepoId(),gitOriginURI=uri,gitCommitHash="master",temporary=True)
+  newTempRepo = Repository(user=user,name=user.getRegistry().getRepositories().getNewUniqueTempRepoId(),gitOriginURI=uri,gitCommitHash="master",temporary=True)
   user.getRegistry().getRepositories().addRepository(newTempRepo)
   return newTempRepo
 
@@ -114,7 +115,7 @@ def getRepositoryFromPath(user,path):
     return repository
   else:
     # If it doesn't, create a new repo and return it.
-    newTempRepo = subuserlib.classes.repository.Repository(user=user,name=user.getRegistry().getRepositories().getNewUniqueTempRepoId(),temporary=True,sourceDir=path)
+    newTempRepo = Repository(user=user,name=user.getRegistry().getRepositories().getNewUniqueTempRepoId(),temporary=True,sourceDir=path)
     user.getRegistry().getRepositories().addRepository(newTempRepo)
     return newTempRepo
 

@@ -8,7 +8,8 @@ In order to make our test suit work, we must use a MockDockerDaemon rather than 
 """
 
 #external imports
-import json,os
+import json
+import os
 #internal imports
 from subuserlib.classes.userOwnedObject import UserOwnedObject
 import subuserlib.classes.docker.dockerDaemon

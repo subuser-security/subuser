@@ -7,15 +7,22 @@ This is the list of repositories from which subuser images may be installed or u
 """
 
 #external imports
-import os,collections,json,sys
+import os
+import collections
+import json
+import sys
 #internal imports
-import subuserlib.paths, subuserlib.classes.fileBackedObject, subuserlib.classes.userOwnedObject, subuserlib.classes.repository,subuserlib.loadMultiFallbackJsonConfigFile
+import subuserlib.paths
+from subuserlib.classes.fileBackedObject import FileBackedObject
+from subuserlib.classes.userOwnedObject import UserOwnedObject
+from subuserlib.classes.repository import Repository
+import subuserlib.loadMultiFallbackJsonConfigFile
 
-class Repositories(collections.Mapping,subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.classes.fileBackedObject.FileBackedObject):
+class Repositories(collections.Mapping,UserOwnedObject,FileBackedObject):
   def __init__(self,user):
     self.systemRepositories = {} # TODO rename and document these variables
     self.userRepositories = {}
-    subuserlib.classes.userOwnedObject.UserOwnedObject.__init__(self,user)
+    UserOwnedObject.__init__(self,user)
     self.systemRepositoryListPaths = ["/etc/subuser/repositories.json"
        ,os.path.join(user.homeDir,".subuser","repositories.json")
        ,os.path.join(subuserlib.paths.getSubuserDir(),"repositories.json")] # TODO how does this work on windows?
@@ -63,7 +70,7 @@ class Repositories(collections.Mapping,subuserlib.classes.userOwnedObject.UserOw
           sourceDir = repoAttributes["source-dir"]
         else:
           sourceDir = None
-        repositories[repoName] = subuserlib.classes.repository.Repository(self.getUser(),name=repoName,gitOriginURI=gitOriginURI,gitCommitHash=gitCommitHash,temporary=temporary,sourceDir=sourceDir)
+        repositories[repoName] = Repository(self.getUser(),name=repoName,gitOriginURI=gitOriginURI,gitCommitHash=gitCommitHash,temporary=temporary,sourceDir=sourceDir)
       return repositories
 
     self.systemRepositories = loadRepositoryDict(subuserlib.loadMultiFallbackJsonConfigFile.getConfig(self.systemRepositoryListPaths))

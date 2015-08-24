@@ -6,7 +6,10 @@ Implements functions involved in building/installing/updating subuser images.
 """
 
 #external imports
-import sys,os,stat,io
+import sys
+import os
+import stat
+import io
 #internal imports
 import subuserlib.classes.installedImage
 import subuserlib.installedImages

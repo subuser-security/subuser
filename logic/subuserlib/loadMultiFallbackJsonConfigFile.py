@@ -7,7 +7,9 @@ Module used for loading multiple json config files, where attributes consequtive
 """
 
 #external imports
-import os,inspect,json
+import os
+import inspect
+import json
 #internal imports
 #import ...
 

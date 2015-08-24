@@ -7,7 +7,9 @@ Helper functions for running foreign executables.
 """
 
 #external imports
-import sys,subprocess,os
+import sys
+import subprocess
+import os
 #internal imports
 #import ...
 

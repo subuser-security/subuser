@@ -7,7 +7,14 @@ The DockerDaemon object allows us to communicate with the Docker daemon via the 
 """
 
 #external imports
-import urllib,tarfile,os,tempfile,fnmatch,re,json,sys
+import urllib
+import tarfile
+import os
+import tempfile
+import fnmatch
+import re
+import json
+import sys
 try:
  import httplib
 except ImportError:

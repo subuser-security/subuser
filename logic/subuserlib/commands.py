@@ -8,7 +8,8 @@ This module helps us figure out which subuser subcommands can be called.
 #external imports
 import os
 #internal imports
-import subuserlib.executablePath,subuserlib.paths
+import subuserlib.executablePath
+import subuserlib.paths
 
 nonCommands = {"__init__.py", "pathConfig.py"}
 

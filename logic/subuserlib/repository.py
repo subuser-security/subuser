@@ -9,7 +9,9 @@ High level operations on repostories.
 #external imports
 import sys
 #internal imports
-import subuserlib.classes.user,subuserlib.resolve,subuserlib.classes.repository
+from subuserlib.classes.user import User
+import subuserlib.resolve
+from subuserlib.classes.repository import Repository
 
 def add(user,name,url):
   repository = subuserlib.resolve.lookupRepositoryByURIOrPath(user,url)
@@ -20,9 +22,9 @@ def add(user,name,url):
       sys.exit("The repository named:" +repository.getName()+" already has this URL.  Cannot add.")
   else:
     if url.startswith("/"):
-      repository = subuserlib.classes.repository.Repository(user,name=name,sourceDir=url)
+      repository = Repository(user,name=name,sourceDir=url)
     else:
-      repository = subuserlib.classes.repository.Repository(user,name=name,gitOriginURI=url,gitCommitHash="master")
+      repository = Repository(user,name=name,gitOriginURI=url,gitCommitHash="master")
     user.getRegistry().getRepositories().addRepository(repository)
     user.getRegistry().commit()
 

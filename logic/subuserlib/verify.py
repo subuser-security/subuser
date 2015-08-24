@@ -13,7 +13,8 @@ This is one of the most important modules in subuser.  This module has one funct
 """
 
 #external imports
-import shutil,os
+import shutil
+import os
 #internal imports
 import subuserlib.install
 import subuserlib.classes.docker.dockerDaemon as dockerDaemon

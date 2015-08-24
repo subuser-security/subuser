@@ -8,7 +8,11 @@ This module helps us interact with the Docker executable directly.
 
 
 #external imports
-import sys,os,getpass,grp,subprocess
+import sys
+import os
+import getpass
+import grp
+import subprocess
 #internal imports
 import subuserlib.subprocessExtras as subprocessExtras
 import subuserlib.executablePath

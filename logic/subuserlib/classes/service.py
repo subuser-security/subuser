@@ -19,14 +19,14 @@ import signal
 #semi-external imports
 import subuserlib.portalocker.utils
 #internal imports
-import subuserlib.classes.userOwnedObject
+from subuserlib.classes.userOwnedObject import UserOwnedObject
 
-class Service(subuserlib.classes.userOwnedObject.UserOwnedObject):
+class Service(UserOwnedObject):
   __metaclass__ = abc.ABCMeta
 
   def __init__(self,user,subuser):
     self.__subuser = subuser
-    subuserlib.classes.userOwnedObject.UserOwnedObject.__init__(self,user)
+    UserOwnedObject.__init__(self,user)
 
   @abc.abstractmethod
   def start(self,serviceStatus):

@@ -7,7 +7,8 @@ Each subuser has a set of permissions which specify what parts of the host syste
 """
 
 #external imports
-import collections,hashlib
+import collections
+import hashlib
 #internal imports
 from subuserlib.classes.userOwnedObject import UserOwnedObject
 from subuserlib.classes.fileBackedObject import FileBackedObject

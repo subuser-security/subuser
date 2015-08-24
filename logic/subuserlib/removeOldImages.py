@@ -6,7 +6,8 @@ import pathConfig
 #external imports
 #import
 #internal imports
-import subuserlib.verify,subuserlib.install
+import subuserlib.verify
+import subuserlib.install
 
 def getInstalledImagesThatAreInUse(user):
   """

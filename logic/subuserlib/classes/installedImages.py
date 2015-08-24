@@ -7,13 +7,18 @@ This is the set of installed images that bellongs to a given user.
 """
 
 #external imports
-import os,json,collections,sys
+import os
+import json
+import collections
+import sys
 #internal imports
-import subuserlib.classes.installedImage,subuserlib.classes.fileBackedObject, subuserlib.classes.userOwnedObject
+from subuserlib.classes.installedImage import InstalledImage
+from subuserlib.classes.fileBackedObject import FileBackedObject
+from subuserlib.classes.userOwnedObject import UserOwnedObject
 
-class InstalledImages(dict,subuserlib.classes.userOwnedObject.UserOwnedObject,subuserlib.classes.fileBackedObject.FileBackedObject):
+class InstalledImages(dict,UserOwnedObject,FileBackedObject):
   def __init__(self,user):
-    subuserlib.classes.userOwnedObject.UserOwnedObject.__init__(self,user)
+    UserOwnedObject.__init__(self,user)
     self.reloadInstalledImagesList()
 
   def reloadInstalledImagesList(self):
@@ -35,7 +40,7 @@ class InstalledImages(dict,subuserlib.classes.userOwnedObject.UserOwnedObject,su
         imageSourceHash = imageAttributes["image-source-hash"]
       except KeyError:
         imageSourceHash = ""
-      image = subuserlib.classes.installedImage.InstalledImage(
+      image = InstalledImage(
         user=self.getUser(),
         imageId=imageId,
         imageSourceName=imageAttributes["image-source"],

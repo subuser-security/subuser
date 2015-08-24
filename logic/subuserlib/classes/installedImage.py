@@ -7,7 +7,8 @@ Each user has a set of images that have been installed.
 """
 
 #external imports
-import os,json
+import os
+import json
 #internal imports
 from subuserlib.classes.userOwnedObject import UserOwnedObject
 from subuserlib.classes.describable import Describable

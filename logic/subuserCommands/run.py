@@ -4,7 +4,8 @@
 
 import pathConfig
 #external imports
-import sys,os
+import sys
+import os
 #internal imports
 import subuserlib.classes.user
 

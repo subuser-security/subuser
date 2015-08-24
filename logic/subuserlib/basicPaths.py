@@ -7,7 +7,8 @@ This module exists only to provide some things that are also int paths, to modul
 """
 
 #external imports
-import os,inspect
+import os
+import inspect
 #internal imports
 #import ...
 home = os.path.expanduser("~")
