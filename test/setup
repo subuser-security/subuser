@@ -14,5 +14,5 @@ git init
 git add .
 git commit -m 'test'
 cp -r  $1/test/local-test-repo /home/travis/local-test-repo
-cp -r --preserve=mode $1/test/hashtest/ /home/travis/hashtest/
+cp -r $1/test/hashtest/ /home/travis/hashtest/
 chmod -R 644 /home/travis/hashtest
