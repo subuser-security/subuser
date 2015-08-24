@@ -30,12 +30,16 @@ class Service(UserOwnedObject):
 
   @abc.abstractmethod
   def start(self,serviceStatus):
-    """ Start the service. Block untill the service has started. Returns a modified service status dictionary with any service specific properties set."""
+    """
+    Start the service. Block untill the service has started. Returns a modified service status dictionary with any service specific properties set.
+    """
     pass
 
   @abc.abstractmethod
   def stop(self,serviceStatus):
-    """ Stop the service. Block untill the service has stopped. """
+    """
+    Stop the service. Block untill the service has stopped.
+    """
     pass
 
   @abc.abstractmethod
@@ -64,7 +68,9 @@ class Service(UserOwnedObject):
     return lockFd
 
   def addClient(self):
-    """ Increase the services client counter, starting the service if necessary. Blocks untill the service is ready to accept the new client. """
+    """
+    Increase the services client counter, starting the service if necessary. Blocks untill the service is ready to accept the new client.
+    """
     sig = signal.signal(signal.SIGINT, signal.SIG_IGN)
     with self.getLock() as lockFile:
       try:
@@ -82,7 +88,9 @@ class Service(UserOwnedObject):
     signal.signal(signal.SIGINT, sig)
 
   def removeClient(self):
-    """ Decrease the services client counter, stopping the service if no longer necessary. """
+    """
+    Decrease the services client counter, stopping the service if no longer necessary.
+    """
     sig = signal.signal(signal.SIGINT, signal.SIG_IGN)
     with self.getLock() as lockFile:
       serviceStatus = json.load(lockFile)

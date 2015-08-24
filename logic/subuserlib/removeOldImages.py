@@ -24,7 +24,6 @@ def getInstalledImagesThatAreInUse(user):
 
 def removeOldImages(user,dryrun,sourceRepoId=None,imageSourceName=None):
   installedImagesThatAreInUse = getInstalledImagesThatAreInUse(user)
-
   for installedImageId,installedImage in user.getInstalledImages().items():
     filterOut = False
     # If a sourceRepoId or sourceImageId have been specified, only remove images from that repo/soure
@@ -41,9 +40,6 @@ def removeOldImages(user,dryrun,sourceRepoId=None,imageSourceName=None):
       if not dryrun:
         installedImage.removeCachedRuntimes()
         installedImage.removeDockerImage()
-
   if not dryrun:
     subuserlib.verify.verify(user)
     user.getRegistry().commit()
-
-

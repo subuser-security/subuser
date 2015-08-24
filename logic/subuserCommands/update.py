@@ -10,7 +10,7 @@ import sys
 import optparse
 #internal imports
 import subuserlib.commandLineArguments
-import subuserlib.classes.user
+from subuserlib.classes.user import User
 import subuserlib.update
 from subuserlib.classes.permissionsAccepters.acceptPermissionsAtCLI import AcceptPermissionsAtCLI
 
@@ -64,7 +64,7 @@ def update(realArgs):
 
   Check initial test environment:
 
-  >>> user = subuserlib.classes.user.User()
+  >>> user = User()
   >>> set(user.getRegistry().getSubusers().keys()) == set([u'foo'])
   True
   >>> set([i.getImageSourceName() for i in user.getInstalledImages().values()]) == set([u'foo', u'bar'])
@@ -126,7 +126,7 @@ def update(realArgs):
 
   Check that our new subuser was successfully added.
 
-  >>> user = subuserlib.classes.user.User()
+  >>> user = User()
   >>> subuserNamesBeforeUpdate = user.getRegistry().getSubusers().keys()
   >>> set(subuserNamesBeforeUpdate) == set(['dependent', u'foo'])
   True
@@ -155,7 +155,7 @@ def update(realArgs):
 
   The same subusers are still installed.
 
-  >>> user = subuserlib.classes.user.User()
+  >>> user = User()
   >>> set(user.getRegistry().getSubusers().keys()) == set(subuserNamesBeforeUpdate)
   True
 
@@ -250,7 +250,7 @@ def update(realArgs):
   Checking for updates to: foo@default
   Running garbage collector on temporary repositories...
 
-  >>> user = subuserlib.classes.user.User()
+  >>> user = User()
   >>> set(user.getRegistry().getSubusers().keys()) == set(['dependent', u'foo'])
   True
 
@@ -289,7 +289,7 @@ def update(realArgs):
   Checking for updates to: foo@default
   Running garbage collector on temporary repositories...
 
-  >>> user = subuserlib.classes.user.User()
+  >>> user = User()
   >>> set(user.getRegistry().getSubusers().keys()) == set(['dependent', u'foo'])
   True
 
@@ -335,7 +335,7 @@ def update(realArgs):
   Installed new image <33> for subuser dependent
   Running garbage collector on temporary repositories...
 
-  >>> user = subuserlib.classes.user.User()
+  >>> user = User()
   >>> set(user.getRegistry().getSubusers().keys()) == set(['dependent', u'foo'])
   True
 
@@ -343,7 +343,7 @@ def update(realArgs):
   True
   """
   options,args = parseCliArgs(realArgs)
-  user = subuserlib.classes.user.User()
+  user = User()
   permissionsAccepter = AcceptPermissionsAtCLI(user,alwaysAccept = options.accept)
   if len(args) < 1:
     sys.exit("No arguments given. Please use subuser update -h for help.")

@@ -97,12 +97,9 @@ def list(sysargs):
 
   """
   options,args = parseCliArgs(sysargs)
- 
   if len(args)==0:
     sys.exit("Nothing to list. Issue this command with the -h argument for help.")
-  
   user = subuserlib.classes.user.User()
-  
   if 'available' in args:
     for repoName,repository in user.getRegistry().getRepositories().items():
       if not options.short:
@@ -112,7 +109,6 @@ def list(sysargs):
           print(imageSource.getIdentifier())
         else:
           imageSource.describe()
-  
   if 'subusers' in args:
     if not options.short:
       print("The following subusers are registered.")
@@ -122,7 +118,6 @@ def list(sysargs):
           print(name)
         else:
           subuser.describe()
-
   if 'installed-images' in args:
     if not options.short:
       print("The following images are installed.")
@@ -138,7 +133,6 @@ def list(sysargs):
       else:
         print("------------------")
         installedImage.describe()
-
   if 'repositories' in args:
     for name,repo in user.getRegistry().getRepositories().items():
       if options.short:
@@ -147,6 +141,5 @@ def list(sysargs):
         repo.describe()
         print("")
       
-
 if __name__ == "__main__":
   list(sys.argv[1:])

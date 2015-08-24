@@ -3,7 +3,9 @@
 # If it is not, please file a bug report.
 
 #internal imports
-import sys,os,subprocess
+import sys
+import os
+import subprocess
 #external imports
 import subuserlib.commands
 

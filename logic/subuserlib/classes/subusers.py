@@ -57,7 +57,6 @@ class Subusers(dict,UserOwnedObject,FileBackedObject):
   >>> subusers["foo"].getName()
   'foo'
   """
-
   def __init__(self,user):
     UserOwnedObject.__init__(self,user)
     if os.path.exists(self.getUser().getConfig()["locked-subusers-path"]):
@@ -70,7 +69,7 @@ class Subusers(dict,UserOwnedObject,FileBackedObject):
 
   def save(self):
     """
-     Save the list of subusers to disk.
+    Save the list of subusers to disk.
     """
     serializedUnlockedSubusersDict = {}
     serializedLockedSubusersDict = {}

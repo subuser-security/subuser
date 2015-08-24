@@ -15,7 +15,6 @@ from subuserlib.classes.describable import Describable
 import subuserlib.classes.docker.dockerDaemon as dockerDaemon
 
 class InstalledImage(UserOwnedObject,Describable):
-
   def __init__(self,user,imageId,imageSourceName,sourceRepoId,imageSourceHash):
     self.__imageId = imageId
     self.__imageSourceHash = imageSourceHash
@@ -41,7 +40,7 @@ class InstalledImage(UserOwnedObject,Describable):
 
   def isDockerImageThere(self):
     """
-     Does the Docker daemon have an image with this imageId?
+    Does the Docker daemon have an image with this imageId?
     """
     return not (self.getUser().getDockerDaemon().getImageProperties(self.getImageId()) == None)
 
@@ -68,7 +67,7 @@ class InstalledImage(UserOwnedObject,Describable):
   
   def removeDockerImage(self):
     """
-      Remove the image from the Docker daemon's image store.
+    Remove the image from the Docker daemon's image store.
     """
     try:
       self.getUser().getDockerDaemon().removeImage(self.getImageId())
@@ -84,7 +83,9 @@ class InstalledImage(UserOwnedObject,Describable):
     print("Last update time: "+self.getCreationDateTime())
 
   def checkForUpdates(self):
-    """ Check for updates using the image's built in check-for-updates script. This launches the script as root in a privilageless container. Returns True if the image needs to be updated. """
+    """
+    Check for updates using the image's built in check-for-updates script. This launches the script as root in a privilageless container. Returns True if the image needs to be updated.
+    """
     if self.__alreadyCheckedForUpdates:
       return False
     self.__alreadyCheckedForUpdates = True
@@ -96,7 +97,9 @@ class InstalledImage(UserOwnedObject,Describable):
     return False
 
   def getCreationDateTime(self):
-    """ Return the creation date/time of the installed docker image. Or None if the image does not exist. """
+    """
+    Return the creation date/time of the installed docker image. Or None if the image does not exist.
+    """
     imageProperties = self.getUser().getDockerDaemon().getImageProperties(self.getImageId())
     if not imageProperties is None:
       return imageProperties["Created"]

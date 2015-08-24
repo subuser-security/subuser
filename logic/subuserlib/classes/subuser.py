@@ -107,8 +107,8 @@ To repair your subuser installation.\n""")
 
   def getImageId(self):
     """
-     Get the Id of the Docker image associated with this subuser.
-     None, if the subuser has no installed image yet.
+    Get the Id of the Docker image associated with this subuser.
+    None, if the subuser has no installed image yet.
     """
     return self.__imageId
 
@@ -190,7 +190,7 @@ To repair your subuser installation.\n""")
 
   def installExecutableShortcut(self):
     """
-     Install a trivial executable script into the PATH which launches the subser image.
+    Install a trivial executable script into the PATH which launches the subser image.
     """
     redirect="""#!/bin/bash
   subuser run """+self.getName()+""" $@

@@ -11,7 +11,6 @@ import abc
 #internal imports
 #import ...
 
-
 class Describable(object):
   __metaclass__ = abc.ABCMeta
 

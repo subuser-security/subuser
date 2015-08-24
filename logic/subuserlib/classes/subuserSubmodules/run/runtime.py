@@ -122,7 +122,6 @@ $ subuser repair
     permissions = self.getSubuser().getPermissions()
     for permission, flagGenerator in permissionFlagDict.items():
       flags.extend(flagGenerator(permissions[permission]))
-  
     return ["run"]+flags+["--entrypoint"]+[self.getSubuser().getPermissions()["executable"]]+[self.getRunReadyImageId()]+args
   
   def getPrettyCommand(self,args):
@@ -161,10 +160,8 @@ $ subuser repair
           #I guess it's to be like cp...
           except OSError:
             pass
-    
       if self.getSubuser().getPermissions()["stateful-home"]:
         setupSymlinks()
-  
       #Note, subusers with gui permission cannot be run in the background.
       # Make sure that everything is setup and ready to go.
       if not self.getSubuser().getPermissions()["gui"] is None:
@@ -185,7 +182,6 @@ $ subuser repair
           return container
       else:
         return returnCode
-
     #try:
     return reallyRun()
     #except KeyboardInterrupt:

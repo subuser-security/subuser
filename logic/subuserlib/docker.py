@@ -6,7 +6,6 @@
 This module helps us interact with the Docker executable directly.
 """
 
-
 #external imports
 import sys
 import os
@@ -18,7 +17,9 @@ import subuserlib.subprocessExtras as subprocessExtras
 import subuserlib.executablePath
 
 def getDockerExecutable():
-  """ Return the name of the docker executable or None if docker is not installed. """
+  """
+  Return the name of the docker executable or None if docker is not installed.
+  """
   if subuserlib.executablePath.which("docker.io"): # Docker is called docker.io on debian.
     return "docker.io"
   if subuserlib.executablePath.which("docker"):
@@ -26,7 +27,9 @@ def getDockerExecutable():
   return None
 
 def getAndVerifyDockerExecutable():
-  """ Return the name of the docker executable. Exits and displays a user friendly error message if docker is not setup correctly. """
+  """
+  Return the name of the docker executable. Exits and displays a user friendly error message if docker is not setup correctly.
+  """
   executable = getDockerExecutable()
   if not executable:
     sys.exit("""Error: Docker is not installed.
@@ -46,9 +49,13 @@ To learn how to become a member of the docker group please watch this video: <ht
   return executable
 
 def runDocker(args,cwd=None):
-  """ Run docker with the given command line arguments. Return Docker's exit code."""
+  """
+  Run docker with the given command line arguments. Return Docker's exit code.
+  """
   return subprocessExtras.call([getAndVerifyDockerExecutable()]+args,cwd)
 
 def runDockerBackground(args,cwd=None):
-  """ Run docker with the given command line arguments. Return Docker's pid."""
+  """
+  Run docker with the given command line arguments. Return Docker's pid.
+  """
   return subprocessExtras.callBackground([getAndVerifyDockerExecutable()]+args,cwd)

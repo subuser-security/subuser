@@ -19,9 +19,9 @@ except ImportError:
 
 
 class UHTTPConnection(httplib.HTTPConnection):
-  """Subclass of Python library HTTPConnection that uses a unix-domain socket.
   """
-
+  Subclass of Python library HTTPConnection that uses a unix-domain socket.
+  """
   def __init__(self, path):
     httplib.HTTPConnection.__init__(self, 'localhost')
     self.path = path

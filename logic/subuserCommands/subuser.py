@@ -8,7 +8,7 @@ import sys
 import optparse
 import os
 #internal imports
-import subuserlib.classes.user
+from subuserlib.classes.user import User
 from subuserlib.classes.permissionsAccepters.acceptPermissionsAtCLI import AcceptPermissionsAtCLI
 import subuserlib.commandLineArguments
 import subuserlib.subuser
@@ -69,7 +69,7 @@ def subuser(sysargs):
 
   At the start of our tests, the test environment has one subuser named ``foo``.
 
-  >>> user = subuserlib.classes.user.User()
+  >>> user = User()
   >>> set(user.getRegistry().getSubusers().keys()) == set([u'foo'])
   True
 
@@ -104,7 +104,7 @@ def subuser(sysargs):
 
   Now we have two subusers.
 
-  >>> user = subuserlib.classes.user.User()
+  >>> user = User()
   >>> set(user.getRegistry().getSubusers().keys()) == set([u'foo', 'bar'])
   True
 
@@ -120,7 +120,7 @@ def subuser(sysargs):
 
   Now we only have one subuser.
 
-  >>> user = subuserlib.classes.user.User()
+  >>> user = User()
   >>> set(user.getRegistry().getSubusers().keys()) == set([u'foo'])
   True
 
@@ -155,7 +155,7 @@ def subuser(sysargs):
 
   Now we have two subusers.
 
-  >>> user = subuserlib.classes.user.User()
+  >>> user = User()
   >>> set(user.getRegistry().getSubusers().keys()) == set([u'foo', 'bar'])
   True
 
@@ -171,7 +171,7 @@ def subuser(sysargs):
 
   Now we only have one subuser.
 
-  >>> user = subuserlib.classes.user.User()
+  >>> user = User()
   >>> set(user.getRegistry().getSubusers().keys()) == set([u'foo'])
   True
 
@@ -226,7 +226,7 @@ def subuser(sysargs):
     action = args[0]
   except IndexError:
     parseCliArgs(["--help"])
-  user = subuserlib.classes.user.User()
+  user = User()
   permissionsAccepter = AcceptPermissionsAtCLI(user,alwaysAccept = options.accept)
   if action == "add":
     if not len(args) == 3:
@@ -238,7 +238,6 @@ def subuser(sysargs):
         subuserlib.subuser.add(user,name,imageSourceId,permissionsAccepter=permissionsAccepter)
     except subuserlib.portalocker.portalocker.LockException:
       sys.exit("Another subuser process is currently running and has a lock on the registry. Please try again later.")
-
   elif action == "remove":
     names = args[1:]
     if not options.prefix is None:
@@ -275,6 +274,7 @@ def subuser(sysargs):
       sys.exit("Another subuser process is currently running and has a lock on the registry. Please try again later.")
   else:
     sys.exit("Action "+args[0]+" does not exist. Try:\n subuser subuser --help")
+
 #################################################################################################
 
 if __name__ == "__main__":

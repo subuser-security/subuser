@@ -129,7 +129,6 @@ class BasicFileStructure(FileStructure):
 
   def ls(self, subfolder):
     """
-
     >>> from subuserlib.classes.fileStructure import FileStructure
     >>> fileStructure = BasicFileStructure("/home/travis/hashtest")
     >>> print(",".join(fileStructure.ls("./")))
@@ -143,7 +142,6 @@ class BasicFileStructure(FileStructure):
 
   def lsFiles(self,subfolder):
     """
-
     >>> from subuserlib.classes.fileStructure import FileStructure
     >>> fileStructure = BasicFileStructure("/home/travis/hashtest")
     >>> print(",".join(fileStructure.lsFiles("./")))
@@ -157,7 +155,6 @@ class BasicFileStructure(FileStructure):
 
   def lsFolders(self,subfolder):
     """
-
     >>> from subuserlib.classes.fileStructure import FileStructure
     >>> fileStructure = BasicFileStructure("/home/travis/hashtest")
     >>> print(",".join(fileStructure.lsFolders("./")))
@@ -171,14 +168,12 @@ class BasicFileStructure(FileStructure):
 
   def exists(self,path):
     """
-
     >>> from subuserlib.classes.fileStructure import FileStructure
     >>> fileStructure = BasicFileStructure("/home/travis/hashtest")
     >>> fileStructure.exists("./blah")
     True
     >>> fileStructure.exists("./non-existant")
     False
-
     """
     return os.path.exists(self.getPathInStructure(path))
 

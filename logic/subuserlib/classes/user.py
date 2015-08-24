@@ -30,7 +30,6 @@ class User(object):
   >>> u.homeDir
   '/root/'
   """
-
   def __init__(self,name=None,homeDir=None):
     self.__config = None
     self.__registry = None
@@ -50,7 +49,6 @@ To disable this message delete your subuser/installed-programs.json file.
       except KeyError:
         # We use a broken setup when generating documentation...
         self.name = "I have no name!"
-
     if homeDir:
       self.homeDir = homeDir
     else:

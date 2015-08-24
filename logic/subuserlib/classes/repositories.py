@@ -46,11 +46,13 @@ class Repositories(collections.Mapping,UserOwnedObject,FileBackedObject):
     return self._getAllRepositories()[key]
 
   def reloadRepositoryLists(self):
-    """ Load the repository list from disk, discarding the current in-memory version. """
+    """
+    Load the repository list from disk, discarding the current in-memory version.
+    """
     repositoryStates = self._loadRepositoryStates()
     def loadRepositoryDict(repositoryDict):
       """
-       From a list of paths to repository lists load a single unified repository dict.
+      From a list of paths to repository lists load a single unified repository dict.
       """
       repositories = {}
       for repoName,repoAttributes in repositoryDict.items():
@@ -72,7 +74,6 @@ class Repositories(collections.Mapping,UserOwnedObject,FileBackedObject):
           sourceDir = None
         repositories[repoName] = Repository(self.getUser(),name=repoName,gitOriginURI=gitOriginURI,gitCommitHash=gitCommitHash,temporary=temporary,sourceDir=sourceDir)
       return repositories
-
     self.systemRepositories = loadRepositoryDict(subuserlib.loadMultiFallbackJsonConfigFile.getConfig(self.systemRepositoryListPaths))
     registryFileStructure = self.getUser().getRegistry().getGitRepository().getFileStructureAtCommit(self.getUser().getRegistry().getGitReadHash())
     if "repositories.json" in registryFileStructure.lsFiles("./"):

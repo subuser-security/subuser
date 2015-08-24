@@ -39,4 +39,3 @@ def testImages(user,sourceRepoId,imageSourceNames,permissionsAccepter):
         runtime.run(arguments)
   # Remove the subusers
   subuserlib.subuser.remove(user,subuserNames)
-

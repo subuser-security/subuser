@@ -48,12 +48,9 @@ def printDependencies(realArgs):
  
   """
   (options,imageSourceIds) = parseCliArgs(realArgs)
-   
   if len(imageSourceIds) == 0:
     sys.exit("No images specified.  Issue this command with -h to view help.")
-  
   user = subuserlib.classes.user.User()
- 
   for imageSourceId in imageSourceIds:
     try:
       imageSource = subuserlib.resolve.resolveImageSource(user,imageSourceId)

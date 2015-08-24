@@ -14,13 +14,16 @@ import subuserlib.basicPaths
 home = subuserlib.basicPaths.home
 
 def getSubuserDir():
-  """ Get the toplevel directory for subuser. """
+  """
+  Get the toplevel directory for subuser.
+  """
   return subuserlib.basicPaths.getSubuserDir()
 
 def getDockersideScriptsPath():
   return os.path.join(getSubuserDir(),"logic","dockerside-scripts")
 
 def getSubuserCommandsDir():
-  """ Return the path to the directory where the individual built-in subuser command executables are stored. """
+  """
+  Return the path to the directory where the individual built-in subuser command executables are stored.
+  """
   return os.path.join(getSubuserDir(),"logic","subuserCommands")
-

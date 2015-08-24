@@ -14,31 +14,33 @@ import subuserlib.paths
 nonCommands = {"__init__.py", "pathConfig.py"}
 
 def getBuiltInSubuserCommands():
-  """ Get a list of the names of the built in subuser commands. """
+  """
+  Get a list of the names of the built in subuser commands.
+  """
   apparentCommandsSet = set( os.listdir(subuserlib.paths.getSubuserCommandsDir()))
   commands = list(apparentCommandsSet.difference(nonCommands))
   return [command[:-3] for command in commands if not command.endswith(".pyc") and not command.startswith("__")] #remove the .py suffixes.
 
 def getExternalSubuserCommands():
-  """ Return the list of "external" subuser commands.  These are not built in commands but rather stand alone executables which appear in the user's $PATH and who's names start with "subuser-" """
-
+  """
+  Return the list of "external" subuser commands.  These are not built in commands but rather stand alone executables which appear in the user's $PATH and who's names start with "subuser-"
+  """
   def isPathToSubuserCommand(path):
     directory, executableName = os.path.split(path)
     return executableName.startswith("subuser-")
-
   externalCommandPaths = subuserlib.executablePath.queryPATH(isPathToSubuserCommand)
-
   externalCommands = []
   subuserPrefixLength=len("subuser-")
   for externalCommandPath in externalCommandPaths:
     commandDir, executableName = os.path.split(externalCommandPath)
     commandName = executableName[subuserPrefixLength:]
     externalCommands.append(commandName)
-
   return list(set(externalCommands)) # remove duplicate entries
 
 def getSubuserCommands():
-  """ Returns a list of commands that may be called by the user. """
+  """
+  Returns a list of commands that may be called by the user.
+  """
   return getBuiltInSubuserCommands() + getExternalSubuserCommands()
 
 def getSubuserCommandPath(command):

@@ -22,7 +22,9 @@ class InstalledImages(dict,UserOwnedObject,FileBackedObject):
     self.reloadInstalledImagesList()
 
   def reloadInstalledImagesList(self):
-    """ Reload the installed images list from disk, discarding the current in-memory version. """
+    """
+    Reload the installed images list from disk, discarding the current in-memory version.
+    """
     self.clear()
 
     installedImagesPath = self.getUser().getConfig()["installed-images-list"]
@@ -49,7 +51,9 @@ class InstalledImages(dict,UserOwnedObject,FileBackedObject):
       self[imageId]=image
 
   def save(self):
-    """ Save attributes of the installed images to disk. """
+    """
+    Save attributes of the installed images to disk.
+    """
     # Build a dictionary of installed images.
     installedImagesDict = {}
     for _,installedImage in self.items():
@@ -58,7 +62,6 @@ class InstalledImages(dict,UserOwnedObject,FileBackedObject):
       imageAttributes["image-source"] = installedImage.getImageSourceName()
       imageAttributes["source-repo"] = installedImage.getSourceRepoId()
       installedImagesDict[installedImage.getImageId()] = imageAttributes
-
     # Write that dictionary to disk.
     installedImagesPath = self.getUser().getConfig()["installed-images-list"]
     with open(installedImagesPath, 'w') as file_f:
@@ -66,7 +69,7 @@ class InstalledImages(dict,UserOwnedObject,FileBackedObject):
 
   def unregisterNonExistantImages(self):
     """
-     Go through the installed images list and unregister any images that aren't actually installed.
+    Go through the installed images list and unregister any images that aren't actually installed.
     """
     keysToDelete = []
     for imageId,image in self.items():

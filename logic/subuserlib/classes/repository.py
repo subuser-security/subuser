@@ -146,7 +146,9 @@ class Repository(dict,UserOwnedObject,Describable):
       shutil.rmtree(self.getRepoPath())
 
   def updateSources(self):
-    """ Pull(or clone) the repo's ImageSources from git origin. """
+    """
+    Pull(or clone) the repo's ImageSources from git origin.
+    """
     if self.isLocal():
       return
     if not os.path.exists(self.getRepoPath()):

@@ -7,7 +7,7 @@ import pathConfig
 import sys
 import optparse
 #internal imports
-import subuserlib.classes.user
+from subuserlib.classes.user import User
 import subuserlib.verify
 import subuserlib.commandLineArguments
 from subuserlib.classes.permissionsAccepters.acceptPermissionsAtCLI import AcceptPermissionsAtCLI
@@ -26,7 +26,7 @@ This is usefull when migrating from one machine to another.  You can copy your ~
 
 def verify(realArgs):
   options,arguments=parseCliArgs(realArgs)
-  user = subuserlib.classes.user.User()
+  user = User()
   permissionsAccepter = AcceptPermissionsAtCLI(user,alwaysAccept = options.accept)
   try:
     with user.getRegistry().getLock() as LockFileHandle:
@@ -39,4 +39,3 @@ def verify(realArgs):
   
 if __name__ == "__main__":
   verify(sys.argv[1:])
-

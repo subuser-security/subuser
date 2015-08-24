@@ -97,7 +97,9 @@ guiPermissionDescriptions = {
 
 
 def getPermissions(permissionsFilePath=None,permissionsString=None):
-  """ Return a dictionary of permissions from the given permissions.json file.  Permissions that are not specified are set to their default values."""
+  """
+  Return a dictionary of permissions from the given permissions.json file.  Permissions that are not specified are set to their default values.
+  """
   if not permissionsString is None:
     try:
       permissions=json.loads(permissionsString, object_pairs_hook=collections.OrderedDict)
@@ -141,7 +143,6 @@ def getNonDefaultPermissions(permissions):
   >>> permissions = subuserlib.permissions.getPermissions(permissionsString='{"x11":true}')
   >>> getNonDefaultPermissions(permissions) == {u'x11': True}
   True
-
   """
   nonDefaultPermissions = {}
   for permission,value in permissions.items():
@@ -206,16 +207,13 @@ def __comparePermissions(oldDefaults={},newDefaults={},userApproved={}):
   for key,value in oldDefaults.items():
     if (not key in userApproved):
       userSetPermissions[key] = value
-
   addedOrChangedPermissions = {}
   for key,value in newDefaults.items():
     #                                                         added  or  changed
     if (not key in userSetPermissions) and ((not key in oldDefaults) or (key in oldDefaults and oldDefaults[key] != value)):
       addedOrChangedPermissions[key] = value
-  
   droppedPermissions = []
   for key in oldDefaults.keys():
     if (key not in userSetPermissions) and (key not in newDefaults):
       droppedPermissions.append(key)
-
   return (droppedPermissions,addedOrChangedPermissions)

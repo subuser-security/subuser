@@ -32,7 +32,6 @@ def getImageLineage(user,imageId):
   """
   if imageId == None:
     return []
-
   lineage = []
   dockerImageLayers = getImageLineageInLayers(user,imageId)
   for dockerImageLayer in dockerImageLayers:

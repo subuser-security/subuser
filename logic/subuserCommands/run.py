@@ -7,7 +7,7 @@ import pathConfig
 import sys
 import os
 #internal imports
-import subuserlib.classes.user
+from subuserlib.classes.user import User
 
 ##############################################################
 helpString = """Run the given subuser.
@@ -29,7 +29,7 @@ def run(args):
   subuserName = args[1]
   argsToPassToImage = args[2:]
 
-  user = subuserlib.classes.user.User()
+  user = User()
   user.getRegistry().setLogOutputVerbosity(0)
   if subuserName in user.getRegistry().getSubusers():
     runtime = user.getRegistry().getSubusers()[subuserName].getRuntime(os.environ)

@@ -14,7 +14,6 @@ from subuserlib.classes.userOwnedObject import UserOwnedObject
 from subuserlib.classes.fileBackedObject import FileBackedObject
 import subuserlib.permissions
 
-
 class Permissions(collections.OrderedDict,UserOwnedObject,FileBackedObject):
   def __init__(self,user,initialPermissions,writePath=None):
     self.__writePath = writePath
@@ -59,30 +58,29 @@ class Permissions(collections.OrderedDict,UserOwnedObject,FileBackedObject):
             print("   * "+subPermission)
         else:
           print(firstLine + " " + subPermissions[0])
-
     def areAnyOfThesePermitted(permissions):
       permitted = False
       for permission in permissions:
         if self[permission]:
           permitted = True
       return permitted
-
+    # Prelude
     preludeDescriptions = sum([subuserlib.permissions.permissionDescriptions[permission](self[permission]) for permission in subuserlib.permissions.permissionsPrelude],[])
     for description in preludeDescriptions:
       print(" "+description)
-
+    # Conservative
     if areAnyOfThesePermitted(subuserlib.permissions.conservativePermissions):
       print(" Conservative permissions(These are safe):")
       describePermissions(subuserlib.permissions.conservativePermissions)
-
+    # Moderate
     if areAnyOfThesePermitted(subuserlib.permissions.moderatePermissions):
       print(" Moderate permissions(These are probably safe):")
       describePermissions(subuserlib.permissions.moderatePermissions)
-
+    # Liberal
     if areAnyOfThesePermitted(subuserlib.permissions.liberalPermissions):
       print(" Liberal permissions(These may pose a security risk):")
       describePermissions(subuserlib.permissions.liberalPermissions)
-
+    # Anarchistic
     if areAnyOfThesePermitted(subuserlib.permissions.anarchisticPermissions):
       print("WARNING: this subuser has full access to your system when run.")
       describePermissions(subuserlib.permissions.anarchisticPermissions)

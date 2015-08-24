@@ -177,4 +177,3 @@ class SyntaxError(Exception):
   A syntax error may be raised when parsing an ImageSource's ``Dockerfile``
   """
   pass
-

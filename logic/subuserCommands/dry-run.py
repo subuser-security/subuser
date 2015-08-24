@@ -108,10 +108,8 @@ def dryRun(args):
   if len(args) == 0 or {"help","-h","--help"} & set(args):
     print(helpString)
     sys.exit()
-
   subuserName = args[0]
   argsToPassToImage = args[1:]
-
   user = subuserlib.classes.user.User()
   if subuserName in user.getRegistry().getSubusers():
     subuser = user.getRegistry().getSubusers()[subuserName]

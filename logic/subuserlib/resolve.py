@@ -124,4 +124,3 @@ def getRepositoryFromURIOrPath(user,uriOrPath):
     return getRepositoryFromPath(user,uriOrPath)
   else:
     return getRepositoryFromURI(user,uriOrPath)
-

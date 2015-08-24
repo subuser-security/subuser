@@ -7,7 +7,7 @@ import pathConfig
 import sys
 import optparse
 #internal imports
-import subuserlib.classes.user
+from subuserlib.classes.user import User
 import subuserlib.commandLineArguments
 import subuserlib.removeOldImages
 
@@ -34,7 +34,7 @@ def removeOldImages(realArgs):
 
   Check our assumptions about what subusers are installed in the test environment.  We load a new user object each time we checked, because we are interested about whether the changes we want are present on disk.
 
-  >>> user = subuserlib.classes.user.User()
+  >>> user = User()
   >>> subuserList = list(user.getRegistry().getSubusers().keys())
   >>> subuserList.sort()
   >>> for sb in subuserList:
@@ -72,7 +72,7 @@ def removeOldImages(realArgs):
 
   Check to see if subuser ``bar`` was successfully added.
 
-  >>> user = subuserlib.classes.user.User()
+  >>> user = User()
   >>> subuserList = list(user.getRegistry().getSubusers().keys())
   >>> subuserList.sort()
   >>> for sb in subuserList:
@@ -101,7 +101,7 @@ def removeOldImages(realArgs):
 
   See that the image for ``bar`` was indeed left behind.
 
-  >>> user = subuserlib.classes.user.User()
+  >>> user = User()
   >>> installedImages = list([i.getImageSourceName() for i in user.getInstalledImages().values()])
   >>> installedImages.sort()
   >>> for installedImage in installedImages:
@@ -118,7 +118,7 @@ def removeOldImages(realArgs):
 
   Check to see that dry-run didn't actually remove the un-needed image.
 
-  >>> user = subuserlib.classes.user.User()
+  >>> user = User()
   >>> installedImages = list([i.getImageSourceName() for i in user.getInstalledImages().values()])
   >>> installedImages.sort()
   >>> for installedImage in installedImages:
@@ -157,7 +157,7 @@ def removeOldImages(realArgs):
 
   Check to see if subuser ``blah`` was successfully added.
 
-  >>> user = subuserlib.classes.user.User()
+  >>> user = User()
   >>> subuserList = list(user.getRegistry().getSubusers().keys())
   >>> subuserList.sort()
   >>> for sb in subuserList:
@@ -187,7 +187,7 @@ def removeOldImages(realArgs):
 
   See that the image for ``blah`` was indeed left behind.
 
-  >>> user = subuserlib.classes.user.User()
+  >>> user = User()
   >>> installedImageList = list([i.getImageSourceName() for i in user.getInstalledImages().values()])
   >>> installedImageList.sort()
   >>> for installedImage in installedImageList:
@@ -218,7 +218,7 @@ def removeOldImages(realArgs):
 
   And now the uneccesary ``bar`` image is gone.
 
-  >>> user = subuserlib.classes.user.User()
+  >>> user = User()
   >>> installedImages = list([i.getImageSourceName() for i in user.getInstalledImages().values()])
   >>> installedImages.sort()
   >>> for installedImage in installedImages:
@@ -227,15 +227,12 @@ def removeOldImages(realArgs):
  
   """
   options,args = parseCliArgs(realArgs)
-
-  user = subuserlib.classes.user.User()
-
+  user = User()
   try:
     with user.getRegistry().getLock() as lockFileHandler:
       if options.dryrun:
         print("The following images are uneeded and would be deleted.")
         print("DOCKER-ID : SUBUSER-ID")
-
       repoId = options.repo
       if not repoId is None:
         if not repoId in user.getRegistry().getRepositories():
@@ -252,4 +249,3 @@ def removeOldImages(realArgs):
 
 if __name__ == "__main__":
   removeOldImages(sys.argv[1:])
-

@@ -7,7 +7,7 @@ import pathConfig
 import sys
 import optparse
 #internal imports
-import subuserlib.classes.user
+from subuserlib.classes.user import User
 import subuserlib.commandLineArguments
 import subuserlib.testImages
 from subuserlib.classes.permissionsAccepters.acceptPermissionsAtCLI import AcceptPermissionsAtCLI
@@ -42,8 +42,7 @@ def testImages(realArgs):
   Test the given images.
   """
   options,args = parseCliArgs(realArgs)
-
-  user = subuserlib.classes.user.User()
+  user = User()
   permissionsAccepter = AcceptPermissionsAtCLI(user,alwaysAccept = options.accept)
   try:
     with user.getRegistry().getLock() as lockFileHandler:

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # This file should be compatible with both Python 2 and 3.
 # If it is not, please file a bug report.
+
 """
 Implements functions involved in building/installing/updating subuser images.
 """
@@ -61,7 +62,6 @@ def compareSourceLineageAndInstalledImageLineage(user,sourceLineage,installedIma
     for installedImage in installedImageLineage:
       print(installedImage.getImageSourceName())
     return False
-
   lineage = zip(sourceLineage,installedImageLineage)
   for imageSource,installedImage in lineage:
     imagesMatch =  doImagesMatch(installedImage,imageSource)

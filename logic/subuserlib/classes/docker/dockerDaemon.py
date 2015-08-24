@@ -180,7 +180,6 @@ class DockerDaemon(UserOwnedObject):
       response = self.getConnection().getresponse()
     except httplib.ResponseNotReady as rnr:
       raise ImageBuildException(rnr)
-
     if response.status != 200:
       if quietClient:
         response.read()
@@ -189,7 +188,6 @@ class DockerDaemon(UserOwnedObject):
       raise ImageBuildException("Building image failed.\n"
                      +"status: "+str(response.status)+"\n"
                      +"Reason: "+response.reason+"\n")
-
     if quietClient:
       output = response.read().decode("utf-8")
     else:

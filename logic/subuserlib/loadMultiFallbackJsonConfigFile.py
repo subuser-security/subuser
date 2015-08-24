@@ -20,7 +20,9 @@ def upNDirsInPath(path,n):
     return path
 
 def getSubuserDir():
-  """ Get the toplevel directory for subuser. """
+  """
+  Get the toplevel directory for subuser.
+  """
   pathToThisSourceFile = os.path.abspath(inspect.getfile(inspect.currentframe()))
   return upNDirsInPath(pathToThisSourceFile,4)
 
@@ -32,7 +34,9 @@ def filterOutNonExistantPaths(paths):
   return _paths
 
 def expandPathInDict(homeDir,pathAttribute,dictionary):
-  """ Expand the environment variables in a dictionary of setting-value pairs given that the setting holds a path. """
+  """
+  Expand the environment variables in a dictionary of setting-value pairs given that the setting holds a path.
+  """
   os.environ["SUBUSERDIR"] = getSubuserDir()
   os.environ["HOME"] = homeDir
   dictionary[pathAttribute] = os.path.expandvars(dictionary[pathAttribute]).replace("//","/") # os.path.expandvars is buggy and expands $HOME/foo to /home/user-name//foo
@@ -42,16 +46,17 @@ def expandPathsInDict(homeDir,pathAttributes,dictionary):
     expandPathInDict(homeDir,pathAttribute,dictionary)
 
 def getConfig(configFileHierarchy):
-  """ This function is used for loading hierarchical config files in subuser.  That is, loading config.json and repositories.json.  For more information on config file hierarchies, see the documentation for these two files in the subuser standard:
+  """
+  This function is used for loading hierarchical config files in subuser.  That is, loading config.json and repositories.json.  For more information on config file hierarchies, see the documentation for these two files in the subuser standard:
 
- - `config.json <http://subuser.org/subuser-standard/serializations/config-dot-json-file-format.html>`_
- - `repositories.json <http://subuser.org/subuser-standard/serializations/registry/repositories-dot-json-file-format.html>`_
+   - `config.json <http://subuser.org/subuser-standard/serializations/config-dot-json-file-format.html>`_
+   - `repositories.json <http://subuser.org/subuser-standard/serializations/registry/repositories-dot-json-file-format.html>`_
 
-It takes a hierarchy(a list of paths) of config files starting with the config file with the highest precidence and going to the config file with the least precidence.
+  It takes a hierarchy(a list of paths) of config files starting with the config file with the highest precidence and going to the config file with the least precidence.
 
-It returns a dictionary of entries.
+  It returns a dictionary of entries.
 
-"""
+  """
   configPaths = filterOutNonExistantPaths(configFileHierarchy)
   configPaths.reverse()
   config = {}

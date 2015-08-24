@@ -85,7 +85,6 @@ class MockResponse():
       return self.body
 
 class MockConnection():
-
   def __init__(self,mockDockerDaemon):
     self.mockDockerDaemon=mockDockerDaemon
    

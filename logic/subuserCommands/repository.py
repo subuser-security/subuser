@@ -7,7 +7,7 @@ import pathConfig
 import sys
 import optparse
 #internal imports
-import subuserlib.classes.user
+from subuserlib.classes.user import User
 import subuserlib.resolve
 import subuserlib.repository
 import subuserlib.commandLineArguments
@@ -45,7 +45,7 @@ def repository(sysargs):
 
   Check our assumptions about the initial state of the test environment.
 
-  >>> user = subuserlib.classes.user.User()
+  >>> user = User()
   >>> set(user.getRegistry().getRepositories().keys()) == set([u'default'])
   True
 
@@ -56,7 +56,7 @@ def repository(sysargs):
 
   See that it was actually successfully added.
 
-  >>> user = subuserlib.classes.user.User()
+  >>> user = User()
   >>> set(user.getRegistry().getRepositories().keys()) == set([u'default', 'remote-repo'])
   True
 
@@ -67,7 +67,7 @@ def repository(sysargs):
 
   See that it was actually removed.
 
-  >>> user = subuserlib.classes.user.User()
+  >>> user = User()
   >>> set(user.getRegistry().getRepositories().keys()) == set([u'default'])
   True
 
@@ -79,7 +79,7 @@ def repository(sysargs):
 
   See that it was actually successfully added.
 
-  >>> user = subuserlib.classes.user.User()
+  >>> user = User()
   >>> set(user.getRegistry().getRepositories().keys()) == set([u'default', 'local-repo'])
   True
 
@@ -90,13 +90,13 @@ def repository(sysargs):
 
   See that it was actually removed.
 
-  >>> user = subuserlib.classes.user.User()
+  >>> user = User()
   >>> set(user.getRegistry().getRepositories().keys()) == set([u'default'])
   True
 
   """
   options,args = parseCliArgs(sysargs)
-  user = subuserlib.classes.user.User()
+  user = User()
   action = args[0]
   if action == "add":
     if not len(args) == 3:
@@ -117,7 +117,6 @@ def repository(sysargs):
         subuserlib.repository.remove(user,name)
     except subuserlib.portalocker.portalocker.LockException:
       sys.exit("Another subuser process is currently running and has a lock on the registry. Please try again later.")
-
   else:
      sys.exit("Action "+args[0]+" not supported. Please see:\n subuser repository --help")
 

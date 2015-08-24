@@ -19,4 +19,3 @@ class FileBackedObject():
   def save(self):
     """ Serialize the object to it's appropriate location on disk. """
     pass
-

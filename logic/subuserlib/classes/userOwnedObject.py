@@ -16,5 +16,7 @@ class UserOwnedObject(object):
     self.__user = user
 
   def getUser(self):
-    """ Get the User that owns this object. """
+    """
+    Get the User that owns this object.
+    """
     return self.__user
