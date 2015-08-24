@@ -38,8 +38,8 @@ if subuserlib.docker.getDockerExecutable():
   from subuserlib.classes.fileStructure import BasicFileStructure
   dockerDaemon = DockerDaemon(MockUser())
   testDockerfileNames = [
-   "Dockerfile-debian-python2",
    "Dockerfile-arch-python3",
+   "Dockerfile-debian-python2",
   ]
   for testDockerfileName in testDockerfileNames:
     with io.open(os.path.join(subuserlib.basicPaths.getSubuserDir(),"test",testDockerfileName),encoding="utf-8",mode="r") as dockerfile:
