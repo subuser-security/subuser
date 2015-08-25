@@ -90,8 +90,6 @@ modules = [
   # classes
   subuserlib.classes.user
   ,subuserlib.classes.subusers
-  ,subuserlib.classes.fileStructure
-  ,subuserlib.classes.gitRepository
   # subuserlib modules
   ,subuserlib.permissions
   ,subuserlib.resolve
@@ -105,6 +103,13 @@ modules = [
   ,subuser
   ,update
   ]
+
+localOnlyModules = [ # These don't work with travis for some reason...
+  subuserlib.classes.fileStructure
+  ,subuserlib.classes.gitRepository]
+
+if not "--travis" in sys.argv:
+  modules.extend(localOnlyModules)
 
 for module in modules:
   print("Testing module: " + module.__name__)
