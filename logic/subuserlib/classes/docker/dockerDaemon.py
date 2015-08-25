@@ -64,7 +64,7 @@ def archiveBuildContext(archive,relativeBuildContextPath,repositoryFileStructure
           if fnmatch.fnmatch(filePathRelativeToBuildContext,excludePattern):
             exclude = True
         if not exclude:
-          addFileFromContents(path=filePathRelativeToRepository,contents=repositoryFileStructure.read(filePathRelativeToRepository),mode=repositoryFileStructure.getMode(filePathRelativeToRepository))
+          addFileFromContents(path=filePathRelativeToBuildContext,contents=repositoryFileStructure.read(filePathRelativeToRepository),mode=repositoryFileStructure.getMode(filePathRelativeToRepository))
       for folderPathRelativeToRepository in repositoryFileStructure.lsFolders(folder):
          addFolder(folderPathRelativeToRepository)
     addFolder(relativeBuildContextPath)
