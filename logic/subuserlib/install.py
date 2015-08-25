@@ -8,9 +8,6 @@ Implements functions involved in building/installing/updating subuser images.
 
 #external imports
 import sys
-import os
-import stat
-import io
 #internal imports
 import subuserlib.classes.installedImage
 import subuserlib.installedImages
@@ -42,7 +39,7 @@ def getImageSourceLineage(imageSource):
     sourceLineage.append(imageSource)
     try:
       imageSource = imageSource.getDependency()
-    except subuserlib.classes.imageSource.SyntaxError as syntaxError:
+    except SyntaxError as syntaxError:
       cleanUpAndExitOnError(imageSource.getUser(),"Error while building image: "+ str(syntaxError))
   return reversed(sourceLineage)
 

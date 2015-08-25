@@ -19,13 +19,13 @@ class GitRepository():
 
   def getPath(self):
     return self.__path
-  
+
   def run(self,args):
     """
     Run git with the given command line arguments.
     """
     return subprocessExtras.call(["git"]+args,cwd=self.getPath())
-  
+
   def runCollectOutput(self,args):
     """
     Run git with the given command line arguments and return a tuple with (returncode,output).
@@ -52,11 +52,11 @@ class GitRepository():
       tempFile.flush()
       return self.run(["commit","--file",tempFile.name])
 
-  def checkout(self,hash,files=[]):
+  def checkout(self,commit,files=[]):
     """
     Run git checkout
     """
-    self.run(["checkout",hash]+files)
+    self.run(["checkout",commit]+files)
 
 class GitFileStructure(FileStructure):
   def __init__(self,gitRepository,commit):
@@ -85,7 +85,7 @@ class GitFileStructure(FileStructure):
     """
     Returns a list of tuples of the form:
     (mode,type,hash,path)
- 
+
     Coresponding to the items found in the subfolder.
     """
     if not subfolder.endswith("/"):
@@ -107,7 +107,7 @@ class GitFileStructure(FileStructure):
     """
     Returns a list of file and folder paths.
     Paths are relative to the repository as a whole.
-    
+
     >>> from subuserlib.classes.gitRepository import GitRepository
     >>> gitRepository = GitRepository("/home/travis/hashtest")
     >>> fileStructure = gitRepository.getFileStructureAtCommit("master")

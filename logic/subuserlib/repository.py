@@ -9,7 +9,6 @@ High level operations on repostories.
 #external imports
 import sys
 #internal imports
-from subuserlib.classes.user import User
 import subuserlib.resolve
 from subuserlib.classes.repository import Repository
 

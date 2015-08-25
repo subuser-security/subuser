@@ -27,7 +27,7 @@ class Subusers(dict,UserOwnedObject,FileBackedObject):
   >>> from subuserlib.classes.permissionsAccepters.acceptPermissionsAtCLI import AcceptPermissionsAtCLI
   >>> u = subuserlib.classes.user.User()
   >>> permissionsAccepter = AcceptPermissionsAtCLI(u,alwaysAccept=True)
-  
+
   >>> subuserlib.subuser.add(u,"foo","foo@default",permissionsAccepter)
   Adding subuser foo foo@default
   Verifying subuser configuration.
@@ -60,9 +60,9 @@ class Subusers(dict,UserOwnedObject,FileBackedObject):
   def __init__(self,user):
     UserOwnedObject.__init__(self,user)
     if os.path.exists(self.getUser().getConfig()["locked-subusers-path"]):
-      with open(self.getUser().getConfig()["locked-subusers-path"],"r") as file:
-        self._loadSerializedSubusersDict(json.load(file, object_pairs_hook=collections.OrderedDict),locked=True)
-    registryFileStructure = self.getUser().getRegistry().getGitRepository().getFileStructureAtCommit(self.getUser().getRegistry().getGitReadHash()) 
+      with open(self.getUser().getConfig()["locked-subusers-path"],"r") as fileHandle:
+        self._loadSerializedSubusersDict(json.load(fileHandle, object_pairs_hook=collections.OrderedDict),locked=True)
+    registryFileStructure = self.getUser().getRegistry().getGitRepository().getFileStructureAtCommit(self.getUser().getRegistry().getGitReadHash())
     if "subusers.json" in registryFileStructure.lsFiles("./"):
       serializedUnlockedSubusersDict = json.loads(registryFileStructure.read("subusers.json"), object_pairs_hook=collections.OrderedDict)
       self._loadSerializedSubusersDict(serializedUnlockedSubusersDict,locked=False)

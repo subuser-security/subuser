@@ -7,7 +7,8 @@ Contains code that prepairs a subuser's image to be run.
 """
 
 #external imports
-import sys,os,getpass
+import os
+import getpass
 #internal imports
 from subuserlib.classes.userOwnedObject import UserOwnedObject
 
@@ -30,7 +31,7 @@ class RunReadyImage(UserOwnedObject):
     if not self.__id:
       self.__id = self.getSubuser().getRuntimeCache()["run-ready-image-id"]
     return self.__id
-  
+
   def generateImagePreparationDockerfile(self):
     """
     There is still some preparation that needs to be done before an image is ready to be run.  But this preparation requires run time information, so we cannot preform that preparation at build time.
@@ -46,7 +47,7 @@ class RunReadyImage(UserOwnedObject):
     if self.getSubuser().getPermissions()["sudo"]:
       dockerfileContents += "RUN (umask 337; echo \""+getpass.getuser()+" ALL=(ALL) NOPASSWD: ALL\" > /etc/sudoers.d/allowsudo )\n"
     return dockerfileContents
-  
+
   def build(self):
     """
     Returns the Id of the Docker image to be run.

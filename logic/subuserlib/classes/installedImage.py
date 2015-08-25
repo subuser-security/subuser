@@ -64,7 +64,7 @@ class InstalledImage(UserOwnedObject,Describable):
             pass
     except OSError:
       pass
-  
+
   def removeDockerImage(self):
     """
     Remove the image from the Docker daemon's image store.

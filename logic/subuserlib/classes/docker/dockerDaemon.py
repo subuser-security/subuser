@@ -16,14 +16,14 @@ import re
 import json
 import sys
 try:
- import httplib
+  import httplib
 except ImportError:
- import http.client
- httplib = http.client
+  import http.client
+  httplib = http.client
 try:
- import StringIO
+  import StringIO
 except ImportError:
- import io
+  import io
 #internal imports
 from subuserlib.classes.userOwnedObject import UserOwnedObject
 from subuserlib.classes.uhttpConnection import UHTTPConnection

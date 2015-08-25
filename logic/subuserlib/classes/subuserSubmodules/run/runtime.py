@@ -46,9 +46,10 @@ $ subuser repair
 
   def getSerialDevices(self):
     return [device for device in os.listdir("/dev/") if device.startswith("ttyS") or device.startswith("ttyUSB") or device.startswith("ttyACM")]
+
   def getCidFile(self):
     return "/tmp/subuser-"+self.getSubuser().getName()
-  
+
   def getBasicFlags(self):
     common = ["--rm"]
     if self.getBackground():
@@ -57,7 +58,7 @@ $ subuser repair
       return common + [
         "-i",
         "-t"]
-  
+
   def passOnEnvVar(self,envVar):
     """
     Generate the arguments required to pass on a given ENV var to the container from the host.
@@ -76,7 +77,7 @@ $ subuser repair
       soundArgs += ["--volume=/dev/dsp:/dev/dsp"]
       soundArgs += ["--device=/dev/dsp/"+device for device in os.listdir("/dev/dsp")]
     return soundArgs
-  
+
   def getPermissionFlagDict(self):
     """
     This is a dictionary mapping permissions to functions which when given the permission's values return docker run flags.
@@ -111,7 +112,7 @@ $ subuser repair
   def setHostname(self,hostname):
     self.__extraFlags.append("-h")
     self.__extraFlags.append(hostname)
-  
+
   def getCommand(self,args):
     """
     Returns the command required to run the subuser as a list of string arguments.
@@ -123,7 +124,7 @@ $ subuser repair
     for permission, flagGenerator in permissionFlagDict.items():
       flags.extend(flagGenerator(permissions[permission]))
     return ["run"]+flags+["--entrypoint"]+[self.getSubuser().getPermissions()["executable"]]+[self.getRunReadyImageId()]+args
-  
+
   def getPrettyCommand(self,args):
     """
     Get a command for pretty printing for use with dry-run.
@@ -136,7 +137,7 @@ $ subuser repair
 
   def setBackground(self,background):
     self.__background = background
-  
+
   def run(self,args):
     """
     Run the subuser in a container.

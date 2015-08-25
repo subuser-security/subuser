@@ -40,8 +40,8 @@ def addFromImageSource(user,subuserName,imageSource,permissionsAccepter):
     subuserlib.update.checkoutNoCommit(user,"HEAD")
 
 def addFromImageSourceNoVerify(user,subuserName,imageSource):
-    subuser = subuserlib.classes.subuser.Subuser(user,subuserName,imageSource,None,False,False,[])
-    user.getRegistry().getSubusers()[subuserName] = subuser
+  subuser = subuserlib.classes.subuser.Subuser(user,subuserName,imageSource,None,False,False,[])
+  user.getRegistry().getSubusers()[subuserName] = subuser
 
 def remove(user,subuserNames):
   didSomething = False
@@ -76,7 +76,7 @@ def remove(user,subuserNames):
   if didSomething:
     subuserlib.verify.verify(user)
     user.getRegistry().commit()
-  
+
 def setExecutableShortcutInstalled(user,subuserName,installed):
   if installed:
     user.getRegistry().logChange("Creating shortcut for subuser "+subuserName)

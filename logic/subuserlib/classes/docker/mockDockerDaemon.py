@@ -27,7 +27,7 @@ class MockDockerDaemon(UserOwnedObject):
     self.connection = MockConnection(self)
     self.dockerDaemon.getConnection = self.getConnection
     self.dockerDaemon.getImageProperties = self.getImageProperties
- 
+
   def __load(self):
     with open(self.imagesPath,"r") as imagesFile:
       self.images = json.load(imagesFile)
@@ -86,8 +86,9 @@ class MockResponse():
 
 class MockConnection():
   def __init__(self,mockDockerDaemon):
-    self.mockDockerDaemon=mockDockerDaemon
-   
+    self.mockDockerDaemon = mockDockerDaemon
+    self.newId = None
+
   def request(self,method,url,body=None,headers=None):
     pass
 

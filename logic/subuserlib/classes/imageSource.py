@@ -8,7 +8,6 @@ Images in subuser are built from ImageSource objects.
 
 #external imports
 import os
-import io
 import uuid
 #internal imports
 from subuserlib.classes.userOwnedObject import UserOwnedObject
@@ -171,9 +170,3 @@ class ImageSource(UserOwnedObject,Describable):
   def getHash(self):
     """ Return the hash of the ``docker-image`` directory. """
     return self.getRepository().getFileStructure().hash(self.getDockerImageDir())
-
-class SyntaxError(Exception):
-  """
-  A syntax error may be raised when parsing an ImageSource's ``Dockerfile``
-  """
-  pass

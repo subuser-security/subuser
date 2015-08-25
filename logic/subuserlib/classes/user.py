@@ -56,7 +56,7 @@ To disable this message delete your subuser/installed-programs.json file.
         self.homeDir = "/home/travis/test-home"
       else:
         self.homeDir = os.path.expanduser("~")
- 
+
   def getConfig(self):
     """
     Get the user's :doc:`Config <config>` object.

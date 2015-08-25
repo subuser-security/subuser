@@ -118,8 +118,8 @@ def getPermissions(permissionsFilePath=None,permissionsString=None):
       sys.exit("Error: the permission \""+permission+"\" is not supported by your version of subuser.  Try updating first.")
   if "gui" in permissions and not permissions["gui"] is None:
     for guiPermission in permissions["gui"].keys():
-     if not guiPermission in guiPermissionDefaults:
-       sys.exit("Error: the gui permission \""+guiPermission+"\" is not supported by your version of subuser.  Try updating first.")
+      if not guiPermission in guiPermissionDefaults:
+        sys.exit("Error: the gui permission \""+guiPermission+"\" is not supported by your version of subuser.  Try updating first.")
   # Set permission defaults for permissions that are not explicitly specified in the permissions.json file
   if "basic-common-permissions" in permissions and permissions["basic-common-permissions"]:
     for basicCommonPermission in basicCommonPermissions:
@@ -162,14 +162,14 @@ def setPermissions(permissions,permissionsFilePath):
   Save the permissions to the given file.  We only save permissions that are not set to their default values.
   """
   try:
-    dir,_ = os.path.split(permissionsFilePath)
-    os.makedirs(dir)
+    directory,_ = os.path.split(permissionsFilePath)
+    os.makedirs(directory)
   except OSError:
     pass
   with open(permissionsFilePath, 'w') as file_f:
     file_f.write(getPermissonsJSONString(permissions))
 
-def comparePermissions(oldDefaults={},newDefaults={},userApproved={}):
+def comparePermissions(oldDefaults,newDefaults,userApproved):
   """
   Analize permission sets for changes.
   First, compare the old defaults to the user approved permissions.
@@ -182,9 +182,9 @@ def comparePermissions(oldDefaults={},newDefaults={},userApproved={}):
 
   The return value is a tuple of the form: ([removed-permisions],{additions/changes})
   """
-  return __comparePermissions(oldDefaults = getNonDefaultPermissions(oldDefaults), newDefaults = getNonDefaultPermissions(newDefaults) , userApproved = getNonDefaultPermissions(userApproved))
+  return __comparePermissions(oldDefaults = getNonDefaultPermissions(oldDefaults), newDefaults = getNonDefaultPermissions(newDefaults), userApproved = getNonDefaultPermissions(userApproved))
 
-def __comparePermissions(oldDefaults={},newDefaults={},userApproved={}):
+def __comparePermissions(oldDefaults,newDefaults,userApproved):
   """
   Analize permission sets for changes.
   First, compare the old defaults to the user approved permissions.
@@ -193,7 +193,7 @@ def __comparePermissions(oldDefaults={},newDefaults={},userApproved={}):
 
   Next, we compair the old non-user set permissions to the new defaults.
 
-  Finally, we return a list of permissions that have been removed as well as a dictionary of permissions which have been added or changed. 
+  Finally, we return a list of permissions that have been removed as well as a dictionary of permissions which have been added or changed.
 
   >>> import subuserlib.permissions
   >>> subuserlib.permissions.__comparePermissions(oldDefaults={"a":1,"b":2,"c":3,"d":4,"e":5},newDefaults={"a":1,"b":3,"c":4,"f":4},userApproved={"a":1,"b":5,"e":5,"z":7}) == (["e"],{"f":4})

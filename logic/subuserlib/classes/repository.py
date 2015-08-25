@@ -9,7 +9,6 @@ A repository is a collection of ``ImageSource`` s which are published in a git r
 #external imports
 import os
 import shutil
-import io
 import json
 #internal imports
 import subuserlib.subprocessExtras
@@ -85,7 +84,7 @@ class Repository(dict,UserOwnedObject,Describable):
       if not self.isLocal():
         print("Cloned from: "+self.getGitOriginURI())
         print("Currently at commit: "+self.getGitCommitHash())
-    
+
   def getRepoPath(self):
     """ Get the path of the repo's sources on disk. """
     if self.isLocal():
@@ -111,7 +110,7 @@ class Repository(dict,UserOwnedObject,Describable):
       return repoConfig
     except ValueError as ve:
       # TODO we should probably exit and tell the user loudly that something isn't right.
-      self.getRegistry().log("Error parsing .subuser.json file for repository "+self.getName()+":\n"+str(ve))
+      self.getUser().getRegistry().log("Error parsing .subuser.json file for repository "+self.getName()+":\n"+str(ve))
       return None
 
   def getSubuserRepositoryRoot(self):
@@ -184,7 +183,7 @@ class Repository(dict,UserOwnedObject,Describable):
       return None
     (returncode,output) = self.getGitRepository().runCollectOutput(["show-ref","-s","--head"])
     if returncode != 0:
-      raise OSException("Running git in "+self.getGitRepository().getPath()+" with args "+str(["show-ref","-s","--head"])+" failed.")
+      raise OSError("Running git in "+self.getGitRepository().getPath()+" with args "+str(["show-ref","-s","--head"])+" failed.")
     newCommitHash = output.split("\n")[0]
     updated = not newCommitHash == self.__lastGitCommitHash
     self.__lastGitCommitHash = newCommitHash

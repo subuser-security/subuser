@@ -9,7 +9,6 @@ Each user's settings are stored in a "registry". This is a git repository with a
 #external imports
 import os
 import errno
-import sys
 #semi-external imports
 import subuserlib.portalocker.utils
 #internal imports

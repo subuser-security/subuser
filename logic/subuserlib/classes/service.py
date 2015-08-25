@@ -16,8 +16,6 @@ import os
 import errno
 import fcntl
 import signal
-#semi-external imports
-import subuserlib.portalocker.utils
 #internal imports
 from subuserlib.classes.userOwnedObject import UserOwnedObject
 

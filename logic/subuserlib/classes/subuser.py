@@ -9,7 +9,6 @@ A subuser is an entity that runs within a Docker container and has a home direct
 #external imports
 import os
 import stat
-import json
 #internal imports
 import subuserlib.permissions
 from subuserlib.classes.userOwnedObject import UserOwnedObject

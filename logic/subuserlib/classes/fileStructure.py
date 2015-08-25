@@ -52,7 +52,7 @@ class FileStructure():
     """
     Returns the contents of the given file.
     """
-    pass 
+    pass
 
   @abc.abstractmethod
   def getMode(self,path):
@@ -72,16 +72,16 @@ class FileStructure():
   def hash(self,path):
     """
     Return the SHA1 hash of the file or directory.
-  
+
     In the case of directectories, hashes alphabetically and hashes subdirectories first.
-  
+
     Hashes the following:
       - Relative file path
       - File mode
       - File contents
-  
+ 
     Return the hash as a hexidecimal string.
-  
+ 
     >>> from subuserlib.classes.fileStructure import FileStructure
     >>> fileStructure = BasicFileStructure("/home/travis/hashtest")
     >>> fileStructure.hash("./")

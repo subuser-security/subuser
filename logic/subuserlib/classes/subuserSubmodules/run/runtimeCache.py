@@ -7,9 +7,7 @@ Stores metadata about images which are built to encorporate changes to subuser i
 """
 
 #external imports
-import sys
 import os
-import getpass
 import json
 #internal imports
 from subuserlib.classes.userOwnedObject import UserOwnedObject

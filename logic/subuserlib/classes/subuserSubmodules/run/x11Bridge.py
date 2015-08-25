@@ -30,10 +30,8 @@ I up-to-date version of xpra can be used, xpra need not be installed on the host
 #external imports
 import os
 import time
-import signal
 import shutil
 #internal imports
-from subuserlib.classes.userOwnedObject import UserOwnedObject
 from subuserlib.classes.service import Service
 import subuserlib.verify
 import subuserlib.subuser
@@ -63,7 +61,7 @@ class XpraX11Bridge(Service):
     self.getClientSubuser().createPermissions(self.getClientSubuser().getImageSource().getPermissions())
     self.getClientSubuser().getPermissions()["system-dirs"] = {self.getXpraSocket():os.path.join(os.getenv("HOME"),".xpra","server-100")}
     self.getClientSubuser().getPermissions().save()
- 
+
   def setup(self,verify=True):
     """
     Do any setup required in order to create a functional bridge: Creating subusers building images ect.
@@ -74,13 +72,12 @@ class XpraX11Bridge(Service):
       self.setupServerPermissions()
       self.addClientSubuser()
       self.setupClientPermissions()
-      
       newSubuserNames = [self.getServerSubuserName(),self.getClientSubuserName()]
       if verify:
         subuserlib.verify.verify(self.getUser(),subuserNames=newSubuserNames,permissionsAccepter=self._getPermissionsAccepter())
       else:
         return newSubuserNames
- 
+
   def getServerSideX11Path(self):
     return os.path.join(self.getUser().getConfig()["volumes-dir"],"xpra",self.getSubuser().getName(),"tmp",".X11-unix")
 

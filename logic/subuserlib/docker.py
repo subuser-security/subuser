@@ -11,7 +11,6 @@ import sys
 import os
 import getpass
 import grp
-import subprocess
 #internal imports
 import subuserlib.subprocessExtras as subprocessExtras
 import subuserlib.executablePath

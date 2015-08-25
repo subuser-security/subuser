@@ -10,10 +10,10 @@ This module allows us to communicate using http over standard unix sockets.
 #external imports
 import socket
 try:
- import httplib
+  import httplib
 except ImportError:
- import http.client
- httplib = http.client
+  import http.client
+  httplib = http.client
 #internal imports
 #import ...
 

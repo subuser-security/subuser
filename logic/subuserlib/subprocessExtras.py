@@ -7,7 +7,6 @@ Helper functions for running foreign executables.
 """
 
 #external imports
-import sys
 import subprocess
 import os
 #internal imports
@@ -32,7 +31,7 @@ def callBackground(args,cwd=None):
   process = subprocess.Popen(args,cwd=cwd,stdout=devnull,stderr=devnull,close_fds=True)
   return process.pid
 
-def callCollectOutput(args,errorContext="",cwd=None):
+def callCollectOutput(args,cwd=None):
   """
   Run the command and return a tuple with: (returncode,the output to stdout as a string).
   """

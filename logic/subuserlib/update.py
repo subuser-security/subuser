@@ -7,7 +7,7 @@ High level operations used for updating, rolling back, locking ect.
 """
 
 #external imports
-import os
+#import ...
 #internal imports
 import subuserlib.verify
 import subuserlib.subprocessExtras as subprocessExtras
