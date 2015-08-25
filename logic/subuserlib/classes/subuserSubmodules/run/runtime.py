@@ -15,6 +15,7 @@ import binascii
 import struct
 #internal imports
 import subuserlib.subprocessExtras
+import subuserlib.test
 from subuserlib.classes.userOwnedObject import UserOwnedObject
 
 def getRecursiveDirectoryContents(directory):
@@ -30,7 +31,10 @@ class Runtime(UserOwnedObject):
     self.__environment = environment
     self.__extraFlags = []
     self.__background = False
-    self.__hostname = binascii.b2a_hex(os.urandom(10))
+    if not subuserlib.test.testing:
+      self.__hostname = binascii.b2a_hex(os.urandom(10))
+    else:
+      self.__hostname = b"<random-hostname>"
     UserOwnedObject.__init__(self,user)
 
   def getSubuser(self):
@@ -121,7 +125,7 @@ $ subuser repair
 
   def getHostnameFlag(self):
     if not self.__hostname is None:
-      return ["--hostname",self.__hostname]
+      return ["--hostname",self.__hostname.decode(encoding="ascii")]
     else:
       return []
 
