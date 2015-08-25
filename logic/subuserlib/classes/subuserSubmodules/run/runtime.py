@@ -11,7 +11,10 @@ import sys
 import collections
 import os
 import time
+import binascii
+import struct
 #internal imports
+import subuserlib.subprocessExtras
 from subuserlib.classes.userOwnedObject import UserOwnedObject
 
 def getRecursiveDirectoryContents(directory):
@@ -27,6 +30,7 @@ class Runtime(UserOwnedObject):
     self.__environment = environment
     self.__extraFlags = []
     self.__background = False
+    self.__hostname = binascii.b2a_hex(os.urandom(10))
     UserOwnedObject.__init__(self,user)
 
   def getSubuser(self):
@@ -96,7 +100,7 @@ $ subuser repair
      ("access-working-directory", lambda p: ["-v="+os.getcwd()+":/pwd:rw","--workdir=/pwd"] if p else ["--workdir="+self.getSubuser().getDockersideHome()]),
      ("allow-network-access", lambda p: ["--net=bridge","--dns=8.8.8.8"] if p else ["--net=none"]),
      # Liberal permissions
-     ("x11", lambda p: ["-e","DISPLAY=unix"+os.environ['DISPLAY'],"-v=/tmp/.X11-unix:/tmp/.X11-unix:rw"] if p else []),
+     ("x11", lambda p: ["-e","DISPLAY=unix"+os.environ['DISPLAY'],"-v=/tmp/.X11-unix:/tmp/.X11-unix:rw","-v="+self.getXautorityFilePath()+":/subuser/.Xauthority","-e","XAUTHORITY=/subuser/.Xauthority"] if p else []),
      ("system-dirs", lambda systemDirs : ["-v="+source+":"+dest+":rw" for source,dest in systemDirs.items()]),
      ("graphics-card", lambda p: ["--device=/dev/dri/"+device for device in os.listdir("/dev/dri")] if p else []),
      ("serial-devices", lambda sd: ["--device=/dev/"+device for device in self.getSerialDevices()] if sd else []),
@@ -110,8 +114,16 @@ $ subuser repair
     self.__extraFlags.append(envVar+"="+value)
 
   def setHostname(self,hostname):
-    self.__extraFlags.append("-h")
-    self.__extraFlags.append(hostname)
+    self.__hostname = hostname
+
+  def getHostname(self):
+    return self.__hostname
+
+  def getHostnameFlag(self):
+    if not self.__hostname is None:
+      return ["--hostname",self.__hostname]
+    else:
+      return []
 
   def getCommand(self,args):
     """
@@ -123,6 +135,7 @@ $ subuser repair
     permissions = self.getSubuser().getPermissions()
     for permission, flagGenerator in permissionFlagDict.items():
       flags.extend(flagGenerator(permissions[permission]))
+    flags.extend(self.getHostnameFlag())
     return ["run"]+flags+["--entrypoint"]+[self.getSubuser().getPermissions()["executable"]]+[self.getRunReadyImageId()]+args
 
   def getPrettyCommand(self,args):
@@ -138,6 +151,54 @@ $ subuser repair
   def setBackground(self,background):
     self.__background = background
 
+  def getXautorityDirPath(self):
+    return os.path.join(self.getUser().getConfig()["volumes-dir"],"x11",self.getSubuser().getName(),"subuser")
+
+  def getXautorityFilePath(self):
+    return os.path.join(self.getXautorityDirPath(),".Xauthority")
+
+  def setupXauth(self):
+    try:
+      os.makedirs(self.getXautorityDirPath())
+    except OSError: #Already exists
+      pass
+    try:
+      os.remove(self.getXautorityFilePath())
+    except OSError:
+      pass
+    subuserlib.subprocessExtras.call(["xauth","extract",self.getXautorityFilePath(),os.environ["DISPLAY"]])
+    with open(self.getXautorityFilePath(),"rb") as xauthFile:
+      # The extracted Xauthority file has the following format(bytewise):
+      # 1 0 0 [len(hostname)] [hostname-in-ascii] 0 1 [display-number-in-ascii] 0 22 ["MIT-MAGIC-COOKIE-1"-in-ascii] 0 20 [Magic number]
+      # The goal here, is to change the hostname...
+      # BTW, either I am doing this totally wrong,
+      # or python is terrible at dealing with binary files...
+      start=xauthFile.read(3)
+      lengthOfHostname = struct.unpack("b",xauthFile.read(1))[0]
+      hostnameOfHost = xauthFile.read(lengthOfHostname)
+      rest = xauthFile.read()
+    with open(self.getXautorityFilePath(),"wb") as xauthFile:
+      xauthFile.write(start)
+      hostname = self.getHostname()
+      xauthFile.write(struct.pack("b",len(hostname)))
+      xauthFile.write(hostname)
+      xauthFile.write(rest)
+
+  def setupSymlinks(self):
+    symlinkPath = os.path.join(self.getSubuser().getHomeDirOnHost(),"Userdirs")
+    destinationPath = "/userdirs"
+    if not os.path.exists(symlinkPath):
+      try:
+        os.makedirs(self.getSubuser().getHomeDirOnHost())
+      except OSError:
+        pass
+      try:
+        os.symlink(destinationPath,symlinkPath) #Arg, why are source and destination switched?
+      #os.symlink(where does the symlink point to, where is the symlink)
+      #I guess it's to be like cp...
+      except OSError:
+        pass
+
   def run(self,args):
     """
     Run the subuser in a container.
@@ -147,22 +208,10 @@ $ subuser repair
     def reallyRun():
       if not self.getSubuser().getPermissions()["executable"]:
         sys.exit("Cannot run subuser, no executable configured in permissions.json file.")
-      def setupSymlinks():
-        symlinkPath = os.path.join(self.getSubuser().getHomeDirOnHost(),"Userdirs")
-        destinationPath = "/userdirs"
-        if not os.path.exists(symlinkPath):
-          try:
-            os.makedirs(self.getSubuser().getHomeDirOnHost())
-          except OSError:
-            pass
-          try:
-            os.symlink(destinationPath,symlinkPath) #Arg, why are source and destination switched?
-          #os.symlink(where does the symlink point to, where is the symlink)
-          #I guess it's to be like cp...
-          except OSError:
-            pass
       if self.getSubuser().getPermissions()["stateful-home"]:
-        setupSymlinks()
+        self.setupSymlinks()
+      if self.getSubuser().getPermissions()["x11"]:
+        self.setupXauth()
       #Note, subusers with gui permission cannot be run in the background.
       # Make sure that everything is setup and ready to go.
       if not self.getSubuser().getPermissions()["gui"] is None:
