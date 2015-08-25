@@ -67,4 +67,4 @@ class AcceptPermissionsAtCLI(PermissionsAccepter,UserOwnedObject):
         subuser.getPermissions().applyChanges(removedPermissions,additionsAndChanges)
       subuser.getPermissions().save()
     if (choice == "E") or (choice == "e"):
-      subuserlib.subprocessExtras.call([os.environ["EDITOR"],subuser.getPermissions().getWritePath()])
+      subuser.editPermissionsCLI()

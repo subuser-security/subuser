@@ -267,14 +267,8 @@ def subuser(sysargs):
     try:
       with user.getRegistry().getLock():
         user.getRegistry().logChange("Edit "+name+"'s permissions.")
-        try:
-          editor = os.environ["EDITOR"]
-        except KeyError:
-          editor = "/usr/bin/nano"
-        subuserlib.subprocessExtras.call([editor,user.getRegistry().getSubusers()[name].getPermissions().getWritePath()])
         subuser = user.getRegistry().getSubusers()[name]
-        subuser.loadPermissions()
-        subuser.getPermissions().save()
+        subuser.editPermissionsCLI()
         subuserlib.verify.verify(user,subuserNames=[name],permissionsAccepter=permissionsAccepter)
         user.getRegistry().commit()
     except subuserlib.portalocker.portalocker.LockException:

@@ -61,15 +61,17 @@ class Subuser(UserOwnedObject, Describable):
     self.__permissions = Permissions(self.getUser(),initialPermissions=permissionsDict,writePath=permissionsDotJsonWritePath)
     return self.__permissions
 
+  def getPermissionsDotJsonWritePath(self):
+    return os.path.join(self.getPermissionsDir(),"permissions.json")
+
   def loadPermissions(self):
-      permissionsDotJsonWritePath = os.path.join(self.getPermissionsDir(),"permissions.json")
       registryFileStructure = self.getUser().getRegistry().getGitRepository().getFileStructureAtCommit(self.getUser().getRegistry().getGitReadHash())
       if registryFileStructure.exists(os.path.join(self.getRelativePermissionsDir(),"permissions.json")):
         initialPermissions = subuserlib.permissions.getPermissions(permissionsString=registryFileStructure.read(os.path.join(self.getRelativePermissionsDir(),"permissions.json")))
       else:
         raise SubuserHasNoPermissionsException("The subuser <"+self.getName()+"""> has no permissions.
 
-If you are updating sometime around August 2014, you should move ~/.subuser/permissions to ~/.subuser/registry/permissions and run:
+If you are updating sometime around August 2015, you should move ~/.subuser/permissions to ~/.subuser/registry/permissions and run:
 
 $ git add .
 $ git commit
@@ -79,7 +81,7 @@ Otherwise, please run:
 $ subuser repair
 
 To repair your subuser installation.\n""")
-      self.__permissions = Permissions(self.getUser(),initialPermissions,writePath=permissionsDotJsonWritePath)
+      self.__permissions = Permissions(self.getUser(),initialPermissions,writePath=self.getPermissionsDotJsonWritePath())
 
   def getPermissions(self):
     if self.__permissions is None:
@@ -100,6 +102,16 @@ To repair your subuser installation.\n""")
       if save:
         self.__permissionsTemplate.save()
     return self.__permissionsTemplate
+
+  def editPermissionsCLI(self):
+    try:
+      editor = os.environ["EDITOR"]
+    except KeyError:
+      editor = "/usr/bin/nano"
+    subuserlib.subprocessExtras.call([editor,self.getPermissions().getWritePath()])
+    initialPermissions = subuserlib.permissions.getPermissions(permissionsFilePath=self.getPermissionsDotJsonWritePath())
+    self.__permissions = Permissions(self.getUser(),initialPermissions,writePath=self.getPermissionsDotJsonWritePath())
+    self.getPermissions().save()
 
   def removePermissions(self):
     """
