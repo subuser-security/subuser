@@ -61,11 +61,10 @@ class Subuser(UserOwnedObject, Describable):
     self.__permissions = Permissions(self.getUser(),initialPermissions=permissionsDict,writePath=permissionsDotJsonWritePath)
     return self.__permissions
 
-  def getPermissions(self):
-    if self.__permissions is None:
+  def loadPermissions(self):
       permissionsDotJsonWritePath = os.path.join(self.getPermissionsDir(),"permissions.json")
       registryFileStructure = self.getUser().getRegistry().getGitRepository().getFileStructureAtCommit(self.getUser().getRegistry().getGitReadHash())
-      if os.path.join(self.getRelativePermissionsDir(),"permissions.json") in registryFileStructure.lsFiles(self.getRelativePermissionsDir()):
+      if registryFileStructure.exists(os.path.join(self.getRelativePermissionsDir(),"permissions.json")):
         initialPermissions = subuserlib.permissions.getPermissions(permissionsString=registryFileStructure.read(os.path.join(self.getRelativePermissionsDir(),"permissions.json")))
       else:
         raise SubuserHasNoPermissionsException("The subuser <"+self.getName()+"""> has no permissions.
@@ -81,6 +80,10 @@ $ subuser repair
 
 To repair your subuser installation.\n""")
       self.__permissions = Permissions(self.getUser(),initialPermissions,writePath=permissionsDotJsonWritePath)
+
+  def getPermissions(self):
+    if self.__permissions is None:
+      self.loadPermissions()
     return self.__permissions
 
   def getPermissionsTemplate(self):
@@ -150,6 +153,8 @@ To repair your subuser installation.\n""")
   def getRuntimeCache(self):
     if not self.__runtimeCache:
       self.__runtimeCache = RuntimeCache(self.getUser(),self)
+    else:
+      self.__runtimeCache.reload()
     return self.__runtimeCache
 
   def locked(self):
