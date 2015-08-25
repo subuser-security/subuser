@@ -201,7 +201,8 @@ To repair your subuser installation.\n""")
   def describe(self):
     print("Subuser: "+self.getName())
     print("------------------")
-    self.getImageSource().describe()
+    print(self.getImageSource().getIdentifier())
+    self.getPermissions().describe()
     print("")
 
   def installExecutableShortcut(self):
