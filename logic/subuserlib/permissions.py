@@ -144,7 +144,7 @@ def getNonDefaultPermissions(permissions):
   >>> getNonDefaultPermissions(permissions) == {u'x11': True}
   True
   """
-  nonDefaultPermissions = {}
+  nonDefaultPermissions = collections.OrderedDict()
   for permission,value in permissions.items():
     if not value == permissionDefaults[permission]:
       nonDefaultPermissions[permission] = value
