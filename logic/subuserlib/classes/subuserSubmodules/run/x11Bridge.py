@@ -162,9 +162,6 @@ class XpraX11Bridge(Service):
     serverContainer = serverRuntime.run(args=serverArgs)
     serviceStatus["xpra-server-service-cid"] = serverContainer.getId()
     self.waitForServerContainerToLaunch()
-    serverContainerInfo = serverContainer.inspect()
-    if serverContainerInfo is None:
-      exit("The xpra server container failed to launch. Container id:" + serverContainer.getId())
     # Launch xpra client
     clientArgs = ["attach","--no-tray","--compress=0","--encoding=rgb"]
     clientArgs.extend(commonArgs)

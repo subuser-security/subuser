@@ -6,6 +6,7 @@ import pathConfig
 #external imports
 import sys
 import os
+import cProfile
 #internal imports
 from subuserlib.classes.user import User
 
@@ -21,6 +22,19 @@ Will launch the subuser named iceweasel
 
 #################################################################################################
 
+def do_cprofile(func):
+    def profiled_func(*args, **kwargs):
+        profile = cProfile.Profile()
+        try:
+            profile.enable()
+            result = func(*args, **kwargs)
+            profile.disable()
+            return result
+        finally:
+            profile.print_stats(sort='cumtime')
+    return profiled_func
+
+#@do_cprofile
 def run(args):
   if len(args) == 1 or args[1] == "-h" or args[1] == "--help":
     print(helpString)
