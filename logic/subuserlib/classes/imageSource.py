@@ -13,6 +13,7 @@ import uuid
 from subuserlib.classes.userOwnedObject import UserOwnedObject
 from subuserlib.classes.describable import Describable
 import subuserlib.permissions
+import subuserlib.classes.docker.dockerDaemon as dockerDaemon
 
 class ImageSource(UserOwnedObject,Describable):
   def __init__(self,user,repo,name):
@@ -123,7 +124,7 @@ class ImageSource(UserOwnedObject,Describable):
     """
     try:
       return self.getRepository().getFileStructure().read(self.getRelativeSubuserImagefilePath())
-    except OSError:
+    except (OSError,IOError):
       return None
 
   def getDockerfileContents(self,parent=None):
@@ -137,6 +138,8 @@ class ImageSource(UserOwnedObject,Describable):
     except (OSError,IOError):
       pass
     subuserImagefileContents = self.getSubuserImagefileContents()
+    if subuserImagefileContents is None:
+      raise dockerDaemon.ImageBuildException("No build file found for image:" + self.getIdentifier()+"\nEvery image must have a valid Dockerfile or SubuserImageFile")
     dockerfileContents = ""
     for line in subuserImagefileContents.split("\n"):
       if line.startswith("FROM-SUBUSER-IMAGE"):
@@ -150,11 +153,11 @@ class ImageSource(UserOwnedObject,Describable):
      Returns the dependency of this ImageSource as a ImageSource.
      Or None if there is no dependency.
     """
-    SubuserImagefileContents = self.getSubuserImagefileContents()
-    if self.getSubuserImagefileContents() == None:
+    subuserImagefileContents = self.getSubuserImagefileContents()
+    if subuserImagefileContents == None:
       return None
     lineNumber=0
-    for line in SubuserImagefileContents.split("\n"):
+    for line in subuserImagefileContents.split("\n"):
       if line.startswith("FROM-SUBUSER-IMAGE"):
         try:
           import subuserlib.resolve

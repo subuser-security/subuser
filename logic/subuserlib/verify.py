@@ -76,7 +76,7 @@ def ensureImagesAreInstalledAndUpToDate(user,subuserNames,checkForUpdatesExterna
       try:
         subuserlib.install.ensureSubuserImageIsInstalledAndUpToDate(subuser,checkForUpdatesExternally=checkForUpdatesExternally)
         subuser.getRunReadyImage().setup()
-      except dockerDaemon.ImageBuildException as e:
+      except (dockerDaemon.ImageBuildException,SyntaxError) as e:
         user.getRegistry().log(str(e))
         subusersWhosImagesFailedToBuild.append(subuser)
   if subusersWhosImagesFailedToBuild:
