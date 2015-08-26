@@ -17,11 +17,13 @@ class RuntimeCache(dict,UserOwnedObject,FileBackedObject):
   def __init__(self,user,subuser):
     self.__subuser = subuser
     UserOwnedObject.__init__(self,user)
-    self.__pathToRuntimeCacheFile = None
     self.load()
 
   def getPathToCurrentImagesRuntimeCacheDir(self):
     return os.path.join(self.getUser().getConfig()["runtime-cache"],self.getSubuser().getImageId())
+
+  def getRuntimeCacheFilePath(self):
+    return os.path.join(self.getPathToCurrentImagesRuntimeCacheDir(),self.getSubuser().getPermissions().getHash()+".json")
 
   def getSubuser(self):
     return self.__subuser
@@ -31,7 +33,7 @@ class RuntimeCache(dict,UserOwnedObject,FileBackedObject):
       os.makedirs(self.getPathToCurrentImagesRuntimeCacheDir())
     except OSError:
       pass
-    with open(self.__pathToRuntimeCacheFile,mode='w') as runtimeCacheFileHandle:
+    with open(self.getRuntimeCacheFilePath(),mode='w') as runtimeCacheFileHandle:
       json.dump(self,runtimeCacheFileHandle,indent=1,separators=(',',': '))
 
   def reload(self):
@@ -41,9 +43,9 @@ class RuntimeCache(dict,UserOwnedObject,FileBackedObject):
   def load(self):
     if not self.getSubuser().getImageId():
       raise NoRuntimeCacheForSubusersWhichDontHaveExistantImagesException
-    self.__pathToRuntimeCacheFile = os.path.join(self.getPathToCurrentImagesRuntimeCacheDir(),self.getSubuser().getPermissions().getHash()+".json")
-    if os.path.exists(self.__pathToRuntimeCacheFile):
-      with open(self.__pathToRuntimeCacheFile,mode="r") as runtimeCacheFileHandle:
+    runtimeCacheFilePath = self.getRuntimeCacheFilePath()
+    if os.path.exists(runtimeCacheFilePath):
+      with open(runtimeCacheFilePath,mode="r") as runtimeCacheFileHandle:
         runtimeCacheInfo = json.load(runtimeCacheFileHandle)
         self.update(runtimeCacheInfo)
 
