@@ -10,6 +10,7 @@ import optparse
 from subuserlib.classes.user import User
 import subuserlib.verify
 import subuserlib.commandLineArguments
+import subuserlib.profile
 from subuserlib.classes.permissionsAccepters.acceptPermissionsAtCLI import AcceptPermissionsAtCLI
 
 ####################################################
@@ -24,6 +25,7 @@ This is usefull when migrating from one machine to another.  You can copy your ~
   parser.add_option("--accept",dest="accept",action="store_true",default=False,help="Acceppt permissions without asking.")
   return parser.parse_args(args=realArgs)
 
+@subuserlib.profile.do_cprofile
 def verify(realArgs):
   options,arguments=parseCliArgs(realArgs)
   user = User()

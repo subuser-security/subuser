@@ -100,6 +100,7 @@ def readAndPrintStreamingBuildStatus(user,response):
 class DockerDaemon(UserOwnedObject):
   def __init__(self,user):
     self.__connection = None
+    self.__imagePropertiesCache = {}
     UserOwnedObject.__init__(self,user)
 
   def getConnection(self):
@@ -120,13 +121,19 @@ class DockerDaemon(UserOwnedObject):
     """
      Returns a dictionary of image properties, or None if the image does not exist.
     """
+    try:
+      return self.__imagePropertiesCache[imageTagOrId]
+    except KeyError:
+      pass
     self.getConnection().request("GET","/v1.13/images/"+imageTagOrId+"/json")
     response = self.getConnection().getresponse()
     if not response.status == 200:
       response.read() # Read the response and discard it to prevent the server from getting locked up: http://stackoverflow.com/questions/3231543/python-httplib-responsenotready
       return None
     else:
-      return json.loads(response.read().decode("utf-8"))
+      properties = json.loads(response.read().decode("utf-8"))
+      self.__imagePropertiesCache[imageTagOrId] = properties
+      return properties
 
   def removeImage(self,imageId):
     self.getConnection().request("DELETE","/v1.13/images/"+imageId)

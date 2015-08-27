@@ -74,6 +74,7 @@ class GitFileStructure(FileStructure):
     """
     self.__gitRepository = gitRepository
     self.__commit = commit
+    self.__lsTreeCache = {}
 
   def getCommit(self):
     return self.__commit
@@ -92,7 +93,13 @@ class GitFileStructure(FileStructure):
       subfolder += "/"
     if subfolder == "/":
       subfolder = "./"
-    (returncode,output) = self.getRepository().runCollectOutput(["ls-tree"]+extraArgs+[self.getCommit(),subfolder])
+    args = extraArgs+[self.getCommit(),subfolder]
+    argsTuple = tuple(args)
+    try:
+      return self.__lsTreeCache[argsTuple]
+    except KeyError:
+      pass
+    (returncode,output) = self.getRepository().runCollectOutput(["ls-tree"]+args)
     if returncode != 0:
       return [] # This commenting out is intentional. It is simpler to just return [] here than to check if the repository is properly initialized everywhere else.
     lines = output.splitlines()
@@ -101,6 +108,7 @@ class GitFileStructure(FileStructure):
       mode,objectType,rest = line.split(" ",2)
       objectHash,path = rest.split("\t",1)
       items.append((mode,objectType,objectHash,path))
+    self.__lsTreeCache[argsTuple] = items
     return items
 
   def ls(self, subfolder, extraArgs=[]):

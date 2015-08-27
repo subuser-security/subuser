@@ -13,6 +13,7 @@ from subuserlib.classes.permissionsAccepters.acceptPermissionsAtCLI import Accep
 import subuserlib.commandLineArguments
 import subuserlib.subuser
 import subuserlib.verify
+import subuserlib.profile
 
 def parseCliArgs(sysargs):
   usage = "usage: subuser %prog [add|remove|create-shortcut|remove-shortcut|edit-permissions] NAME [IMAGESOURCE]"
@@ -55,6 +56,7 @@ Edit a subuser's permissions.
   parser.add_option("--accept",dest="accept",action="store_true",default=False,help="Accept permissions without asking.")
   return parser.parse_args(args=sysargs)
 
+@subuserlib.profile.do_cprofile
 def subuser(sysargs):
   """
   Manage subusers

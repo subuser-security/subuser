@@ -12,6 +12,7 @@ import optparse
 import subuserlib.commandLineArguments
 from subuserlib.classes.user import User
 import subuserlib.update
+import subuserlib.profile
 from subuserlib.classes.permissionsAccepters.acceptPermissionsAtCLI import AcceptPermissionsAtCLI
 
 #####################################################################################
@@ -50,6 +51,7 @@ def parseCliArgs(realArgs):
 
 #################################################################################################
 
+@subuserlib.profile.do_cprofile
 def update(realArgs):
   """
   Update your subuser installation.
