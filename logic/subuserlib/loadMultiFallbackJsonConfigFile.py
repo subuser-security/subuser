@@ -11,20 +11,7 @@ import os
 import inspect
 import json
 #internal imports
-#import ...
-
-def upNDirsInPath(path,n):
-  if n > 0:
-    return os.path.dirname(upNDirsInPath(path,n-1))
-  else:
-    return path
-
-def getSubuserDir():
-  """
-  Get the toplevel directory for subuser.
-  """
-  pathToThisSourceFile = os.path.abspath(inspect.getfile(inspect.currentframe()))
-  return upNDirsInPath(pathToThisSourceFile,4)
+import subuserlib.paths
 
 def filterOutNonExistantPaths(paths):
   _paths = []
@@ -37,7 +24,7 @@ def expandPathInDict(homeDir,pathAttribute,dictionary):
   """
   Expand the environment variables in a dictionary of setting-value pairs given that the setting holds a path.
   """
-  os.environ["SUBUSERDIR"] = getSubuserDir()
+  os.environ["SUBUSERDIR"] = subuserlib.paths.getSubuserDir()
   os.environ["HOME"] = homeDir
   dictionary[pathAttribute] = os.path.expandvars(dictionary[pathAttribute]).replace("//","/") # os.path.expandvars is buggy and expands $HOME/foo to /home/user-name//foo
 

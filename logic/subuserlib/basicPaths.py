@@ -13,6 +13,15 @@ import inspect
 #import ...
 home = os.path.expanduser("~")
 
+def upNDirsInPath(path,n):
+  if n > 0:
+    return os.path.dirname(upNDirsInPath(path,n-1))
+  else:
+    return path
+
 def getSubuserDir():
-  """ Get the toplevel directory for subuser. """
-  return os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))))) # BLEGH!
+  """
+  Get the toplevel directory for subuser.
+  """
+  pathToThisSourceFile = os.path.abspath(inspect.getfile(inspect.currentframe()))
+  return upNDirsInPath(pathToThisSourceFile,3)
