@@ -26,7 +26,7 @@ def expandPathInDict(homeDir,pathAttribute,dictionary):
   """
   os.environ["SUBUSERDIR"] = subuserlib.paths.getSubuserDir()
   os.environ["HOME"] = homeDir
-  dictionary[pathAttribute] = os.path.expandvars(dictionary[pathAttribute]).replace("//","/") # os.path.expandvars is buggy and expands $HOME/foo to /home/user-name//foo
+  dictionary[pathAttribute] = os.path.normpath(os.path.expandvars(dictionary[pathAttribute])) # Norpath because os.path.expandvars is buggy and expands $HOME/foo to /home/user-name//foo
 
 def expandPathsInDict(homeDir,pathAttributes,dictionary):
   for pathAttribute in pathAttributes:
