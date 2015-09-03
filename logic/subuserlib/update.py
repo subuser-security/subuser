@@ -13,7 +13,7 @@ import subuserlib.verify
 import subuserlib.subprocessExtras as subprocessExtras
 
 #####################################################################################
-def updateAll(user,permissionsAccepter):
+def all(user,permissionsAccepter):
   """
   This command updates(if needed) all of the installed subuser images.
   """
@@ -25,7 +25,7 @@ def updateAll(user,permissionsAccepter):
   subuserlib.verify.verify(user,checkForUpdatesExternally=True,subuserNames=subuserNames,permissionsAccepter=permissionsAccepter)
   user.getRegistry().commit()
 
-def updateSubusers(user,subuserNames,permissionsAccepter):
+def subusers(user,subuserNames,permissionsAccepter):
   """
   This command updates the specified subusers' images.
   """

@@ -352,13 +352,13 @@ def update(realArgs):
   elif ["all"] == args:
     try:
       with user.getRegistry().getLock():
-        subuserlib.update.updateAll(user,permissionsAccepter=permissionsAccepter)
+        subuserlib.update.all(user,permissionsAccepter=permissionsAccepter)
     except subuserlib.portalocker.portalocker.LockException:
       sys.exit("Another subuser process is currently running and has a lock on the registry. Please try again later.")
   elif "subusers" == args[0]:
     try:
       with user.getRegistry().getLock():
-        subuserlib.update.updateSubusers(user,args[1:],permissionsAccepter=permissionsAccepter)
+        subuserlib.update.subusers(user,args[1:],permissionsAccepter=permissionsAccepter)
     except subuserlib.portalocker.portalocker.LockException:
       sys.exit("Another subuser process is currently running and has a lock on the registry. Please try again later.")
   elif ["log"] == args:
