@@ -32,18 +32,18 @@ class AcceptPermissionsAtCLI(PermissionsAccepter,UserOwnedObject):
       createNewPermissions = True
     else:
       createNewPermissions = False
-      (removedPermissions,additionsAndChanges) = subuserlib.permissions.comparePermissions(newDefaults = newDefaults, oldDefaults=oldDefaults, userApproved=userApproved)
+      (removedPermissions,additionsAndChanges) = subuserlib.permissions.compare(newDefaults = newDefaults, oldDefaults=oldDefaults, userApproved=userApproved)
       if additionsAndChanges == {} and removedPermissions == []:
         return
       if not additionsAndChanges == {}:
         print(subuser.getName()+" would like to add/change the following permissions:")
         for permission,value in additionsAndChanges.items():
-          for line in subuserlib.permissions.permissionDescriptions[permission](value):
+          for line in subuserlib.permissions.descriptions[permission](value):
             print("   - "+line)
       if not removedPermissions == []:
         print(subuser.getName()+" no longer needs the following permissions:")
         for removedPermission in removedPermissions:
-          for line in subuserlib.permissions.permissionDescriptions[removedPermission](oldDefaults[removedPermission]):
+          for line in subuserlib.permissions.descriptions[removedPermission](oldDefaults[removedPermission]):
             print("   - "+line)
     options = OrderedDict([("A","Accept and apply changes")
                           ,("E","Apply changes and edit result")

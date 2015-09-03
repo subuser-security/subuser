@@ -32,22 +32,22 @@ class Permissions(collections.OrderedDict,UserOwnedObject,FileBackedObject):
     Return the SHA512 hash of the given permissions.
     """
     hasher = hashlib.sha512()
-    hasher.update(subuserlib.permissions.getPermissonsJSONString(self).encode('utf-8'))
+    hasher.update(subuserlib.permissions.getJSONString(self).encode('utf-8'))
     return hasher.hexdigest()
 
   def applyChanges(self,permissionsToRemove,permissionsToAddOrChange):
     for permission in permissionsToRemove:
-      self[permission] = subuserlib.permissions.permissionDefaults[permission]
+      self[permission] = subuserlib.permissions.defaults[permission]
     for permission,value in permissionsToAddOrChange.items():
       self[permission] = value
 
   def save(self):
-    subuserlib.permissions.setPermissions(self,self.__writePath)
+    subuserlib.permissions.save(self,self.__writePath)
 
   def describe(self):
     def describePermissions(permissions):
       for permission in permissions:
-        subPermissions = subuserlib.permissions.permissionDescriptions[permission](self[permission])
+        subPermissions = subuserlib.permissions.descriptions[permission](self[permission])
         if not subPermissions:
           continue
         firstLine = "  - " + permission + ":"
@@ -64,7 +64,7 @@ class Permissions(collections.OrderedDict,UserOwnedObject,FileBackedObject):
         if self[permission]:
           permitted = True
       return permitted
-    preludeDescriptions = sum([subuserlib.permissions.permissionDescriptions[permission](self[permission]) for permission in subuserlib.permissions.levels[0]["permissions"]],[])
+    preludeDescriptions = sum([subuserlib.permissions.descriptions[permission](self[permission]) for permission in subuserlib.permissions.levels[0]["permissions"]],[])
     for description in preludeDescriptions:
       print(" "+description)
     for level in subuserlib.permissions.levels[1:]:

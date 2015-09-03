@@ -17,7 +17,7 @@ allImagesMustHavePermissions = "All subuser images must have a permissions.json 
 
 # Defaults from subuser/docs/permissions-dot-json-file-format.md
 # This is a comprehensive list of all permissions
-permissionDefaults = {
+defaults = {
  # Conservative permissions
   "description": ""
  ,"maintainer": ""
@@ -47,7 +47,7 @@ permissionDefaults = {
  ,"privileged": False
  }
 
-guiPermissionDefaults = {
+guiDefaults = {
  "clipboard": False,
  "system-tray": False,
  "cursors": False
@@ -72,7 +72,7 @@ levels = [
    "permissions" : ["privileged"],
    "description" : "WARNING: These permissions give the subuser full access to your system when run."}]
 
-permissionDescriptions = {
+descriptions = {
   # Prelude
   "description":lambda description : ["Description: "+description]
   ,"maintainer":lambda maintainer : ["Maintainer: "+maintainer]
@@ -82,7 +82,7 @@ permissionDescriptions = {
   ,"inherit-locale": lambda p : ["To find out language you speak and what region you live in."] if p else []
   ,"inherit-timezone": lambda p : ["To find out your current timezone."] if p else []
   # Moderate
-  ,"gui": lambda guiOptions : (["To be able to display windows."] + sum([guiPermissionDescriptions[permission](value) for permission,value in guiOptions.items()],[])) if guiOptions else []
+  ,"gui": lambda guiOptions : (["To be able to display windows."] + sum([guiDescriptions[permission](value) for permission,value in guiOptions.items()],[])) if guiOptions else []
   ,"user-dirs": lambda userDirs : ["To access to the following user directories: '~/"+"' '~/".join(userDirs)+"'"] if userDirs else []
   ,"inherit-envvars": lambda envVars : ["To access to the following environment variables: "+" ".join(envVars)] if envVars else []
   ,"sound-card": lambda p : ["To access to your soundcard, can play sounds/record sound."] if p else []
@@ -101,12 +101,12 @@ permissionDescriptions = {
   ,"privileged": lambda p: ["To have full access to your system.  To even do things as root outside of its container."] if p else []
   }
 
-guiPermissionDescriptions = {
+guiDescriptions = {
   "clipboard": lambda p : ["Is able to access the host's clipboard."] if p else []
   ,"system-tray": lambda p : ["Is able to create system tray icons."] if p else []
   ,"cursors": lambda p : ["Is able to change the mouse's cursor icon."] if p else []}
 
-def getPermissions(permissionsFilePath=None,permissionsString=None):
+def load(permissionsFilePath=None,permissionsString=None):
   """
   Return a dictionary of permissions from the given permissions.json file.  Permissions that are not specified are set to their default values.
   """
@@ -124,23 +124,23 @@ def getPermissions(permissionsFilePath=None,permissionsString=None):
         sys.exit(permissionsFilePath+" is not valid json.  "+allImagesMustHavePermissions)
   # Validate that the permissions are supported by this version of subuser.
   for permission in permissions.keys():
-    if not permission in permissionDefaults:
+    if not permission in defaults:
       sys.exit("Error: the permission \""+permission+"\" is not supported by your version of subuser.  Try updating first.")
   if "gui" in permissions and not permissions["gui"] is None:
     for guiPermission in permissions["gui"].keys():
-      if not guiPermission in guiPermissionDefaults:
+      if not guiPermission in guiDefaults:
         sys.exit("Error: the gui permission \""+guiPermission+"\" is not supported by your version of subuser.  Try updating first.")
   # Set permission defaults for permissions that are not explicitly specified in the permissions.json file
   if "basic-common-permissions" in permissions and permissions["basic-common-permissions"]:
     for basicCommonPermission in basicCommonPermissions:
       if not basicCommonPermission in permissions:
         permissions[basicCommonPermission] = True
-  for permission,defaultValue in permissionDefaults.items():
+  for permission,defaultValue in defaults.items():
     if not permission in permissions:
       permissions[permission] = defaultValue
   # gui permissions
   if not permissions["gui"] is None:
-    for permission,defaultValue in guiPermissionDefaults.items():
+    for permission,defaultValue in guiDefaults.items():
       if not permission in permissions["gui"]:
         permissions["gui"][permission] = defaultValue
   return permissions
@@ -150,24 +150,24 @@ def getNonDefaultPermissions(permissions):
   Returns the dictionary of permissions which are NOT set to their default values.
 
   >>> import subuserlib.permissions
-  >>> permissions = subuserlib.permissions.getPermissions(permissionsString='{"x11":true}')
+  >>> permissions = subuserlib.permissions.load(permissionsString='{"x11":true}')
   >>> getNonDefaultPermissions(permissions) == {u'x11': True}
   True
   """
   nonDefaultPermissions = collections.OrderedDict()
   for permission,value in permissions.items():
-    if not value == permissionDefaults[permission]:
+    if not value == defaults[permission]:
       nonDefaultPermissions[permission] = value
   return nonDefaultPermissions
 
-def getPermissonsJSONString(permissions):
+def getJSONString(permissions):
   """
   Returns the given permissions as a JSON formated string.
   """
   permissionsToSave = getNonDefaultPermissions(permissions)
   return json.dumps(permissionsToSave,indent=1, separators=(',', ': '))
 
-def setPermissions(permissions,permissionsFilePath):
+def save(permissions,permissionsFilePath):
   """
   Save the permissions to the given file.  We only save permissions that are not set to their default values.
   """
@@ -177,9 +177,9 @@ def setPermissions(permissions,permissionsFilePath):
   except OSError:
     pass
   with open(permissionsFilePath, 'w') as file_f:
-    file_f.write(getPermissonsJSONString(permissions))
+    file_f.write(getJSONString(permissions))
 
-def comparePermissions(oldDefaults,newDefaults,userApproved):
+def compare(oldDefaults,newDefaults,userApproved):
   """
   Analize permission sets for changes.
   First, compare the old defaults to the user approved permissions.
@@ -192,9 +192,9 @@ def comparePermissions(oldDefaults,newDefaults,userApproved):
 
   The return value is a tuple of the form: ([removed-permisions],{additions/changes})
   """
-  return __comparePermissions(oldDefaults = getNonDefaultPermissions(oldDefaults), newDefaults = getNonDefaultPermissions(newDefaults), userApproved = getNonDefaultPermissions(userApproved))
+  return __compare(oldDefaults = getNonDefaultPermissions(oldDefaults), newDefaults = getNonDefaultPermissions(newDefaults), userApproved = getNonDefaultPermissions(userApproved))
 
-def __comparePermissions(oldDefaults,newDefaults,userApproved):
+def __compare(oldDefaults,newDefaults,userApproved):
   """
   Analize permission sets for changes.
   First, compare the old defaults to the user approved permissions.
@@ -206,7 +206,7 @@ def __comparePermissions(oldDefaults,newDefaults,userApproved):
   Finally, we return a list of permissions that have been removed as well as a dictionary of permissions which have been added or changed.
 
   >>> import subuserlib.permissions
-  >>> subuserlib.permissions.__comparePermissions(oldDefaults={"a":1,"b":2,"c":3,"d":4,"e":5},newDefaults={"a":1,"b":3,"c":4,"f":4},userApproved={"a":1,"b":5,"e":5,"z":7}) == (["e"],{"f":4})
+  >>> subuserlib.permissions.__compare(oldDefaults={"a":1,"b":2,"c":3,"d":4,"e":5},newDefaults={"a":1,"b":3,"c":4,"f":4},userApproved={"a":1,"b":5,"e":5,"z":7}) == (["e"],{"f":4})
   True
   """
   userSetPermissions = {}

@@ -67,7 +67,7 @@ class Subuser(UserOwnedObject, Describable):
   def loadPermissions(self):
     registryFileStructure = self.getUser().getRegistry().getGitRepository().getFileStructureAtCommit(self.getUser().getRegistry().getGitReadHash())
     if registryFileStructure.exists(os.path.join(self.getRelativePermissionsDir(),"permissions.json")):
-      initialPermissions = subuserlib.permissions.getPermissions(permissionsString=registryFileStructure.read(os.path.join(self.getRelativePermissionsDir(),"permissions.json")))
+      initialPermissions = subuserlib.permissions.load(permissionsString=registryFileStructure.read(os.path.join(self.getRelativePermissionsDir(),"permissions.json")))
     else:
       raise SubuserHasNoPermissionsException("The subuser <"+self.getName()+"""> has no permissions.
 
@@ -93,7 +93,7 @@ To repair your subuser installation.\n""")
       permissionsDotJsonWritePath = os.path.join(self.getPermissionsDir(),"permissions-template.json")
       registryFileStructure = self.getUser().getRegistry().getGitRepository().getFileStructureAtCommit(self.getUser().getRegistry().getGitReadHash())
       if os.path.join(self.getRelativePermissionsDir(),"permissions-template.json") in registryFileStructure.lsFiles(self.getRelativePermissionsDir()):
-        initialPermissions = subuserlib.permissions.getPermissions(permissionsString=registryFileStructure.read(os.path.join(self.getRelativePermissionsDir(),"permissions-template.json")))
+        initialPermissions = subuserlib.permissions.load(permissionsString=registryFileStructure.read(os.path.join(self.getRelativePermissionsDir(),"permissions-template.json")))
         save = False
       else:
         initialPermissions = self.getImageSource().getPermissions()
@@ -109,7 +109,7 @@ To repair your subuser installation.\n""")
     except KeyError:
       editor = "/usr/bin/nano"
     subuserlib.subprocessExtras.call([editor,self.getPermissions().getWritePath()])
-    initialPermissions = subuserlib.permissions.getPermissions(permissionsFilePath=self.getPermissionsDotJsonWritePath())
+    initialPermissions = subuserlib.permissions.load(permissionsFilePath=self.getPermissionsDotJsonWritePath())
     self.__permissions = Permissions(self.getUser(),initialPermissions,writePath=self.getPermissionsDotJsonWritePath())
     self.getPermissions().save()
 

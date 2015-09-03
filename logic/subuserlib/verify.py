@@ -18,7 +18,6 @@ import os
 #internal imports
 import subuserlib.install
 import subuserlib.classes.docker.dockerDaemon as dockerDaemon
-import subuserlib.permissions
 
 def verify(user,permissionsAccepter=None,checkForUpdatesExternally=False,subuserNames=[]):
   """
