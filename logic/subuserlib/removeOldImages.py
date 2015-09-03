@@ -17,7 +17,7 @@ def getInstalledImagesThatAreInUse(user):
   installedImagesThatAreInUse = {} # {imageId : installedImage}
   for _,subuser in user.getRegistry().getSubusers().items():
     if subuser.getImageId():
-      for inUseInstalledImage in subuserlib.installedImages.getImageLineage(user,subuser.getImageId()):
+      for inUseInstalledImage in subuser.getUser().getInstalledImages()[subuser.getImageId()].getImageLineage():
         installedImagesThatAreInUse[inUseInstalledImage.getImageId()] = inUseInstalledImage
   return installedImagesThatAreInUse
 

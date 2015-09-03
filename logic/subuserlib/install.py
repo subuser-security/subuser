@@ -10,7 +10,6 @@ Implements functions involved in building/installing/updating subuser images.
 import sys
 #internal imports
 import subuserlib.classes.installedImage
-import subuserlib.installedImages
 import subuserlib.verify
 
 def cleanUpAndExitOnError(user,error):
@@ -81,7 +80,7 @@ def isInstalledImageUpToDate(installedImage,checkForUpdatesExternally=False):
     return True
   # Check for updates to image sources
   sourceLineage = getImageSourceLineage(topImageSource)
-  installedImageLineage = subuserlib.installedImages.getImageLineage(installedImage.getUser(),installedImage.getImageId())
+  installedImageLineage = installedImage.getImageLineage()
   if not compareSourceLineageAndInstalledImageLineage(installedImage.getUser(),sourceLineage,installedImageLineage):
     return False
   # Check for updates externally using the images' built in check-for-updates script.

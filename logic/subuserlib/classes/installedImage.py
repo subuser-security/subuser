@@ -105,3 +105,29 @@ class InstalledImage(UserOwnedObject,Describable):
       return imageProperties["Created"]
     else:
       return None
+
+  def getLineageLayers(self):
+    """
+    Return the list(lineage) of id of Docker image layers which goes from a base image to this image including all of the image's ancestors in order of dependency.
+    """
+    def getLineageRecursive(imageId):
+      imageProperties = self.getUser().getDockerDaemon().getImageProperties(imageId)
+      if imageProperties == None:
+        return []
+        #sys.exit("Failed to get properties of image "+imageId)
+      if not imageProperties["Parent"] == "":
+        return getLineageRecursive(imageProperties["Parent"]) + [imageId]
+      else:
+        return [imageId]
+    return getLineageRecursive(self.getImageId())
+
+  def getImageLineage(self):
+    """
+    Return the list(lineage) of InstalledImages which goes from a base image to this image including all of the image's ancestors in order of dependency.
+    """
+    lineage = []
+    dockerImageLayers = self.getLineageLayers()
+    for dockerImageLayer in dockerImageLayers:
+      if dockerImageLayer in self.getUser().getInstalledImages():
+        lineage.append(self.getUser().getInstalledImages()[dockerImageLayer])
+    return lineage
