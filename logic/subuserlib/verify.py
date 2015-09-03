@@ -28,7 +28,14 @@ def verify(user,permissionsAccepter=None,checkForUpdatesExternally=False,subuser
      - No-longer-needed installed images are removed.
   """
   user.getRegistry().log("Verifying subuser configuration.")
-  verifyRegistryConsistency(user)
+  user.getRegistry().log("Verifying registry consistency...")
+  for _,subuser in user.getRegistry().getSubusers().items():
+    if not subuser.getImageSource().getName() in subuser.getImageSource().getRepository():
+      user.getRegistry().log("WARNING: "+subuser.getName()+" is no longer present in it's source repository. Support for this progam may have been dropped.")
+      try:
+        subuserNames.remove(subuser.getName())
+      except ValueError:
+        pass
   user.getRegistry().log("Unregistering any non-existant installed images.")
   user.getInstalledImages().unregisterNonExistantImages()
   if subuserNames:
@@ -39,12 +46,6 @@ def verify(user,permissionsAccepter=None,checkForUpdatesExternally=False,subuser
   user.getInstalledImages().save()
   trimUnneededTempRepos(user)
   rebuildBinDir(user)
-
-def verifyRegistryConsistency(user):
-  user.getRegistry().log("Verifying registry consistency...")
-  for _,subuser in user.getRegistry().getSubusers().items():
-    if not subuser.getImageSource().getName() in subuser.getImageSource().getRepository():
-      user.getRegistry().log("WARNING: "+subuser.getName()+" is no longer present in it's source repository. Support for this progam may have been dropped.")
 
 def approvePermissions(user,subuserNames,permissionsAccepter):
   for subuserName in subuserNames:
