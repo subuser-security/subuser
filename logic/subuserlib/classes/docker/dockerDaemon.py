@@ -110,7 +110,7 @@ class DockerDaemon(UserOwnedObject):
      Note: You can find more info in the `Docker API docs <https://docs.docker.com/reference/api/docker_remote_api_v1.13/>`_
     """
     if not self.__connection:
-      subuserlib.docker.getAndVerifyDockerExecutable()
+      subuserlib.docker.getAndVerifyExecutable()
       self.__connection = UHTTPConnection("/var/run/docker.sock")
     return self.__connection
 
@@ -217,9 +217,9 @@ class DockerDaemon(UserOwnedObject):
     Otherwise, wait for the process to finish and return the docker client's exit code.
     """
     if background:
-      return subuserlib.docker.runDockerBackground(args,cwd=cwd)
+      return subuserlib.docker.runBackground(args,cwd=cwd)
     else:
-      return subuserlib.docker.runDocker(args,cwd=cwd)
+      return subuserlib.docker.run(args,cwd=cwd)
 
 class ImageBuildException(Exception):
   pass

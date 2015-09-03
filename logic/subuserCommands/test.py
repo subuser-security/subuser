@@ -32,7 +32,7 @@ class MockUser():
   def getRegistry(self):
     return MockRegistry()
 
-if subuserlib.docker.getDockerExecutable():
+if subuserlib.docker.getExecutable():
   from subuserlib.classes.docker.dockerDaemon import DockerDaemon
   import subuserlib.classes.docker.dockerDaemon
   from subuserlib.classes.fileStructure import BasicFileStructure

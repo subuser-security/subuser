@@ -15,7 +15,7 @@ import grp
 import subuserlib.subprocessExtras as subprocessExtras
 import subuserlib.executablePath
 
-def getDockerExecutable():
+def getExecutable():
   """
   Return the name of the docker executable or None if docker is not installed.
   """
@@ -25,11 +25,11 @@ def getDockerExecutable():
     return "docker"
   return None
 
-def getAndVerifyDockerExecutable():
+def getAndVerifyExecutable():
   """
   Return the name of the docker executable. Exits and displays a user friendly error message if docker is not setup correctly.
   """
-  executable = getDockerExecutable()
+  executable = getExecutable()
   if not executable:
     sys.exit("""Error: Docker is not installed.
 
@@ -47,14 +47,14 @@ For installation instructions see <https://www.docker.io/gettingstarted/#h_insta
 To learn how to become a member of the docker group please watch this video: <http://www.youtube.com/watch?v=ahgRx5U4V7E>""")
   return executable
 
-def runDocker(args,cwd=None):
+def run(args,cwd=None):
   """
   Run docker with the given command line arguments. Return Docker's exit code.
   """
-  return subprocessExtras.call([getAndVerifyDockerExecutable()]+args,cwd)
+  return subprocessExtras.call([getAndVerifyExecutable()]+args,cwd)
 
-def runDockerBackground(args,cwd=None):
+def runBackground(args,cwd=None):
   """
   Run docker with the given command line arguments. Return Docker's pid.
   """
-  return subprocessExtras.callBackground([getAndVerifyDockerExecutable()]+args,cwd)
+  return subprocessExtras.callBackground([getAndVerifyExecutable()]+args,cwd)
