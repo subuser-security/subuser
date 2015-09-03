@@ -7,7 +7,7 @@ import os
 import io
 #internal imports
 import subuserlib.docker
-import subuserlib.basicPaths
+import subuserlib.paths
 
 if "--help" in sys.argv:
   print("""Run the subuser test suit.  Please do this before sending pull requests.
@@ -42,10 +42,10 @@ if subuserlib.docker.getDockerExecutable():
    "Dockerfile-debian-python2",
   ]
   for testDockerfileName in testDockerfileNames:
-    with io.open(os.path.join(subuserlib.basicPaths.getSubuserDir(),"test",testDockerfileName),encoding="utf-8",mode="r") as dockerfile:
+    with io.open(os.path.join(subuserlib.paths.getSubuserDir(),"test",testDockerfileName),encoding="utf-8",mode="r") as dockerfile:
       dockerfileContents = dockerfile.read()
     try:
-      subuserDir = BasicFileStructure(subuserlib.basicPaths.getSubuserDir())
+      subuserDir = BasicFileStructure(subuserlib.paths.getSubuserDir())
       dockerDaemon.build(repositoryFileStructure=subuserDir,relativeBuildContextPath="./",useCache=True,dockerfile=dockerfileContents)
     except subuserlib.classes.docker.dockerDaemon.ImageBuildException as e:
       print("Tests failed!")

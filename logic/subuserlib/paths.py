@@ -8,19 +8,24 @@ Module used for determining non-user-configurable paths.
 
 #external imports
 import os
+import inspect
 #internal imports
-import subuserlib.basicPaths
+#import ...
 
-home = subuserlib.basicPaths.home
+home = os.path.expanduser("~")
+
+def upNDirsInPath(path,n):
+  if n > 0:
+    return os.path.dirname(upNDirsInPath(path,n-1))
+  else:
+    return path
 
 def getSubuserDir():
   """
   Get the toplevel directory for subuser.
   """
-  return subuserlib.basicPaths.getSubuserDir()
-
-def getDockersideScriptsPath():
-  return os.path.join(getSubuserDir(),"logic","dockerside-scripts")
+  pathToThisSourceFile = os.path.abspath(inspect.getfile(inspect.currentframe()))
+  return upNDirsInPath(pathToThisSourceFile,3)
 
 def getSubuserCommandsDir():
   """
