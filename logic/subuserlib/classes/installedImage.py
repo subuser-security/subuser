@@ -91,7 +91,7 @@ class InstalledImage(UserOwnedObject,Describable):
     self.__alreadyCheckedForUpdates = True
     self.getUser().getRegistry().log("Checking for updates to: " + self.getImageSource().getIdentifier())
     if self.getUser().getDockerDaemon().execute(["run","--rm","--entrypoint","/usr/bin/test",self.getImageId(),"-e","/subuser/check-for-updates"]) == 0:
-      returnCode = self.getUser().getDockerDaemon().execute(["run","--rm","--entrypoint","/subuser/check-for-updates"],self.getImageId())
+      returnCode = self.getUser().getDockerDaemon().execute(["run","--rm","--entrypoint","/subuser/check-for-updates",self.getImageId()])
       if returnCode == 0:
         return True
     return False
