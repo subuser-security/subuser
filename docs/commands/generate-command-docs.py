@@ -3,7 +3,7 @@ import sys,subprocess
 sys.path.append("../../logic")
 import subuserlib.commands
 
-builtInCommands = subuserlib.commands.getBuiltInSubuserCommands()
+builtInCommands = subuserlib.commands.getBuiltIn()
 
 for command in builtInCommands:
   with open(command+".rst","w") as command_file:

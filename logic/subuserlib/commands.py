@@ -13,7 +13,7 @@ import subuserlib.paths
 
 nonCommands = {"__init__.py", "pathConfig.py"}
 
-def getBuiltInSubuserCommands():
+def getBuiltIn():
   """
   Get a list of the names of the built in subuser commands.
   """
@@ -21,14 +21,14 @@ def getBuiltInSubuserCommands():
   commands = list(apparentCommandsSet.difference(nonCommands))
   return [command[:-3] for command in commands if command.endswith(".py") and not command.startswith("__")] # Filter out non-.py files and remove the .py suffixes.
 
-def getExternalSubuserCommands():
+def getExternal():
   """
   Return the list of "external" subuser commands.  These are not built in commands but rather stand alone executables which appear in the user's $PATH and who's names start with "subuser-"
   """
-  def isPathToSubuserCommand(path):
+  def isPathToCommand(path):
     directory, executableName = os.path.split(path)
     return executableName.startswith("subuser-")
-  externalCommandPaths = subuserlib.executablePath.queryPATH(isPathToSubuserCommand)
+  externalCommandPaths = subuserlib.executablePath.queryPATH(isPathToCommand)
   externalCommands = []
   subuserPrefixLength=len("subuser-")
   for externalCommandPath in externalCommandPaths:
@@ -37,13 +37,13 @@ def getExternalSubuserCommands():
     externalCommands.append(commandName)
   return list(set(externalCommands)) # remove duplicate entries
 
-def getSubuserCommands():
+def getCommands():
   """
   Returns a list of commands that may be called by the user.
   """
-  return getBuiltInSubuserCommands() + getExternalSubuserCommands()
+  return getBuiltIn() + getExternal()
 
-def getSubuserCommandPath(command):
+def getPath(command):
   builtInCommandPath = os.path.join(subuserlib.paths.getSubuserCommandsDir(),command)
   if os.path.exists(builtInCommandPath):
     return builtInCommandPath
