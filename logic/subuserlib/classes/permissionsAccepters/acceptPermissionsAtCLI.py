@@ -7,7 +7,6 @@ This is a PermissionAccepter object used to get user approval of permissions via
 """
 
 #external imports
-import os
 from collections import OrderedDict
 #internal imports
 from subuserlib.classes.permissionsAccepters.permissionsAccepter import PermissionsAccepter

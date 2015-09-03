@@ -18,7 +18,7 @@ def cleanUpAndExitOnError(user,error):
   user.getRegistry().log("Cleaning up.")
   sys.exit(1)
 
-def installImage(imageSource, useCache=False,parent=None):
+def installImage(imageSource,parent=None):
   """
   Install a image by building the given ImageSource.
   Register the newly installed image in the user's InstalledImages list.
@@ -90,7 +90,7 @@ def isInstalledImageUpToDate(installedImage,checkForUpdatesExternally=False):
       return False
   return True
 
-def ensureSubuserImageIsInstalledAndUpToDate(subuser, useCache=False, checkForUpdatesExternally=False):
+def ensureSubuserImageIsInstalledAndUpToDate(subuser, checkForUpdatesExternally=False):
   """
   Ensure that the Docker image associated with the subuser is installed and up to date.
   If the image is already installed, but is out of date, or it's dependencies are out of date, build it again.

@@ -66,7 +66,7 @@ def archiveBuildContext(archive,relativeBuildContextPath,repositoryFileStructure
         if not exclude:
           addFileFromContents(path=filePathRelativeToBuildContext,contents=repositoryFileStructure.read(filePathRelativeToRepository),mode=repositoryFileStructure.getMode(filePathRelativeToRepository))
       for folderPathRelativeToRepository in repositoryFileStructure.lsFolders(folder):
-         addFolder(folderPathRelativeToRepository)
+        addFolder(folderPathRelativeToRepository)
     addFolder(relativeBuildContextPath)
   # Add the provided Dockerfile if necessary
   if not dockerfile == None:

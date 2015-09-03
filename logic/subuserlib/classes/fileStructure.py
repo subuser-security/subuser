@@ -79,9 +79,9 @@ class FileStructure():
       - Relative file path
       - File mode
       - File contents
- 
+
     Return the hash as a hexidecimal string.
- 
+
     >>> from subuserlib.classes.fileStructure import FileStructure
     >>> fileStructure = BasicFileStructure("/home/travis/hashtest")
     >>> fileStructure.hash("./")

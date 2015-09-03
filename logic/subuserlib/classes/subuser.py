@@ -65,11 +65,11 @@ class Subuser(UserOwnedObject, Describable):
     return os.path.join(self.getPermissionsDir(),"permissions.json")
 
   def loadPermissions(self):
-      registryFileStructure = self.getUser().getRegistry().getGitRepository().getFileStructureAtCommit(self.getUser().getRegistry().getGitReadHash())
-      if registryFileStructure.exists(os.path.join(self.getRelativePermissionsDir(),"permissions.json")):
-        initialPermissions = subuserlib.permissions.getPermissions(permissionsString=registryFileStructure.read(os.path.join(self.getRelativePermissionsDir(),"permissions.json")))
-      else:
-        raise SubuserHasNoPermissionsException("The subuser <"+self.getName()+"""> has no permissions.
+    registryFileStructure = self.getUser().getRegistry().getGitRepository().getFileStructureAtCommit(self.getUser().getRegistry().getGitReadHash())
+    if registryFileStructure.exists(os.path.join(self.getRelativePermissionsDir(),"permissions.json")):
+      initialPermissions = subuserlib.permissions.getPermissions(permissionsString=registryFileStructure.read(os.path.join(self.getRelativePermissionsDir(),"permissions.json")))
+    else:
+      raise SubuserHasNoPermissionsException("The subuser <"+self.getName()+"""> has no permissions.
 
 If you are updating sometime around August 2015, you should move ~/.subuser/permissions to ~/.subuser/registry/permissions and run:
 
@@ -81,7 +81,7 @@ Otherwise, please run:
 $ subuser repair
 
 To repair your subuser installation.\n""")
-      self.__permissions = Permissions(self.getUser(),initialPermissions,writePath=self.getPermissionsDotJsonWritePath())
+    self.__permissions = Permissions(self.getUser(),initialPermissions,writePath=self.getPermissionsDotJsonWritePath())
 
   def getPermissions(self):
     if self.__permissions is None:

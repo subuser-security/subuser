@@ -18,6 +18,7 @@ class MockDockerDaemon(UserOwnedObject):
   def __init__(self,user):
     self.images = {}
     self.nextImageId = 1
+    self.newId = None
     UserOwnedObject.__init__(self,user)
     self.imagesPath = "/root/subuser/test/docker/images.json"
     if not os.path.exists(self.imagesPath):
