@@ -64,23 +64,10 @@ class Permissions(collections.OrderedDict,UserOwnedObject,FileBackedObject):
         if self[permission]:
           permitted = True
       return permitted
-    # Prelude
-    preludeDescriptions = sum([subuserlib.permissions.permissionDescriptions[permission](self[permission]) for permission in subuserlib.permissions.permissionsPrelude],[])
+    preludeDescriptions = sum([subuserlib.permissions.permissionDescriptions[permission](self[permission]) for permission in subuserlib.permissions.levels[0]["permissions"]],[])
     for description in preludeDescriptions:
       print(" "+description)
-    # Conservative
-    if areAnyOfThesePermitted(subuserlib.permissions.conservativePermissions):
-      print(" Conservative permissions(These are safe):")
-      describePermissions(subuserlib.permissions.conservativePermissions)
-    # Moderate
-    if areAnyOfThesePermitted(subuserlib.permissions.moderatePermissions):
-      print(" Moderate permissions(These are probably safe):")
-      describePermissions(subuserlib.permissions.moderatePermissions)
-    # Liberal
-    if areAnyOfThesePermitted(subuserlib.permissions.liberalPermissions):
-      print(" Liberal permissions(These may pose a security risk):")
-      describePermissions(subuserlib.permissions.liberalPermissions)
-    # Anarchistic
-    if areAnyOfThesePermitted(subuserlib.permissions.anarchisticPermissions):
-      print("WARNING: this subuser has full access to your system when run.")
-      describePermissions(subuserlib.permissions.anarchisticPermissions)
+    for level in subuserlib.permissions.levels[1:]:
+      if areAnyOfThesePermitted(level["permissions"]):
+        print(" "+level["description"])
+        describePermissions(level["permissions"])

@@ -55,11 +55,22 @@ guiPermissionDefaults = {
 
 basicCommonPermissions = ["stateful-home","inherit-locale","inherit-timezone"]
 
-permissionsPrelude = ["description","maintainer","executable"]
-conservativePermissions = ["stateful-home","inherit-locale","inherit-timezone"]
-moderatePermissions = ["gui","user-dirs","sound-card","webcam","access-working-directory","allow-network-access"]
-liberalPermissions = ["x11","system-dirs","graphics-card","serial-devices","system-dbus","as-root"]
-anarchisticPermissions = ["privileged"]
+levels = [
+  {"name" : "prelude",
+   "permissions" : ["description", "maintainer", "executable"],
+   "description" : ""},
+  {"name" : "conservative",
+   "permissions" : ["stateful-home", "inherit-locale", "inherit-timezone"],
+   "description" : "Conservative permissions(These are safe):"},
+  {"name" : "moderate",
+   "permissions" : ["gui", "user-dirs", "sound-card", "webcam", "access-working-directory", "allow-network-access"],
+   "description" : "Moderate permissions(These are probably safe):"},
+  {"name" : "liberal",
+   "permissions" : ["x11", "system-dirs", "graphics-card", "serial-devices", "system-dbus", "as-root"],
+   "description" : "Liberal permissions(These may pose a security risk):"},
+  {"name" : "anarchistic",
+   "permissions" : ["privileged"],
+   "description" : "WARNING: These permissions give the subuser full access to your system when run."}]
 
 permissionDescriptions = {
   # Prelude
@@ -94,7 +105,6 @@ guiPermissionDescriptions = {
   "clipboard": lambda p : ["Is able to access the host's clipboard."] if p else []
   ,"system-tray": lambda p : ["Is able to create system tray icons."] if p else []
   ,"cursors": lambda p : ["Is able to change the mouse's cursor icon."] if p else []}
-
 
 def getPermissions(permissionsFilePath=None,permissionsString=None):
   """

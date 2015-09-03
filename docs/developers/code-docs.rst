@@ -34,5 +34,4 @@ Subuser is written in Python with an object oriented architecture.  The main dat
 
   code-docs/user
   code-docs/helperModules
-  code-docs/common-tasks
 

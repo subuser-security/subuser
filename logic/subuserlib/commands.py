@@ -19,7 +19,7 @@ def getBuiltInSubuserCommands():
   """
   apparentCommandsSet = set( os.listdir(subuserlib.paths.getSubuserCommandsDir()))
   commands = list(apparentCommandsSet.difference(nonCommands))
-  return [command[:-3] for command in commands if not command.endswith(".pyc") and not command.startswith("__")] #remove the .py suffixes.
+  return [command[:-3] for command in commands if command.endswith(".py") and not command.startswith("__")] # Filter out non-.py files and remove the .py suffixes.
 
 def getExternalSubuserCommands():
   """

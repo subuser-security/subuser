@@ -89,7 +89,7 @@ def update(realArgs):
    Liberal permissions(These may pose a security risk):
     - x11: To display X11 windows and interact with your X11 server directly(log keypresses, read over your shoulder, steal your passwords, controll your computer ect.)
     - system-dirs: To read and write to the host's `/var/log` directory, mounted in the container as:`/var/log`
-  WARNING: this subuser has full access to your system when run.
+   WARNING: These permissions give the subuser full access to your system when run.
     - privileged: To have full access to your system.  To even do things as root outside of its container.
   A - Accept and apply changes
   E - Apply changes and edit result
