@@ -30,14 +30,11 @@ def verify(realArgs):
   options,arguments=parseCliArgs(realArgs)
   user = User()
   permissionsAccepter = AcceptPermissionsAtCLI(user,alwaysAccept = options.accept)
-  try:
-    with user.getRegistry().getLock() as LockFileHandle:
-      subuserNames = list(user.getRegistry().getSubusers().keys())
-      subuserNames.sort()
-      subuserlib.verify.verify(user,subuserNames=subuserNames,permissionsAccepter=permissionsAccepter)
-      user.getRegistry().commit()
-  except subuserlib.portalocker.portalocker.LockException:
-    sys.exit("Another subuser process is currently running and has a lock on the registry. Please try again later.")
+  with user.getRegistry().getLock() as LockFileHandle:
+    subuserNames = list(user.getRegistry().getSubusers().keys())
+    subuserNames.sort()
+    subuserlib.verify.verify(user,subuserNames=subuserNames,permissionsAccepter=permissionsAccepter)
+    user.getRegistry().commit()
   
 if __name__ == "__main__":
   verify(sys.argv[1:])

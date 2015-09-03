@@ -235,46 +235,31 @@ def subuser(sysargs):
       sys.exit("Wrong number of arguments to add.  See `subuser subuser -h`.")
     name = args[1]
     imageSourceId = args[2]
-    try:
-      with user.getRegistry().getLock():
-        subuserlib.subuser.add(user,name,imageSourceId,permissionsAccepter=permissionsAccepter)
-    except subuserlib.portalocker.portalocker.LockException:
-      sys.exit("Another subuser process is currently running and has a lock on the registry. Please try again later.")
+    with user.getRegistry().getLock():
+      subuserlib.subuser.add(user,name,imageSourceId,permissionsAccepter=permissionsAccepter)
   elif action == "remove":
     names = args[1:]
     if not options.prefix is None:
       allSubuserNames = user.getRegistry().getSubusers().keys()
       names.extend([subuserName for subuserName in allSubuserNames if subuserName.startswith(options.prefix)])
-    try:
-      with user.getRegistry().getLock():
-        subuserlib.subuser.remove(user,names)
-    except subuserlib.portalocker.portalocker.LockException:
-      sys.exit("Another subuser process is currently running and has a lock on the registry. Please try again later.")
+    with user.getRegistry().getLock():
+      subuserlib.subuser.remove(user,names)
   elif action == "create-shortcut":
     name = args[1]
-    try:
-      with user.getRegistry().getLock():
-        subuserlib.subuser.setExecutableShortcutInstalled(user,name,True)
-    except subuserlib.portalocker.portalocker.LockException:
-      sys.exit("Another subuser process is currently running and has a lock on the registry. Please try again later.")
+    with user.getRegistry().getLock():
+      subuserlib.subuser.setExecutableShortcutInstalled(user,name,True)
   elif action == "remove-shortcut":
     name = args[1]
-    try:
-      with user.getRegistry().getLock():
-        subuserlib.subuser.setExecutableShortcutInstalled(user,name,False)
-    except subuserlib.portalocker.portalocker.LockException:
-      sys.exit("Another subuser process is currently running and has a lock on the registry. Please try again later.")
+    with user.getRegistry().getLock():
+      subuserlib.subuser.setExecutableShortcutInstalled(user,name,False)
   elif action == "edit-permissions":
     name = args[1]
-    try:
-      with user.getRegistry().getLock():
-        user.getRegistry().logChange("Edit "+name+"'s permissions.")
-        subuser = user.getRegistry().getSubusers()[name]
-        subuser.editPermissionsCLI()
-        subuserlib.verify.verify(user,subuserNames=[name],permissionsAccepter=permissionsAccepter)
-        user.getRegistry().commit()
-    except subuserlib.portalocker.portalocker.LockException:
-      sys.exit("Another subuser process is currently running and has a lock on the registry. Please try again later.")
+    with user.getRegistry().getLock():
+      user.getRegistry().logChange("Edit "+name+"'s permissions.")
+      subuser = user.getRegistry().getSubusers()[name]
+      subuser.editPermissionsCLI()
+      subuserlib.verify.verify(user,subuserNames=[name],permissionsAccepter=permissionsAccepter)
+      user.getRegistry().commit()
   else:
     sys.exit("Action "+args[0]+" does not exist. Try:\n subuser subuser --help")
 

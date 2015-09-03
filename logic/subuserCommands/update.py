@@ -350,17 +350,11 @@ def update(realArgs):
   if len(args) < 1:
     sys.exit("No arguments given. Please use subuser update -h for help.")
   elif ["all"] == args:
-    try:
-      with user.getRegistry().getLock():
-        subuserlib.update.all(user,permissionsAccepter=permissionsAccepter)
-    except subuserlib.portalocker.portalocker.LockException:
-      sys.exit("Another subuser process is currently running and has a lock on the registry. Please try again later.")
+    with user.getRegistry().getLock():
+      subuserlib.update.all(user,permissionsAccepter=permissionsAccepter)
   elif "subusers" == args[0]:
-    try:
-      with user.getRegistry().getLock():
-        subuserlib.update.subusers(user,args[1:],permissionsAccepter=permissionsAccepter)
-    except subuserlib.portalocker.portalocker.LockException:
-      sys.exit("Another subuser process is currently running and has a lock on the registry. Please try again later.")
+    with user.getRegistry().getLock():
+      subuserlib.update.subusers(user,args[1:],permissionsAccepter=permissionsAccepter)
   elif ["log"] == args:
     subuserlib.update.showLog(user)
   elif "lock-subuser-to" == args[0]:
@@ -369,31 +363,22 @@ def update(realArgs):
       commit = args[2]
     except KeyError:
       sys.exit("Wrong number of arguments.  Expected a subuser name and a commit.  Try running\nsubuser update --help\n for more info.")
-    try:
-      with user.getRegistry().getLock():
-        subuserlib.update.lockSubuser(user,subuserName=subuserName,commit=commit)
-    except subuserlib.portalocker.portalocker.LockException:
-      sys.exit("Another subuser process is currently running and has a lock on the registry. Please try again later.")
+    with user.getRegistry().getLock():
+      subuserlib.update.lockSubuser(user,subuserName=subuserName,commit=commit)
   elif "unlock-subuser" == args[0]:
     try:
       subuserName = args[1]
     except KeyError:
       sys.exit("Wrong number of arguments.  Expected a subuser's name. Try running\nsubuser update --help\nfor more information.")
-    try:
-      with user.getRegistry().getLock():
-        subuserlib.update.unlockSubuser(user,subuserName=subuserName,permissionsAccepter=permissionsAccepter)
-    except subuserlib.portalocker.portalocker.LockException:
-      sys.exit("Another subuser process is currently running and has a lock on the registry. Please try again later.")
+    with user.getRegistry().getLock():
+      subuserlib.update.unlockSubuser(user,subuserName=subuserName,permissionsAccepter=permissionsAccepter)
   elif "rollback" == args[0]:
     try:
       commit = args[1]
     except KeyError:
       sys.exit("Wrong number of arguments.  Expected a commit.  Try running \nsubuser update --help\nfor more info.")
-    try:
-      with user.getRegistry().getLock():
-        subuserlib.update.rollback(user,commit=commit)
-    except subuserlib.portalocker.portalocker.LockException:
-      sys.exit("Another subuser process is currently running and has a lock on the registry. Please try again later.")
+    with user.getRegistry().getLock():
+      subuserlib.update.rollback(user,commit=commit)
   elif len(args) == 1:
     sys.exit(" ".join(args) + " is not a valid update subcommand. Please use subuser update -h for help.")
   else:

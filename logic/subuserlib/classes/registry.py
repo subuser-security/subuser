@@ -9,13 +9,14 @@ Each user's settings are stored in a "registry". This is a git repository with a
 #external imports
 import os
 import errno
-#semi-external imports
-import subuserlib.portalocker.utils
+import sys
+from contextlib import contextmanager
 #internal imports
 from subuserlib.classes import repositories
 from subuserlib.classes import subusers
 from subuserlib.classes import userOwnedObject
 from subuserlib.classes.gitRepository import GitRepository
+import subuserlib.lock
 
 class Registry(userOwnedObject.UserOwnedObject):
   def __init__(self,user,gitReadHash="master"):
@@ -99,6 +100,7 @@ class Registry(userOwnedObject.UserOwnedObject):
       self.__changed = False
       self.__changeLog = ""
 
+  @contextmanager
   def getLock(self):
     """
     To be used with with.
@@ -108,4 +110,11 @@ class Registry(userOwnedObject.UserOwnedObject):
     except OSError as exception:
       if exception.errno != errno.EEXIST:
         raise
-    return subuserlib.portalocker.utils.Lock(os.path.join(self.getUser().getConfig()["lock-dir"],"registry.lock"),timeout=0,check_interval=0)
+    try:
+      lock = subuserlib.lock.getLock(os.path.join(self.getUser().getConfig()["lock-dir"],"registry.lock"),timeout=1)
+      with lock:
+        yield
+    except IOError as e:
+      if e.errno != errno.EINTR:
+        raise e
+      sys.exit("Another subuser process is currently running and has a lock on the registry. Please try again later.")

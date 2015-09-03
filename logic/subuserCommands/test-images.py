@@ -44,11 +44,8 @@ def testImages(realArgs):
   options,args = parseCliArgs(realArgs)
   user = User()
   permissionsAccepter = AcceptPermissionsAtCLI(user,alwaysAccept = options.accept)
-  try:
-    with user.getRegistry().getLock() as lockFileHandler:
-      subuserlib.testImages.testImages(user=user,sourceRepoId=args[0],imageSourceNames=args[1:],permissionsAccepter=permissionsAccepter)
-  except subuserlib.portalocker.portalocker.LockException:
-    sys.exit("Another subuser process is currently running and has a lock on the registry. Please try again later.")
+  with user.getRegistry().getLock() as lockFileHandler:
+    subuserlib.testImages.testImages(user=user,sourceRepoId=args[0],imageSourceNames=args[1:],permissionsAccepter=permissionsAccepter)
 
 #################################################################################################
 

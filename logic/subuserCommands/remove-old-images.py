@@ -228,22 +228,19 @@ def removeOldImages(realArgs):
   """
   options,args = parseCliArgs(realArgs)
   user = User()
-  try:
-    with user.getRegistry().getLock() as lockFileHandler:
-      if options.dryrun:
-        print("The following images are uneeded and would be deleted.")
-        print("DOCKER-ID : SUBUSER-ID")
-      repoId = options.repo
-      if not repoId is None:
-        if not repoId in user.getRegistry().getRepositories():
-          repo = subuserlib.resolve.lookupRepositoryByURI(user,options.repo)
-          if repo is None:
-            sys.exit("The repository <"+repoId+"> does not exist.")
-          else:
-            repoId = repo.getName()
-      subuserlib.removeOldImages.removeOldImages(user=user,dryrun=options.dryrun,sourceRepoId=repoId)
-  except subuserlib.portalocker.portalocker.LockException:
-    sys.exit("Another subuser process is currently running and has a lock on the registry. Please try again later.")
+  with user.getRegistry().getLock() as lockFileHandler:
+    if options.dryrun:
+      print("The following images are uneeded and would be deleted.")
+      print("DOCKER-ID : SUBUSER-ID")
+    repoId = options.repo
+    if not repoId is None:
+      if not repoId in user.getRegistry().getRepositories():
+        repo = subuserlib.resolve.lookupRepositoryByURI(user,options.repo)
+        if repo is None:
+          sys.exit("The repository <"+repoId+"> does not exist.")
+        else:
+          repoId = repo.getName()
+    subuserlib.removeOldImages.removeOldImages(user=user,dryrun=options.dryrun,sourceRepoId=repoId)
 
 #################################################################################################
 
