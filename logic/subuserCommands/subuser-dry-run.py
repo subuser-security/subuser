@@ -32,10 +32,10 @@ def dryRun(args):
   """
   Print the command that would have been run if this wasn't a dry run.
 
-  >>> dry_run = __import__("dry-run")
+  >>> dry_run = __import__("subuser-dry-run")
   >>> dry_run.dryRunTestSetup()
-  >>> import subuser
-  >>> remove_old_images = __import__("remove-old-images")
+  >>> subuser = __import__("subuser-subuser")
+  >>> remove_old_images = __import__("subuser-remove-old-images")
 
   If we dry run the basic foo test subuser, we will see the generated pre-run Dockerfile and also the docker command that will launch our subuser.
 

@@ -13,7 +13,7 @@ import subuserlib.install
 import subuserlib.commandLineArguments
 
 def parseCliArgs(realArgs):
-  usage = "usage: subuser %prog IMAGE_NAME(s) SETS_OF_IMAGES"
+  usage = "usage: subuser print-dependency-info IMAGE_NAME(s) SETS_OF_IMAGES"
   description = """Prints information about how the listed images relate to each other:
 
 Example:
@@ -31,7 +31,7 @@ def printDependencies(realArgs):
   -----
  
   **Setup:**
-  >>> print_dependency_info = __import__("print-dependency-info")#import self
+  >>> print_dependency_info = __import__("subuser-print-dependency-info")#import self
  
   Prints a list of images that the image depends on, including itself.
  

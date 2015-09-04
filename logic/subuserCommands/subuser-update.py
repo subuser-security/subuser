@@ -18,7 +18,7 @@ from subuserlib.classes.permissionsAccepters.acceptPermissionsAtCLI import Accep
 #####################################################################################
 
 def parseCliArgs(realArgs):
-  usage = "usage: subuser %prog [options]"
+  usage = "usage: subuser update [options]"
   description = """Update subuser images.
 
   all 
@@ -62,7 +62,10 @@ def update(realArgs):
   **Setup:**
 
   >>> import os
-  >>> import update,subuser,subuserlib.classes.gitRepository,repository
+  >>> update = __import__("subuser-update")
+  >>> subuser = __import__("subuser-subuser")
+  >>> repository = __import__("subuser-repository")
+  >>> import subuserlib.classes.gitRepository
 
   Check initial test environment:
 

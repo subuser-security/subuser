@@ -13,7 +13,7 @@ import subuserlib.repository
 import subuserlib.commandLineArguments
 
 def parseCliArgs(sysargs):
-  usage = "usage: subuser %prog [options] [add|remove] NAME <URL>"
+  usage = "usage: subuser repository [options] [add|remove] NAME <URL>"
   description = """Add or remove a new named repository.
 
 - EXAMPLE
@@ -41,7 +41,7 @@ def repository(sysargs):
 
   **Setup:**
 
-  >>> import repository #import self
+  >>> repository = __import__("subuser-repository") #import self
 
   Check our assumptions about the initial state of the test environment.
 

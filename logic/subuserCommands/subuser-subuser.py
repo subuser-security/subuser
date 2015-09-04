@@ -16,7 +16,7 @@ import subuserlib.verify
 import subuserlib.profile
 
 def parseCliArgs(sysargs):
-  usage = "usage: subuser %prog [add|remove|create-shortcut|remove-shortcut|edit-permissions] NAME [IMAGESOURCE]"
+  usage = "usage: subuser subuser [add|remove|create-shortcut|remove-shortcut|edit-permissions] NAME [IMAGESOURCE]"
   description = """
 
 Add and remove subusers.  Create shorcuts for launching subusers.
@@ -66,7 +66,7 @@ def subuser(sysargs):
 
   **Setup:**
 
-  >>> import subuser #import self
+  >>> subuser = __import__("subuser-subuser") #import self
   >>> import subuserlib.classes.user
 
   At the start of our tests, the test environment has one subuser named ``foo``.

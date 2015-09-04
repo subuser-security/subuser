@@ -12,7 +12,7 @@ import subuserlib.classes.user
 import subuserlib.commandLineArguments
 
 def parseCliArgs(sysargs):
-  usage = "usage: subuser %prog WHAT_TO_LIST [options]"
+  usage = "usage: subuser list WHAT_TO_LIST [options]"
   description = """   List subuser-images.  You can use this command to list images that are:
 
   available
@@ -43,7 +43,7 @@ def list(sysargs):
   List various things: image sources, subusers, ect.
 
   >>> import sys
-  >>> import list #import self
+  >>> list = __import__("subuser-list") #import self
 
   Listing available images lists the images along with their default permissions.
 

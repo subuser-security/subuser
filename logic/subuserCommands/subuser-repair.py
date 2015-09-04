@@ -15,7 +15,7 @@ from subuserlib.classes.permissionsAccepters.acceptPermissionsAtCLI import Accep
 
 ####################################################
 def parseCliArgs(realArgs):
-  usage = "usage: subuser %prog [options]"
+  usage = "usage: subuser repair [options]"
   description = """
 Repair your subuser installation.
 

@@ -77,14 +77,14 @@ import subuserlib.classes.gitRepository
 import subuserlib.resolve
 import subuserlib.permissions
 # commands
-import list
-import describe
-import repository
-import subuser
-import update
-dry_run = __import__("dry-run")
-print_dependency_info = __import__("print-dependency-info")
-remove_old_images = __import__("remove-old-images")
+list = __import__("subuser-list")
+describe = __import__("subuser-describe")
+repository = __import__("subuser-repository")
+subuser = __import__("subuser-subuser")
+update = __import__("subuser-update")
+dry_run = __import__("subuser-dry-run")
+print_dependency_info = __import__("subuser-print-dependency-info")
+remove_old_images = __import__("subuser-remove-old-images")
 
 modules = [
   # classes

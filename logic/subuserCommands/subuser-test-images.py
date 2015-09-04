@@ -13,7 +13,7 @@ import subuserlib.testImages
 from subuserlib.classes.permissionsAccepters.acceptPermissionsAtCLI import AcceptPermissionsAtCLI
 
 def parseCliArgs(realArgs):
-  usage = "usage: subuser %prog <repo-name> <image-source-names>"
+  usage = "usage: subuser test-images <repo-name> <image-source-names>"
   description = """ Test image sources by building and running them.
 
   Usage:

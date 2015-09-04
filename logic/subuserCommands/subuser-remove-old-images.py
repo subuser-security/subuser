@@ -12,7 +12,7 @@ import subuserlib.commandLineArguments
 import subuserlib.removeOldImages
 
 def parseCliArgs(realArgs):
-  usage = "usage: subuser %prog"
+  usage = "usage: subuser remove-old-images"
   description = """ Remove old, no longer used, installed images.  Note, once you do this, you will no longer be able to return to previous configuration states with subuser update checkout."""
   parser=optparse.OptionParser(usage=usage,description=description,formatter=subuserlib.commandLineArguments.HelpFormatterThatDoesntReformatDescription())
   parser.add_option("--dry-run", dest="dryrun",action="store_true",default=False,help="Don't actually delete the images. Print which images would be deleted.")
@@ -28,8 +28,8 @@ def removeOldImages(realArgs):
 
   **Setup:**
 
-  >>> remove_old_images = __import__("remove-old-images")#import self
-  >>> import subuser
+  >>> remove_old_images = __import__("subuser-remove-old-images")#import self
+  >>> subuser = __import__("subuser-subuser")
   >>> import subuserlib.classes.user
 
   Check our assumptions about what subusers are installed in the test environment.  We load a new user object each time we checked, because we are interested about whether the changes we want are present on disk.

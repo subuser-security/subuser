@@ -11,15 +11,12 @@ import os
 import subuserlib.executablePath
 import subuserlib.paths
 
-nonCommands = {"__init__.py", "pathConfig.py"}
-
 def getBuiltIn():
   """
   Get a list of the names of the built in subuser commands.
   """
-  apparentCommandsSet = set( os.listdir(subuserlib.paths.getSubuserCommandsDir()))
-  commands = list(apparentCommandsSet.difference(nonCommands))
-  return [command[:-3] for command in commands if command.endswith(".py") and not command.startswith("__")] # Filter out non-.py files and remove the .py suffixes.
+  commands = set( os.listdir(subuserlib.paths.getSubuserCommandsDir()))
+  return [command[8:-3] for command in commands if command.endswith(".py") and command.startswith("subuser-")] # Filter out non-.py files and remove the .py suffixes and the "subuser-" prefixes.
 
 def getExternal():
   """
@@ -41,14 +38,15 @@ def getCommands():
   """
   Returns a list of commands that may be called by the user.
   """
-  return getBuiltIn() + getExternal()
+  return list(set(getBuiltIn() + getExternal()))
 
 def getPath(command):
-  builtInCommandPath = os.path.join(subuserlib.paths.getSubuserCommandsDir(),command)
+  builtInCommandPath = os.path.join(subuserlib.paths.getSubuserCommandsDir(),"subuser-" + command + ".py")
   if os.path.exists(builtInCommandPath):
-    return builtInCommandPath
-  elif os.path.exists(builtInCommandPath+".py"):
-    return (builtInCommandPath+".py")
+    return (builtInCommandPath)
   else:
     externalCommandPath = subuserlib.executablePath.which("subuser-"+command)
-    return externalCommandPath
+    if externalCommandPath:
+      return externalCommandPath
+    else:
+      return subuserlib.executablePath.which("subuser-"+command+".py")

@@ -12,7 +12,7 @@ import subuserlib.commandLineArguments
 import subuserlib.resolve
 
 def parseCliArgs(sysargs):
-  usage = "usage: subuser %prog describe [subuser|image] SUBUSER(s)/IMAGE(s)"
+  usage = "usage: subuser describe [subuser|image] SUBUSER(s)/IMAGE(s)"
   description = """Show basic information about a subuser or image: Whether it is installed, what it's permissions are ect.
 
 EXAMPLE:
@@ -29,7 +29,7 @@ def describe(sysargs):
   """
   Describe subusers and images.
   
-  >>> import describe #import self
+  >>> describe = __import__("subuser-describe") #import self
 
   Describing a subuser prints its permissions.
 
