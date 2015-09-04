@@ -45,6 +45,7 @@ defaults = {
  ,"sudo": False
  # Anarchistic permissions
  ,"privileged": False
+ ,"run-commands-on-host": False
  }
 
 guiDefaults = {
@@ -69,7 +70,7 @@ levels = [
    "permissions" : ["x11", "system-dirs", "graphics-card", "serial-devices", "system-dbus", "as-root"],
    "description" : "Liberal permissions(These may pose a security risk):"},
   {"name" : "anarchistic",
-   "permissions" : ["privileged"],
+   "permissions" : ["privileged","run-commands-on-host"],
    "description" : "WARNING: These permissions give the subuser full access to your system when run."}]
 
 descriptions = {
@@ -99,6 +100,7 @@ descriptions = {
   ,"as-root": lambda p: ["To be allowed to run as root within the container."] if p else []
   # Anarchistic
   ,"privileged": lambda p: ["To have full access to your system.  To even do things as root outside of its container."] if p else []
+  ,"run-commands-on-host": lambda p: ["To run commands as a normal user on the host system."] if p else []
   }
 
 guiDescriptions = {

@@ -13,6 +13,7 @@ import os
 import time
 import binascii
 import struct
+import subprocess
 #internal imports
 import subuserlib.subprocessExtras
 import subuserlib.test
@@ -111,7 +112,27 @@ $ subuser repair
      ("system-dbus", lambda dbus: ["--volume=/var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket"] if dbus else []),
      ("as-root", lambda root: ["--user=0"] if root else ["--user="+str(os.getuid())]),
      # Anarchistic permissions
+     ("run-commands-on-host", lambda p : ["-v",self.getExecutionSpool()+":/subuser/execute"] if p else []),
      ("privileged", lambda p: ["--privileged"] if p else [])])
+
+  def getExecutionSpool(self):
+    return os.path.join(self.getUser().getConfig()["volumes-dir"],"execute",str(os.getpid()))
+
+  def setupExecutionSpool(self):
+    try:
+      os.makedirs(os.path.join(self.getUser().getConfig()["volumes-dir"],"execute"))
+    except (OSError,IOError):
+      pass
+    try:
+      os.remove(self.getExecutionSpool())
+    except (OSError,IOError):
+      pass
+    try:
+      open(self.getExecutionSpool(),"a").close()
+    except (OSError,IOError):
+      pass
+    tail = subprocess.Popen(("tail", "-F","--pid="+str(os.getpid()),self.getExecutionSpool()), stdout=subprocess.PIPE)
+    subprocess.Popen(('/bin/sh'), stdin=tail.stdout)
 
   def setEnvVar(self,envVar,value):
     self.__extraFlags.append("-e")
@@ -216,6 +237,8 @@ $ subuser repair
         self.setupSymlinks()
       if self.getSubuser().getPermissions()["x11"]:
         self.setupXauth()
+      if self.getSubuser().getPermissions()["run-commands-on-host"]:
+        self.setupExecutionSpool()
       #Note, subusers with gui permission cannot be run in the background.
       # Make sure that everything is setup and ready to go.
       if not self.getSubuser().getPermissions()["gui"] is None:
