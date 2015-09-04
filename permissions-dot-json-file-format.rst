@@ -174,6 +174,12 @@ Anarchistic permissions
 
   **Default**: ``false``
 
+ * ``run-commands-on-host``: Should the subuser be able to execute commands as the normal user on the host system? If this is enabled, a ``/subuser/execute`` file will be present in the container. Any text appended to this file will be piped to ``/bin/sh`` on the host machine.
+
+  .. warning:: Obviously completely compromises security.
+
+  **Default**: ``false``
+
 Depricated
 ----------------------
 
