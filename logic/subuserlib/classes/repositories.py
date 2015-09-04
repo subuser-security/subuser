@@ -25,7 +25,7 @@ class Repositories(collections.Mapping,UserOwnedObject,FileBackedObject):
     UserOwnedObject.__init__(self,user)
     self.systemRepositoryListPaths = ["/etc/subuser/repositories.json"
        ,os.path.join(user.homeDir,".subuser","repositories.json")
-       ,os.path.join(subuserlib.paths.getSubuserDir(),"repositories.json")] # TODO how does this work on windows?
+       ,os.path.join(subuserlib.paths.getSubuserDir(),"logic","subuserlib","data","repositories.json")] # TODO how does this work on windows?
     self.userRepositoryListPath = os.path.join(self.getUser().getConfig()["registry-dir"],"repositories.json")
     self.reloadRepositoryLists()
 
