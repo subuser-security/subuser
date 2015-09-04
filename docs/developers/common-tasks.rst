@@ -10,7 +10,7 @@ Once it is accepted:
 
  1. Set the permission's default value, description, and level in the `permissions module <https://github.com/subuser-security/subuser/blob/master/logic/subuserlib/permissions.py>`_
 
- 2. Tell subuser how to apply the permission in the `run module <https://github.com/subuser-security/subuser/blob/master/logic/subuserlib/run.py>`_
+ 2. Tell subuser how to apply the permission in the `runtime class <https://github.com/subuser-security/subuser/blob/master/logic/subuserlib/classes/subuserSubmodules/run/runtime.py>`_
 
 Profiling
 ---------
