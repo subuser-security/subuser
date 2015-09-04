@@ -30,6 +30,8 @@ def testImages(user,sourceRepoId,imageSourceNames,permissionsAccepter):
   for subuserName in subuserNames:
     arguments = raw_input("Running "+subuserName+" enter arguments and press enter to continue:")
     arguments = arguments.split(" ")
+    if arguments == [""]:
+      arguments = []
     subuser = user.getRegistry().getSubusers()[subuserName]
     if subuser.getPermissions()["executable"]:
       runtime = subuser.getRuntime(os.environ)
