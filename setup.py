@@ -19,7 +19,7 @@ setuptools.setup(
   long_description=readme(),
   classifiers=[
     "Development Status :: 3 - Alpha",
-    "License :: OSI Approved :: LGPLv3 License",
+    "License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)",
     "Programming Language :: Python :: 2.7",
     "Programming Language :: Python :: 3.0",
     ],
