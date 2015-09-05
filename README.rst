@@ -39,4 +39,57 @@ Subuser turns a docker container into a normal program.  But this program is not
 
 For a list of all permissions supported by subuser, please see `the subuser standard <http://subuser.org/subuser-standard/permissions-dot-json-file-format.html>`_.
 
+Installation
+------------
+
+System Requirements
+--------------------
+
+ * `Docker <http://www.docker.io/gettingstarted/#h_installation>`_ 1.3 or higher
+
+ * Python >= 2.7
+
+ * Git
+
+ * X11 and the xauth utility (You almost certainly have this)
+
+Install with pip: Stable version
+--------------------------------
+
+1. Add yourself to the `docker group <http://docs.docker.io/en/v0.7.3/use/basics/>`_.
+
+.. note:: Being a member of the ``docker`` group is equivalent to having root access.
+
+2. Install subuser from pip.
+
+  $ sudo pip install subuser
+
+3. Add ``~/.subuser/bin`` to your path by adding the line ``PATH=$HOME/.subuser/bin:$PATH`` to the end of your ``.bashrc`` file.
+
+4. Log out and then back in again.
+
+5. Done!
+
+Install from git: Development version
+-------------------------------------
+
+1. Add yourself to the `docker group <http://docs.docker.io/en/v0.7.3/use/basics/>`_.
+
+.. note:: Being a member of the ``docker`` group is equivalent to having root access.
+
+2. Download the subuser repository
+
+  ::
+
+  $ cd
+  $ git clone https://github.com/subuser-security/subuser
+
+3. Add ``subuser/logic`` and ``~/.subuser/bin`` to your path by adding the line ``PATH=$HOME/subuser/logic:$HOME/.subuser/bin:$PATH`` to the end of your ``.bashrc`` file.
+
+.. note:: You will need to change the path to ``subuser/logic`` to refer to the location to which you downloaded subuser.
+
+4. Log out and then back in again.
+
+5. Done!
+
 To learn more and read the full manual please visit `subuser.org <http://subuser.org>`_

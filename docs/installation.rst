@@ -4,16 +4,35 @@ Installing subuser
 System Requirements
 --------------------
 
- * Docker 1.3 or higher
+ * `Docker <http://www.docker.io/gettingstarted/#h_installation>`_ 1.3 or higher
 
  * Python >= 2.7
 
  * Git
 
-Installation
--------------
+ * X11 and the xauth utility (You almost certainly have this)
 
-1. Install `Docker <http://www.docker.io/gettingstarted/#h_installation). Then [add yourself to the docker group](http://docs.docker.io/en/v0.7.3/use/basics/>`_ and add your user to the ``docker`` group.
+Install with pip: Stable version
+--------------------------------
+
+1. Add yourself to the `docker group <http://docs.docker.io/en/v0.7.3/use/basics/>`_.
+
+.. note:: Being a member of the ``docker`` group is equivalent to having root access.
+
+2. Install subuser from pip.
+
+  $ sudo pip install subuser
+
+3. Add ``~/.subuser/bin`` to your path by adding the line ``PATH=$HOME/.subuser/bin:$PATH`` to the end of your ``.bashrc`` file.
+
+4. Log out and then back in again.
+
+5. Done!
+
+Install from git: Development version
+-------------------------------------
+
+1. Add yourself to the `docker group <http://docs.docker.io/en/v0.7.3/use/basics/>`_.
 
 .. note:: Being a member of the ``docker`` group is equivalent to having root access.
 
@@ -30,4 +49,3 @@ Installation
 4. Log out and then back in again.
 
 5. Done!
-
