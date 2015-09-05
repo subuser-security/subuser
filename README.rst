@@ -1,11 +1,10 @@
-`Subuser - Securing the Linux desktop with Docker <http://subuser.org>`_
---------------------------
+Subuser - Securing the Linux desktop with Docker
+-------------------------------------------------
 
 .. image:: http://subuser.org/_static/images/subuser-logo.png
    :target: http://subuser.org
 
 `Visit us at subuser.org <http://subuser.org>`_
---------------------------
 
 As free software developers we like to share.  We surf the web and discover new code.  We are eager to try it out.  We live out an orgy of love and trust, unafraid that some code we cloned from Git might be faulty or malicious.  We live in the 60s, carefree hippies.
 
@@ -24,7 +23,7 @@ Right now I'm editing this file in ``vim``.  ``vim`` is not installed on my comp
 
     $ vim README.md
 
-Subuser turns a docker container into a normal program.  But this program is not fully privileged.  It can only access the directory from which it was called, `not my entire home dir <http://xkcd.com/1200/>`_.  Each subuser is assigned a specific set of permissions, just like in Android.  You can see an example `permissions.json` file bellow.
+Subuser turns a docker container into a normal program.  But this program is not fully privileged.  It can only access the directory from which it was called, `not my entire home dir <http://xkcd.com/1200/>`_.  Each subuser is assigned a specific set of permissions, just like in Android.  You can see an example ``permissions.json`` file bellow.
 
 ::
 
