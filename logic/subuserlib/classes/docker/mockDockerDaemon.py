@@ -20,9 +20,7 @@ class MockDockerDaemon(UserOwnedObject):
     self.nextImageId = 1
     self.newId = None
     UserOwnedObject.__init__(self,user)
-    self.imagesPath = "/root/subuser/test/docker/images.json"
-    if not os.path.exists(self.imagesPath):
-      self.imagesPath = "/home/travis/build/subuser-security/subuser/test/docker/images.json"
+    self.imagesPath = "/home/travis/docker/images.json"
     self.__load()
     self.dockerDaemon = subuserlib.classes.docker.dockerDaemon.RealDockerDaemon(user)
     self.connection = MockConnection(self)

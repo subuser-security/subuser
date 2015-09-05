@@ -19,3 +19,5 @@ echo User is $USER id $UID
 echo ls -la /home/travis/hashtest
 ls -la /home/travis/hashtest
 chmod -R 644 /home/travis/hashtest
+mkdir -p /home/travis/docker
+echo "{}" > /home/travis/docker/images.json

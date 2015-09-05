@@ -46,7 +46,8 @@ if subuserlib.docker.getExecutable():
       dockerfileContents = dockerfile.read()
     try:
       subuserDir = BasicFileStructure(subuserlib.paths.getSubuserDir())
-      dockerDaemon.build(repositoryFileStructure=subuserDir,relativeBuildContextPath="./",useCache=True,dockerfile=dockerfileContents)
+      id = dockerDaemon.build(repositoryFileStructure=subuserDir,relativeBuildContextPath="./",useCache=True,dockerfile=dockerfileContents)
+      dockerDaemon.execute(["run","-it","--volume",subuserlib.paths.getSubuserDir()+":/root/subuser:ro",id,"/root/subuser/logic/subuser","test"])
     except subuserlib.classes.docker.dockerDaemon.ImageBuildException as e:
       print("Tests failed!")
       print(str(e))
@@ -65,7 +66,6 @@ if not "--travis" in sys.argv:
 else:
   subuserDir = subuserlib.paths.getSubuserDir()
 
-subprocess.call([os.path.join(subuserDir,"test/teardown"),subuserDir])
 subprocess.call([os.path.join(subuserDir,"test/setup"),subuserDir])
 
 # classes
