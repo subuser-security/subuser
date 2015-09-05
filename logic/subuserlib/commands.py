@@ -15,8 +15,11 @@ def getBuiltIn():
   """
   Get a list of the names of the built in subuser commands.
   """
-  commands = set( os.listdir(subuserlib.paths.getSubuserCommandsDir()))
-  return [command[8:-3] for command in commands if command.endswith(".py") and command.startswith("subuser-")] # Filter out non-.py files and remove the .py suffixes and the "subuser-" prefixes.
+  try:
+    commands = set( os.listdir(subuserlib.paths.getSubuserCommandsDir()))
+    return [command[8:-3] for command in commands if command.endswith(".py") and command.startswith("subuser-")] # Filter out non-.py files and remove the .py suffixes and the "subuser-" prefixes.
+  except OSError:
+    return []
 
 def getExternal():
   """
@@ -31,6 +34,8 @@ def getExternal():
   for externalCommandPath in externalCommandPaths:
     commandDir, executableName = os.path.split(externalCommandPath)
     commandName = executableName[subuserPrefixLength:]
+    if commandName.endswith(".py"):
+      commandName=commandName[:-3]
     externalCommands.append(commandName)
   return list(set(externalCommands)) # remove duplicate entries
 

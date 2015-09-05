@@ -23,7 +23,7 @@ class Config(userOwnedObject.UserOwnedObject, dict):
     """ Returns a list of paths to config.json files in order that they should be looked in. """
     configFileInHomeDir = os.path.join(self.getUser().homeDir,".subuser","config.json")
     configFileInEtc = "/etc/subuser/config.json"
-    configFileInSubuserDir = os.path.join(paths.getSubuserDir(),"logic","subuserlib","data","config.json")
+    configFileInSubuserDir = paths.getSubuserDataFile("config.json")
     return [configFileInHomeDir,configFileInEtc,configFileInSubuserDir]
 
   def _expandPathsInConfig(self,config):

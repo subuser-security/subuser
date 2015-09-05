@@ -3,8 +3,10 @@
 # If it is not, please file a bug report.
 
 # This command updates all or some of the installed subuser images.
-
-import pathConfig
+try:
+  import pathConfig
+except ImportError:
+  pass
 #external imports
 import sys
 import optparse

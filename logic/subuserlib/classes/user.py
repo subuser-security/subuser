@@ -36,11 +36,6 @@ class User(object):
     self.__installedImages = None
     self.__dockerDaemon = None
     self.__runtimeCache = None
-    if os.path.exists(os.path.join(paths.getSubuserDir(),"installed-images.json")):
-      sys.exit("""Hey, it looks like you are using an old version of subuser.  First of, thanks for being an early adopter!  That really means a lot to me :)  Subuser has recently undergone a major re-write.  Unfortunately, you'll have to set up everything all over again.  You can find your subuser home dirs in subuser/homes.  The new version of subuser keeps them in ~/.subuser/homes.  You can find out all about the different locations subuser serializes to by looking in the enw config.json file.  I hope I'll have some docs up soon at subuser.org.  Sorry for the inconvenience.
-
-To disable this message delete your subuser/installed-programs.json file.
-""")
     if name:
       self.name = name
     else:

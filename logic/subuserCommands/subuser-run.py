@@ -2,7 +2,10 @@
 # This file should be compatible with both Python 2 and 3.
 # If it is not, please file a bug report.
 
-import pathConfig
+try:
+  import pathConfig
+except ImportError:
+  pass
 #external imports
 import sys
 import os

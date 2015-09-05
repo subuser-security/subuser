@@ -5,3 +5,6 @@
 .bash_history
 .pylint.d
 *#*#
+/dist/
+/*.egg-info
+/*.egg
