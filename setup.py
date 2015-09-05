@@ -9,13 +9,13 @@ def readme():
 
 pathToThisSourceFile = os.path.abspath(inspect.getfile(inspect.currentframe()))
 
-commands = [os.path.join("logic","subuserCommands",command) for command in os.listdir(os.path.join(os.path.dirname(pathToThisSourceFile),"logic","subuserCommands")) if command.startswith("subuser-") and command.endswith(".py")]
+commands = [os.path.join("logic","subuserCommands",command) for command in os.listdir(os.path.join(os.path.dirname(pathToThisSourceFile),"logic","subuserCommands")) if command.startswith("subuser-") and command.endswith(".py") and not command == "subuser-test.py"]
 scripts = ["logic/subuser"]+commands
 
 setuptools.setup(
   name="subuser",
   version="0.4-dev",
-  description="subuser - a program which helps you run other programs in containers, securly and portably.",
+  description="subuser - a program which helps you run other programs in containers, securely and portably.",
   long_description=readme(),
   classifiers=[
     "Development Status :: 3 - Alpha",
