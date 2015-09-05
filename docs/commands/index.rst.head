@@ -11,16 +11,3 @@ You can get help for a specific command by running::
 
 .. toctree::
 
-  run
-  subuser
-  repository
-  list
-  update
-  repair
-  remove-old-images
-  describe
-  test
-  test-images
-  print-dependency-info
-  dry-run
-

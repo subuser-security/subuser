@@ -13,3 +13,10 @@ for command in builtInCommands:
     commandDocs += commandHelpOutput.replace("\n\n    $","\n::\n\n    $")
     command_file.write(commandDocs)
 
+with open("index.rst",mode="w") as index:
+  with open("index.rst.head",mode="r") as indexHead:
+    index.write(indexHead.read())
+  for command in builtInCommands:
+    index.write("  "+command+"\n")
+  index.write("\n")
+    

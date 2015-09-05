@@ -1,6 +1,6 @@
 _build/
 commands/*
-!commands/index.rst
+!commands/index.rst.head
 !commands/generate-command-docs.py
 _themes/sphinx_rtd_theme/static/images/subuser-website.svg
 subuser-standard
