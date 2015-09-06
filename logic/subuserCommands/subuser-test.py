@@ -47,8 +47,9 @@ if subuserlib.docker.getExecutable():
     try:
       subuserDir = BasicFileStructure(subuserlib.paths.getSubuserDir())
       id = dockerDaemon.build(repositoryFileStructure=subuserDir,relativeBuildContextPath="./",useCache=True,dockerfile=dockerfileContents)
-      dockerDaemon.execute(["run","-it","--volume",subuserlib.paths.getSubuserDir()+":/root/subuser:ro",id,"/root/subuser/logic/subuser","test"])
-    except subuserlib.classes.docker.dockerDaemon.ImageBuildException as e:
+      if dockerDaemon.execute(["run","-it","--volume",subuserlib.paths.getSubuserDir()+":/root/subuser:ro",id,"/root/subuser/logic/subuser","test"]) != 0:
+        raise Exception()
+    except Exception as e:
       print("Tests failed!")
       print(str(e))
       if not "--no-fail" in sys.argv:
