@@ -107,5 +107,5 @@ class Subusers(dict,UserOwnedObject,FileBackedObject):
       else:
         serviceSubusers = []
       executableShortcutInstalled = subuserAttributes["executable-shortcut-installed"]
-      imageSource = subuserlib.classes.imageSource.ImageSource(user=self.getUser(),name=name,repo=repo)
+      imageSource = repo[name]
       self[subuserName] = Subuser(self.getUser(),subuserName,imageSource,imageId=imageId,executableShortcutInstalled=executableShortcutInstalled,locked=locked,serviceSubusers=serviceSubusers)

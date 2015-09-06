@@ -31,6 +31,9 @@ class Repository(dict,UserOwnedObject,Describable):
     self.__fileStructure = None
     UserOwnedObject.__init__(self,user)
     self.__gitRepository = GitRepository(self.getRepoPath())
+    if not os.path.exists(self.getRepoPath()):
+      self.updateSources(initialUpdate=True)
+    self.__repoConfig = self.loadRepoConfig()
     self.loadImageSources()
 
   def getName(self):
@@ -92,26 +95,32 @@ class Repository(dict,UserOwnedObject,Describable):
     else:
       return os.path.join(self.getUser().getConfig()["repositories-dir"],self.getName())
 
-  def getRepoConfig(self):
+  def loadRepoConfig(self):
     """
     Either returns the config as a dictionary or None if no configuration exists or can be parsed.
     """
+    def verifyPaths(dictionary,paths):
+      """
+      Looks through a dictionary at all entries that can be considered to be paths, and ensures that they do not contain any relative upwards references.
+      Throws a ValueError if they do.
+      """
+      for path in paths:
+        if path in dictionary and path.startswith("../") or "/../" in path:
+          raise ValueError("Paths in .subuser.json may not be relative to a higher directory.")
     if self.getFileStructure().exists("./.subuser.json"):
       configFileContents = self.getFileStructure().read("./.subuser.json")
     else:
       return None
-    try:
-      repoConfig = json.loads(configFileContents)
-      # Validate untrusted input
-      paths = ["subuser-repository-root"]
-      for path in paths:
-        if path in repoConfig and path.startswith("../"):
-          raise ValueError("Paths in .subuser.json may not be relative to a higher directory.")
-      return repoConfig
-    except ValueError as ve:
-      # TODO we should probably exit and tell the user loudly that something isn't right.
-      self.getUser().getRegistry().log("Error parsing .subuser.json file for repository "+self.getName()+":\n"+str(ve))
-      return None
+    repoConfig = json.loads(configFileContents)
+    # Validate untrusted input
+    verifyPaths(repoConfig,["subuser-repository-root"])
+    if "explicit-image-sources" in repoConfig:
+      for explicitImageSource in repoConfig["explicit-image-sources"]:
+        verifyPaths(explicitImageSource,["image-file","permissions-file","build-context"])
+    return repoConfig
+
+  def getRepoConfig(self):
+    return self.__repoConfig
 
   def getSubuserRepositoryRoot(self):
     """
@@ -144,7 +153,7 @@ class Repository(dict,UserOwnedObject,Describable):
     if not self.isLocal():
       shutil.rmtree(self.getRepoPath())
 
-  def updateSources(self):
+  def updateSources(self,initialUpdate=False):
     """
     Pull(or clone) the repo's ImageSources from git origin.
     """
@@ -160,18 +169,21 @@ class Repository(dict,UserOwnedObject,Describable):
     if self.updateGitCommitHash():
       if not new:
         self.getUser().getRegistry().logChange("Updated repository "+self.getDisplayName())
-      self.loadImageSources()
+      if not initialUpdate:
+        self.loadImageSources()
 
   def loadImageSources(self):
     """
     Load ImageSources from disk into memory.
     """
-    if not os.path.exists(self.getRepoPath()):
-      self.updateSources()
     imageNames = self.getFileStructure().lsFolders(self.getSubuserRepositoryRelativeRoot())
     imageNames = [os.path.basename(path) for path in imageNames]
     for imageName in imageNames:
       self[imageName] = ImageSource(self.getUser(),self,imageName)
+    if self.getRepoConfig() is not None and "explicit-image-sources" in self.getRepoConfig():
+      for imageName,config in self.getRepoConfig()["explicit-image-sources"].items():
+        assert config is not None
+        self[imageName] = ImageSource(self.getUser(),self,imageName,explicitConfig = config)
 
   def updateGitCommitHash(self):
     """

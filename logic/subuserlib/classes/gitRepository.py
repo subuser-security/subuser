@@ -183,7 +183,7 @@ class GitFileStructure(FileStructure):
     """
     (errorcode,content) = self.getRepository().runCollectOutput(["show",self.getCommit()+":"+path])
     if errorcode != 0:
-      raise OSError("Git show exited with error "+str(errorcode)+". File does not exist.")
+      raise OSError("Git show exited with error "+str(errorcode)+". File does not exist.\nPath: "+path+"\nCommit: "+self.getCommit()+"\n")
     return content
 
   def getMode(self,path):

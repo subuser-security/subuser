@@ -16,10 +16,11 @@ import subuserlib.permissions
 import subuserlib.classes.docker.dockerDaemon as dockerDaemon
 
 class ImageSource(UserOwnedObject,Describable):
-  def __init__(self,user,repo,name):
+  def __init__(self,user,repo,name,explicitConfig=None):
     self.__name = name
     self.__repo = repo
     self.__permissions = None
+    self.__explicitConfig = explicitConfig
     UserOwnedObject.__init__(self,user)
 
   def getName(self):
@@ -48,6 +49,8 @@ class ImageSource(UserOwnedObject,Describable):
     return subusers
 
   def getImageDir(self):
+    if self.__explicitConfig:
+      return self.__explicitConfig["build-context"]
     absImageDir = os.path.join(self.getSourceDir(),"image")
     imageDir = os.path.join(self.getRelativeSourceDir(),"image")
     # If the image dir does not exist,
@@ -90,11 +93,19 @@ class ImageSource(UserOwnedObject,Describable):
     return installedImagesBasedOnThisImageSource
 
   def getPermissionsFilePath(self):
-    return os.path.join(self.getSourceDir(),"permissions.json")
+    relativePath = self.getRelativePermissionsFilePath()
+    return os.path.join(self.getRepository().getRepoPath(),relativePath)
+
+  def getRelativePermissionsFilePath(self):
+    if self.__explicitConfig is not None:
+      return self.__explicitConfig["permissions-file"]
+    if "dependent" in self.getRelativeSourceDir():
+      raise Exception(str(self.__explicitConfig)+"\n"+self.getName()+str(self.getRepository().keys()))
+    return os.path.join(self.getRelativeSourceDir(),"permissions.json")
 
   def getPermissions(self):
     if not self.__permissions:
-      permissionsString = self.getRepository().getFileStructure().read(os.path.join(self.getRepository().getSubuserRepositoryRelativeRoot(),self.getName(),"permissions.json"))
+      permissionsString = self.getRepository().getFileStructure().read(self.getRelativePermissionsFilePath())
       initialPermissions = subuserlib.permissions.load(permissionsString=permissionsString)
       self.__permissions = subuserlib.classes.permissions.Permissions(self.getUser(),initialPermissions,writePath=self.getPermissionsFilePath())
     return self.__permissions
@@ -109,57 +120,47 @@ class ImageSource(UserOwnedObject,Describable):
     self.getPermissions().describe()
 
   def build(self,parent):
-    dockerFileContents = self.getDockerfileContents(parent=parent)
-    imageId = self.getUser().getDockerDaemon().build(relativeBuildContextPath=self.getImageDir(),repositoryFileStructure=self.getRepository().getFileStructure(),rm=True,dockerfile=dockerFileContents)
+    imageFileType = self.getImageFileType()
+    if imageFileType == "Dockerfile":
+      dockerfileContents = self.getImageFileContents()
+    elif imageFileType == "SubuserImagefile":
+      subuserImagefileContents = self.getImageFileContents()
+      dockerfileContents = ""
+      for line in subuserImagefileContents.split("\n"):
+        if line.startswith("FROM-SUBUSER-IMAGE"):
+          dockerfileContents = dockerfileContents + "FROM "+parent+"\n"
+        else:
+          dockerfileContents = dockerfileContents +line+"\n"
+    imageId = self.getUser().getDockerDaemon().build(relativeBuildContextPath=self.getImageDir(),repositoryFileStructure=self.getRepository().getFileStructure(),rm=True,dockerfile=dockerfileContents)
     subuserSetupDockerFile = ""
     subuserSetupDockerFile += "FROM "+imageId+"\n"
     subuserSetupDockerFile += "RUN mkdir /subuser ; echo "+str(uuid.uuid4())+" > /subuser/uuid\n" # This ensures that all images have unique Ids.  Even images that are otherwise the same.
     return self.getUser().getDockerDaemon().build(dockerfile=subuserSetupDockerFile)
 
-  def getRelativeSubuserImagefilePath(self):
-    """
-    Returns the relative path to the SubuserImagefile, whether it exists or not.
-    """
-    return os.path.join(self.getImageDir(),"SubuserImagefile")
+  def getImageFile(self):
+    if self.__explicitConfig:
+      return self.__explicitConfig["image-file"]
+    dockerfilePath = os.path.join(self.getImageDir(),"Dockerfile")
+    if self.getRepository().getFileStructure().exists(dockerfilePath):
+      return dockerfilePath
+    subuserImagefilePath = os.path.join(self.getImageDir(),"SubuserImagefile")
+    if self.getRepository().getFileStructure().exists(subuserImagefilePath):
+      return subuserImagefilePath
 
-  def getSubuserImagefileContents(self):
-    """
-     Returns the contents of the SubuserImagefile.  If there is no SubuserImagefile return None.
-    """
-    try:
-      return self.getRepository().getFileStructure().read(self.getRelativeSubuserImagefilePath())
-    except (OSError,IOError):
-      return None
+  def getImageFileType(self):
+    return os.path.basename(self.getImageFile())
 
-  def getDockerfileContents(self,parent=None):
-    """
-    Returns a string representing the Dockerfile that is to be used to build this ImageSource.
-    """
-    imageDir = self.getImageDir()
-    dockerfilePath = os.path.join(imageDir,"Dockerfile")
-    try:
-      return self.getRepository().getFileStructure().read(dockerfilePath)
-    except (OSError,IOError):
-      pass
-    subuserImagefileContents = self.getSubuserImagefileContents()
-    if subuserImagefileContents is None:
-      raise dockerDaemon.ImageBuildException("No build file found for image:" + self.getIdentifier()+"\nEvery image must have a valid Dockerfile or SubuserImageFile")
-    dockerfileContents = ""
-    for line in subuserImagefileContents.split("\n"):
-      if line.startswith("FROM-SUBUSER-IMAGE"):
-        dockerfileContents = dockerfileContents + "FROM "+parent+"\n"
-      else:
-        dockerfileContents = dockerfileContents +line+"\n"
-    return dockerfileContents
+  def getImageFileContents(self):
+    return self.getRepository().getFileStructure().read(self.getImageFile())
 
   def getDependency(self):
     """
      Returns the dependency of this ImageSource as a ImageSource.
      Or None if there is no dependency.
     """
-    subuserImagefileContents = self.getSubuserImagefileContents()
-    if subuserImagefileContents == None:
+    if not self.getImageFileType() == "SubuserImagefile":
       return None
+    subuserImagefileContents = self.getImageFileContents()
     lineNumber=0
     for line in subuserImagefileContents.split("\n"):
       if line.startswith("FROM-SUBUSER-IMAGE"):
