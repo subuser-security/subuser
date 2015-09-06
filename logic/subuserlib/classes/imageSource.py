@@ -47,12 +47,17 @@ class ImageSource(UserOwnedObject,Describable):
         subusers.append(subuser)
     return subusers
 
-  def getDockerImageDir(self):
-    repoConfig = self.getRepository().getRepoConfig()
-    if repoConfig and "docker-image-dir" in repoConfig:
-      return os.path.join(self.getRelativeSourceDir(),repoConfig["docker-image-dir"])
-    else:
-      return os.path.join(self.getRelativeSourceDir(),"docker-image")
+  def getImageDir(self):
+    absImageDir = os.path.join(self.getSourceDir(),"image")
+    imageDir = os.path.join(self.getRelativeSourceDir(),"image")
+    # If the image dir does not exist,
+    # Look for the old, deprecated, docker-image dir
+    if not os.path.exists(absImageDir):
+      absImageDir = os.path.join(self.getSourceDir(),"docker-image")
+      imageDir = os.path.join(self.getRelativeSourceDir(),"docker-image")
+      if not os.path.exists(absImageDir):
+        return None
+    return imageDir
 
   def getSourceDir(self):
     return os.path.join(self.getRepository().getSubuserRepositoryRoot(),self.getName())
@@ -105,7 +110,7 @@ class ImageSource(UserOwnedObject,Describable):
 
   def build(self,parent):
     dockerFileContents = self.getDockerfileContents(parent=parent)
-    imageId = self.getUser().getDockerDaemon().build(relativeBuildContextPath=self.getDockerImageDir(),repositoryFileStructure=self.getRepository().getFileStructure(),rm=True,dockerfile=dockerFileContents)
+    imageId = self.getUser().getDockerDaemon().build(relativeBuildContextPath=self.getImageDir(),repositoryFileStructure=self.getRepository().getFileStructure(),rm=True,dockerfile=dockerFileContents)
     subuserSetupDockerFile = ""
     subuserSetupDockerFile += "FROM "+imageId+"\n"
     subuserSetupDockerFile += "RUN mkdir /subuser ; echo "+str(uuid.uuid4())+" > /subuser/uuid\n" # This ensures that all images have unique Ids.  Even images that are otherwise the same.
@@ -115,8 +120,7 @@ class ImageSource(UserOwnedObject,Describable):
     """
     Returns the relative path to the SubuserImagefile, whether it exists or not.
     """
-    dockerImageDir = self.getDockerImageDir()
-    return os.path.join(dockerImageDir,"SubuserImagefile")
+    return os.path.join(self.getImageDir(),"SubuserImagefile")
 
   def getSubuserImagefileContents(self):
     """
@@ -131,8 +135,8 @@ class ImageSource(UserOwnedObject,Describable):
     """
     Returns a string representing the Dockerfile that is to be used to build this ImageSource.
     """
-    dockerImageDir = self.getDockerImageDir()
-    dockerfilePath = os.path.join(dockerImageDir,"Dockerfile")
+    imageDir = self.getImageDir()
+    dockerfilePath = os.path.join(imageDir,"Dockerfile")
     try:
       return self.getRepository().getFileStructure().read(dockerfilePath)
     except (OSError,IOError):
@@ -171,5 +175,5 @@ class ImageSource(UserOwnedObject,Describable):
     return None
 
   def getHash(self):
-    """ Return the hash of the ``docker-image`` directory. """
-    return self.getRepository().getFileStructure().hash(self.getDockerImageDir())
+    """ Return the hash of the ``image`` directory. """
+    return self.getRepository().getFileStructure().hash(self.getImageDir())

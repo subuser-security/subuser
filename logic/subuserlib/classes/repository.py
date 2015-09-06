@@ -103,7 +103,7 @@ class Repository(dict,UserOwnedObject,Describable):
     try:
       repoConfig = json.loads(configFileContents)
       # Validate untrusted input
-      paths = ["subuser-repository-root","docker-image-dir"]
+      paths = ["subuser-repository-root"]
       for path in paths:
         if path in repoConfig and path.startswith("../"):
           raise ValueError("Paths in .subuser.json may not be relative to a higher directory.")

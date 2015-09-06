@@ -8,7 +8,7 @@ Packaging programs for use with subuser is much simpler than packaging for say, 
 A subuser repository is a git repository.  Repositories have the following file structure::
 
   image-name/
-    docker-image/
+    image/
       SubuserImagefile
       docker-build-context...
     permissions.json
@@ -26,13 +26,13 @@ Quick packaging tutorial
   
 2. Add subuser images:
 
-a. Create a folder in your subuser repository for your new subuser image and add a ``docker-image`` subdirectory:
+a. Create a folder in your subuser repository for your new subuser image and add a ``image`` subdirectory:
 
 ::
 
   $ mkdir my-subuser-image
   $ cd my-subuser-image
-  $ mkdir docker-image
+  $ mkdir image
 
 b. Create an `permissions.json` file. More on this later.
 
@@ -44,7 +44,7 @@ c. Create a `SubuserImagefile` file. More on this later.
 
 ::
 
-  $ vi docker-image/SubuserImagefile
+  $ vi image/SubuserImagefile
 
 3. Test your new image by installing it from the local folder. Note, you must specify a full path to the repository.
 
@@ -88,7 +88,7 @@ You can find a full specification for the `permissions.json` file format :doc:`h
 Creating a `SubuserImagefile`
 -----------------------------
 
-Create a directory called `docker-image` and add a `SubuserImagefile` to that directory. This is a very similar format to that of the Dockerfile.
+Create a directory called `image` and add a `SubuserImagefile` to that directory. This is a very similar format to that of the Dockerfile.
 
 The only difference is the adition of a special `FROM-SUBUSER-IMAGE` command which takes :doc:`the identifier of a subuser image source <subuser-standard/image-source-identifiers>` as it's argument. For information on creating a Dockerfile, please see the `official documentation for writting Dockerfiles <https://docs.docker.com/reference/builder/>`_.
 
