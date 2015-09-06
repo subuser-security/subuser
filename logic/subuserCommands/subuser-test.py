@@ -8,6 +8,7 @@ import io
 #internal imports
 import subuserlib.docker
 import subuserlib.paths
+import subuserlib.terminalColors
 
 if "--help" in sys.argv:
   print("""Run the subuser test suit.  Please do this before sending pull requests.
@@ -50,7 +51,7 @@ if subuserlib.docker.getExecutable():
       if dockerDaemon.execute(["run","-it","--volume",subuserlib.paths.getSubuserDir()+":/root/subuser:ro",id,"/root/subuser/logic/subuser","test"]) != 0:
         raise Exception()
     except Exception as e:
-      print("Tests failed!")
+      print(subuserlib.terminalColors.FAIL+"Tests failed!"+subuserlib.terminalColors.ENDC)
       print(str(e))
       if not "--no-fail" in sys.argv:
         exit(1)
@@ -113,9 +114,9 @@ if not "--travis" in sys.argv:
   modules.extend(localOnlyModules)
 
 for module in modules:
-  print("Testing module: " + module.__name__)
+  print(subuserlib.terminalColors.OKGREEN+"Testing module: " + module.__name__+subuserlib.terminalColors.ENDC)
   (failures,_) = doctest.testmod(module)
   if failures:
     sys.exit(failures)
 
-print("Tests passed.")
+print(subuserlib.terminalColors.OKGREEN+"Tests passed."+subuserlib.terminalColors.ENDC)
