@@ -50,7 +50,7 @@ def doImageSourceHashesMatch(installedImage,imageSource):
 
 def compareSourceLineageAndInstalledImageLineage(user,sourceLineage,installedImageLineage):
   if not len(list(sourceLineage)) == len(installedImageLineage):
-    user.getRegistry().log("Number of dependencies changed from "+str(len(installedImageLineage))+" to "+str(len(sourceLineage)))
+    user.getRegistry().log("Number of dependencies changed from "+str(len(installedImageLineage))+" to "+str(len(list(sourceLineage))))
     print("Image sources:")
     for imageSource in sourceLineage:
       print(imageSource.getName())
