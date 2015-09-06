@@ -24,7 +24,7 @@ image ids to json objects which have the following attributes:
 
     "source-image" : "firefox"
 
- * ``image-source-hash``: SHA-1 hash of the ``docker-image`` directory of the image source.
+ * ``image-source-hash``: SHA-1 hash of the ``image`` directory of the image source.
 
   Ex::
 

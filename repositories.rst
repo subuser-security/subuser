@@ -5,17 +5,17 @@ Subuser repositories are used to package and distribute subuser image sources. S
 
 Subuser repositories reside within git repositories.
 
-In a subuser repository, there is one subdirectory per subuser image source. These subdirectories reside at the ``subuser-repository-root`` which is the root of the git repository by default.
+Typically, in a subuser repository, there is one subdirectory per subuser image source. These subdirectories reside at the ``subuser-repository-root`` which is the root of the git repository by default. Subuser will automatically build a list of image sources in the repository simply by looking through ``subuser-repository-root`` for folders which match the image source directory format. It is also possible to give subuser an explicit list of image sources in the repository by setting ``explicit-image-sources`` in the repositories configuration file. This is usefull when one cannot match the standard image source directory format due to restrictions caused by an existing git repositories layout.
 
 Image source directories
 ------------------------
 
 Each image source directory contains a :doc:`permissions.json <permissions-dot-json-file-format>` file.
 
-It also contains a ``docker-image`` directory.
+It also contains a ``image`` directory (previously, this directory was named ``docker-image`` that name is now deprecated).
 
-The ``docker-image`` directory contains files required to build subuser images:
- A) If the ``docker-image`` directory contains a ``SubuserImagefile``, then the image will be built from the ``SubuserImagefile``. The format for ``SubuserImagefile`` s is the same as the format for `Dockerfile <http://docs.docker.com/reference/builder/>`_ s with the addition of one command:  ``FROM-SUBUSER-IMAGE``.  The ``FROM-SUBUSER-IMAGE`` command takes as it's argument a subuser image source identifier. The build context for the ``SubuserImageFile`` is the ``docker-image`` directory.
+The ``image`` directory contains files required to build subuser images:
+ A) If the ``image`` directory contains a ``SubuserImagefile``, then the image will be built from the ``SubuserImagefile``. The format for ``SubuserImagefile`` s is the same as the format for `Dockerfile <http://docs.docker.com/reference/builder/>`_ s with the addition of one command:  ``FROM-SUBUSER-IMAGE``.  The ``FROM-SUBUSER-IMAGE`` command takes as it's argument a subuser image source identifier. The build context for the ``SubuserImageFile`` is the ``image`` directory.
 
 The ``.subuser.json`` file
 --------------------------
@@ -24,4 +24,21 @@ Any git repository which contains a subuser repositry may contain a ``.subuser.j
 
  * ``subuser-repository-root``: The root of the subuser repository. A relative path to the directory where the subuser image source directories are stored.
 
- * ``docker-image-dir``: The subdirectory of each image source directory in which the ``SubuserImagefile`` or ``Dockerfile`` may be found. Default: ``./docker-image``
+ * ``explicit-image-sources``: A dictionary of explicitly defined image sources. This is useful when you have a git repository for an application and you would like to package that application with subuser. You can explicitly set the entire repository as the image build context. This dictionary maps image source names to a JSON objects with the following values:
+
+   - ``image-file``: Path to the image file used to build the image.
+
+     Ex: ``./subuser/Dockerfile``
+   - ``build-context``: The image build context that will be used when building the subuser.
+     Ex: ``./``
+
+   - ``permissions-file``: The path to the image's ``permissions.json`` file.
+
+     Ex: ``./subuser/permissions.json``
+
+ Here is an example ``explicit-image-sources`` object that one might find in the source directory for the FreeCAD cad application::
+
+    {"explicit-image-sources":
+      {"freecad":{"image-file":"./subuser/SubuserImagefile"
+                 ,"build-context":"./"
+                 ,"permissions-file":"./subuser/permissions.json"}}}
