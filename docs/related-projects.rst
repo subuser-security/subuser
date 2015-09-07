@@ -62,6 +62,10 @@ Related projects
 
  There are many different chroot type setups.
 
+ * `Firejail <https://github.com/netblue30/firejail>`_
+
+ Firejail is a sandboxing program based on Linux namespaces, seccomp-bpf and Linux capabilities.
+
 Papers and publications
 -----------------------
 
