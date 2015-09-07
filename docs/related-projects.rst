@@ -13,7 +13,7 @@ Related projects
 
  A 2010 accademic project which had a very similar design to subuser. No code has been published, however the talk is interesting.
 
- * `Bedrock linux <http://bedrocklinux.org>`_ 
+ * `Bedrock linux <http://bedrocklinux.org>`_
 
  Bedrock Linux is a project that I learned about long after I started working on subuser. Like subuser, it allows you to install software packaged for a variety of Linux distributions. Unlike subuser, which installs and runs programs in isolated environments running within a base system, Bedrock Linux mixes everything together at the same level without any segregation.
 
@@ -49,7 +49,7 @@ Related projects
  * `grsecurity <https://grsecurity.net>`_
 
  This is a patchset for the Linux kernel which improves kernel security.  It can help make subuser more secure by reducing the risk that a program will escape it's container by finding a kernel exploit.
- 
+
  * `Docker <http://docker.com>`_
 
  Docker is the containment system that powers subuser.
@@ -62,7 +62,11 @@ Related projects
 
  There are many different chroot type setups.
 
+ * `Firejail <https://github.com/netblue30/firejail>`_
+
+ Firejail is a sandboxing program based on Linux namespaces, seccomp-bpf and Linux capabilities.
+
 Papers and publications
-------
+-----------------------
 
  * Cliffe Schreuders Z, McGill T, Payne C, `The State of the Art of Application Restrictions and Sandboxes: A Survey of Application-oriented Access Controls and their Shortfalls, Computers & Security (2012) <http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.300.4042&rep=rep1&type=pdf>`_
