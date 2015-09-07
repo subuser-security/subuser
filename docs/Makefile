@@ -22,20 +22,22 @@ pylint:
 	cd ../logic ; pylint --disable=C0111,C0301,C0103,C0322,C0323,C0324,R0913,R0903,R0904,superfluous-parens,bad-continuation,unused-variable,too-many-branches,too-many-locals,bad-builtin,deprecated-lambda,locally-disabled --indent-string='  ' subuserlib/ > ../docs/developers/pylint.rst ; echo DONE GENERATING PYLINT OUTPUT
 	./developers/restructure-pylint-output
 
-images-dir:
+developers/images:
 	mkdir developers/images ; echo IMAGES DIR CREATED
+
+news/images:
 	mkdir news/images ; echo IMAGES DIR CREATED
 
-developers/images/object-hierarchy.png: developers/object-hierarchy.uxf images-dir
+developers/images/object-hierarchy.png: developers/object-hierarchy.uxf developers/images 
 	umlet -action=convert -format=png -filename=developers/object-hierarchy.uxf -output=developers/images/object-hierarchy
 
-news/images/x11-bridge.png: news/x11-bridge.uxf images-dir
+news/images/x11-bridge.png: news/x11-bridge.uxf news/images
 	umlet -action=convert -format=png -filename=news/x11-bridge.uxf -output=news/images/x11-bridge
 
-news/images/virtualbox.png: news/virtualbox.uxf images-dir
+news/images/virtualbox.png: news/virtualbox.uxf news/images
 	umlet -action=convert -format=png -filename=news/virtualbox.uxf -output=news/images/virtualbox
 
-news/images/wayland.png: news/wayland.uxf images-dir
+news/images/wayland.png: news/wayland.uxf news/images
 	umlet -action=convert -format=png -filename=news/wayland.uxf -output=news/images/wayland
 
 html: command-docs pylint community.rst developers/contributing.rst developers/images/object-hierarchy.png news/images/x11-bridge.png  news/images/virtualbox.png  news/images/wayland.png
