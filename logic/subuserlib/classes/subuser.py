@@ -154,12 +154,12 @@ To repair your subuser installation.\n""")
       self.__x11Bridge = X11Bridge(self.getUser(),self)
     return self.__x11Bridge
 
-  def getRuntime(self,environment):
+  def getRuntime(self,environment,extraDockerFlags=None):
     """
     Returns the subuser's Runtime object for it's current permissions, creating it if necessary.
     """
     if not self.__runtime:
-      self.__runtime = Runtime(self.getUser(),subuser=self,environment=environment)
+      self.__runtime = Runtime(self.getUser(),subuser=self,environment=environment,extraDockerFlags=extraDockerFlags)
     return self.__runtime
 
   def getRuntimeCache(self):

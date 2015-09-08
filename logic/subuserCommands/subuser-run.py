@@ -39,7 +39,11 @@ def run(args):
   user = User()
   user.getRegistry().setLogOutputVerbosity(0)
   if subuserName in user.getRegistry().getSubusers():
-    runtime = user.getRegistry().getSubusers()[subuserName].getRuntime(os.environ)
+    try:
+      extraDockerFlags = os.environ["SUBUSER_EXTRA_DOCKER_ARGS"].split(" ")
+    except KeyError:
+      extraDockerFlags = []
+    runtime = user.getRegistry().getSubusers()[subuserName].getRuntime(os.environ,extraDockerFlags=extraDockerFlags)
     if runtime:
       runtime.run(argsToPassToImage)
     else:

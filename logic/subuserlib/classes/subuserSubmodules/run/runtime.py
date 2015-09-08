@@ -27,10 +27,13 @@ def getRecursiveDirectoryContents(directory):
   return files
 
 class Runtime(UserOwnedObject):
-  def __init__(self,user,subuser,environment):
+  def __init__(self,user,subuser,environment,extraDockerFlags=None):
     self.__subuser = subuser
     self.__environment = environment
-    self.__extraFlags = []
+    if extraDockerFlags is None:
+      self.__extraFlags = []
+    else:
+      self.__extraFlags = extraDockerFlags
     self.__background = False
     if not subuserlib.test.testing:
       self.__hostname = binascii.b2a_hex(os.urandom(10))
@@ -105,7 +108,7 @@ $ subuser repair
      ("access-working-directory", lambda p: ["-v="+os.getcwd()+":/pwd:rw","--workdir=/pwd"] if p else ["--workdir="+self.getSubuser().getDockersideHome()]),
      ("allow-network-access", lambda p: ["--net=bridge","--dns=8.8.8.8"] if p else ["--net=none"]),
      # Liberal permissions
-     ("x11", lambda p: ["-e","DISPLAY=unix"+os.environ['DISPLAY'],"-v=/tmp/.X11-unix:/tmp/.X11-unix:rw","-v="+self.getXautorityFilePath()+":/subuser/.Xauthority","-e","XAUTHORITY=/subuser/.Xauthority"] if p else []),
+     ("x11", lambda p: ["-e","DISPLAY=unix"+self.getEnvironment()['DISPLAY'],"-v=/tmp/.X11-unix:/tmp/.X11-unix:rw","-v="+self.getXautorityFilePath()+":/subuser/.Xauthority","-e","XAUTHORITY=/subuser/.Xauthority"] if p else []),
      ("system-dirs", lambda systemDirs : ["-v="+source+":"+dest+":rw" for source,dest in systemDirs.items()]),
      ("graphics-card", lambda p: ["--device=/dev/dri/"+device for device in os.listdir("/dev/dri")] if p else []),
      ("serial-devices", lambda sd: ["--device=/dev/"+device for device in self.getSerialDevices()] if sd else []),
@@ -161,11 +164,7 @@ $ subuser repair
     for permission, flagGenerator in permissionFlagDict.items():
       flags.extend(flagGenerator(permissions[permission]))
     flags.extend(self.getHostnameFlag())
-    try:
-      extraFlags = os.environ["SUBUSER_EXTRA_DOCKER_ARGS"].split(" ")
-    except KeyError:
-      extraFlags = []
-    return ["run"]+flags+extraFlags+["--entrypoint"]+[self.getSubuser().getPermissions()["executable"]]+[self.getRunReadyImageId()]+args
+    return ["run"]+flags+["--entrypoint"]+[self.getSubuser().getPermissions()["executable"]]+[self.getRunReadyImageId()]+args
 
   def getPrettyCommand(self,args):
     """
@@ -195,7 +194,7 @@ $ subuser repair
       os.remove(self.getXautorityFilePath())
     except OSError:
       pass
-    subuserlib.subprocessExtras.call(["xauth","extract",self.getXautorityFilePath(),os.environ["DISPLAY"]])
+    subuserlib.subprocessExtras.call(["xauth","extract",self.getXautorityFilePath(),self.getEnvironment()["DISPLAY"]])
     with open(self.getXautorityFilePath(),"rb") as xauthFile:
       # The extracted Xauthority file has the following format(bytewise):
       # 1 0 0 [len(hostname)] [hostname-in-ascii] 0 1 [display-number-in-ascii] 0 22 ["MIT-MAGIC-COOKIE-1"-in-ascii] 0 20 [Magic number]
