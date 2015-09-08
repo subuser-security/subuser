@@ -40,8 +40,10 @@ news/images/virtualbox.png: news/virtualbox.uxf news/images
 news/images/wayland.png: news/wayland.uxf news/images
 	umlet -action=convert -format=png -filename=news/wayland.uxf -output=news/images/wayland
 
-html: command-docs pylint community.rst developers/contributing.rst developers/images/object-hierarchy.png news/images/x11-bridge.png  news/images/virtualbox.png  news/images/wayland.png
+sphynx:
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) . $(BUILDDIR)/html
+
+html: command-docs pylint community.rst developers/contributing.rst developers/images/object-hierarchy.png news/images/x11-bridge.png  news/images/virtualbox.png news/images/wayland.png sphynx
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
 
