@@ -118,10 +118,11 @@ class XpraX11Bridge(Service):
     """
     Clear special volumes. This ensures statelessness of stateless subusers.
     """
-    try:
-      shutil.rmtree(os.path.join(self.getUser().getConfig()["volumes-dir"],"xpra",self.getSubuser().getName()))
-    except OSError:
-      pass
+    if not "SUBUSER_DEBUG_XPRA" in os.environ:
+      try:
+        shutil.rmtree(os.path.join(self.getUser().getConfig()["volumes-dir"],"xpra",self.getSubuser().getName()))
+      except OSError:
+        pass
 
   def createAndSetupSpecialVolumes(self):
     try:
@@ -153,12 +154,14 @@ class XpraX11Bridge(Service):
     commonArgs = ["--no-daemon","--no-notifications"]
     # Launch xpra server
     serverArgs = ["start","--no-pulseaudio","--no-mdns","--encoding=rgb"]
+    suppressOutput = not "SUBUSER_DEBUG_XPRA" in os.environ
     serverArgs.extend(commonArgs)
     serverArgs.extend(permissionArgs)
     serverArgs.append(":100")
     serverRuntime = self.getServerSubuser().getRuntime(os.environ)
     serverRuntime.setHostname(self.getServerSubuserHostname())
     serverRuntime.setBackground(True)
+    serverRuntime.setBackgroundSuppressOutput(suppressOutput)
     serverContainer = serverRuntime.run(args=serverArgs)
     serviceStatus["xpra-server-service-cid"] = serverContainer.getId()
     self.waitForServerContainerToLaunch()
@@ -169,6 +172,7 @@ class XpraX11Bridge(Service):
     clientRuntime = self.getClientSubuser().getRuntime(os.environ)
     clientRuntime.setEnvVar("XPRA_SOCKET_HOSTNAME","server")
     clientRuntime.setBackground(True)
+    clientRuntime.setBackgroundSuppressOutput(suppressOutput)
     serviceStatus["xpra-client-service-cid"] = clientRuntime.run(args=clientArgs).getId()
     return serviceStatus
 

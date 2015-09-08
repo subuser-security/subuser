@@ -22,13 +22,16 @@ def call(args,cwd=None):
   (stdout,stderr) = process.communicate()
   return process.returncode
 
-def callBackground(args,cwd=None):
+def callBackground(args,cwd=None,suppressOutput=True):
   """
   Same as subprocess.call except here you can specify the cwd.
   Returns imediately with the subprocesses pid.
   """
-  devnull = open(os.devnull,"a")
-  process = subprocess.Popen(args,cwd=cwd,stdout=devnull,stderr=devnull,close_fds=True)
+  if suppressOutput:
+    devnull = open(os.devnull,"a")
+    process = subprocess.Popen(args,cwd=cwd,stdout=devnull,stderr=devnull,close_fds=True)
+  else:
+    process = subprocess.Popen(args,cwd=cwd)
   return process.pid
 
 def callCollectOutput(args,cwd=None):

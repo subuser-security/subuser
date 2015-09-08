@@ -17,3 +17,7 @@ Profiling
 
 Running most commands: ``subuser``, ``update``, ``repair`` and ``run`` with the ``SUBUSER_RUN_PROFILER`` environment variable set will run those commands and print profiler output once the command has finnished.
 
+Debugging the XPRA bridge
+-------------------------
+
+If you set the ``SUBUSER_DEBUG_XPRA`` environment variable then XPRA logs will be left in ``~/.subuser/volumes/xpra/<subuser-name>/xpra-home/``. XPRA will also spew out a bunch of garbage to the screen that you can read through.

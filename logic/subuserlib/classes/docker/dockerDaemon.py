@@ -210,14 +210,14 @@ class DockerDaemon(UserOwnedObject):
     shortId = match.group(1) #This is REALLY ugly!
     return self.getImageProperties(shortId)["Id"]
 
-  def execute(self,args,cwd=None,background=False):
+  def execute(self,args,cwd=None,background=False,backgroundSuppressOutput=True):
     """
     Execute the docker client.
     If the background argument is True, return emediately with the docker client's pid.
     Otherwise, wait for the process to finish and return the docker client's exit code.
     """
     if background:
-      return subuserlib.docker.runBackground(args,cwd=cwd)
+      return subuserlib.docker.runBackground(args,cwd=cwd,suppressOutput=backgroundSuppressOutput)
     else:
       return subuserlib.docker.run(args,cwd=cwd)
 

@@ -30,6 +30,7 @@ class Runtime(UserOwnedObject):
   def __init__(self,user,subuser,environment,extraDockerFlags=None):
     self.__subuser = subuser
     self.__environment = environment
+    self.__backgroundSuppressOutput = True
     if extraDockerFlags is None:
       self.__extraFlags = []
     else:
@@ -179,6 +180,12 @@ $ subuser repair
   def setBackground(self,background):
     self.__background = background
 
+  def getBackgroundSuppressOutput(self):
+    return self.__backgroundSuppressOutput
+
+  def setBackgroundSuppressOutput(self,suppressOutput):
+    self.__backgroundSuppressOutput = suppressOutput
+
   def getXautorityDirPath(self):
     return os.path.join(self.getUser().getConfig()["volumes-dir"],"x11",self.getSubuser().getName(),"subuser")
 
@@ -247,7 +254,7 @@ $ subuser repair
       if not self.getSubuser().getPermissions()["gui"] is None:
         self.getSubuser().getX11Bridge().addClient()
       command = self.getCommand(args)
-      returnCode = self.getUser().getDockerDaemon().execute(command,background=self.getBackground())
+      returnCode = self.getUser().getDockerDaemon().execute(command,background=self.getBackground(),backgroundSuppressOutput=self.getBackgroundSuppressOutput())
       if not self.getSubuser().getPermissions()["gui"] is None:
         self.getSubuser().getX11Bridge().removeClient()
       if self.getBackground():
