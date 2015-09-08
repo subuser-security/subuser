@@ -161,7 +161,11 @@ $ subuser repair
     for permission, flagGenerator in permissionFlagDict.items():
       flags.extend(flagGenerator(permissions[permission]))
     flags.extend(self.getHostnameFlag())
-    return ["run"]+flags+["--entrypoint"]+[self.getSubuser().getPermissions()["executable"]]+[self.getRunReadyImageId()]+args
+    try:
+      extraFlags = os.environ["SUBUSER_EXTRA_DOCKER_ARGS"].split(" ")
+    except KeyError:
+      extraFlags = []
+    return ["run"]+flags+extraFlags+["--entrypoint"]+[self.getSubuser().getPermissions()["executable"]]+[self.getRunReadyImageId()]+args
 
   def getPrettyCommand(self,args):
     """

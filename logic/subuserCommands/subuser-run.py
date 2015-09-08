@@ -21,6 +21,8 @@ For example:
     $ subuser run iceweasel
 
 Will launch the subuser named iceweasel
+
+If the SUBUSER_EXTRA_DOCKER_ARGS environment variable is set. Those arguments will be passed to Docker.
 """
 
 #################################################################################################
