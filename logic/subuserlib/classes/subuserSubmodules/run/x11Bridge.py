@@ -118,11 +118,10 @@ class XpraX11Bridge(Service):
     """
     Clear special volumes. This ensures statelessness of stateless subusers.
     """
-    if not "SUBUSER_DEBUG_XPRA" in os.environ:
-      try:
-        shutil.rmtree(os.path.join(self.getUser().getConfig()["volumes-dir"],"xpra",self.getSubuser().getName()))
-      except OSError:
-        pass
+    try:
+      shutil.rmtree(os.path.join(self.getUser().getConfig()["volumes-dir"],"xpra",self.getSubuser().getName()))
+    except OSError:
+      pass
 
   def createAndSetupSpecialVolumes(self):
     try:
@@ -188,7 +187,8 @@ class XpraX11Bridge(Service):
     """
     self.getUser().getDockerDaemon().getContainer(serviceStatus["xpra-client-service-cid"]).stop()
     self.getUser().getDockerDaemon().getContainer(serviceStatus["xpra-server-service-cid"]).stop()
-    self.cleanUp()
+    if not "SUBUSER_DEBUG_XPRA" in os.environ:
+      self.cleanUp()
 
 def X11Bridge(user,subuser):
   return bridges[user.getConfig()["x11-bridge"]](user,subuser)
