@@ -178,7 +178,7 @@ class XpraX11Bridge(Service):
 
   def waitForServerContainerToLaunch(self):
     while True:
-      if os.path.exists(os.path.join(self.getServerSideX11Path(),"X100")):
+      if os.path.exists(os.path.join(self.getServerSideX11Path(),"X100")) and os.path.exists(self.getXpraSocket()):
         return
       time.sleep(0.05)
 
