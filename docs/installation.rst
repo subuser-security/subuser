@@ -15,9 +15,15 @@ System Requirements
 Install with pip: Stable version
 --------------------------------
 
-1. Add yourself to the `docker group <http://docs.docker.io/en/v0.7.3/use/basics/>`_.
+1. Add yourself to the docker group.
 
 .. note:: Being a member of the ``docker`` group is equivalent to having root access.
+
+::
+
+   $ sudo nano /etc/group
+
+Find ``docker`` and add your username to the end of the line.
 
 2. Install subuser from pip.
 
@@ -32,9 +38,15 @@ Install with pip: Stable version
 Install from git: Development version
 -------------------------------------
 
-1. Add yourself to the `docker group <http://docs.docker.io/en/v0.7.3/use/basics/>`_.
+1. Add yourself to the docker group.
 
 .. note:: Being a member of the ``docker`` group is equivalent to having root access.
+
+::
+
+   $ sudo nano /etc/group
+
+Find ``docker`` and add your username to the end of the line.
 
 2. Download the subuser repository
   ::

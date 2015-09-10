@@ -60,6 +60,12 @@ Install with pip: Stable version
 
 .. note:: Being a member of the ``docker`` group is equivalent to having root access.
 
+::
+
+   $ sudo nano /etc/group
+
+Find ``docker`` and add your username to the end of the line.
+
 2. Install subuser from pip.
 
   $ sudo pip install subuser
