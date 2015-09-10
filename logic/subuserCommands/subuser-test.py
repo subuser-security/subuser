@@ -5,10 +5,12 @@ import pathConfig
 import sys
 import os
 import io
+import subprocess
 #internal imports
 import subuserlib.docker
 import subuserlib.paths
 import subuserlib.terminalColors
+import subuserlib.paths
 
 if "--help" in sys.argv:
   print("""Run the subuser test suit.  Please do this before sending pull requests.
@@ -17,6 +19,7 @@ Options include:
 
  - ``--travis`` - run the test suit in travis mode which does not run the tests in Docker.
  - ``--no-fail`` - do not stop the test suit from running after a test fails.
+ - ``--x11-bridge`` - run x11 bridge test suit. To run the test suit, you must have a subuser named xterm which has the gui option enabled. You will be shown a series of xterms and two series of counters. You should close the xterms and see that the counters go up linearly.
 
 """)
   sys.exit()
@@ -55,13 +58,24 @@ if subuserlib.docker.getExecutable():
       print(str(e))
       if not "--no-fail" in sys.argv:
         exit(1)
+  if "--x11-bridge" in sys.argv:
+    pid = os.fork()
+    if pid:
+      counter = "a"
+    else:
+      counter = "b"
+    for i in range(1,6):
+      print(counter+" "+str(i))
+      command = [os.path.join(subuserlib.paths.getSubuserDir(),"logic","subuser"),"run","xterm"]
+      subprocess.call(command)
   exit()
 
 import subuserlib.test
 
 subuserlib.test.testing = True
 
-import subuserlib.docker,sys,doctest,subprocess,os,subuserlib.paths
+import subuserlib.docker
+import doctest
 
 if not "--travis" in sys.argv:
   subuserDir = "/root/subuser"
