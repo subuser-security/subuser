@@ -7,7 +7,7 @@ Container objects allow you to interact with docker containers via the Docker da
 """
 
 #external imports
-import json
+import json,urllib
 #internal imports
 from subuserlib.classes.userOwnedObject import UserOwnedObject
 
@@ -31,6 +31,18 @@ class Container(UserOwnedObject):
 
   def stop(self):
     self.getUser().getDockerDaemon().getConnection().request("POST","/v1.13/containers/"+self.getId()+"/stop")
+    response = self.getUser().getDockerDaemon().getConnection().getresponse()
+    response.read()
+
+  def remove(self,force=False):
+    queryParameters =  {
+      'force': force
+      }
+    try:
+      queryParametersString = urllib.urlencode(queryParameters)
+    except AttributeError:
+      queryParametersString = urllib.parse.urlencode(queryParameters) # Python 3
+    self.getUser().getDockerDaemon().getConnection().request("DELETE","/v1.13/containers/"+self.getId()+"?"+queryParametersString)
     response = self.getUser().getDockerDaemon().getConnection().getresponse()
     response.read()
 

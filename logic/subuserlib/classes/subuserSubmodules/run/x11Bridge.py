@@ -31,6 +31,7 @@ I up-to-date version of xpra can be used, xpra need not be installed on the host
 import os
 import time
 import shutil
+import errno
 #internal imports
 from subuserlib.classes.service import Service
 import subuserlib.verify
@@ -78,11 +79,14 @@ class XpraX11Bridge(Service):
       else:
         return newSubuserNames
 
+  def getXpraVolumePath(self):
+    return os.path.join(self.getUser().getConfig()["volumes-dir"],"xpra",self.getSubuser().getName())
+
   def getServerSideX11Path(self):
-    return os.path.join(self.getUser().getConfig()["volumes-dir"],"xpra",self.getSubuser().getName(),"tmp",".X11-unix")
+    return os.path.join(self.getXpraVolumePath(),"tmp",".X11-unix")
 
   def getXpraHomeDir(self):
-    return os.path.join(self.getUser().getConfig()["volumes-dir"],"xpra",self.getSubuser().getName(),"xpra-home")
+    return os.path.join(self.getXpraVolumePath(),"xpra-home")
 
   def getXpraSocket(self):
     return os.path.join(self.getXpraHomeDir(),".xpra",self.getServerSubuserHostname()+"-100")
@@ -124,15 +128,26 @@ class XpraX11Bridge(Service):
       pass
 
   def createAndSetupSpecialVolumes(self):
+    def clearAndTryAgain():
+      # We need to clean this up.
+      # Unfortunately, the X11 socket will be owned by root.
+      # So we cannot do the clean up as a normal user.
+      # Fortunately, being a member of the docker group is the same as having root access.
+      self.getUser().getDockerDaemon().execute(["run","--rm","--volume",self.getXpraVolumePath()+":/xpra-volume","--entrypoint","/bin/rm",self.getServerSubuser().getImageId(),"-r","/xpra-volume/tmp","/xpra-volume/xpra-home"])
+      self.getUser().getDockerDaemon().execute(["run","--rm","--volume",self.getXpraVolumePath()+":/xpra-volume","--entrypoint","/bin/ls",self.getServerSubuser().getImageId(),"-la","/xpra-volume/","/xpra-volume/tmp","/xpra-volume/xpra-home"])
+      # Having preformed our clean up steps, we try again.
+      self.createAndSetupSpecialVolumes()
+    def mkdirs(directory):
+      if os.path.exists(directory):
+        clearAndTryAgain()
+      os.makedirs(directory)
+    mkdirs(self.getServerSideX11Path())
+    mkdirs(self.getXpraHomeDir())
     try:
-      os.makedirs(self.getServerSideX11Path())
-    except OSError:
-      pass
-    try:
-      os.makedirs(self.getXpraHomeDir())
-    except OSError:
-      pass
-    os.chmod(self.getServerSideX11Path(),1023)
+      os.chmod(self.getServerSideX11Path(),1023)
+    except OSError as e:
+      if e.errno == errno.EPERM:
+	clearAndTryAgain()
 
   def start(self,serviceStatus):
     """
@@ -189,6 +204,21 @@ class XpraX11Bridge(Service):
     self.getUser().getDockerDaemon().getContainer(serviceStatus["xpra-server-service-cid"]).stop()
     if not "SUBUSER_DEBUG_XPRA" in os.environ:
       self.cleanUp()
+
+  def isRunning(self,serviceStatus):
+    def isContainerRunning(cid):
+      container = self.getUser().getDockerDaemon().getContainer(cid)
+      containerStatus = container.inspect()
+      if containerStatus is None:
+        return False
+      else:
+        if not containerStatus["State"]["Running"]:
+          return False
+        else:
+          #Clean up left over container
+          container.remove(force=True)
+          return True
+    return isContainerRunning(serviceStatus["xpra-client-service-cid"]) and isContainerRunning(serviceStatus["xpra-server-service-cid"])
 
 def X11Bridge(user,subuser):
   return bridges[user.getConfig()["x11-bridge"]](user,subuser)

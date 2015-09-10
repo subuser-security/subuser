@@ -41,6 +41,13 @@ class Service(UserOwnedObject):
     pass
 
   @abc.abstractmethod
+  def isRunning(self,serviceStatus):
+    """
+    Returns True if the services is running.
+    """
+    pass
+
+  @abc.abstractmethod
   def getName(self):
     pass
 
@@ -69,21 +76,23 @@ class Service(UserOwnedObject):
     """
     Increase the services client counter, starting the service if necessary. Blocks untill the service is ready to accept the new client.
     """
-    sig = signal.signal(signal.SIGINT, signal.SIG_IGN)
+    #originalHandler = signal.getsignal(signal.SIGINT)
+    #signal.signal(signal.SIGINT, signal.SIG_IGN)
     with self.getLock() as lockFile:
       try:
         serviceStatus = json.load(lockFile)
       except ValueError:
         serviceStatus = {}
         serviceStatus["client-counter"] = 0
-      if serviceStatus["client-counter"] == 0:
+      if serviceStatus["client-counter"] == 0 or not self.isRunning(serviceStatus):
+        serviceStatus["client-counter"] = 0
         serviceStatus = self.start(serviceStatus)
       serviceStatus["client-counter"] = serviceStatus["client-counter"] + 1
       lockFile.seek(0)
       lockFile.truncate()
       json.dump(serviceStatus,lockFile)
       fcntl.flock(lockFile,fcntl.LOCK_UN)
-    signal.signal(signal.SIGINT, sig)
+    #signal.signal(signal.SIGINT, originalHandler)
 
   def removeClient(self):
     """
