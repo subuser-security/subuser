@@ -134,7 +134,6 @@ class XpraX11Bridge(Service):
       # So we cannot do the clean up as a normal user.
       # Fortunately, being a member of the docker group is the same as having root access.
       self.getUser().getDockerDaemon().execute(["run","--rm","--volume",self.getXpraVolumePath()+":/xpra-volume","--entrypoint","/bin/rm",self.getServerSubuser().getImageId(),"-r","/xpra-volume/tmp","/xpra-volume/xpra-home"])
-      self.getUser().getDockerDaemon().execute(["run","--rm","--volume",self.getXpraVolumePath()+":/xpra-volume","--entrypoint","/bin/ls",self.getServerSubuser().getImageId(),"-la","/xpra-volume/","/xpra-volume/tmp","/xpra-volume/xpra-home"])
       # Having preformed our clean up steps, we try again.
       self.createAndSetupSpecialVolumes()
     def mkdirs(directory):
