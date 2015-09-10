@@ -212,10 +212,10 @@ class XpraX11Bridge(Service):
         return False
       else:
         if not containerStatus["State"]["Running"]:
-          return False
-        else:
           #Clean up left over container
           container.remove(force=True)
+          return False
+        else:
           return True
     return isContainerRunning(serviceStatus["xpra-client-service-cid"]) and isContainerRunning(serviceStatus["xpra-server-service-cid"])
 
