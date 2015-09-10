@@ -65,6 +65,19 @@ Subuser - Portability, Security, Maintainability
   <center><embed id="presentationSVG" src="_static/images/subuser-website.svg" onload="redrawSlides()" width="80%"></embed></center>
   <center><button onclick="previousSlide()">&lt;--</button><button id="playPauseButton" onclick="toggleAutoplay()">Pause</button><button onclick="nextSlide()">--&gt;</button></center>
 
+The subuser vision
+------------------
+
+This is a talk I did back before subuser 0.3 came out. Back before I had the `XPRA X11 bridge working ` and before I had improved the update system to include "pull" style updates.
+
+.. raw :: html
+
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/mnZ2gWRsz8Y" frameborder="0" allowfullscreen></iframe>
+
+Howerver, the vision remains...
+
+Unfulfilled.
+
 
 Index
 -----
