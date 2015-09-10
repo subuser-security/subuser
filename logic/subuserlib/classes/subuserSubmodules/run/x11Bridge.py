@@ -147,7 +147,7 @@ class XpraX11Bridge(Service):
       os.chmod(self.getServerSideX11Path(),1023)
     except OSError as e:
       if e.errno == errno.EPERM:
-	clearAndTryAgain()
+        clearAndTryAgain()
 
   def start(self,serviceStatus):
     """
