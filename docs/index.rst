@@ -1,4 +1,3 @@
-
 Subuser - Portability, Security, Maintainability
 ================================================
 
@@ -68,7 +67,7 @@ Subuser - Portability, Security, Maintainability
 The subuser vision
 ------------------
 
-This is a talk I did back before subuser 0.3 came out. Back before I had the `XPRA X11 bridge working ` and before I had improved the update system to include "pull" style updates.
+This is a talk I did back before subuser 0.3 came out. Back before I had the :doc:`XPRA X11 bridge working <news/0.3>` and before I had improved the update system to include "pull" style updates.
 
 .. raw :: html
 
