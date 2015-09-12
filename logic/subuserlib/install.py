@@ -31,7 +31,7 @@ def installImage(imageSource,parent=None):
 
 def getImageSourceLineage(imageSource):
   """
-  Return the lineage of the ProgrmSource, going from its base dependency up to itself.
+  Return the lineage of the ImageSource, going from its base dependency up to itself.
   """
   sourceLineage = []
   while imageSource:
