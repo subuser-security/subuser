@@ -51,14 +51,12 @@ class ImageSource(UserOwnedObject,Describable):
   def getImageDir(self):
     if self.__explicitConfig:
       return self.__explicitConfig["build-context"]
-    absImageDir = os.path.join(self.getSourceDir(),"image")
     imageDir = os.path.join(self.getRelativeSourceDir(),"image")
     # If the image dir does not exist,
     # Look for the old, deprecated, docker-image dir
-    if not os.path.exists(absImageDir):
-      absImageDir = os.path.join(self.getSourceDir(),"docker-image")
+    if not self.getRepository().getFileStructure().exists(imageDir):
       imageDir = os.path.join(self.getRelativeSourceDir(),"docker-image")
-      if not os.path.exists(absImageDir):
+      if not self.getRepository().getFileStructure().exists(absImageDir):
         return None
     return imageDir
 
