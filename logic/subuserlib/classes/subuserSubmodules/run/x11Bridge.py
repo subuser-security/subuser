@@ -139,7 +139,10 @@ class XpraX11Bridge(Service):
     def mkdirs(directory):
       if os.path.exists(directory):
         clearAndTryAgain()
-      os.makedirs(directory)
+      try:
+        os.makedirs(directory)
+      except OSError as e:
+        clearAndTryAgain()
     mkdirs(self.getServerSideX11Path())
     mkdirs(self.getXpraHomeDir())
     try:
