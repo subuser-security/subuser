@@ -30,6 +30,7 @@ from subuserlib.classes.uhttpConnection import UHTTPConnection
 import subuserlib.docker
 import subuserlib.test
 from subuserlib.classes.docker.container import Container
+import subuserlib.classes.exceptions as exceptions
 
 def archiveBuildContext(archive,relativeBuildContextPath,repositoryFileStructure,excludePatterns,dockerfile=None):
   """
@@ -89,9 +90,9 @@ def readAndPrintStreamingBuildStatus(user,response):
       elif "status" in lineDict:
         user.getRegistry().log(lineDict["status"])
       elif "errorDetail" in lineDict:
-        raise ImageBuildException("Build error:"+lineDict["errorDetail"]["message"]+"\n"+response.read())
+        raise exceptions.ImageBuildException("Build error:"+lineDict["errorDetail"]["message"]+"\n"+response.read())
       else:
-        raise ImageBuildException("Build error:"+jsonSegmentBytes.decode("utf-8")+"\n"+response.read())
+        raise excpetions.ImageBuildException("Build error:"+jsonSegmentBytes.decode("utf-8")+"\n"+response.read())
       jsonSegmentBytes = b''
     except ValueError:
       pass
@@ -186,13 +187,13 @@ class DockerDaemon(UserOwnedObject):
     try:
       response = self.getConnection().getresponse()
     except httplib.ResponseNotReady as rnr:
-      raise ImageBuildException(rnr)
+      raise exceptions.ImageBuildException(rnr)
     if response.status != 200:
       if quietClient:
         response.read()
       else:
         readAndPrintStreamingBuildStatus(self.getUser(), response)
-      raise ImageBuildException("Building image failed.\n"
+      raise exceptions.ImageBuildException("Building image failed.\n"
                      +"status: "+str(response.status)+"\n"
                      +"Reason: "+response.reason+"\n")
     if quietClient:
@@ -206,7 +207,7 @@ class DockerDaemon(UserOwnedObject):
     if not match:
       match = re.search(search, outputLines[-2]) #This is REALLY ugly!
     if not match:
-      raise ImageBuildException("Unexpected server response when building image:\n"+output)
+      raise exceptions.ImageBuildException("Unexpected server response when building image:\n"+output)
     shortId = match.group(1) #This is REALLY ugly!
     return self.getImageProperties(shortId)["Id"]
 

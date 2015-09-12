@@ -12,11 +12,6 @@ import sys
 import subuserlib.classes.installedImage
 import subuserlib.verify
 
-def cleanUpAndExitOnError(user,error):
-  user.getRegistry().log(str(error))
-  user.getRegistry().log("Cleaning up.")
-  sys.exit(1)
-
 def installImage(imageSource,parent=None):
   """
   Install a image by building the given ImageSource.
@@ -36,10 +31,7 @@ def getImageSourceLineage(imageSource):
   sourceLineage = []
   while imageSource:
     sourceLineage.append(imageSource)
-    try:
-      imageSource = imageSource.getDependency()
-    except SyntaxError as syntaxError:
-      cleanUpAndExitOnError(imageSource.getUser(),"Error while building image: "+ str(syntaxError))
+    imageSource = imageSource.getDependency()
   return reversed(sourceLineage)
 
 def doImagesMatch(installedImage,imageSource):

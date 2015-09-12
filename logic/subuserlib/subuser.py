@@ -15,7 +15,7 @@ import subuserlib.resolve
 import subuserlib.classes.subuser
 import subuserlib.verify
 import subuserlib.update
-import subuserlib.classes.docker.dockerDaemon as dockerDaemon
+import subuserlib.classes.exceptions as exceptions
 
 def add(user,subuserName,imageSourceIdentifier,permissionsAccepter):
   if subuserName.startswith("!"):
@@ -34,7 +34,7 @@ def addFromImageSource(user,subuserName,imageSource,permissionsAccepter):
     addFromImageSourceNoVerify(user,subuserName,imageSource)
     subuserlib.verify.verify(user,subuserNames=[subuserName],permissionsAccepter=permissionsAccepter)
     user.getRegistry().commit()
-  except dockerDaemon.ImageBuildException as e:
+  except exceptions.ImageBuildException as e:
     print("Adding subuser failed.")
     print(str(e))
     subuserlib.update.checkoutNoCommit(user,"HEAD")

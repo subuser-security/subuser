@@ -184,10 +184,7 @@ def subuser(sysargs):
 
   This works for syntax errors.
 
-  >>> try:
-  ...   subuser.subuser(["add","--accept","broken-syntax","broken-syntax@file:///home/travis/remote-test-repo"])
-  ... except SystemExit:
-  ...   pass
+  >>> subuser.subuser(["add","--accept","broken-syntax","broken-syntax@file:///home/travis/remote-test-repo"])
   Adding subuser broken-syntax broken-syntax@file:///home/travis/remote-test-repo
   Verifying subuser configuration.
   Verifying registry consistency...
@@ -201,14 +198,13 @@ def subuser(sysargs):
   A
   Checking if images need to be updated or installed...
   Checking if subuser broken-syntax is up to date.
-  Error while building image: Error in broken-syntax's SubuserImagefile on line 0
+  Error in broken-syntax's SubuserImagefile on line 0
    Subuser image does not exist: ""
-  Cleaning up.
-
-  >>> try:
-  ...   subuser.subuser(["add","--accept","broken-non-existant-dependency","broken-non-existant-dependency@file:///home/travis/remote-test-repo"])
-  ... except SystemExit:
-  ...   pass
+  Images for the following subusers failed to build:
+  broken-syntax
+  Running garbage collector on temporary repositories...
+  >>>
+  >>> subuser.subuser(["add","--accept","broken-non-existant-dependency","broken-non-existant-dependency@file:///home/travis/remote-test-repo"])
   Adding subuser broken-non-existant-dependency broken-non-existant-dependency@file:///home/travis/remote-test-repo
   Verifying subuser configuration.
   Verifying registry consistency...
@@ -222,9 +218,20 @@ def subuser(sysargs):
   A
   Checking if images need to be updated or installed...
   Checking if subuser broken-non-existant-dependency is up to date.
-  Error while building image: Error in broken-non-existant-dependency's SubuserImagefile on line 0
+  Error in broken-non-existant-dependency's SubuserImagefile on line 0
    Subuser image does not exist: "non-existant-I-do-not-exist!!!!!"
-  Cleaning up.
+  Images for the following subusers failed to build:
+  broken-non-existant-dependency
+  Running garbage collector on temporary repositories...
+  >>> subuser.subuser(["remove","broken-syntax","broken-non-existant-dependency"])
+  Removing subuser broken-syntax
+   If you wish to remove the subusers image, issue the command $ subuser remove-old-images
+  Removing subuser broken-non-existant-dependency
+   If you wish to remove the subusers image, issue the command $ subuser remove-old-images
+  Verifying subuser configuration.
+  Verifying registry consistency...
+  Unregistering any non-existant installed images.
+  Running garbage collector on temporary repositories...
   """
   options,args = parseCliArgs(sysargs)
   try:

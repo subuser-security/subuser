@@ -14,6 +14,7 @@ from subuserlib.classes.userOwnedObject import UserOwnedObject
 from subuserlib.classes.describable import Describable
 import subuserlib.permissions
 import subuserlib.classes.docker.dockerDaemon as dockerDaemon
+import subuserlib.classes.exceptions as exceptions
 
 class ImageSource(UserOwnedObject,Describable):
   def __init__(self,user,repo,name,explicitConfig=None):
@@ -56,8 +57,8 @@ class ImageSource(UserOwnedObject,Describable):
     # Look for the old, deprecated, docker-image dir
     if not self.getRepository().getFileStructure().exists(imageDir):
       imageDir = os.path.join(self.getRelativeSourceDir(),"docker-image")
-      if not self.getRepository().getFileStructure().exists(absImageDir):
-        return None
+      if not self.getRepository().getFileStructure().exists(imageDir):
+        raise exceptions.ImageBuildException("Image source "+self.getIdentifier()+ " does not have an image dir with sources from which to build.")
     return imageDir
 
   def getSourceDir(self):
@@ -167,9 +168,9 @@ class ImageSource(UserOwnedObject,Describable):
           imageURI = line.split(" ")[1]
           return subuserlib.resolve.resolveImageSource(self.getUser(),imageURI,contextRepository=self.getRepository(),allowRefferingToRepositoriesByName=False) #TODO, ImageSource names with spaces or other funny characters...
         except IndexError:
-          raise SyntaxError("Syntax error in SubuserImagefile one line "+str(lineNumber)+":\n"+line)
+          raise exceptions.ImageBuildException("Syntax error in SubuserImagefile one line "+str(lineNumber)+":\n"+line)
         except KeyError:
-          raise SyntaxError("Error in "+self.getName()+"'s SubuserImagefile on line "+str(lineNumber)+"\n Subuser image does not exist: \""+imageURI+"\"")
+          raise exceptions.ImageBuildException("Error in "+self.getName()+"'s SubuserImagefile on line "+str(lineNumber)+"\n Subuser image does not exist: \""+imageURI+"\"")
       lineNumber+=1
     return None
 

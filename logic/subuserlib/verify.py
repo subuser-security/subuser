@@ -17,7 +17,7 @@ import shutil
 import os
 #internal imports
 import subuserlib.install
-import subuserlib.classes.docker.dockerDaemon as dockerDaemon
+import subuserlib.classes.exceptions as exceptions
 
 def verify(user,permissionsAccepter=None,checkForUpdatesExternally=False,subuserNames=[]):
   """
@@ -76,7 +76,7 @@ def ensureImagesAreInstalledAndUpToDate(user,subuserNames,checkForUpdatesExterna
       try:
         subuserlib.install.ensureSubuserImageIsInstalledAndUpToDate(subuser,checkForUpdatesExternally=checkForUpdatesExternally)
         subuser.getRunReadyImage().setup()
-      except (dockerDaemon.ImageBuildException,SyntaxError) as e:
+      except exceptions.ImageBuildException as e:
         user.getRegistry().log(str(e))
         subusersWhosImagesFailedToBuild.append(subuser)
   if subusersWhosImagesFailedToBuild:
