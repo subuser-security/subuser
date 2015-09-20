@@ -16,51 +16,35 @@ A subuser repository is a git repository.  Repositories have the following file 
 Quick packaging tutorial
 ------------------------
 
-1. Create a git repository for your own personal subuser repository:
+1. Create a directory for your own personal subuser repository:
 
 ::
   
   $ mkdir my-subuser-programs
   $ cd my-subuser-programs
-  $ git init
+  $ subuser pkg init
   
 2. Add subuser images:
 
-a. Create a folder in your subuser repository for your new subuser image and add a ``image`` subdirectory:
+::
+
+   $ subuser pkg add xterm # You will be prompted to edit the new image sources permissions and build files.
+
+3. Install your new subuser image:
 
 ::
 
-  $ mkdir my-subuser-image
-  $ cd my-subuser-image
-  $ mkdir image
+   $ subuser subuser add xterm xterm@./
 
-b. Create an `permissions.json` file. More on this later.
+4. Publish your subuser repository:
 
 ::
 
-  $ vi permissions.json
-
-c. Create a `SubuserImagefile` file. More on this later.
-
-::
-
-  $ vi image/SubuserImagefile
-
-3. Test your new image by installing it from the local folder. Note, you must specify a full path to the repository.
-
-::
-
-  $ subuser subuser add my-new-subuser my-subuser-image@/home/timothy/my-subuser-programs/
-  $ subuser run my-new-subuser
-  $ subuser subuser remove my-new-subuser
-
-4. Commit your changes.
-
-::
-
-  $ cd ..
+  $ git init
   $ git add .
   $ git commit
+  $ git remote add origin <url>
+  $ git push origin master
 
 5. If you publish your new git repository to a website such as `Gitorious <https://gitorious.org>`_, `Bitbucket <https://bitbucket.org>`_, or `Github <https://github.com>`_, others will be able to install your images with a command similar to the one bellow.
 

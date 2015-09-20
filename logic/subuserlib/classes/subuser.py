@@ -104,11 +104,7 @@ To repair your subuser installation.\n""")
     return self.__permissionsTemplate
 
   def editPermissionsCLI(self):
-    try:
-      editor = os.environ["EDITOR"]
-    except KeyError:
-      editor = "/usr/bin/nano"
-    subuserlib.subprocessExtras.call([editor,self.getPermissions().getWritePath()])
+    subuserlib.subprocessExtras.runEditor(self.getPermissions().getWritePath())
     initialPermissions = subuserlib.permissions.load(permissionsFilePath=self.getPermissionsDotJsonWritePath())
     self.__permissions = Permissions(self.getUser(),initialPermissions,writePath=self.getPermissionsDotJsonWritePath())
     self.getPermissions().save()

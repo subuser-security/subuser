@@ -41,3 +41,13 @@ def callCollectOutput(args,cwd=None):
   process = subprocess.Popen(args,stdout=subprocess.PIPE,stderr=subprocess.PIPE,cwd=cwd)
   (stdout,stderr) = process.communicate()
   return (process.returncode,stdout.decode("utf-8"))
+
+def runEditor(filePath):
+  """
+  Launch a file editor and edit the given filePath.
+  """
+  try:
+    editor = os.environ["EDITOR"]
+  except KeyError:
+    editor = "/usr/bin/nano"
+  call([editor,filePath])
