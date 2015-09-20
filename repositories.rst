@@ -22,7 +22,7 @@ The ``.subuser.json`` file
 
 Any git repository which contains a subuser repositry may contain a ``.subuser.json`` file. This file resides at the root of the git repository. A ``.subuser.json`` file is a valid JSON file consisting of a single JSON object. This object may have the following properties:
 
- * ``subuser-repository-root``: The root of the subuser repository. A relative path to the directory where the subuser image source directories are stored.
+ * ``image-sources-dir``: A relative path to the directory where the subuser image source directories are stored. This is usefull if the repository is already a git repository being used for a project related to the packaged image sources.
 
  * ``explicit-image-sources``: A dictionary of explicitly defined image sources. This is useful when you have a git repository for an application and you would like to package that application with subuser. You can explicitly set the entire repository as the image build context. This dictionary maps image source names to a JSON objects with the following values:
 
