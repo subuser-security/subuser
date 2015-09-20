@@ -7,11 +7,11 @@ This module is used to parse the image source identifiers used to identify image
 """
 
 #external imports
-#import ...
+import os
 #internal imports
 from subuserlib.classes.repository import Repository
 
-def resolveImageSource(user,imageSourcePath,contextRepository=None,allowRefferingToRepositoriesByName=True):
+def resolveImageSource(user,imageSourcePath,contextRepository=None,allowLocalRepositories=True):
   """
   From a image source identifier path return a ImageSource object.
 
@@ -58,15 +58,35 @@ def resolveImageSource(user,imageSourcePath,contextRepository=None,allowRefferin
   # "foo"
   if len(splitImageIdentifier)==1:
     repository = contextRepository
+  # "foo@./"
+  elif splitImageIdentifier[1] == "./":
+    if allowLocalRepositories:
+      repository = getRepositoryFromURIOrPath(user,os.environ["PWD"])
+    else:
+      raise Exception("Error when resolving ImageSource "+imageSourcePath+". Refering to local repositories is forbidden in this context.")
+  # "foo@/home/timothy/subuser-repo"
+  elif splitImageIdentifier[1].startswith("/"):
+    if allowLocalRepositories:
+      repository = getRepositoryFromURIOrPath(user,splitImageIdentifier[1])
+    else:
+      raise Exception("Error when resolving ImageSource "+imageSourcePath+". Refering to local repositories is forbidden in this context.")
+  # "foo@file:///home/timothy/subuser-repo"
+  elif  splitImageIdentifier[1].startswith("file:///"):
+    if allowLocalRepositories:
+      repository = getRepositoryFromURIOrPath(user,splitImageIdentifier[1])
+    else:
+      raise Exception("Error when resolving ImageSource "+imageSourcePath+". Refering to local repositories is forbidden in this context.")
+  # "foo@https://github.com/subuser-security/some-repo.git"
+  elif splitImageIdentifier[1].startswith("https://") or splitImageIdentifier[1].startswith("http://"):
+    repository = getRepositoryFromURIOrPath(user,splitImageIdentifier[1])
   # "foo@bar"
-  elif not ":" in splitImageIdentifier[1] and not splitImageIdentifier[1].startswith("/"):
-    if allowRefferingToRepositoriesByName or splitImageIdentifier[1] == "default":
+  elif not ":" in splitImageIdentifier[1] and not "/" in splitImageIdentifier[1]:
+    if allowLocalRepositories or splitImageIdentifier[1] == "default":
       repository = user.getRegistry().getRepositories()[splitImageIdentifier[1]]
     else:
       raise Exception("Error when resolving ImageSource "+imageSourcePath+". Refering to repositories by name is forbidden in this context.")
-  # "foo@https://github.com/subuser-security/some-repo.git"
   else:
-    repository = getRepositoryFromURIOrPath(user,splitImageIdentifier[1])
+    raise Exception("Error when resolving ImageSource "+imageSourcePath+".")
   try:
     return repository[imageName]
   except KeyError:

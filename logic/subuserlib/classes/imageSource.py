@@ -166,7 +166,7 @@ class ImageSource(UserOwnedObject,Describable):
         try:
           import subuserlib.resolve
           imageURI = line.split(" ")[1]
-          return subuserlib.resolve.resolveImageSource(self.getUser(),imageURI,contextRepository=self.getRepository(),allowRefferingToRepositoriesByName=False) #TODO, ImageSource names with spaces or other funny characters...
+          return subuserlib.resolve.resolveImageSource(self.getUser(),imageURI,contextRepository=self.getRepository(),allowLocalRepositories=False) #TODO, ImageSource names with spaces or other funny characters...
         except IndexError:
           raise exceptions.ImageBuildException("Syntax error in SubuserImagefile one line "+str(lineNumber)+":\n"+line)
         except KeyError:
