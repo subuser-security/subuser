@@ -62,10 +62,10 @@ class ImageSource(UserOwnedObject,Describable):
     return imageDir
 
   def getSourceDir(self):
-    return os.path.join(self.getRepository().getSubuserRepositoryRoot(),self.getName())
+    return os.path.join(self.getRepository().getImageSourcesDir(),self.getName())
 
   def getRelativeSourceDir(self):
-    return os.path.join(self.getRepository().getSubuserRepositoryRelativeRoot(),self.getName())
+    return os.path.join(self.getRepository().getRelativeImageSourcesDir(),self.getName())
 
   def getLatestInstalledImage(self):
     """

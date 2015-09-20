@@ -1,2 +1,2 @@
-{"subuser-repository-root":"images"
+{"image-sources-dir":"images"
  ,"explicit-image-sources":{"dependent":{"image-file":"./dependent/SubuserImagefile","build-context":"./dependent","permissions-file":"./dependent/permissions.json"}}}

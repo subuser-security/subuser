@@ -113,7 +113,7 @@ class Repository(dict,UserOwnedObject,Describable):
       return None
     repoConfig = json.loads(configFileContents)
     # Validate untrusted input
-    verifyPaths(repoConfig,["subuser-repository-root"])
+    verifyPaths(repoConfig,["image-sources-dir"])
     if "explicit-image-sources" in repoConfig:
       for explicitImageSource in repoConfig["explicit-image-sources"]:
         verifyPaths(explicitImageSource,["image-file","permissions-file","build-context"])
@@ -122,19 +122,19 @@ class Repository(dict,UserOwnedObject,Describable):
   def getRepoConfig(self):
     return self.__repoConfig
 
-  def getSubuserRepositoryRoot(self):
+  def getImageSourcesDir(self):
     """
     Get the path of the repo's subuser root on disk on the host.
     """
-    return os.path.join(self.getRepoPath(),self.getSubuserRepositoryRelativeRoot())
+    return os.path.join(self.getRepoPath(),self.getRelativeImageSourcesDir())
 
-  def getSubuserRepositoryRelativeRoot(self):
+  def getRelativeImageSourcesDir(self):
     """
     Get the path of the repo's subuser root on disk on the host.
     """
     repoConfig = self.getRepoConfig()
-    if repoConfig and "subuser-repository-root" in repoConfig:
-      return repoConfig["subuser-repository-root"]
+    if repoConfig and "image-sources-dir" in repoConfig:
+      return repoConfig["image-sources-dir"]
     else:
       return "./"
 
@@ -176,7 +176,7 @@ class Repository(dict,UserOwnedObject,Describable):
     """
     Load ImageSources from disk into memory.
     """
-    imageNames = self.getFileStructure().lsFolders(self.getSubuserRepositoryRelativeRoot())
+    imageNames = self.getFileStructure().lsFolders(self.getRelativeImageSourcesDir())
     imageNames = [os.path.basename(path) for path in imageNames]
     for imageName in imageNames:
       self[imageName] = ImageSource(self.getUser(),self,imageName)
