@@ -96,6 +96,8 @@ def lookupRepositoryByURI(user,uri):
   """
   If a repository with this URI exists, return that repository.  Otherwise, return None.
   """
+  if uri == "./":
+    uri = os.environ["PWD"]
   for _,repository in user.getRegistry().getRepositories().items():
     if uri == repository.getURI():
       return repository
