@@ -21,7 +21,6 @@ defaults = {
  # Conservative permissions
   "description": ""
  ,"maintainer": ""
- ,"last-update-time": None
  ,"executable": None
  ,"basic-common-permissions": False
  ,"stateful-home": False

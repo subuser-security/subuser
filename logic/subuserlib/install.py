@@ -58,7 +58,7 @@ def compareSourceLineageAndInstalledImageLineage(user,sourceLineage,installedIma
       if not imagesMatch:
         user.getRegistry().log("Dependency changed for image from "+installedImage.getImageSourceName()+"@"+installedImage.getSourceRepoId()+" to "+imageSource.getName()+"@"+imageSource.getRepository().getName())
       elif not imageSourceHashesMatch:
-        user.getRegistry().log("Installed image "+installedImage.getImageSourceName()+"@"+installedImage.getSourceRepoId()+" is out of date.\nCurrently installed from image source:\n "+installedImage.getImageSourceHash()+"\nCurrent version:\n "+str(imageSource.getPermissions()["last-update-time"])+"\n")
+        user.getRegistry().log("Installed image "+installedImage.getImageSourceName()+"@"+installedImage.getSourceRepoId()+" is out of date.\nCurrently installed from image source:\n "+installedImage.getImageSourceHash())
       return False
   return True
 
