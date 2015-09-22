@@ -56,7 +56,8 @@ def pkg(realArgs):
         repoConfig["image-sources-dir"] = options.imageSourcesDir
       with open("./.subuser.json","w") as subuserDotJson:
         json.dump(repoConfig,subuserDotJson)
-        os.makedirs(options.imageSourcesDir)
+        if options.imageSourcesDir:
+          os.makedirs(options.imageSourcesDir)
       print("Subuser repository initialized successfully!")
       print("You can add new image sources with:")
       print("$ subuser pkg add image-source-name")
