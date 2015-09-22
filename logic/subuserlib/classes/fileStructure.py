@@ -55,6 +55,13 @@ class FileStructure():
     pass
 
   @abc.abstractmethod
+  def readBinary(self,path):
+    """
+    Returns the contents of the given file.
+    """
+    pass
+
+  @abc.abstractmethod
   def getMode(self,path):
     pass
 
@@ -96,7 +103,7 @@ class FileStructure():
     def hashFile(path):
       SHAhash.update(path.encode("utf-8"))
       SHAhash.update(self.getModeString(path).encode("utf-8"))
-      SHAhash.update(self.read(path).encode("utf-8"))
+      SHAhash.update(self.readBinary(path))
     def hashDir(path):
       # Hash subdirectories
       subdirs = self.lsFolders(path)
@@ -186,6 +193,17 @@ class BasicFileStructure(FileStructure):
     <BLANKLINE>
     """
     with open(self.getPathInStructure(path),"r") as fd:
+      return fd.read()
+
+  def readBinary(self,path):
+    """
+    >>> from subuserlib.classes.fileStructure import FileStructure
+    >>> fileStructure = BasicFileStructure("/home/travis/hashtest")
+    >>> print(fileStructure.read("./blah"))
+    blahblah
+    <BLANKLINE>
+    """
+    with open(self.getPathInStructure(path),"rb") as fd:
       return fd.read()
 
   def getMode(self,path):

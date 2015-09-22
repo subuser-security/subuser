@@ -186,6 +186,9 @@ class GitFileStructure(FileStructure):
       raise OSError("Git show exited with error "+str(errorcode)+". File does not exist.\nPath: "+path+"\nCommit: "+self.getCommit()+"\n")
     return content
 
+  def readBinary(self,path):
+    return self.read(path).encode()
+
   def getMode(self,path):
     """
     >>> from subuserlib.classes.gitRepository import GitRepository
