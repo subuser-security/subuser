@@ -1,2 +1,2 @@
 {"image-sources-dir":"images"
- ,"explicit-image-sources":{"dependent":{"image-file":"./dependent/SubuserImagefile","build-context":"./dependent","permissions-file":"./dependent/permissions.json"}}}
+ ,"explicit-image-sources":{"dependent":{"image-file":"./dependent/image-dir/SubuserImagefile","build-context":"./dependent/image-dir","permissions-file":"./dependent/permissions.json"}}}
