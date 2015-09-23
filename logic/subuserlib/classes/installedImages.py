@@ -50,10 +50,7 @@ class InstalledImages(dict,UserOwnedObject,FileBackedObject):
         imageSourceHash=imageSourceHash)
       self[imageId]=image
 
-  def save(self):
-    """
-    Save attributes of the installed images to disk.
-    """
+  def serializeToDict(self):
     # Build a dictionary of installed images.
     installedImagesDict = {}
     for _,installedImage in self.items():
@@ -62,10 +59,16 @@ class InstalledImages(dict,UserOwnedObject,FileBackedObject):
       imageAttributes["image-source"] = installedImage.getImageSourceName()
       imageAttributes["source-repo"] = installedImage.getSourceRepoId()
       installedImagesDict[installedImage.getImageId()] = imageAttributes
+    return installedImagesDict
+
+  def save(self):
+    """
+    Save attributes of the installed images to disk.
+    """
     # Write that dictionary to disk.
     installedImagesPath = self.getUser().getConfig()["installed-images-list"]
     with open(installedImagesPath, 'w') as file_f:
-      json.dump(installedImagesDict, file_f, indent=1, separators=(',', ': '))
+      json.dump(self.serializeToDict(), file_f, indent=1, separators=(',', ': '))
 
   def unregisterNonExistantImages(self):
     """

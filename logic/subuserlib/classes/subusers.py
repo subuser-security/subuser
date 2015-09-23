@@ -67,12 +67,10 @@ class Subusers(dict,UserOwnedObject,FileBackedObject):
       serializedUnlockedSubusersDict = json.loads(registryFileStructure.read("subusers.json"), object_pairs_hook=collections.OrderedDict)
       self._loadSerializedSubusersDict(serializedUnlockedSubusersDict,locked=False)
 
-  def save(self):
-    """
-    Save the list of subusers to disk.
-    """
-    serializedUnlockedSubusersDict = {}
-    serializedLockedSubusersDict = {}
+  def serializeToDict(self):
+    serializedDict={}
+    serializedDict["locked"]={}
+    serializedDict["unlocked"]={}
     for subuserName,subuser in self.items():
       serializedSubuser = {}
       serializedSubuser["source-repo"] = subuser.getImageSource().getRepository().getName()
@@ -81,17 +79,24 @@ class Subusers(dict,UserOwnedObject,FileBackedObject):
       serializedSubuser["docker-image"] = subuser.getImageId()
       serializedSubuser["service-subusers"] = subuser.getServiceSubuserNames()
       if subuser.locked():
-        serializedLockedSubusersDict[subuserName] = serializedSubuser
+        serializedDict["locked"][subuserName] = serializedSubuser
       else:
-        serializedUnlockedSubusersDict[subuserName] = serializedSubuser
+        serializedDict["unlocked"][subuserName] = serializedSubuser
+    return serializedDict
+
+  def save(self):
+    """
+    Save the list of subusers to disk.
+    """
+    serializedDict = self.serializeToDict()
     with open(os.path.join(self.getUser().getConfig()["registry-dir"],"subusers.json"), 'w') as file_f:
-      json.dump(serializedUnlockedSubusersDict, file_f, indent=1, separators=(',', ': '))
+      json.dump(serializedDict["unlocked"], file_f, indent=1, separators=(',', ': '))
     with open(os.path.join(self.getUser().getConfig()["locked-subusers-path"]), 'w') as file_f:
-      json.dump(serializedLockedSubusersDict, file_f, indent=1, separators=(',', ': '))
+      json.dump(serializedDict["locked"], file_f, indent=1, separators=(',', ': '))
 
   def _loadSerializedSubusersDict(self,serializedSubusersDict,locked):
     """
-    Load the serialzed subusers json file into memory.
+    Load the serialized subusers json file into memory.
     """
     for subuserName, subuserAttributes in serializedSubusersDict.items():
       if not subuserAttributes["source-repo"] in self.getUser().getRegistry().getRepositories():

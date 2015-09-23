@@ -10,6 +10,7 @@ except ImportError:
 import sys
 import os
 import optparse
+import json
 #internal imports
 import subuserlib.classes.user
 import subuserlib.commandLineArguments
@@ -35,6 +36,7 @@ def parseCliArgs(sysargs):
 """
   parser=optparse.OptionParser(usage=usage,description=description,formatter=subuserlib.commandLineArguments.HelpFormatterThatDoesntReformatDescription())
   parser.add_option("--short",dest="short",action="store_true",default=False,help="Only display the names of the images to be listed, and no other information.")
+  parser.add_option("--json",dest="json",action="store_true",default=False,help="Display results in JSON format.")
   parser.add_option("--internal",dest="internal",action="store_true",default=False,help="Include internal subusers in the list. These are subusers which are automatically created and used by subuser internally.")
   parser.add_option("--broken",dest="broken",action="store_true",default=False,help="When listing installed images with the --short option, list the Ids of broken/orphaned images. Otherwise has no effect. Without this option, broken/orphaned images are simply not listed in the --short mode.")
   return parser.parse_args(args=sysargs)
@@ -103,8 +105,20 @@ def list(sysargs):
   if len(args)==0:
     sys.exit("Nothing to list. Issue this command with the -h argument for help.")
   user = subuserlib.classes.user.User()
-  if 'available' in args:
-    for repoName,repository in user.getRegistry().getRepositories().items():
+  if args[0] == 'available':
+    if len(args) > 1:
+      reposToList = args[1:]
+    else:
+      reposToList = user.getRegistry().getRepositories().keys()
+    if options.json:
+      availableDict = {}
+      for repoName in reposToList:
+        repository = user.getRegistry().getRepositories()[repoName]
+        availableDict[repoName] = repository.serializeToDict()
+      print(json.dumps(availableDict,indent=1,separators=(",",": ")))
+      sys.exit()
+    for repoName in reposToList:
+      repository = user.getRegistry().getRepositories()[repoName]
       if not options.short:
         print("Images available for instalation from the repo: " + repoName)
       for _,imageSource in repository.items():
@@ -112,7 +126,10 @@ def list(sysargs):
           print(imageSource.getIdentifier())
         else:
           imageSource.describe()
-  if 'subusers' in args:
+  elif args[0] == 'subusers':
+    if options.json:
+      print(json.dumps(user.getRegistry().getSubusers().serializeToDict(),indent=1,separators=(",",": ")))
+      sys.exit()
     if not options.short:
       print("The following subusers are registered.")
     for name,subuser in user.getRegistry().getSubusers().items():
@@ -121,7 +138,10 @@ def list(sysargs):
           print(name)
         else:
           subuser.describe()
-  if 'installed-images' in args:
+  elif args[0] == 'installed-images':
+    if options.json:
+      print(json.dumps(user.getInstalledImages().serializeToDict(),indent=1,separators=(",",": ")))
+      sys.exit()
     if not options.short:
       print("The following images are installed.")
     for id,installedImage in user.getInstalledImages().items():
@@ -136,7 +156,10 @@ def list(sysargs):
       else:
         print("------------------")
         installedImage.describe()
-  if 'repositories' in args:
+  elif args[0] == 'repositories':
+    if options.json:
+      print(json.dumps(user.getRegistry().getRepositories().serializeToDict(),indent=1,separators=(",",": ")))
+      sys.exit()
     for name,repo in user.getRegistry().getRepositories().items():
       if options.short:
         print(repo.getDisplayName())

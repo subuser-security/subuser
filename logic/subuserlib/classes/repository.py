@@ -172,6 +172,15 @@ class Repository(dict,UserOwnedObject,Describable):
       if not initialUpdate:
         self.loadImageSources()
 
+  def serializeToDict(self):
+    """
+    Return a dictionary which describes the image sources available in this repository.
+    """
+    imageSourcesDict = {}
+    for name,imageSource in self.items():
+      imageSourcesDict[name] = {}
+    return imageSourcesDict
+
   def loadImageSources(self):
     """
     Load ImageSources from disk into memory.

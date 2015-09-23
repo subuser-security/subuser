@@ -110,29 +110,46 @@ class Repositories(collections.Mapping,UserOwnedObject,FileBackedObject):
       self.getUser().getRegistry().logChange("Removing temporary repository "+self[name].getDisplayName())
     del self.userRepositories[name]
 
+  def serializeToDict(self):
+    """
+    Note: The save method serializes only that which needs to be saved. Not the entire repositories list. This returns a complete dictionary including system repositories and their states.
+    """
+    repositories = {}
+    repositories.update(self.serializeRepositoriesToDict(self.userRepositories))
+    repositories.update(self.serializeRepositoriesToDict(self.systemRepositories))
+    for repoName,repositoryState in self.serializeRepositoryStatesToDict().items():
+      repositories[repoName].update(repositoryState)
+    return repositories
+
+  def serializeRepositoriesToDict(self,repositories):
+    repositoryListDict = {}
+    for name,repository in repositories.items():
+      repositoryListDict[name] = {}
+      if repository.getGitOriginURI():
+        repositoryListDict[name]["git-origin"] = repository.getGitOriginURI()
+      else:
+        repositoryListDict[name]["source-dir"] = repository.getRepoPath()
+      repositoryListDict[name]["temporary"] = repository.isTemporary()
+    return repositoryListDict
+
+  def serializeRepositoryStatesToDict(self):
+    repositoryStates = {}
+    for repoName,repository in self.items():
+      repositoryStates[repoName] = {}
+      repositoryStates[repoName]["git-commit-hash"] = repository.getGitCommitHash()
+    return repositoryStates
+
   def save(self):
     """
     Save attributes of the repositories to disk.
 
     Note: This is done automatically for you when you ``commit()`` the registry.
     """
-    userRepositoryListDict = {}
-    for name,repository in self.userRepositories.items():
-      userRepositoryListDict[name] = {}
-      if repository.getGitOriginURI():
-        userRepositoryListDict[name]["git-origin"] = repository.getGitOriginURI()
-      else:
-        userRepositoryListDict[name]["source-dir"] = repository.getRepoPath()
-      userRepositoryListDict[name]["temporary"] = repository.isTemporary()
     with open(self.userRepositoryListPath, 'w') as file_f:
-      json.dump(userRepositoryListDict, file_f, indent=1, separators=(',', ': '))
+      json.dump(self.serializeRepositoriesToDict(self.userRepositories), file_f, indent=1, separators=(',', ': '))
     repositoryStatesDotJsonPath = os.path.join(self.getUser().getConfig()["registry-dir"],"repository-states.json")
-    repositoryStates = {}
-    for repoName,repository in self.items():
-      repositoryStates[repoName] = {}
-      repositoryStates[repoName]["git-commit-hash"] = repository.getGitCommitHash()
     with open(repositoryStatesDotJsonPath,mode="w") as repositoryStatesDotJsonFile:
-      json.dump(repositoryStates,repositoryStatesDotJsonFile, indent=1, separators=(',', ': '))
+      json.dump(self.serializeRepositoryStatesToDict(),repositoryStatesDotJsonFile, indent=1, separators=(',', ': '))
 
   def getNewUniqueTempRepoId(self):
     """
