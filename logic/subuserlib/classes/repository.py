@@ -188,7 +188,9 @@ class Repository(dict,UserOwnedObject,Describable):
     imageNames = self.getFileStructure().lsFolders(self.getRelativeImageSourcesDir())
     imageNames = [os.path.basename(path) for path in imageNames]
     for imageName in imageNames:
-      self[imageName] = ImageSource(self.getUser(),self,imageName)
+      imageSource = ImageSource(self.getUser(),self,imageName)
+      if self.getFileStructure().exists(imageSource.getRelativePermissionsFilePath()):
+        self[imageName] = imageSource
     if self.getRepoConfig() is not None and "explicit-image-sources" in self.getRepoConfig():
       for imageName,config in self.getRepoConfig()["explicit-image-sources"].items():
         assert config is not None
