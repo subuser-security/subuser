@@ -142,6 +142,8 @@ class XpraX11Bridge(Service):
       except OSError as e:
         if e.errno == errno.EEXIST:
           clearAndTryAgain()
+        else:
+          raise e
     mkdirs(self.getServerSideX11Path())
     mkdirs(self.getXpraHomeDir())
     try:
