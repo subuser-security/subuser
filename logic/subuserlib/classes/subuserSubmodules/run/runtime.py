@@ -68,9 +68,10 @@ $ subuser repair
     if self.getBackground():
       return common + ["--cidfile",self.getCidFile()]
     else:
-      return common + [
-        "-i",
-        "-t"]
+      if sys.stdout.isatty() and sys.stdin.isatty():
+        return common + ["-i","-t"]
+      else:
+        return common + ["-i"]
 
   def passOnEnvVar(self,envVar):
     """
