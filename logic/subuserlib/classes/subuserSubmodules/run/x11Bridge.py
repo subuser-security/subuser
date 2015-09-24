@@ -133,22 +133,20 @@ class XpraX11Bridge(Service):
       # Unfortunately, the X11 socket will be owned by root.
       # So we cannot do the clean up as a normal user.
       # Fortunately, being a member of the docker group is the same as having root access.
-      self.getUser().getDockerDaemon().execute(["run","--rm","--volume",self.getXpraVolumePath()+":/xpra-volume","--entrypoint","/bin/rm",self.getServerSubuser().getImageId(),"-rf","/xpra-volume/tmp","/xpra-volume/xpra-home"])
+      self.getUser().getDockerDaemon().execute(["run","--rm","--volume",os.path.join(self.getUser().getConfig()["volumes-dir"],"xpra")+":/xpra-volume","--entrypoint","/bin/rm",self.getServerSubuser().getImageId(),"-rf",os.path.join("/xpra-volume/",self.getSubuser().getName())])
       # Having preformed our clean up steps, we try again.
       self.createAndSetupSpecialVolumes()
     def mkdirs(directory):
       if os.path.exists(directory):
         clearAndTryAgain()
-      try:
-        os.makedirs(directory)
-      except OSError as e:
-        clearAndTryAgain()
+      os.makedirs(directory)
     mkdirs(self.getServerSideX11Path())
     mkdirs(self.getXpraHomeDir())
     try:
       os.chmod(self.getServerSideX11Path(),1023)
     except OSError as e:
       if e.errno == errno.EPERM:
+        print("X11 bridge perm error, clearing a trying again.")
         clearAndTryAgain()
 
   def start(self,serviceStatus):
