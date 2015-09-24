@@ -137,9 +137,11 @@ class XpraX11Bridge(Service):
       # Having preformed our clean up steps, we try again.
       self.createAndSetupSpecialVolumes()
     def mkdirs(directory):
-      if os.path.exists(directory):
-        clearAndTryAgain()
-      os.makedirs(directory)
+      try:
+        os.makedirs(directory)
+      except OSError as e:
+        if e.errno == errno.EEXIST:
+          clearAndTryAgain()
     mkdirs(self.getServerSideX11Path())
     mkdirs(self.getXpraHomeDir())
     try:
