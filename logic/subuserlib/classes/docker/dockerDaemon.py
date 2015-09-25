@@ -211,6 +211,18 @@ class DockerDaemon(UserOwnedObject):
     shortId = match.group(1) #This is REALLY ugly!
     return self.getImageProperties(shortId)["Id"]
 
+  def getInfo(self):
+    """
+    Returns a dictionary of version info about the running Docker daemon.
+    """
+    self.getConnection().request("GET","/v1.13/info")
+    response = self.getConnection().getresponse()
+    if not response.status == 200:
+      response.read() # Read the response and discard it to prevent the server from getting locked up: http://stackoverflow.com/questions/3231543/python-httplib-responsenotready
+      return None
+    else:
+      return json.loads(response.read().decode("utf-8"))
+
   def execute(self,args,cwd=None,background=False,backgroundSuppressOutput=True):
     """
     Execute the docker client.

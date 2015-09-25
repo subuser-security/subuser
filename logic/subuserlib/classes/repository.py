@@ -204,10 +204,7 @@ class Repository(dict,UserOwnedObject,Describable):
     """
     if self.isLocal():
       return None
-    (returncode,output) = self.getGitRepository().runCollectOutput(["show-ref","-s","--head"])
-    if returncode != 0:
-      raise OSError("Running git in "+self.getGitRepository().getPath()+" with args "+str(["show-ref","-s","--head"])+" failed.")
-    newCommitHash = output.split("\n")[0]
+    newCommitHash = self.getGitRepository().getHashOfHead()
     updated = not newCommitHash == self.__lastGitCommitHash
     self.__lastGitCommitHash = newCommitHash
     self.__fileStructure = None

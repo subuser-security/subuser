@@ -58,6 +58,13 @@ class GitRepository():
     """
     self.run(["checkout",commit]+files)
 
+  def getHashOfHead(self):
+    command = ["show-ref","-s","--head"]
+    (returncode,output) = self.runCollectOutput(command)
+    if returncode != 0:
+      raise OSError("Running git in "+self.getPath()+" with args "+str(command)+" failed.")
+    return output.split("\n")[0]
+
 class GitFileStructure(FileStructure):
   def __init__(self,gitRepository,commit):
     """
