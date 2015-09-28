@@ -64,6 +64,8 @@ def update(realArgs):
   **Setup:**
 
   >>> import os
+  >>> import subuserlib.permissions
+  >>> from subuserlib.classes.permissions import Permissions
   >>> update = __import__("subuser-update")
   >>> subuser = __import__("subuser-subuser")
   >>> repository = __import__("subuser-repository")
@@ -173,12 +175,17 @@ def update(realArgs):
 
   However, if we change ``dependent``'s image source's permissions, the user is asked to approve the new permissions:
 
-  >>> permissions = user.getRegistry().getRepositories()[u'1']["dependent"].getPermissions()
+  >>> permissionsPath = "/home/travis/remote-test-repo/dependent/permissions.json"
+  >>> permissions = Permissions(user,subuserlib.permissions.load(permissionsFilePath=permissionsPath),writePath=permissionsPath)
   >>> del permissions["sound-card"]
   >>> permissions["user-dirs"] = ["Images","Downloads"]
   >>> permissions.save()
 
-  >>> repo1 = subuserlib.classes.gitRepository.GitRepository(user.getRegistry().getRepositories()[u'1'].getRepoPath())
+  >>> try:
+  ...   import urlparse
+  ... except ImportError:
+  ...   import urllib.parse as urlparse
+  >>> repo1 = subuserlib.classes.gitRepository.GitRepository("/home/travis/remote-test-repo/")
   >>> repo1.run(["commit","-a","-m","changed dependent's permissions"])
   0
 
@@ -207,7 +214,7 @@ def update(realArgs):
 
   Now we change the ImageSource for the ``intermediary`` image.
 
-  >>> with open("/home/travis/test-home/.subuser/repositories/1/images/intermediary/image/SubuserImagefile",mode="w") as subuserImagefile:
+  >>> with open("/home/travis/remote-test-repo/images/intermediary/image/SubuserImagefile",mode="w") as subuserImagefile:
   ...   _ = subuserImagefile.write("FROM-SUBUSER-IMAGE dependency2")
 
   And commit the changes to git.
@@ -275,7 +282,7 @@ def update(realArgs):
   Unregistering any non-existant installed images.
   Running garbage collector on temporary repositories...
 
-  >>> with open("/home/travis/test-home/.subuser/repositories/1/images/intermediary/image/SubuserImagefile",mode="w") as subuserImagefile:
+  >>> with open("/home/travis/remote-test-repo/images/intermediary/image/SubuserImagefile",mode="w") as subuserImagefile:
   ...   _ = subuserImagefile.write("FROM-SUBUSER-IMAGE dependency3")
 
   And commit the changes to git.
