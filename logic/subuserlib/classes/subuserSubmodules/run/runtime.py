@@ -89,7 +89,10 @@ $ subuser repair
       soundArgs += ["--device=/dev/snd/"+device for device in os.listdir("/dev/snd") if not device == "by-id" and not device == "by-path"]
     if os.path.exists("/dev/dsp"):
       soundArgs += ["--volume=/dev/dsp:/dev/dsp"]
-      soundArgs += ["--device=/dev/dsp/"+device for device in os.listdir("/dev/dsp")]
+      if os.path.isdir('/dev/dsp'):
+        soundArgs += ["--device=/dev/dsp/"+device for device in os.listdir("/dev/dsp")]
+      else:
+        soundArgs += ["--device=/dev/dsp"]
     return soundArgs
 
   def getPermissionFlagDict(self):
