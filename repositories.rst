@@ -42,3 +42,18 @@ Any git repository which contains a subuser repositry may contain a ``.subuser.j
       {"freecad":{"image-file":"./subuser/SubuserImagefile"
                  ,"build-context":"./"
                  ,"permissions-file":"./subuser/permissions.json"}}}
+
+   - ``subuser-version-constraints``: This is a list of lists mapping subuser versions to the repositories git commits/branches. Each sublist has three elements: a comparison operator, a version, and a git commit or branch. The list is processed from start to end. The first mapping which applies to the current subuser version is used. Therefore, order of this list is significant.
+
+   When reading ``.subuser.json`` subuser first reads the ``.subuser.json`` file found at ``master`` and subsiquently interacts with the proper branch or commit based on the ``subuser-version-constraints``. After the switch, it re-reads ``.subuser.json``.
+
+   Example::
+
+    {"subuser-version-constraints":
+      [[">=","0.7","latest"]
+      ,[">=","0.6","subuser-0.6"]
+      ,["<","0.6","35d670fc80a11d3029a049f754c99969b9477b09"]]}
+
+   In this example, versions of subuser from ``0.7`` onward will use ``latest``. Between 0.6 and 0.7 the ``subuser-0.6`` branch will be used. Earlier versions of subuser will use the specified commit. The default is master and subuser versions before 0.4 do not read ``subuser-version-constraints``, so in reality, in this example subuser versions up till ``0.4`` will use the ``master`` branch.
+
+   The version comparison operators are: ``<``, ``<=``, ``==``, ``>=``, and ``>``.
