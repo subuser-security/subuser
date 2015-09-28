@@ -156,7 +156,6 @@ class Repositories(collections.Mapping,UserOwnedObject,FileBackedObject):
     Return a new, unique, identifier for a temporary repository.  This function is useful when creating new temporary repositories.
     """
     idAsInt=0
-    for _,repo in self.items():
-      if repo.getName() == str(idAsInt) or os.path.exists(os.path.join(self.getUser().getConfig()["repositories-dir"],str(idAsInt))):
-        idAsInt = idAsInt + 1
+    while str(idAsInt) in self or os.path.exists(os.path.join(self.getUser().getConfig()["repositories-dir"],str(idAsInt))):
+      idAsInt = idAsInt + 1
     return str(idAsInt)
