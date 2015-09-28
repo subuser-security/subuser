@@ -94,6 +94,7 @@ import subuserlib.resolve
 import subuserlib.permissions
 # commands
 list = __import__("subuser-list")
+version = __import__("subuser-version")
 describe = __import__("subuser-describe")
 repository = __import__("subuser-repository")
 subuser = __import__("subuser-subuser")
@@ -112,6 +113,7 @@ modules = [
   # subuser commands
   ,dry_run
   ,list
+  ,version
   ,describe
   ,print_dependency_info
   ,remove_old_images

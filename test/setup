@@ -13,6 +13,20 @@ cd /home/travis/default-test-repo
 git init
 git add .
 git commit -m 'test'
+cp -r $1/test/version-constrained-test-repo/ /home/travis/version-constrained-test-repo
+cd /home/travis/version-constrained-test-repo
+git init
+git add .
+git commit -m 'test'
+git checkout -b subuser-0.5
+echo {} > .subuser.json
+git mv bip bop
+git add .
+git commit -m 'change bip to bop'
+git checkout master
+git mv bip baz
+bit add .
+git commit -m 'change bop to baz'
 cp -r  $1/test/local-test-repo /home/travis/local-test-repo
 cp -r $1/test/hashtest/ /home/travis/hashtest/
 echo User is $USER id $UID

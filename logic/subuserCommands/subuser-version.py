@@ -23,6 +23,13 @@ def parseCliArgs(realArgs):
   return parser.parse_args(args=realArgs)
 
 def printVersion(realArgs):
+  """
+  >>> version = __import__("subuser-version") #import self
+  >>> version.printVersion([])
+  Subuser version: 0.5
+  Docker info:
+   Foo: bar
+  """
   (options,args) = parseCliArgs(realArgs)
   if options.json:
     print(json.dumps(subuserlib.version.getInfo(),indent=1,separators=(",",": ")))

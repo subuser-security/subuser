@@ -66,6 +66,9 @@ class MockDockerDaemon(UserOwnedObject):
     del self.images[imageId]
     self.__save()
 
+  def getInfo(self):
+    return {"Foo":"bar"}
+
   def execute(self,args,cwd=None):
     pass
 

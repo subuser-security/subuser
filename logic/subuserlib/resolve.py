@@ -58,39 +58,43 @@ def resolveImageSource(user,imageSourcePath,contextRepository=None,allowLocalRep
   # "foo"
   if len(splitImageIdentifier)==1:
     repository = contextRepository
-  # "foo@./"
-  elif splitImageIdentifier[1] == "./":
-    if allowLocalRepositories:
-      repository = getRepositoryFromURIOrPath(user,os.environ["PWD"])
-    else:
-      raise Exception("Error when resolving ImageSource "+imageSourcePath+". Refering to local repositories is forbidden in this context.")
-  # "foo@/home/timothy/subuser-repo"
-  elif splitImageIdentifier[1].startswith("/"):
-    if allowLocalRepositories:
-      repository = getRepositoryFromURIOrPath(user,splitImageIdentifier[1])
-    else:
-      raise Exception("Error when resolving ImageSource "+imageSourcePath+". Refering to local repositories is forbidden in this context.")
-  # "foo@file:///home/timothy/subuser-repo"
-  elif  splitImageIdentifier[1].startswith("file:///"):
-    if allowLocalRepositories:
-      repository = getRepositoryFromURIOrPath(user,splitImageIdentifier[1])
-    else:
-      raise Exception("Error when resolving ImageSource "+imageSourcePath+". Refering to local repositories is forbidden in this context.")
-  # "foo@https://github.com/subuser-security/some-repo.git"
-  elif splitImageIdentifier[1].startswith("https://") or splitImageIdentifier[1].startswith("http://"):
-    repository = getRepositoryFromURIOrPath(user,splitImageIdentifier[1])
-  # "foo@bar"
-  elif not ":" in splitImageIdentifier[1] and not "/" in splitImageIdentifier[1]:
-    if allowLocalRepositories or splitImageIdentifier[1] == "default":
-      repository = user.getRegistry().getRepositories()[splitImageIdentifier[1]]
-    else:
-      raise Exception("Error when resolving ImageSource "+imageSourcePath+". Refering to repositories by name is forbidden in this context.")
   else:
-    raise Exception("Error when resolving ImageSource "+imageSourcePath+".")
+    repository = resolveRepository(user,splitImageIdentifier[1],allowLocalRepositories=allowLocalRepositories)
   try:
     return repository[imageName]
   except KeyError:
     raise KeyError(imageName + " could not be found in the repository. The following images exist in the repository: \"" + "\" \"".join(repository.keys())+"\"")
+
+def resolveRepository(user,repoIdentifier,allowLocalRepositories=True):
+  # "./"
+  if repoIdentifier == "./":
+    if allowLocalRepositories:
+      return getRepositoryFromURIOrPath(user,os.environ["PWD"])
+    else:
+      raise Exception("Error when resolving ImageSource "+imageSourcePath+". Refering to local repositories is forbidden in this context.")
+  # "/home/timothy/subuser-repo"
+  elif repoIdentifier.startswith("/"):
+    if allowLocalRepositories:
+      return getRepositoryFromURIOrPath(user,repoIdentifier)
+    else:
+      raise Exception("Error when resolving ImageSource "+imageSourcePath+". Refering to local repositories is forbidden in this context.")
+  # "file:///home/timothy/subuser-repo"
+  elif repoIdentifier.startswith("file:///"):
+    if allowLocalRepositories:
+      return getRepositoryFromURIOrPath(user,repoIdentifier)
+    else:
+      raise Exception("Error when resolving ImageSource "+imageSourcePath+". Refering to local repositories is forbidden in this context.")
+  # "https://github.com/subuser-security/some-repo.git"
+  elif repoIdentifier.startswith("https://") or repoIdentifier.startswith("http://"):
+    return getRepositoryFromURIOrPath(user,repoIdentifier)
+  # "bar"
+  elif not ":" in repoIdentifier and not "/" in repoIdentifier:
+    if allowLocalRepositories or repoIdentifier == "default":
+      return user.getRegistry().getRepositories()[repoIdentifier]
+    else:
+      raise Exception("Error when resolving ImageSource "+imageSourcePath+". Refering to repositories by name is forbidden in this context.")
+  else:
+    raise Exception("Error when resolving ImageSource "+imageSourcePath+".")
 
 def lookupRepositoryByURI(user,uri):
   """

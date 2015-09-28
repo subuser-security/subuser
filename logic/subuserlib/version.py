@@ -13,6 +13,7 @@ import subuserlib.subprocessExtras as subprocessExtras
 import subuserlib.paths
 from subuserlib.classes.gitRepository import GitRepository
 from subuserlib.classes.docker.dockerDaemon import DockerDaemon
+import subuserlib.test
 
 def getInfo():
   info = {}
@@ -21,11 +22,13 @@ def getInfo():
   return info
 
 def getSubuserVersion():
+  if subuserlib.test.testing:
+    return "0.5"
   with open(subuserlib.paths.getSubuserDataFile("VERSION")) as f:
     stableVersion = f.read().strip()
   if os.path.exists(os.path.join(subuserlib.paths.getSubuserDir(),".git")):
     gitRepo = GitRepository(subuserlib.paths.getSubuserDir())
-    gitHash = gitRepo.getHashOfHead()
+    gitHash = gitRepo.getHashOfRef("HEAD")
     return stableVersion+"-dev-"+gitHash
   else:
     return stableVersion

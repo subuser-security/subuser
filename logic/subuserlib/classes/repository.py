@@ -204,7 +204,36 @@ class Repository(dict,UserOwnedObject,Describable):
     """
     if self.isLocal():
       return None
-    newCommitHash = self.getGitRepository().getHashOfHead()
+    # Default
+    newCommitHash = self.getGitRepository().getHashOfRef("refs/remotes/origin/master")
+    # First we check for version constraints on the repository.
+    if self.getGitRepository().getFileStructureAtCommit("master").exists("./.subuser.json"):
+      configFileContents = self.getGitRepository().getFileStructureAtCommit("master").read("./.subuser.json")
+      configAtMaster = json.loads(configFileContents)
+      if "subuser-version-constraints" in configAtMaster:
+        versionConstraints = configAtMaster["subuser-version-constraints"]
+        subuserVersion = subuserlib.version.getSubuserVersion()
+        for constraint in versionConstraints:
+          if not len(constraint) == 3:
+            raise SyntaxError("Error in .subuser.json file. Invalid subuser-version-constraints."+ str(versionConstraints))
+          op,version,commit = constraint
+          from operator import lt,le,eq,ge,gt
+          operators = {"<":lt,"<=":le,"==":eq,">=":ge,">":gt}
+          try:
+            matched = operators[op](subuserVersion,version)
+          except KeyError:
+            raise SyntaxError("Error in .subuser.json file. Invalid subuser-version-constraints.  \""+op+"\" is not a valid operator.\n\n"+ str(versionConstraints))
+          if matched:
+            try:
+              newCommitHash = self.getGitRepository().getHashOfRef("refs/remotes/origin/"+commit)
+            except OSError as e:
+              if len(commit)==40:
+                newCommitHash = commit
+              else:
+                raise e
+            break
+        else:
+          raise SyntaxError("Error reading .subuser.json file, no version constraints matched the current subuser version ("+subuserVersion+").\n\n"+str(versionConstraints))
     updated = not newCommitHash == self.__lastGitCommitHash
     self.__lastGitCommitHash = newCommitHash
     self.__fileStructure = None

@@ -14,6 +14,7 @@ import json
 #internal imports
 import subuserlib.classes.user
 import subuserlib.commandLineArguments
+import subuserlib.resolve
 
 def parseCliArgs(sysargs):
   usage = "usage: subuser list WHAT_TO_LIST [options]"
@@ -94,6 +95,17 @@ def list(sysargs):
   >>> list.list(["available","--short"])
   foo@default
 
+  You can specify which repository to list image sources from.
+
+  >>> list.list(["available","default","--short"])
+  foo@default
+
+  When listing available image sources, refering to a repository via a URI works as well.
+
+  >>> list.list(["available","file:///home/travis/version-constrained-test-repo","--short"])
+  Adding new temporary repository file:///home/travis/version-constrained-test-repo
+  bop@file:///home/travis/version-constrained-test-repo
+
   >>> list.list(["installed-images","--short"])
   foo@default 2
 
@@ -112,20 +124,32 @@ def list(sysargs):
       reposToList = user.getRegistry().getRepositories().keys()
     if options.json:
       availableDict = {}
-      for repoName in reposToList:
-        repository = user.getRegistry().getRepositories()[repoName]
-        availableDict[repoName] = repository.serializeToDict()
+      for repoIdentifier in reposToList:
+        if repoIdentifier in user.getRegistry().getRepositories():
+          temp = False
+        else:
+          temp = True
+        repository = subuserlib.resolve.resolveRepository(user,repoIdentifier)
+        availableDict[repository.getName()] = repository.serializeToDict()
+        if temp:
+          repository.removeGitRepo()
       print(json.dumps(availableDict,indent=1,separators=(",",": ")))
       sys.exit()
-    for repoName in reposToList:
-      repository = user.getRegistry().getRepositories()[repoName]
+    for repoIdentifier in reposToList:
+      if repoIdentifier in user.getRegistry().getRepositories():
+        temp = False
+      else:
+        temp = True
+      repository =  subuserlib.resolve.resolveRepository(user,repoIdentifier)
       if not options.short:
-        print("Images available for instalation from the repo: " + repoName)
+        print("Images available for instalation from the repo: " + repository.getName())
       for _,imageSource in repository.items():
         if options.short:
           print(imageSource.getIdentifier())
         else:
           imageSource.describe()
+      if temp:
+        repository.removeGitRepo()
   elif args[0] == 'subusers':
     if options.json:
       print(json.dumps(user.getRegistry().getSubusers().serializeToDict(),indent=1,separators=(",",": ")))
