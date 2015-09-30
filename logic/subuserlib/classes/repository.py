@@ -17,6 +17,7 @@ from subuserlib.classes.imageSource import ImageSource
 from subuserlib.classes.describable import Describable
 from subuserlib.classes.gitRepository import GitRepository
 from subuserlib.classes.fileStructure import BasicFileStructure
+import subuserlib.version
 
 class Repository(dict,UserOwnedObject,Describable):
   def __init__(self,user,name,gitOriginURI=None,gitCommitHash=None,temporary=False,sourceDir=None):
@@ -59,6 +60,8 @@ class Repository(dict,UserOwnedObject,Describable):
       if self.isLocal():
         self.__fileStructure = BasicFileStructure(self.getSourceDir())
       else:
+        if self.getGitCommitHash() is None:
+          self.updateGitCommitHash()
         self.__fileStructure = self.getGitRepository().getFileStructureAtCommit(self.getGitCommitHash())
     return self.__fileStructure
 
