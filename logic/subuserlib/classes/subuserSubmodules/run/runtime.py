@@ -14,6 +14,7 @@ import time
 import binascii
 import struct
 import subprocess
+import shutil
 #internal imports
 import subuserlib.subprocessExtras
 import subuserlib.test
@@ -31,6 +32,7 @@ class Runtime(UserOwnedObject):
     self.__subuser = subuser
     self.__environment = environment
     self.__backgroundSuppressOutput = True
+    self.__executionSpoolReader = None
     if extraDockerFlags is None:
       self.__extraFlags = []
     else:
@@ -120,27 +122,32 @@ $ subuser repair
      ("system-dbus", lambda dbus: ["--volume=/var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket"] if dbus else []),
      ("as-root", lambda root: ["--user=0"] if root else ["--user="+str(os.getuid())]),
      # Anarchistic permissions
-     ("run-commands-on-host", lambda p : ["-v",self.getExecutionSpool()+":/subuser/execute"] if p else []),
+     ("run-commands-on-host", lambda p : ["-v",self.getExecutionSpoolDir()+":/subuser/execute"] if p else []),
      ("privileged", lambda p: ["--privileged"] if p else [])])
 
-  def getExecutionSpool(self):
+  def getExecutionSpoolDir(self):
     return os.path.join(self.getUser().getConfig()["volumes-dir"],"execute",str(os.getpid()))
+
+  def getExecutionSpool(self):
+    return os.path.join(self.getExecutionSpoolDir(),"spool")
 
   def setupExecutionSpool(self):
     try:
-      os.makedirs(os.path.join(self.getUser().getConfig()["volumes-dir"],"execute"))
+      shutil.rmtree(self.getExecutionSpoolDir())
     except (OSError,IOError):
       pass
     try:
-      os.remove(self.getExecutionSpool())
+      os.makedirs(os.path.join(self.getExecutionSpoolDir()))
     except (OSError,IOError):
       pass
-    try:
-      open(self.getExecutionSpool(),"a").close()
-    except (OSError,IOError):
-      pass
-    tail = subprocess.Popen(("tail", "-F","--pid="+str(os.getpid()),self.getExecutionSpool()), stdout=subprocess.PIPE)
-    subprocess.Popen(('/bin/sh'), stdin=tail.stdout)
+    os.mkfifo(self.getExecutionSpool())
+    executionSpoolReader = os.path.join(subuserlib.paths.getSubuserCommandsDir(),"execute-json-from-fifo.py")
+    if not os.path.exists(executionSpoolReader):
+      executionSpoolReader = subuserlib.executablePath.which("execute-json-from-fifo.py")
+    self.__executionSpoolReader = subprocess.Popen((executionSpoolReader,self.getExecutionSpool()),cwd=self.getExecutionSpoolDir())
+
+  def tearDownExecutionSpool(self):
+    self.__executionSpoolReader.terminate()
 
   def setEnvVar(self,envVar,value):
     self.__extraFlags.append("-e")
@@ -263,6 +270,8 @@ $ subuser repair
         self.getSubuser().getX11Bridge().addClient()
       command = self.getCommand(args)
       returnCode = self.getUser().getDockerDaemon().execute(command,background=self.getBackground(),backgroundSuppressOutput=self.getBackgroundSuppressOutput())
+      if self.getSubuser().getPermissions()["run-commands-on-host"]:
+        self.tearDownExecutionSpool()
       if not self.getSubuser().getPermissions()["gui"] is None:
         self.getSubuser().getX11Bridge().removeClient()
       if self.getBackground():
