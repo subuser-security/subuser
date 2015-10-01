@@ -16,7 +16,7 @@ def getBuiltIn():
   Get a list of the names of the built in subuser commands.
   """
   try:
-    commands = set( os.listdir(subuserlib.paths.getSubuserCommandsDir()))
+    commands = set(os.listdir(subuserlib.paths.getSubuserCommandsDir()))
     return [command[8:-3] for command in commands if command.endswith(".py") and command.startswith("subuser-")] # Filter out non-.py files and remove the .py suffixes and the "subuser-" prefixes.
   except OSError:
     return []
