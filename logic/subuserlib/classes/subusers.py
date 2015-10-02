@@ -73,8 +73,8 @@ class Subusers(dict,UserOwnedObject,FileBackedObject):
     serializedDict["unlocked"]={}
     for subuserName,subuser in self.items():
       serializedSubuser = {}
-      serializedSubuser["source-repo"] = subuser.getImageSource().getRepository().getName()
-      serializedSubuser["image-source"] = subuser.getImageSource().getName()
+      serializedSubuser["source-repo"] = subuser.getSourceRepoName()
+      serializedSubuser["image-source"] = subuser.getImageSourceName()
       serializedSubuser["executable-shortcut-installed"] = subuser.isExecutableShortcutInstalled()
       serializedSubuser["docker-image"] = subuser.getImageId()
       serializedSubuser["service-subusers"] = subuser.getServiceSubuserNames()
@@ -99,10 +99,8 @@ class Subusers(dict,UserOwnedObject,FileBackedObject):
     Load the serialized subusers json file into memory.
     """
     for subuserName, subuserAttributes in serializedSubusersDict.items():
-      if not subuserAttributes["source-repo"] in self.getUser().getRegistry().getRepositories():
-        sys.exit("ERROR: Registry inconsistent. Subuser "+str(subuserName)+" points to non-existant repository: "+str(subuserAttributes["source-repo"]))
-      repo = self.getUser().getRegistry().getRepositories()[subuserAttributes["source-repo"]]
-      name = subuserAttributes["image-source"]
+      repoName = subuserAttributes["source-repo"]
+      imageSourceName = subuserAttributes["image-source"]
       if "docker-image" in subuserAttributes:
         imageId = subuserAttributes["docker-image"]
       else:
@@ -112,5 +110,4 @@ class Subusers(dict,UserOwnedObject,FileBackedObject):
       else:
         serviceSubusers = []
       executableShortcutInstalled = subuserAttributes["executable-shortcut-installed"]
-      imageSource = repo[name]
-      self[subuserName] = Subuser(self.getUser(),subuserName,imageSource,imageId=imageId,executableShortcutInstalled=executableShortcutInstalled,locked=locked,serviceSubusers=serviceSubusers)
+      self[subuserName] = Subuser(self.getUser(),subuserName,imageSourceName=imageSourceName,repoName=repoName,imageId=imageId,executableShortcutInstalled=executableShortcutInstalled,locked=locked,serviceSubusers=serviceSubusers)

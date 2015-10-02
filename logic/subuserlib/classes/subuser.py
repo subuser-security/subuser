@@ -20,9 +20,11 @@ from subuserlib.classes.subuserSubmodules.run.runReadyImage import RunReadyImage
 from subuserlib.classes.subuserSubmodules.run.runtimeCache import RuntimeCache
 
 class Subuser(UserOwnedObject, Describable):
-  def __init__(self,user,name,imageSource,imageId,executableShortcutInstalled,locked,serviceSubusers):
+  def __init__(self,user,name,imageId,executableShortcutInstalled,locked,serviceSubusers,imageSource=None,imageSourceName=None,repoName=None):
     self.__name = name
     self.__imageSource = imageSource
+    self.__repoName = repoName
+    self.__imageSourceName = imageSourceName
     self.__imageId = imageId
     self.__executableShortcutInstalled = executableShortcutInstalled
     self.__locked = locked
@@ -39,7 +41,21 @@ class Subuser(UserOwnedObject, Describable):
     return self.__name
 
   def getImageSource(self):
+    if self.__imageSource is None:
+      self.__imageSource = self.getUser().getRegistry().getRepositories()[self.__repoName][self.__imageSourceName]
     return self.__imageSource
+
+  def getImageSourceName(self):
+    if self.__imageSource is None:
+      return self.__imageSourceName
+    else:
+      return self.getImageSource().getName()
+
+  def getSourceRepoName(self):
+    if self.__imageSource is None:
+      return self.__repoName
+    else:
+      return self.getImageSource().getRepository().getName()
 
   def isExecutableShortcutInstalled(self):
     return self.__executableShortcutInstalled

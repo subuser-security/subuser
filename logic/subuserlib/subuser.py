@@ -40,7 +40,7 @@ def addFromImageSource(user,subuserName,imageSource,permissionsAccepter):
     subuserlib.update.checkoutNoCommit(user,"HEAD")
 
 def addFromImageSourceNoVerify(user,subuserName,imageSource):
-  subuser = subuserlib.classes.subuser.Subuser(user,subuserName,imageSource,None,False,False,[])
+  subuser = subuserlib.classes.subuser.Subuser(user,subuserName,None,False,False,[],imageSource=imageSource)
   user.getRegistry().getSubusers()[subuserName] = subuser
 
 def remove(user,subuserNames):
