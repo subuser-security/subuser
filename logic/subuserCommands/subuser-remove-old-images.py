@@ -17,7 +17,7 @@ import subuserlib.profile
 
 def parseCliArgs(realArgs):
   usage = "usage: subuser remove-old-images"
-  description = """ Remove old, no longer used, installed images.  Note, once you do this, you will no longer be able to return to previous configuration states with subuser update checkout."""
+  description = """ Remove old, no longer used, installed images.  Note, once you do this, you will no longer be able to return to previous configuration states with subuser registry rollback or subuser update lock-subuser-to."""
   parser=optparse.OptionParser(usage=usage,description=description,formatter=subuserlib.commandLineArguments.HelpFormatterThatDoesntReformatDescription())
   parser.add_option("--dry-run", dest="dryrun",action="store_true",default=False,help="Don't actually delete the images. Print which images would be deleted.")
   parser.add_option("--repo", dest="repo",default=None,help="Only remove images from the given repository.")

@@ -34,9 +34,6 @@ def parseCliArgs(realArgs):
 
   EXAMPLE:
     $ subuser update subuser iceweasel git
- 
-  log
-      Prints a log of recent updates.
 
   lock-subuser-to SUBUSER GIT-COMMIT
       Don't want a subuser to be updated?  No problem, lock it to a given version with this update sub-command.  Use subuser update log to see a list of possible hashes.
@@ -44,8 +41,6 @@ def parseCliArgs(realArgs):
   unlock-subuser SUBUSER
       Unlock the subuser and ensure that it is up-to-date.
 
-  rollback HASH
-      Subuser's undo function.  Roll back to an old version of your subuser configuration.  Find the commit hash using subuser update log.  Note: This command is less usefull than lock-subuser-to.
 """
   parser=optparse.OptionParser(usage=usage,description=description,formatter=subuserlib.commandLineArguments.HelpFormatterThatDoesntReformatDescription())
   parser.add_option("--accept",dest="accept",action="store_true",default=False,help="Accept permissions without asking.")
@@ -367,8 +362,6 @@ def update(realArgs):
   elif "subusers" == args[0]:
     with user.getRegistry().getLock():
       subuserlib.update.subusers(user,args[1:],permissionsAccepter=permissionsAccepter)
-  elif ["log"] == args:
-    subuserlib.update.showLog(user)
   elif "lock-subuser-to" == args[0]:
     try:
       subuserName = args[1]
@@ -384,13 +377,6 @@ def update(realArgs):
       sys.exit("Wrong number of arguments.  Expected a subuser's name. Try running\nsubuser update --help\nfor more information.")
     with user.getRegistry().getLock():
       subuserlib.update.unlockSubuser(user,subuserName=subuserName,permissionsAccepter=permissionsAccepter)
-  elif "rollback" == args[0]:
-    try:
-      commit = args[1]
-    except KeyError:
-      sys.exit("Wrong number of arguments.  Expected a commit.  Try running \nsubuser update --help\nfor more info.")
-    with user.getRegistry().getLock():
-      subuserlib.update.rollback(user,commit=commit)
   elif len(args) == 1:
     sys.exit(" ".join(args) + " is not a valid update subcommand. Please use subuser update -h for help.")
   else:

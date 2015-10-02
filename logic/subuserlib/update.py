@@ -35,20 +35,6 @@ def subusers(user,subuserNames,permissionsAccepter):
   subuserlib.verify.verify(user,subuserNames=subuserNames,checkForUpdatesExternally=True,permissionsAccepter=permissionsAccepter)
   user.getRegistry().commit()
 
-def showLog(user):
-  user.getRegistry().getGitRepository().run(["log"])
-
-def checkoutNoCommit(user,commit):
-  subprocessExtras.call(["rm","-rf","*"],cwd=user.getConfig()["registry-dir"])
-  user.getRegistry().getGitRepository().run(["checkout",commit,"."])
-  user.reloadRegistry()
-
-def rollback(user,commit):
-  checkoutNoCommit(user,commit)
-  user.getRegistry().logChange("Rolling back to commit: "+commit)
-  subuserlib.verify.verify(user)
-  user.getRegistry().commit()
-
 def lockSubuser(user,subuserName,commit):
   """
   Lock the subuser to the image and permissions that it had at a given registry commit.

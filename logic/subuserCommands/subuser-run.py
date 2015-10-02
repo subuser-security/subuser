@@ -47,7 +47,7 @@ def run(args):
     if runtime:
       runtime.run(argsToPassToImage)
     else:
-      sys.exit("The subuser's image failed to build. Please use the subuser update log and subuser repair commands for more information.")
+      sys.exit("The subuser's image failed to build. Please use the subuser registry log and subuser repair commands for more information.")
   else:
     sys.exit(subuserName + " not found.\n"+helpString)
 
