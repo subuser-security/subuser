@@ -55,5 +55,3 @@ while True:
       if "env" in rpc:
         env = rpc["env"]
       subprocess.Popen(rpc["command"],stdin=stdin,stdout=stdout,stderr=stderr,cwd=cwd,env=env)
-    
-
