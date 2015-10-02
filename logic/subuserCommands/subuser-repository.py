@@ -14,6 +14,7 @@ from subuserlib.classes.user import User
 import subuserlib.resolve
 import subuserlib.repository
 import subuserlib.commandLineArguments
+import subuserlib.profile
 
 def parseCliArgs(sysargs):
   usage = "usage: subuser repository [options] [add|remove] NAME <URL>"
@@ -35,6 +36,7 @@ def parseCliArgs(sysargs):
   parser=optparse.OptionParser(usage=usage,description=description,formatter=subuserlib.commandLineArguments.HelpFormatterThatDoesntReformatDescription())
   return parser.parse_args(args=sysargs)
 
+@subuserlib.profile.do_cprofile
 def repository(sysargs):
   """
   Manage named subuser repositories.

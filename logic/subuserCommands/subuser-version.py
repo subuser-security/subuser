@@ -13,6 +13,7 @@ import optparse
 #internal imports
 import subuserlib.version
 import subuserlib.commandLineArguments
+import subuserlib.profile
 
 def parseCliArgs(realArgs):
   usage = "usage: subuser version"
@@ -22,6 +23,7 @@ def parseCliArgs(realArgs):
   parser.add_option("--json",dest="json",action="store_true",default=False,help="Display results in JSON format.")
   return parser.parse_args(args=realArgs)
 
+@subuserlib.profile.do_cprofile
 def printVersion(realArgs):
   """
   >>> version = __import__("subuser-version") #import self

@@ -14,6 +14,7 @@ import subuserlib.classes.user
 import subuserlib.resolve
 import subuserlib.install
 import subuserlib.commandLineArguments
+import subuserlib.profile
 
 def parseCliArgs(realArgs):
   usage = "usage: subuser print-dependency-info IMAGE_NAME(s) SETS_OF_IMAGES"
@@ -26,6 +27,7 @@ Example:
   parser = optparse.OptionParser(usage=usage,description=description,formatter=subuserlib.commandLineArguments.HelpFormatterThatDoesntReformatDescription())
   return parser.parse_args(args=realArgs)
 
+@subuserlib.profile.do_cprofile
 def printDependencies(realArgs):
   """
   Print the dependencies of the listed progam sources.

@@ -11,6 +11,7 @@ import sys
 import os
 #internal imports
 import subuserlib.classes.user
+import subuserlib.profile
 
 ##############################################################
 helpString = """
@@ -31,6 +32,7 @@ def dryRunTestSetup():
   os.getuid = lambda: 1000
   getpass.getuser = lambda: "travis"
 
+@subuserlib.profile.do_cprofile
 def dryRun(args):
   """
   Print the command that would have been run if this wasn't a dry run.

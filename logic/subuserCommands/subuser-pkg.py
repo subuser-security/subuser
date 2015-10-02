@@ -19,6 +19,7 @@ import subuserlib.packaging
 import subuserlib.permissions
 from subuserlib.classes.permissionsAccepters.acceptPermissionsAtCLI import AcceptPermissionsAtCLI
 from subuserlib.classes.permissions import Permissions
+import subuserlib.profile
 
 def parseCliArgs(realArgs):
   usage = "usage: subuser pkg [init|add|test] IMAGE-SOURCE-NAMES <args>"
@@ -42,6 +43,7 @@ def parseCliArgs(realArgs):
   parser.add_option("--build-context", dest="buildContext",default=None,help="When adding a new image source, the path to the build context for building the image.")
   return parser.parse_args(args=realArgs)
 
+@subuserlib.profile.do_cprofile
 def pkg(realArgs):
   """
   Run packaging subcommands.

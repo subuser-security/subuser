@@ -13,6 +13,7 @@ import optparse
 from subuserlib.classes.user import User
 import subuserlib.commandLineArguments
 import subuserlib.removeOldImages
+import subuserlib.profile
 
 def parseCliArgs(realArgs):
   usage = "usage: subuser remove-old-images"
@@ -22,6 +23,7 @@ def parseCliArgs(realArgs):
   parser.add_option("--repo", dest="repo",default=None,help="Only remove images from the given repository.")
   return parser.parse_args(args=realArgs)
 
+@subuserlib.profile.do_cprofile
 def removeOldImages(realArgs):
   """
   Remove images that are installed, but are not associated with any subusers.

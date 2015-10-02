@@ -13,6 +13,7 @@ import optparse
 import subuserlib.classes.user
 import subuserlib.commandLineArguments
 import subuserlib.resolve
+import subuserlib.profile
 
 def parseCliArgs(sysargs):
   usage = "usage: subuser describe [subuser|image] SUBUSER(s)/IMAGE(s)"
@@ -28,6 +29,7 @@ EXAMPLE:
   parser = optparse.OptionParser(usage=usage,description=description,formatter=subuserlib.commandLineArguments.HelpFormatterThatDoesntReformatDescription())
   return parser.parse_args(args=sysargs)
 
+@subuserlib.profile.do_cprofile
 def describe(sysargs):
   """
   Describe subusers and images.

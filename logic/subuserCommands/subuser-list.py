@@ -15,6 +15,7 @@ import json
 import subuserlib.classes.user
 import subuserlib.commandLineArguments
 import subuserlib.resolve
+import subuserlib.profile
 
 def parseCliArgs(sysargs):
   usage = "usage: subuser list WHAT_TO_LIST [options]"
@@ -44,6 +45,7 @@ def parseCliArgs(sysargs):
 
 #################################################################################################
 
+@subuserlib.profile.do_cprofile
 def list(sysargs):
   """
   List various things: image sources, subusers, ect.
