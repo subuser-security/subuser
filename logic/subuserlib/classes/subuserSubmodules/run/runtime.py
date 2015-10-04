@@ -32,6 +32,7 @@ class Runtime(UserOwnedObject):
     self.__subuser = subuser
     self.__environment = environment
     self.__backgroundSuppressOutput = True
+    self.__backgroundCollectOutput = False
     self.__executionSpoolReader = None
     if extraDockerFlags is None:
       self.__extraFlags = []
@@ -194,8 +195,14 @@ $ subuser repair
   def getBackgroundSuppressOutput(self):
     return self.__backgroundSuppressOutput
 
+  def getBackgroundCollectOutput(self):
+    return self.__backgroundCollectOutput
+
   def setBackgroundSuppressOutput(self,suppressOutput):
     self.__backgroundSuppressOutput = suppressOutput
+
+  def setBackgroundCollectOutput(self,collectOutput):
+    self.__backgroundCollectOutput = collectOutput
 
   def getXautorityDirPath(self):
     return os.path.join(self.getUser().getConfig()["volumes-dir"],"x11",self.getSubuser().getName(),"subuser")
@@ -251,7 +258,7 @@ $ subuser repair
   def run(self,args):
     """
     Run the subuser in a container.
-    If the subuser is set to run in the background, return a docker Container object.
+    If the subuser is set to run in the background, return a docker Container object and the subprocess.
     Otherwise return the subuser's exit code.
     """
     def reallyRun():
@@ -269,7 +276,7 @@ $ subuser repair
       if not self.getSubuser().getPermissions()["gui"] is None:
         self.getSubuser().getX11Bridge().addClient()
       command = self.getCommand(args)
-      returnCode = self.getUser().getDockerDaemon().execute(command,background=self.getBackground(),backgroundSuppressOutput=self.getBackgroundSuppressOutput())
+      returnValue = self.getUser().getDockerDaemon().execute(command,background=self.getBackground(),backgroundSuppressOutput=self.getBackgroundSuppressOutput(),backgroundCollectOutput=self.getBackgroundCollectOutput())
       if self.getSubuser().getPermissions()["run-commands-on-host"]:
         self.tearDownExecutionSpool()
       if not self.getSubuser().getPermissions()["gui"] is None:
@@ -283,9 +290,9 @@ $ subuser repair
           if container is None:
             sys.exit("Container failed to start:"+containerId)
           os.remove(self.getCidFile())
-          return container
+          return (container, returnValue)
       else:
-        return returnCode
+        return returnValue
     #try:
     return reallyRun()
     #except KeyboardInterrupt:

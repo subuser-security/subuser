@@ -180,9 +180,10 @@ class XpraX11Bridge(Service):
     serverRuntime.setHostname(self.getServerSubuserHostname())
     serverRuntime.setBackground(True)
     serverRuntime.setBackgroundSuppressOutput(suppressOutput)
-    serverContainer = serverRuntime.run(args=serverArgs)
+    serverRuntime.setBackgroundCollectOutput(True)
+    (serverContainer, serverProcess) = serverRuntime.run(args=serverArgs)
     serviceStatus["xpra-server-service-cid"] = serverContainer.getId()
-    self.waitForServerContainerToLaunch()
+    self.waitForServerContainerToLaunch(serverProcess, suppressOutput)
     # Launch xpra client
     clientArgs = ["attach","--no-tray","--compress=0","--encoding=rgb"]
     clientArgs.extend(commonArgs)
@@ -191,14 +192,17 @@ class XpraX11Bridge(Service):
     clientRuntime.setEnvVar("XPRA_SOCKET_HOSTNAME","server")
     clientRuntime.setBackground(True)
     clientRuntime.setBackgroundSuppressOutput(suppressOutput)
-    serviceStatus["xpra-client-service-cid"] = clientRuntime.run(args=clientArgs).getId()
+    (clientContainer, clientProcess) = clientRuntime.run(args=clientArgs)
+    serviceStatus["xpra-client-service-cid"] = clientContainer.getId()
     return serviceStatus
 
-  def waitForServerContainerToLaunch(self):
+  def waitForServerContainerToLaunch(self, serverProcess, suppressOutput):
+    print "Waiting for Xpra server container to launch..."
     while True:
-      if os.path.exists(os.path.join(self.getServerSideX11Path(),"X100")) and os.path.exists(self.getXpraSocket()):
-        return
-      time.sleep(0.05)
+        line = serverProcess.stderr.readline()
+        if not suppressOutput: print line[:-1]
+        if "xpra is ready" in line: break
+    print "Xpra server container is ready!"
 
   def stop(self,serviceStatus):
     """
