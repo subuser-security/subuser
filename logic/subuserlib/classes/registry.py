@@ -11,6 +11,7 @@ import os
 import errno
 import sys
 from contextlib import contextmanager
+import json
 #internal imports
 from subuserlib.classes import repositories
 from subuserlib.classes import subusers
@@ -97,6 +98,12 @@ class Registry(userOwnedObject.UserOwnedObject):
       self.getSubusers().save()
       self.getGitRepository().run(["add","."])
       self.getGitRepository().commit(self.__changeLog)
+      liveLogPath=os.path.join(self.getUser().homeDir,".subuser/registry-live-log")
+      if os.path.exists(liveLogPath):
+        announcement = {}
+        announcement["commit"] = self.getGitRepository().getHashOfRef("master")
+        with open(liveLogPath,"a") as liveLog:
+          liveLog.write(json.dumps(announcement))
       self.__changed = False
       self.__changeLog = ""
 
