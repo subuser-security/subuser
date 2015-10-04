@@ -197,12 +197,12 @@ class XpraX11Bridge(Service):
     return serviceStatus
 
   def waitForServerContainerToLaunch(self, serverProcess, suppressOutput):
-    print "Waiting for Xpra server container to launch..."
     while True:
-        line = serverProcess.stderr.readline()
-        if not suppressOutput: print line[:-1]
-        if "xpra is ready" in line: break
-    print "Xpra server container is ready!"
+      line = serverProcess.stderr.readline()
+      if not suppressOutput:
+        print(line[:-1])
+      if "xpra is ready" in line:
+        break
 
   def stop(self,serviceStatus):
     """
