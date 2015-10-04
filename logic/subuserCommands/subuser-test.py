@@ -20,6 +20,7 @@ Options include:
  - ``--travis`` - run the test suit in travis mode which does not run the tests in Docker.
  - ``--no-fail`` - do not stop the test suit from running after a test fails.
  - ``--x11-bridge`` - run x11 bridge test suit. To run the test suit, you must have a subuser named xterm which has the gui option enabled. You will be shown a series of xterms and two series of counters. You should close the xterms and see that the counters go up linearly.
+ -- ``--skip-codetests`` - do not run doctests. Usefull for testing the X11 bridge exclusively.
 
 """)
   sys.exit()
@@ -37,27 +38,28 @@ class MockUser():
     return MockRegistry()
 
 if subuserlib.docker.getExecutable():
-  from subuserlib.classes.docker.dockerDaemon import DockerDaemon
-  import subuserlib.classes.docker.dockerDaemon
-  from subuserlib.classes.fileStructure import BasicFileStructure
-  dockerDaemon = DockerDaemon(MockUser())
-  testDockerfileNames = [
-   "Dockerfile-arch-python3",
-   "Dockerfile-debian-python2",
-  ]
-  for testDockerfileName in testDockerfileNames:
-    with io.open(os.path.join(subuserlib.paths.getSubuserDir(),"test",testDockerfileName),encoding="utf-8",mode="r") as dockerfile:
-      dockerfileContents = dockerfile.read()
-    try:
-      subuserDir = BasicFileStructure(subuserlib.paths.getSubuserDir())
-      id = dockerDaemon.build(repositoryFileStructure=subuserDir,relativeBuildContextPath="./",useCache=True,dockerfile=dockerfileContents)
-      if dockerDaemon.execute(["run","-it","--volume",subuserlib.paths.getSubuserDir()+":/root/subuser:ro",id,"/root/subuser/logic/subuser","test"]) != 0:
-        raise Exception()
-    except Exception as e:
-      print(subuserlib.terminalColors.FAIL+"Tests failed!"+subuserlib.terminalColors.ENDC)
-      print(str(e))
-      if not "--no-fail" in sys.argv:
-        exit(1)
+  if not "--skip-codetests" in sys.argv:
+    from subuserlib.classes.docker.dockerDaemon import DockerDaemon
+    import subuserlib.classes.docker.dockerDaemon
+    from subuserlib.classes.fileStructure import BasicFileStructure
+    dockerDaemon = DockerDaemon(MockUser())
+    testDockerfileNames = [
+     "Dockerfile-arch-python3",
+     "Dockerfile-debian-python2",
+    ]
+    for testDockerfileName in testDockerfileNames:
+      with io.open(os.path.join(subuserlib.paths.getSubuserDir(),"test",testDockerfileName),encoding="utf-8",mode="r") as dockerfile:
+        dockerfileContents = dockerfile.read()
+      try:
+        subuserDir = BasicFileStructure(subuserlib.paths.getSubuserDir())
+        id = dockerDaemon.build(repositoryFileStructure=subuserDir,relativeBuildContextPath="./",useCache=True,dockerfile=dockerfileContents)
+        if dockerDaemon.execute(["run","-it","--volume",subuserlib.paths.getSubuserDir()+":/root/subuser:ro",id,"/root/subuser/logic/subuser","test"]) != 0:
+          raise Exception()
+      except Exception as e:
+        print(subuserlib.terminalColors.FAIL+"Tests failed!"+subuserlib.terminalColors.ENDC)
+        print(str(e))
+        if not "--no-fail" in sys.argv:
+          exit(1)
   if "--x11-bridge" in sys.argv:
     pid = os.fork()
     if pid:
