@@ -179,7 +179,6 @@ class XpraX11Bridge(Service):
     serverRuntime = self.getServerSubuser().getRuntime(os.environ)
     serverRuntime.setHostname(self.getServerSubuserHostname())
     serverRuntime.setBackground(True)
-    serverRuntime.setBackgroundSuppressOutput(suppressOutput)
     serverRuntime.setBackgroundCollectOutput(True)
     (serverContainer, serverProcess) = serverRuntime.run(args=serverArgs)
     serviceStatus["xpra-server-service-cid"] = serverContainer.getId()
