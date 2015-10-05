@@ -76,6 +76,10 @@ $ subuser repair
       else:
         return common + ["-i"]
 
+  def logIfInteractive(self,message):
+    if sys.stdout.isatty():
+      print(message)
+
   def passOnEnvVar(self,envVar):
     """
     Generate the arguments required to pass on a given ENV var to the container from the host.
