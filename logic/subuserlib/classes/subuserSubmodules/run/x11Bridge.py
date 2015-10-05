@@ -180,7 +180,8 @@ class XpraX11Bridge(Service):
     serverRuntime.logIfInteractive("Starting xpra server...")
     serverRuntime.setHostname(self.getServerSubuserHostname())
     serverRuntime.setBackground(True)
-    serverRuntime.setBackgroundCollectOutput(True)
+    serverRuntime.setBackgroundSuppressOutput(suppressOutput)
+    serverRuntime.setBackgroundCollectOutput(False,True)
     (serverContainer, serverProcess) = serverRuntime.run(args=serverArgs)
     serviceStatus["xpra-server-service-cid"] = serverContainer.getId()
     self.waitForServerContainerToLaunch(serverProcess, suppressOutput)
@@ -199,11 +200,16 @@ class XpraX11Bridge(Service):
 
   def waitForServerContainerToLaunch(self, serverProcess, suppressOutput):
     while True:
-      line = serverProcess.stderr.readline()
-      if not suppressOutput:
-        print(line[:-1])
-      if "xpra is ready" in line:
-        break
+      where = serverProcess.stderr_file.tell()
+      line = serverProcess.stderr_file.readline()
+      if (not line) or (line[-1:] != '\n'):
+        time.sleep(0.1)
+        serverProcess.stderr_file.seek(where)
+      else:
+        if not suppressOutput:
+          print line,
+        if "xpra is ready" in line:
+          break
 
   def stop(self,serviceStatus):
     """

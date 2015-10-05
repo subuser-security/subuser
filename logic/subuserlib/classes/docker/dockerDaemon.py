@@ -223,14 +223,14 @@ class DockerDaemon(UserOwnedObject):
     else:
       return json.loads(response.read().decode("utf-8"))
 
-  def execute(self,args,cwd=None,background=False,backgroundSuppressOutput=True,backgroundCollectOutput=False):
+  def execute(self,args,cwd=None,background=False,backgroundSuppressOutput=True,backgroundCollectStdout=False,backgroundCollectStderr=False):
     """
     Execute the docker client.
     If the background argument is True, return emediately with the docker client's subprocess.
     Otherwise, wait for the process to finish and return the docker client's exit code.
     """
     if background:
-      return subuserlib.docker.runBackground(args,cwd=cwd,suppressOutput=backgroundSuppressOutput,collectOutput=backgroundCollectOutput)
+      return subuserlib.docker.runBackground(args,cwd=cwd,suppressOutput=backgroundSuppressOutput,collectStdout=backgroundCollectStdout,collectStderr=backgroundCollectStderr)
     else:
       return subuserlib.docker.run(args,cwd=cwd)
 

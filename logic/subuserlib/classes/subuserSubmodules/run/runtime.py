@@ -32,7 +32,8 @@ class Runtime(UserOwnedObject):
     self.__subuser = subuser
     self.__environment = environment
     self.__backgroundSuppressOutput = True
-    self.__backgroundCollectOutput = False
+    self.__backgroundCollectStdout = False
+    self.__backgroundCollectStderr = False
     self.__executionSpoolReader = None
     if extraDockerFlags is None:
       self.__extraFlags = []
@@ -200,13 +201,14 @@ $ subuser repair
     return self.__backgroundSuppressOutput
 
   def getBackgroundCollectOutput(self):
-    return self.__backgroundCollectOutput
+    return (self.__backgroundCollectStdout, self.__backgroundCollectStderr)
 
   def setBackgroundSuppressOutput(self,suppressOutput):
     self.__backgroundSuppressOutput = suppressOutput
 
-  def setBackgroundCollectOutput(self,collectOutput):
-    self.__backgroundCollectOutput = collectOutput
+  def setBackgroundCollectOutput(self,collectStdout,collectStderr):
+    self.__backgroundCollectStdout = collectStdout
+    self.__backgroundCollectStderr = collectStderr
 
   def getXautorityDirPath(self):
     return os.path.join(self.getUser().getConfig()["volumes-dir"],"x11",self.getSubuser().getName(),"subuser")
@@ -280,7 +282,8 @@ $ subuser repair
       if not self.getSubuser().getPermissions()["gui"] is None:
         self.getSubuser().getX11Bridge().addClient()
       command = self.getCommand(args)
-      returnValue = self.getUser().getDockerDaemon().execute(command,background=self.getBackground(),backgroundSuppressOutput=self.getBackgroundSuppressOutput(),backgroundCollectOutput=self.getBackgroundCollectOutput())
+      (collectStdout,collectStderr) = self.getBackgroundCollectOutput()
+      returnValue = self.getUser().getDockerDaemon().execute(command,background=self.getBackground(),backgroundSuppressOutput=self.getBackgroundSuppressOutput(),backgroundCollectStdout=collectStdout,backgroundCollectStderr=collectStderr)
       if self.getSubuser().getPermissions()["run-commands-on-host"]:
         self.tearDownExecutionSpool()
       if not self.getSubuser().getPermissions()["gui"] is None:
