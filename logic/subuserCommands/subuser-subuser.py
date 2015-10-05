@@ -87,8 +87,8 @@ def subuser(sysargs):
   Verifying registry consistency...
   Unregistering any non-existant installed images.
   bar would like to have the following permissions:
-   Description: 
-   Maintainer: 
+   Description: bar
+   Maintainer: fred
    Executable: /usr/bin/bar
   A - Accept and apply changes
   E - Apply changes and edit result
@@ -138,8 +138,8 @@ def subuser(sysargs):
   Verifying registry consistency...
   Unregistering any non-existant installed images.
   bar would like to have the following permissions:
-   Description: 
-   Maintainer: 
+   Description: bar
+   Maintainer: fred
    Executable: /usr/bin/bar
   A - Accept and apply changes
   E - Apply changes and edit result
@@ -190,8 +190,8 @@ def subuser(sysargs):
   Verifying registry consistency...
   Unregistering any non-existant installed images.
   broken-syntax would like to have the following permissions:
-   Description: 
-   Maintainer: 
+   Description: broken-syntax
+   Maintainer: fred
    Is a library.
   A - Accept and apply changes
   E - Apply changes and edit result
@@ -210,8 +210,8 @@ def subuser(sysargs):
   Verifying registry consistency...
   Unregistering any non-existant installed images.
   broken-non-existant-dependency would like to have the following permissions:
-   Description: 
-   Maintainer: 
+   Description: broken-non-existant-dependency
+   Maintainer: fred
    Is a library.
   A - Accept and apply changes
   E - Apply changes and edit result

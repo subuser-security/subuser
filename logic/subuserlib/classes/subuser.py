@@ -208,7 +208,7 @@ To repair your subuser installation.\n""")
     if self.getPermissions()["as-root"]:
       return "/root/"
     else:
-      return self.getUser().homeDir
+      return os.path.join("/home/",self.getUser().name)
 
   def describe(self):
     print("Subuser: "+self.getName())

@@ -55,8 +55,8 @@ def removeOldImages(realArgs):
   Verifying registry consistency...
   Unregistering any non-existant installed images.
   bar would like to have the following permissions:
-   Description: 
-   Maintainer: 
+   Description: bar
+   Maintainer: fred
    Executable: /usr/bin/bar
   A - Accept and apply changes
   E - Apply changes and edit result
@@ -140,8 +140,8 @@ def removeOldImages(realArgs):
   Verifying registry consistency...
   Unregistering any non-existant installed images.
   blah would like to have the following permissions:
-   Description: 
-   Maintainer: 
+   Description: blah
+   Maintainer: fred
    Executable: /usr/bin/foo
   A - Accept and apply changes
   E - Apply changes and edit result
@@ -229,7 +229,7 @@ def removeOldImages(realArgs):
   >>> for installedImage in installedImages:
   ...   print(installedImage)
   foo
- 
+
   """
   options,args = parseCliArgs(realArgs)
   user = User()

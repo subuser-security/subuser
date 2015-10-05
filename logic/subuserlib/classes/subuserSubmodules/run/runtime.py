@@ -125,7 +125,7 @@ $ subuser repair
      ("graphics-card", lambda p: ["--device=/dev/dri/"+device for device in os.listdir("/dev/dri")] if p else []),
      ("serial-devices", lambda sd: ["--device=/dev/"+device for device in self.getSerialDevices()] if sd else []),
      ("system-dbus", lambda dbus: ["--volume=/var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket"] if dbus else []),
-     ("as-root", lambda root: ["--user=0"] if root else ["--user="+str(os.getuid())]),
+     ("as-root", lambda root: ["--user=0"] if root else ["--user="+str(self.getUser().uid)]),
      # Anarchistic permissions
      ("run-commands-on-host", lambda p : ["-v",self.getExecutionSpoolDir()+":/subuser/execute"] if p else []),
      ("privileged", lambda p: ["--privileged"] if p else [])])
@@ -142,7 +142,7 @@ $ subuser repair
     except (OSError,IOError):
       pass
     try:
-      os.makedirs(os.path.join(self.getExecutionSpoolDir()))
+      self.getUser().makedirs(os.path.join(self.getExecutionSpoolDir()))
     except (OSError,IOError):
       pass
     os.mkfifo(self.getExecutionSpool())
@@ -216,14 +216,18 @@ $ subuser repair
 
   def setupXauth(self):
     try:
-      os.makedirs(self.getXautorityDirPath())
+      self.getUser().makedirs(self.getXautorityDirPath())
     except OSError: #Already exists
       pass
     try:
       os.remove(self.getXautorityFilePath())
     except OSError:
       pass
-    subuserlib.subprocessExtras.call(["xauth","extract",self.getXautorityFilePath(),self.getEnvironment()["DISPLAY"]])
+    if self.getUser().rootProxy:
+      sudoArgs = ["sudo","--user",self.getUser().name]
+    else:
+      sudoArgs = []
+    subuserlib.subprocessExtras.call(sudoArgs+["xauth","extract",".Xauthority",self.getEnvironment()["DISPLAY"]],cwd=self.getXautorityDirPath())
     with open(self.getXautorityFilePath(),"rb") as xauthFile:
       # The extracted Xauthority file has the following format(bytewise):
       # 1 0 0 [len(hostname)] [hostname-in-ascii] 0 1 [display-number-in-ascii] 0 22 ["MIT-MAGIC-COOKIE-1"-in-ascii] 0 20 [Magic number]
@@ -243,7 +247,7 @@ $ subuser repair
 
   def createHomeDir(self):
     try:
-      os.makedirs(self.getSubuser().getHomeDirOnHost())
+      self.getUser().makedirs(self.getSubuser().getHomeDirOnHost())
     except OSError:
       pass
 

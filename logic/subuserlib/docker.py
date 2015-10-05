@@ -41,7 +41,7 @@ For installation instructions see <https://www.docker.io/gettingstarted/#h_insta
 """)
 
   username = getpass.getuser()
-  if not username in grp.getgrnam("docker").gr_mem:
+  if (not os.getuid() == 0) and (not username in grp.getgrnam("docker").gr_mem):
     sys.exit("""Error: You are not a member of the docker group.
 
 To learn how to become a member of the docker group please watch this video: <http://www.youtube.com/watch?v=ahgRx5U4V7E>""")

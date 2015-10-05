@@ -55,12 +55,12 @@ class XpraX11Bridge(Service):
 
   def setupServerPermissions(self):
     self.getServerSubuser().createPermissions(self.getServerSubuser().getImageSource().getPermissions())
-    self.getServerSubuser().getPermissions()["system-dirs"] = {self.getServerSideX11Path():"/tmp/.X11-unix",self.getXpraHomeDir():os.getenv("HOME")}
+    self.getServerSubuser().getPermissions()["system-dirs"] = {self.getServerSideX11Path():"/tmp/.X11-unix",self.getXpraHomeDir():"/home/"+self.getUser().name}
     self.getServerSubuser().getPermissions().save()
 
   def setupClientPermissions(self):
     self.getClientSubuser().createPermissions(self.getClientSubuser().getImageSource().getPermissions())
-    self.getClientSubuser().getPermissions()["system-dirs"] = {self.getXpraSocket():os.path.join(os.getenv("HOME"),".xpra","server-100")}
+    self.getClientSubuser().getPermissions()["system-dirs"] = {self.getXpraSocket():os.path.join("/home/",self.getUser().name,".xpra","server-100")}
     self.getClientSubuser().getPermissions().save()
 
   def setup(self,verify=True):
@@ -138,7 +138,7 @@ class XpraX11Bridge(Service):
       self.createAndSetupSpecialVolumes()
     def mkdirs(directory):
       try:
-        os.makedirs(directory)
+        self.getUser().makedirs(directory)
       except OSError as e:
         if e.errno == errno.EEXIST:
           clearAndTryAgain()
@@ -200,6 +200,8 @@ class XpraX11Bridge(Service):
   def waitForServerContainerToLaunch(self, serverProcess, suppressOutput):
     while True:
       line = serverProcess.stderr.readline()
+      if not line:
+        raise Exception("Xpra server crashed.")
       if not suppressOutput:
         print(line[:-1])
       if "xpra is ready" in line:

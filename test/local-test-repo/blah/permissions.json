@@ -1,2 +1,2 @@
-{"executable" : "/usr/bin/foo"
+{"executable" : "/usr/bin/foo","description":"blah","maintainer":"fred"
 }

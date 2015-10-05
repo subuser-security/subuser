@@ -24,9 +24,9 @@ import subuserlib.profile
 def parseCliArgs(realArgs):
   usage = "usage: subuser pkg [init|add|test] IMAGE-SOURCE-NAMES <args>"
   description = """ Packaging subucommands. These commands are to be issued from the root of a subuser repository.
-  
+
   init - Initialize a subuser repository.
-  
+
   add - Add an image source to the repository.
   Usage: $ subuser pkg add image-source-name
 
@@ -59,7 +59,8 @@ def pkg(realArgs):
       with open("./.subuser.json","w") as subuserDotJson:
         json.dump(repoConfig,subuserDotJson)
         if options.imageSourcesDir:
-          os.makedirs(options.imageSourcesDir)
+          user.makedirs(options.imageSourcesDir)
+      user.chown("./.subuser.json")
       print("Subuser repository initialized successfully!")
       print("You can add new image sources with:")
       print("$ subuser pkg add image-source-name")
@@ -77,7 +78,7 @@ def pkg(realArgs):
       imageFile = os.path.join(buildContext,"SubuserImagefile")
       permissionsFile = os.path.join(imageSourceDir,"permissions.json")
       try:
-        os.makedirs(buildContext)
+        user.makedirs(buildContext)
       except OSError:
         pass
     else:
@@ -85,17 +86,17 @@ def pkg(realArgs):
         sys.exit("If you specify non-default paths you must specify all of them. That is --image-file, --build-context AND --permissions-file. Cannot add image. Exiting...")
       imageFile = options.imageFile
       try:
-        os.makedirs(os.path.dirname(imageFile))
+        user.makedirs(os.path.dirname(imageFile))
       except OSError:
         pass
       buildContext = options.buildContext
       try:
-        os.makedirs(os.path.dirname(buildContext))
+        user.makedirs(os.path.dirname(buildContext))
       except OSError:
         pass
       permissionsFile = options.permissionsFile
       try:
-        os.makedirs(os.path.dirname(permissionsFile))
+        user.makedirs(os.path.dirname(permissionsFile))
       except OSError:
         pass
       repoConfig = repo.getRepoConfig()
@@ -106,17 +107,19 @@ def pkg(realArgs):
         json.dump(repoConfig,subuserDotJson,indent=1,separators=(",",": "))
     permissions = copy.deepcopy(subuserlib.permissions.defaults)
     (returncode,maintainerName) = subuserlib.subprocessExtras.callCollectOutput(["git","config","user.name"])
-    (returncode,maintainerEmail) = subuserlib.subprocessExtras.callCollectOutput(["git","config","user.email"]) 
+    (returncode,maintainerEmail) = subuserlib.subprocessExtras.callCollectOutput(["git","config","user.email"])
     permissions["maintainer"] = maintainerName.rstrip("\n")+" <"+maintainerEmail.rstrip("\n")+">"
     if not os.path.exists(permissionsFile):
       with open(permissionsFile,"w") as pf:
         json.dump(permissions,pf,indent=1,separators=(",",": "))
     subuserlib.subprocessExtras.runEditor(permissionsFile)
     Permissions(user,initialPermissions=subuserlib.permissions.load(permissionsFilePath=permissionsFile),writePath=permissionsFile).save()
+    user.chown(permissionsFile)
     if not os.path.exists(imageFile):
       with open(imageFile,"w") as imgf:
         imgf.write("""FROM-SUBUSER-IMAGE libx11@default
 RUN apt-get update && apt-get upgrade -y && apt-get install -y PKG""")
+      user.chown(imageFile)
     subuserlib.subprocessExtras.runEditor(imageFile)
     if raw_input("Would you like to test your new image? [Y/n]") == "n":
       sys.exit(0)
@@ -161,4 +164,3 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y PKG""")
 
 if __name__ == "__main__":
   pkg(sys.argv[1:])
-
