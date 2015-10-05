@@ -194,10 +194,8 @@ class XpraX11Bridge(Service):
     clientRuntime.setEnvVar("XPRA_SOCKET_HOSTNAME","server")
     clientRuntime.setBackground(True)
     clientRuntime.setBackgroundSuppressOutput(suppressOutput)
-    clientRuntime.setBackgroundCollectOutput(False,True)
     (clientContainer, clientProcess) = clientRuntime.run(args=clientArgs)
     serviceStatus["xpra-client-service-cid"] = clientContainer.getId()
-    self.waitForContainerToLaunch("Attached to", clientProcess, suppressOutput)
     return serviceStatus
 
   def waitForContainerToLaunch(self, readyString, process, suppressOutput):
@@ -212,6 +210,7 @@ class XpraX11Bridge(Service):
           print line,
         if readyString in line:
           break
+    process.stderr_file.close()
 
   def stop(self,serviceStatus):
     """
