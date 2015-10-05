@@ -22,7 +22,7 @@ import subuserlib.lock
 class Registry(userOwnedObject.UserOwnedObject):
   def __init__(self,user,gitReadHash="master"):
     self.__subusers = None
-    self.__changeLog = ""
+    self.__changeLog = u""
     self.__changed = False
     self.__logOutputVerbosity = 2
     self.__repositories = None
@@ -69,7 +69,7 @@ class Registry(userOwnedObject.UserOwnedObject):
     """
     Add a log message to the registry's change log and print it to the screen, but do not mark the registry as changed.
     """
-    self.__changeLog = self.__changeLog + message+"\n"
+    self.__changeLog = self.__changeLog + message+u"\n"
     if self.getLogOutputVerbosity() > 0:
       print(message)
 
@@ -87,7 +87,7 @@ class Registry(userOwnedObject.UserOwnedObject):
     """
     Add a new message to the top of the log.
     """
-    self.__changeLog = message + "\n" + self.__changeLog
+    self.__changeLog = message + u"\n" + self.__changeLog
 
   def commit(self):
     """
@@ -105,7 +105,7 @@ class Registry(userOwnedObject.UserOwnedObject):
         with open(liveLogPath,"a") as liveLog:
           liveLog.write(json.dumps(announcement))
       self.__changed = False
-      self.__changeLog = ""
+      self.__changeLog = u""
 
   @contextmanager
   def getLock(self):

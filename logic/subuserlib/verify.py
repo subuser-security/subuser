@@ -77,7 +77,10 @@ def ensureImagesAreInstalledAndUpToDate(user,subuserNames,checkForUpdatesExterna
         subuserlib.install.ensureSubuserImageIsInstalledAndUpToDate(subuser,checkForUpdatesExternally=checkForUpdatesExternally)
         subuser.getRunReadyImage().setup()
       except exceptions.ImageBuildException as e:
-        user.getRegistry().log(str(e))
+        try:
+          user.getRegistry().log(unicode(e))
+        except NameError: #Python3
+          user.getRegistry().log(str(e))
         subusersWhosImagesFailedToBuild.append(subuser)
   if subusersWhosImagesFailedToBuild:
     user.getRegistry().log("Images for the following subusers failed to build:")
