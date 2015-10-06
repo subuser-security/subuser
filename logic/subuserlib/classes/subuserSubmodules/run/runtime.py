@@ -150,7 +150,7 @@ $ subuser repair
     executionSpoolReader = os.path.join(subuserlib.paths.getSubuserCommandsDir(),"execute-json-from-fifo.py")
     if not os.path.exists(executionSpoolReader):
       executionSpoolReader = subuserlib.executablePath.which("execute-json-from-fifo.py")
-    self.__executionSpoolReader = subprocess.Popen((executionSpoolReader,self.getExecutionSpool()),cwd=self.getExecutionSpoolDir())
+    self.__executionSpoolReader = subprocess.Popen(self.getUser().getEndUser().getSudoArgs()+[executionSpoolReader,self.getExecutionSpool()],cwd=self.getExecutionSpoolDir())
 
   def tearDownExecutionSpool(self):
     self.__executionSpoolReader.terminate()
@@ -225,11 +225,7 @@ $ subuser repair
       os.remove(self.getXautorityFilePath())
     except OSError:
       pass
-    if self.getUser().getEndUser().proxiedByOtherUser:
-      sudoArgs = ["sudo","--user",self.getUser().getEndUser().name]
-    else:
-      sudoArgs = []
-    subuserlib.subprocessExtras.call(sudoArgs+["xauth","extract",".Xauthority",self.getEnvironment()["DISPLAY"]],cwd=self.getXautorityDirPath())
+    subuserlib.subprocessExtras.call(self.getUser().getEndUser().getSudoArgs()+["xauth","extract",".Xauthority",self.getEnvironment()["DISPLAY"]],cwd=self.getXautorityDirPath())
     with open(self.getXautorityFilePath(),"rb") as xauthFile:
       # The extracted Xauthority file has the following format(bytewise):
       # 1 0 0 [len(hostname)] [hostname-in-ascii] 0 1 [display-number-in-ascii] 0 22 ["MIT-MAGIC-COOKIE-1"-in-ascii] 0 20 [Magic number]

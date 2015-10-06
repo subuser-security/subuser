@@ -66,3 +66,9 @@ class EndUser(UserOwnedObject,object):
       if not os.path.exists(pathBeingBuilt):
         os.mkdir(pathBeingBuilt)
         self.chown(pathBeingBuilt)
+
+  def getSudoArgs(self):
+    if self.proxiedByOtherUser:
+      return ["sudo","--user",self.name]
+    else:
+      return []
