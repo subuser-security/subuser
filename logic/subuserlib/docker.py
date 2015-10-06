@@ -53,8 +53,8 @@ def run(args,cwd=None):
   """
   return subprocessExtras.call([getAndVerifyExecutable()]+args,cwd)
 
-def runBackground(args,cwd=None,suppressOutput=True,collectOutput=False):
+def runBackground(args,cwd=None,suppressOutput=True,collectStdout=False,collectStderr=False):
   """
   Run docker with the given command line arguments. Return Docker's pid.
   """
-  return subprocessExtras.callBackground([getAndVerifyExecutable()]+args,cwd,suppressOutput=suppressOutput,collectOutput=collectOutput)
+  return subprocessExtras.callBackground([getAndVerifyExecutable()]+args,cwd,suppressOutput=suppressOutput,collectStdout=collectStdout,collectStderr=collectStderr)

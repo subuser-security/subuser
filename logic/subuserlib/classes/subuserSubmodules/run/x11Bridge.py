@@ -180,10 +180,11 @@ class XpraX11Bridge(Service):
     serverRuntime.logIfInteractive("Starting xpra server...")
     serverRuntime.setHostname(self.getServerSubuserHostname())
     serverRuntime.setBackground(True)
-    serverRuntime.setBackgroundCollectOutput(True)
+    serverRuntime.setBackgroundSuppressOutput(suppressOutput)
+    serverRuntime.setBackgroundCollectOutput(False,True)
     (serverContainer, serverProcess) = serverRuntime.run(args=serverArgs)
     serviceStatus["xpra-server-service-cid"] = serverContainer.getId()
-    self.waitForServerContainerToLaunch(serverProcess, suppressOutput)
+    self.waitForContainerToLaunch("xpra is ready", serverProcess, suppressOutput)
     # Launch xpra client
     clientArgs = ["attach","--no-tray","--compress=0","--encoding=rgb"]
     clientArgs.extend(commonArgs)
@@ -197,15 +198,19 @@ class XpraX11Bridge(Service):
     serviceStatus["xpra-client-service-cid"] = clientContainer.getId()
     return serviceStatus
 
-  def waitForServerContainerToLaunch(self, serverProcess, suppressOutput):
+  def waitForContainerToLaunch(self, readyString, process, suppressOutput):
     while True:
-      line = serverProcess.stderr.readline()
-      if not line:
-        raise Exception("Xpra server crashed.")
-      if not suppressOutput:
-        print(line[:-1])
-      if "xpra is ready" in line:
-        break
+      where = process.stderr_file.tell()
+      line = process.stderr_file.readline()
+      if (not line) or (line[-1:] != '\n'):
+        time.sleep(0.1)
+        process.stderr_file.seek(where)
+      else:
+        if not suppressOutput:
+          print(line)
+        if readyString in line:
+          break
+    process.stderr_file.close()
 
   def stop(self,serviceStatus):
     """
