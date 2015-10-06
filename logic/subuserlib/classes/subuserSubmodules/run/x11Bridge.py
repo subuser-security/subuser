@@ -55,12 +55,12 @@ class XpraX11Bridge(Service):
 
   def setupServerPermissions(self):
     self.getServerSubuser().createPermissions(self.getServerSubuser().getImageSource().getPermissions())
-    self.getServerSubuser().getPermissions()["system-dirs"] = {self.getServerSideX11Path():"/tmp/.X11-unix",self.getXpraHomeDir():"/home/"+self.getUser().name}
+    self.getServerSubuser().getPermissions()["system-dirs"] = {self.getServerSideX11Path():"/tmp/.X11-unix",self.getXpraHomeDir():self.getUser().getEndUser().homeDir}
     self.getServerSubuser().getPermissions().save()
 
   def setupClientPermissions(self):
     self.getClientSubuser().createPermissions(self.getClientSubuser().getImageSource().getPermissions())
-    self.getClientSubuser().getPermissions()["system-dirs"] = {self.getXpraSocket():os.path.join("/home/",self.getUser().name,".xpra","server-100")}
+    self.getClientSubuser().getPermissions()["system-dirs"] = {self.getXpraSocket():os.path.join(self.getClientSubuser().getDockersideHome(),".xpra","server-100")}
     self.getClientSubuser().getPermissions().save()
 
   def setup(self,verify=True):
@@ -138,7 +138,7 @@ class XpraX11Bridge(Service):
       self.createAndSetupSpecialVolumes()
     def mkdirs(directory):
       try:
-        self.getUser().makedirs(directory)
+        self.getUser().getEndUser().makedirs(directory)
       except OSError as e:
         if e.errno == errno.EEXIST:
           clearAndTryAgain()

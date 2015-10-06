@@ -59,8 +59,8 @@ def pkg(realArgs):
       with open("./.subuser.json","w") as subuserDotJson:
         json.dump(repoConfig,subuserDotJson)
         if options.imageSourcesDir:
-          user.makedirs(options.imageSourcesDir)
-      user.chown("./.subuser.json")
+          user.getEndUser().makedirs(options.imageSourcesDir)
+      user.getEndUser().chown("./.subuser.json")
       print("Subuser repository initialized successfully!")
       print("You can add new image sources with:")
       print("$ subuser pkg add image-source-name")
@@ -78,7 +78,7 @@ def pkg(realArgs):
       imageFile = os.path.join(buildContext,"SubuserImagefile")
       permissionsFile = os.path.join(imageSourceDir,"permissions.json")
       try:
-        user.makedirs(buildContext)
+        user.getEndUser().makedirs(buildContext)
       except OSError:
         pass
     else:
@@ -86,17 +86,17 @@ def pkg(realArgs):
         sys.exit("If you specify non-default paths you must specify all of them. That is --image-file, --build-context AND --permissions-file. Cannot add image. Exiting...")
       imageFile = options.imageFile
       try:
-        user.makedirs(os.path.dirname(imageFile))
+        user.getEndUser().makedirs(os.path.dirname(imageFile))
       except OSError:
         pass
       buildContext = options.buildContext
       try:
-        user.makedirs(os.path.dirname(buildContext))
+        user.getEndUser().makedirs(os.path.dirname(buildContext))
       except OSError:
         pass
       permissionsFile = options.permissionsFile
       try:
-        user.makedirs(os.path.dirname(permissionsFile))
+        user.getEndUser().makedirs(os.path.dirname(permissionsFile))
       except OSError:
         pass
       repoConfig = repo.getRepoConfig()
@@ -114,12 +114,12 @@ def pkg(realArgs):
         json.dump(permissions,pf,indent=1,separators=(",",": "))
     subuserlib.subprocessExtras.runEditor(permissionsFile)
     Permissions(user,initialPermissions=subuserlib.permissions.load(permissionsFilePath=permissionsFile),writePath=permissionsFile).save()
-    user.chown(permissionsFile)
+    user.getEndUser().chown(permissionsFile)
     if not os.path.exists(imageFile):
       with open(imageFile,"w") as imgf:
         imgf.write("""FROM-SUBUSER-IMAGE libx11@default
 RUN apt-get update && apt-get upgrade -y && apt-get install -y PKG""")
-      user.chown(imageFile)
+      user.getEndUser().chown(imageFile)
     subuserlib.subprocessExtras.runEditor(imageFile)
     if raw_input("Would you like to test your new image? [Y/n]") == "n":
       sys.exit(0)

@@ -126,7 +126,7 @@ $ subuser repair
      ("graphics-card", lambda p: ["--device=/dev/dri/"+device for device in os.listdir("/dev/dri")] if p else []),
      ("serial-devices", lambda sd: ["--device=/dev/"+device for device in self.getSerialDevices()] if sd else []),
      ("system-dbus", lambda dbus: ["--volume=/var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket"] if dbus else []),
-     ("as-root", lambda root: ["--user=0"] if root else ["--user="+str(self.getUser().uid)]),
+     ("as-root", lambda root: ["--user=0"] if root else ["--user="+str(self.getUser().getEndUser().uid)]),
      # Anarchistic permissions
      ("run-commands-on-host", lambda p : ["-v",self.getExecutionSpoolDir()+":/subuser/execute"] if p else []),
      ("privileged", lambda p: ["--privileged"] if p else [])])
@@ -143,7 +143,7 @@ $ subuser repair
     except (OSError,IOError):
       pass
     try:
-      self.getUser().makedirs(os.path.join(self.getExecutionSpoolDir()))
+      self.getUser().getEndUser().makedirs(os.path.join(self.getExecutionSpoolDir()))
     except (OSError,IOError):
       pass
     os.mkfifo(self.getExecutionSpool())
@@ -218,15 +218,15 @@ $ subuser repair
 
   def setupXauth(self):
     try:
-      self.getUser().makedirs(self.getXautorityDirPath())
+      self.getUser().getEndUser().makedirs(self.getXautorityDirPath())
     except OSError: #Already exists
       pass
     try:
       os.remove(self.getXautorityFilePath())
     except OSError:
       pass
-    if self.getUser().rootProxy:
-      sudoArgs = ["sudo","--user",self.getUser().name]
+    if self.getUser().getEndUser().proxiedByOtherUser:
+      sudoArgs = ["sudo","--user",self.getUser().getEndUser().name]
     else:
       sudoArgs = []
     subuserlib.subprocessExtras.call(sudoArgs+["xauth","extract",".Xauthority",self.getEnvironment()["DISPLAY"]],cwd=self.getXautorityDirPath())
@@ -249,7 +249,7 @@ $ subuser repair
 
   def createHomeDir(self):
     try:
-      self.getUser().makedirs(self.getSubuser().getHomeDirOnHost())
+      self.getUser().getEndUser().makedirs(self.getSubuser().getHomeDirOnHost())
     except OSError:
       pass
 
