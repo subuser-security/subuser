@@ -207,7 +207,7 @@ class XpraX11Bridge(Service):
         process.stderr_file.seek(where)
       else:
         if not suppressOutput:
-          print(line)
+          print(line[:-1])
         if readyString in line:
           break
     process.stderr_file.close()
