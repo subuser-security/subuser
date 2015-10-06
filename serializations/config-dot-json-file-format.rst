@@ -62,3 +62,7 @@ The defaults settings for these properties may be found in ``$SUBUSERDIR/config.
  * ``volumes-dir``: Path to directory which contains docker volumes which are managed by subuser.
 
   ``type``: string - path to directory
+
+ * ``user``: It is possible to run subuser as root rather than making your main user a member of the ``docker`` group. If you choose to do so, you can use this option to tell subuser what your main user is.
+
+  ``type``: string - username
