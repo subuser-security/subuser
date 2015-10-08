@@ -12,6 +12,13 @@ import optparse
 import json
 import os
 import copy
+
+# Python 2.x/Python 3 compatibility
+try:
+    input = raw_input
+except NameError:
+    raw_input = input
+
 #internal imports
 from subuserlib.classes.user import User
 import subuserlib.commandLineArguments

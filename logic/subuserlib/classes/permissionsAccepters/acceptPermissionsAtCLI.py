@@ -8,6 +8,13 @@ This is a PermissionAccepter object used to get user approval of permissions via
 
 #external imports
 from collections import OrderedDict
+
+# Python 2.x/Python 3 compatibility
+try:
+    input = raw_input
+except NameError:
+    raw_input = input
+
 #internal imports
 from subuserlib.classes.permissionsAccepters.permissionsAccepter import PermissionsAccepter
 from subuserlib.classes.userOwnedObject import UserOwnedObject
