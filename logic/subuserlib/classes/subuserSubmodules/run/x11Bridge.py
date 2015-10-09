@@ -32,6 +32,7 @@ import os
 import time
 import shutil
 import errno
+import sys
 #internal imports
 from subuserlib.classes.service import Service
 import subuserlib.verify
@@ -53,31 +54,53 @@ class XpraX11Bridge(Service):
     serverSubuserInstalled = self.getServerSubuserName() in self.getUser().getRegistry().getSubusers()
     return clientSubuserInstalled and serverSubuserInstalled
 
+  def getSubuserSpecificServerPermissions(self):
+    """
+    Get the dictionary of permissions that are specific to this particular subuser and therefore are not packaged in the xpra server image source.
+    """
+    permissions = {}
+    permissions["system-dirs"] = {self.getServerSideX11Path():"/tmp/.X11-unix",self.getXpraHomeDir():self.getUser().getEndUser().homeDir}
+    return permissions
+
+  def getSubuserSpecificClientPermissions(self):
+    """
+    Get the dictionary of permissions that are specific to this particular subuser and therefore are not packaged in the xpra client image source.
+    """
+    permissions = {}
+    permissions["system-dirs"] = {self.getXpraSocket():os.path.join(self.getClientSubuser().getDockersideHome(),".xpra","server-100"),self.getXpraTmpDir():os.path.join(self.getClientSubuser().getDockersideHome(),"tmp")}
+    return permissions
+
   def setupServerPermissions(self):
-    self.getServerSubuser().createPermissions(self.getServerSubuser().getImageSource().getPermissions())
-    self.getServerSubuser().getPermissions()["system-dirs"] = {self.getServerSideX11Path():"/tmp/.X11-unix",self.getXpraHomeDir():self.getUser().getEndUser().homeDir}
-    self.getServerSubuser().getPermissions().save()
+    permissions = self.getServerSubuser().getPermissions()
+    for key,value in self.getSubuserSpecificServerPermissions().items():
+      permissions[key] = value
+    permissions.save()
 
   def setupClientPermissions(self):
-    self.getClientSubuser().createPermissions(self.getClientSubuser().getImageSource().getPermissions())
-    self.getClientSubuser().getPermissions()["system-dirs"] = {self.getXpraSocket():os.path.join(self.getClientSubuser().getDockersideHome(),".xpra","server-100")}
-    self.getClientSubuser().getPermissions().save()
+    permissions = self.getClientSubuser().getPermissions()
+    for key,value in self.getSubuserSpecificClientPermissions().items():
+      permissions[key] = value
+    permissions.save()
 
-  def setup(self,verify=True):
+  def arePermissionsUpToDate(self):
+    areClientPermissionsUpToDate = isSubDict(self.getSubuserSpecificClientPermissions(),self.getClientSubuser().getPermissions())
+    areServerPermissionsUpToDate = isSubDict(self.getSubuserSpecificServerPermissions(),self.getServerSubuser().getPermissions())
+    return areClientPermissionsUpToDate and areServerPermissionsUpToDate
+
+  def setup(self):
     """
     Do any setup required in order to create a functional bridge: Creating subusers building images ect.
-    If verify is False, returns the names of the new service subusers that were created.
     """
+    newSubuserNames = []
     if not self.isSetup():
       self.addServerSubuser()
-      self.setupServerPermissions()
       self.addClientSubuser()
+      newSubuserNames = [self.getServerSubuserName(),self.getClientSubuserName()]
+    if not self.arePermissionsUpToDate():
+      self.setupServerPermissions()
       self.setupClientPermissions()
       newSubuserNames = [self.getServerSubuserName(),self.getClientSubuserName()]
-      if verify:
-        subuserlib.verify.verify(self.getUser(),subuserNames=newSubuserNames,permissionsAccepter=self._getPermissionsAccepter())
-      else:
-        return newSubuserNames
+    return newSubuserNames
 
   def getXpraVolumePath(self):
     return os.path.join(self.getUser().getConfig()["volumes-dir"],"xpra",self.getSubuser().getName())
@@ -87,6 +110,9 @@ class XpraX11Bridge(Service):
 
   def getXpraHomeDir(self):
     return os.path.join(self.getXpraVolumePath(),"xpra-home")
+
+  def getXpraTmpDir(self):
+    return os.path.join(self.getXpraHomeDir(),"tmp")
 
   def getXpraSocket(self):
     return os.path.join(self.getXpraHomeDir(),".xpra",self.getServerSubuserHostname()+"-100")
@@ -107,6 +133,7 @@ class XpraX11Bridge(Service):
   def addServerSubuser(self):
     subuserlib.subuser.addFromImageSourceNoVerify(self.getUser(),self.getServerSubuserName(),self.getUser().getRegistry().getRepositories()["default"]["subuser-internal-xpra-server"])
     self.getSubuser().addServiceSubuser(self.getServerSubuserName())
+    self.getServerSubuser().createPermissions(self.getServerSubuser().getImageSource().getPermissions())
 
   def getClientSubuserName(self):
     return "!service-subuser-"+self.getSubuser().getName()+"-xpra-client"
@@ -117,6 +144,7 @@ class XpraX11Bridge(Service):
   def addClientSubuser(self):
     subuserlib.subuser.addFromImageSourceNoVerify(self.getUser(),self.getClientSubuserName(),self.getUser().getRegistry().getRepositories()["default"]["subuser-internal-xpra-client"])
     self.getSubuser().addServiceSubuser(self.getClientSubuserName())
+    self.getClientSubuser().createPermissions(self.getClientSubuser().getImageSource().getPermissions())
 
   def cleanUp(self):
     """
@@ -140,12 +168,13 @@ class XpraX11Bridge(Service):
       try:
         self.getUser().getEndUser().makedirs(directory)
       except OSError as e:
-        if e.errno == errno.EEXIST:
+        if e.errno == errno.EEXIST or e.errno == errno.EACCES:
           clearAndTryAgain()
         else:
           raise e
     mkdirs(self.getServerSideX11Path())
     mkdirs(self.getXpraHomeDir())
+    mkdirs(self.getXpraTmpDir())
     try:
       os.chmod(self.getServerSideX11Path(),1023)
     except OSError as e:
@@ -157,6 +186,8 @@ class XpraX11Bridge(Service):
     """
     Start the bridge.
     """
+    if not self.arePermissionsUpToDate():
+      sys.exit("The configuration of the xpra bridge has changed in a recent version. You must update the xpra bridge configuration by running\n\n$subuser repair")
     self.cleanUp()
     self.createAndSetupSpecialVolumes()
     permissionDict = {
@@ -169,7 +200,7 @@ class XpraX11Bridge(Service):
         permissionArgs.append(on)
       else:
         permissionArgs.append(off)
-    commonArgs = ["--no-daemon","--no-notifications"]
+    commonArgs = ["--no-daemon","--no-notifications","--mmap"]
     # Launch xpra server
     serverArgs = ["start","--no-pulseaudio","--no-mdns","--encoding=rgb"]
     suppressOutput = not "SUBUSER_DEBUG_XPRA" in os.environ
@@ -179,6 +210,7 @@ class XpraX11Bridge(Service):
     serverRuntime = self.getServerSubuser().getRuntime(os.environ)
     serverRuntime.logIfInteractive("Starting xpra server...")
     serverRuntime.setHostname(self.getServerSubuserHostname())
+    serverRuntime.setEnvVar("TMPDIR",os.path.join(self.getUser().getEndUser().homeDir,"tmp"))
     serverRuntime.setBackground(True)
     serverRuntime.setBackgroundSuppressOutput(suppressOutput)
     serverRuntime.setBackgroundCollectOutput(False,True)
@@ -192,6 +224,7 @@ class XpraX11Bridge(Service):
     clientRuntime = self.getClientSubuser().getRuntime(os.environ)
     clientRuntime.logIfInteractive("Starting xpra client...")
     clientRuntime.setEnvVar("XPRA_SOCKET_HOSTNAME","server")
+    clientRuntime.setEnvVar("TMPDIR",os.path.join(self.getUser().getEndUser().homeDir,"tmp"))
     clientRuntime.setBackground(True)
     clientRuntime.setBackgroundSuppressOutput(suppressOutput)
     (clientContainer, clientProcess) = clientRuntime.run(args=clientArgs)
@@ -240,3 +273,12 @@ def X11Bridge(user,subuser):
   return bridges[user.getConfig()["x11-bridge"]](user,subuser)
 
 bridges = {"xpra":XpraX11Bridge}
+
+########################################################################
+# Helper functions
+
+def isSubDict(subDict,dictionary):
+  for key in subDict.keys():
+    if (not key in dictionary) or (not subDict[key] == dictionary[key]):
+      return False
+  return True
