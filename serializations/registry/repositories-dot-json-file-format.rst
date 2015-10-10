@@ -17,7 +17,7 @@ Each repositories.json file is to be a valid `json <http://www.ecma-internationa
 
 This object is a set of key value pairs where each key is the name of a subuser repository.
 
-Repository names must not contain any of the following characters: ``\``, ``:`` .
+Repository names must not contain any of the following characters: ``\``, ``:``, ``!``.
 
 The value is a json object with the following properties:
 
@@ -50,4 +50,3 @@ Example repositories.json file
     }
 
 This file states that there is one repository named ``default`` which was downloaded from ``https://github.com/subuser-security/subuser-default-repository.git/``.
-
