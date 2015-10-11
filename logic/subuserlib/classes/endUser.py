@@ -28,12 +28,14 @@ class EndUser(UserOwnedObject,object):
       except KeyError:
         # We use a broken setup when generating documentation...
         self.name = "I have no name!"
-    if test.testing:
-      self.uid = 1000
-      self.gid = 1000
-    else:
-      self.uid = pwd.getpwnam(self.name)[2]
-      self.gid = pwd.getpwnam(self.name)[3]
+    self.uid = 1000
+    self.gid = 1000
+    if not test.testing:
+      try:
+        self.uid = pwd.getpwnam(self.name)[2]
+        self.gid = pwd.getpwnam(self.name)[3]
+      except KeyError:
+        pass
     if not self.uid == 0:
       self.homeDir = os.path.join("/home/",self.name)
     else:
