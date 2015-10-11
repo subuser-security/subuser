@@ -203,7 +203,7 @@ def subuser(sysargs):
   Images for the following subusers failed to build:
   broken-syntax
   Running garbage collector on temporary repositories...
-  >>>
+
   >>> subuser.subuser(["add","--accept","broken-non-existant-dependency","broken-non-existant-dependency@file:///home/travis/remote-test-repo"])
   Adding subuser broken-non-existant-dependency broken-non-existant-dependency@file:///home/travis/remote-test-repo
   Verifying subuser configuration.
@@ -223,10 +223,22 @@ def subuser(sysargs):
   Images for the following subusers failed to build:
   broken-non-existant-dependency
   Running garbage collector on temporary repositories...
-  >>> subuser.subuser(["remove","broken-syntax","broken-non-existant-dependency"])
+
+  >>> subuser.subuser(["add","--accept","broken-permissions-file","broken-permissions-file@file:///home/travis/remote-test-repo"])
+  Adding subuser broken-permissions-file broken-permissions-file@file:///home/travis/remote-test-repo
+  Verifying subuser configuration.
+  Verifying registry consistency...
+  Unregistering any non-existant installed images.
+  Checking if images need to be updated or installed...
+  Error, user dir permissions may not contain system wide absolute paths. The user dir: "/etc/" is forbidden.
+  Running garbage collector on temporary repositories...
+
+  >>> subuser.subuser(["remove","broken-syntax","broken-non-existant-dependency","broken-permissions-file"])
   Removing subuser broken-syntax
    If you wish to remove the subusers image, issue the command $ subuser remove-old-images
   Removing subuser broken-non-existant-dependency
+   If you wish to remove the subusers image, issue the command $ subuser remove-old-images
+  Removing subuser broken-permissions-file
    If you wish to remove the subusers image, issue the command $ subuser remove-old-images
   Verifying subuser configuration.
   Verifying registry consistency...

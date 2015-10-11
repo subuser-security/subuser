@@ -40,23 +40,35 @@ def verify(user,permissionsAccepter=None,checkForUpdatesExternally=False,subuser
   user.getInstalledImages().unregisterNonExistantImages()
   if subuserNames:
     user.getRegistry().setChanged(True)
-    approvePermissions(user,subuserNames,permissionsAccepter)
+    (failedSubuserNames,permissionParsingExceptions) = approvePermissions(user,subuserNames,permissionsAccepter)
+    subuserNames = [x for x in subuserNames if x not in failedSubuserNames]
     subuserNames += ensureServiceSubusersAreSetup(user,subuserNames)
     ensureImagesAreInstalledAndUpToDate(user,subuserNames=subuserNames,checkForUpdatesExternally=checkForUpdatesExternally)
+    for exception in permissionParsingExceptions:
+      user.getRegistry().log(str(exception))
   user.getInstalledImages().save()
   trimUnneededTempRepos(user)
   rebuildBinDir(user)
 
 def approvePermissions(user,subuserNames,permissionsAccepter):
+  subusersWhosPermissionsFailedToParse = []
+  exceptions = []
   for subuserName in subuserNames:
     subuser = user.getRegistry().getSubusers()[subuserName]
     try:
       userApproved = subuser.getPermissions()
     except subuserlib.classes.subuser.SubuserHasNoPermissionsException:
       userApproved = None
-    permissionsAccepter.accept(subuser=subuser,oldDefaults=subuser.getPermissionsTemplate(),newDefaults=subuser.getImageSource().getPermissions(),userApproved=userApproved)
-    subuser.getPermissionsTemplate().update(subuser.getImageSource().getPermissions())
-    subuser.getPermissionsTemplate().save()
+    try:
+      oldDefaults = subuser.getPermissionsTemplate()
+      newDefaults = subuser.getImageSource().getPermissions()
+      permissionsAccepter.accept(subuser=subuser,oldDefaults=oldDefaults,newDefaults=newDefaults,userApproved=userApproved)
+      subuser.getPermissionsTemplate().update(subuser.getImageSource().getPermissions())
+      subuser.getPermissionsTemplate().save()
+    except SyntaxError as e:
+      subusersWhosPermissionsFailedToParse.append(subuserName)
+      exceptions.append(e)
+  return (subusersWhosPermissionsFailedToParse,exceptions)
 
 def ensureServiceSubusersAreSetup(user,subuserNames):
   newServiceSubusers = []

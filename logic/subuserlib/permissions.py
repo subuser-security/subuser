@@ -110,6 +110,51 @@ guiDescriptions = {
 def load(permissionsFilePath=None,permissionsString=None):
   """
   Return a dictionary of permissions from the given permissions.json file.  Permissions that are not specified are set to their default values.
+
+  Loading permissions doesn't crash horribly and does something at least slightly sensible.
+
+  >>> getNonDefaultPermissions(load(permissionsString="{}"))
+  OrderedDict()
+
+  Valid paths are loaded when the user-dirs permission is set.
+
+  >>> print(json.dumps(getNonDefaultPermissions(load(permissionsString='{\"user-dirs\":[\"Downloads\"]}'))))
+  {"user-dirs": ["Downloads"]}
+
+  However, funny business is strictly frowned upon.
+
+  >>> getNonDefaultPermissions(load(permissionsString='{\"user-dirs\":[\"..\"]}'))
+  Traceback (most recent call last):
+    ...
+  SyntaxError: Error, user dir permissions may not contain relative paths. The user dir: ".." is forbidden.
+
+  >>> getNonDefaultPermissions(load(permissionsString='{\"user-dirs\":[\"../\"]}'))
+  Traceback (most recent call last):
+    ...
+  SyntaxError: Error, user dir permissions may not contain relative paths. The user dir: "../" is forbidden.
+
+  >>> getNonDefaultPermissions(load(permissionsString='{\"user-dirs\":[\"./../../\"]}'))
+  Traceback (most recent call last):
+    ...
+  SyntaxError: Error, user dir permissions may not contain relative paths. The user dir: "./../../" is forbidden.
+
+  Even if it is well hiden behind valid values.
+
+  >>> getNonDefaultPermissions(load(permissionsString='{\"user-dirs\":[\"Downloads\",\"../\"]}'))
+  Traceback (most recent call last):
+    ...
+  SyntaxError: Error, user dir permissions may not contain relative paths. The user dir: "../" is forbidden.
+
+  >>> getNonDefaultPermissions(load(permissionsString='{\"user-dirs\":[\"Downloads\",\"./Foo\"]}'))
+  Traceback (most recent call last):
+    ...
+  SyntaxError: Error, user dir permissions may not contain relative paths. The user dir: "./Foo" is forbidden.
+
+  >>> getNonDefaultPermissions(load(permissionsString='{\"user-dirs\":[\"Downloads\",\"/Foo\"]}'))
+  Traceback (most recent call last):
+    ...
+  SyntaxError: Error, user dir permissions may not contain system wide absolute paths. The user dir: "/Foo" is forbidden.
+
   """
   if not permissionsString is None:
     try:
@@ -122,15 +167,26 @@ def load(permissionsFilePath=None,permissionsString=None):
       try:
         permissions=json.load(file_f, object_pairs_hook=collections.OrderedDict)
       except ValueError:
-        sys.exit(permissionsFilePath+" is not valid json.  "+allImagesMustHavePermissions)
+        raise SyntaxError(permissionsFilePath+" is not valid json.  "+allImagesMustHavePermissions)
   # Validate that the permissions are supported by this version of subuser.
   for permission in permissions.keys():
     if not permission in defaults:
-      sys.exit("Error: the permission \""+permission+"\" is not supported by your version of subuser.  Try updating first.")
+      raise SyntaxError("Error: the permission \""+permission+"\" is not supported by your version of subuser.  Try updating first.")
+    else: # Validate if the permissions don't have unsafe contents.
+      if permission == "user-dirs":
+        userDirs = permissions["user-dirs"]
+        if userDirs and type(userDirs) is list:
+          for userDir in permissions["user-dirs"]:
+            if ".." in userDir or userDir.startswith("./"):
+              raise SyntaxError("Error, user dir permissions may not contain relative paths. The user dir: \""+userDir+"\" is forbidden.")
+            if userDir.startswith("/"):
+              raise SyntaxError("Error, user dir permissions may not contain system wide absolute paths. The user dir: \""+userDir+"\" is forbidden.")
+        elif userDirs is []:
+          SyntaxError("The user-dirs permission must be a list of directory names.")
   if "gui" in permissions and not permissions["gui"] is None:
     for guiPermission in permissions["gui"].keys():
       if not guiPermission in guiDefaults:
-        sys.exit("Error: the gui permission \""+guiPermission+"\" is not supported by your version of subuser.  Try updating first.")
+        raise SyntaxError("Error: the gui permission \""+guiPermission+"\" is not supported by your version of subuser.  Try updating first.")
   # Set permission defaults for permissions that are not explicitly specified in the permissions.json file
   if "basic-common-permissions" in permissions and permissions["basic-common-permissions"]:
     for basicCommonPermission in basicCommonPermissions:

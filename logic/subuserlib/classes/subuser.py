@@ -9,6 +9,11 @@ A subuser is an entity that runs within a Docker container and has a home direct
 #external imports
 import os
 import stat
+# Python 2.x/Python 3 compatibility
+try:
+    input = raw_input
+except NameError:
+    raw_input = input
 #internal imports
 import subuserlib.permissions
 from subuserlib.classes.userOwnedObject import UserOwnedObject
@@ -120,8 +125,14 @@ To repair your subuser installation.\n""")
     return self.__permissionsTemplate
 
   def editPermissionsCLI(self):
-    subuserlib.subprocessExtras.runEditor(self.getPermissions().getWritePath())
-    initialPermissions = subuserlib.permissions.load(permissionsFilePath=self.getPermissionsDotJsonWritePath())
+    while True:
+      subuserlib.subprocessExtras.runEditor(self.getPermissions().getWritePath())
+      try:
+        initialPermissions = subuserlib.permissions.load(permissionsFilePath=self.getPermissionsDotJsonWritePath())
+        break
+      except SyntaxError as e:
+        print(e)
+        raw_input("Press ENTER to edit the permission file again.")
     self.__permissions = Permissions(self.getUser(),initialPermissions,writePath=self.getPermissionsDotJsonWritePath())
     self.getPermissions().save()
 
