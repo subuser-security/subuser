@@ -69,6 +69,7 @@ class Registry(userOwnedObject.UserOwnedObject):
     """
     Add a log message to the registry's change log and print it to the screen, but do not mark the registry as changed.
     """
+    message = message.rstrip()
     self.__changeLog = self.__changeLog + message+u"\n"
     if self.getLogOutputVerbosity() > 0:
       print(message)

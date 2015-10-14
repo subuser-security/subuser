@@ -15,11 +15,18 @@ This is one of the most important modules in subuser.  This module has one funct
 #external imports
 import shutil
 import os
-#internal imports
-import subuserlib.install
-import subuserlib.classes.exceptions as exceptions
+# Python 2.x/Python 3 compatibility
+try:
+    input = raw_input
+except NameError:
+    raw_input = input
 
-def verify(user,permissionsAccepter=None,checkForUpdatesExternally=False,subuserNames=[]):
+#internal imports
+from subuserlib.classes.installationTask import InstallationTask
+import subuserlib.classes.exceptions as exceptions
+import subuserlib.classes.subuser
+
+def verify(user,permissionsAccepter=None,checkForUpdatesExternally=False,subuserNames=[],prompt=False):
   """
    Ensure that:
       - Registry is consistent; warns the user about subusers that point to non-existant source images.
@@ -43,9 +50,27 @@ def verify(user,permissionsAccepter=None,checkForUpdatesExternally=False,subuser
     (failedSubuserNames,permissionParsingExceptions) = approvePermissions(user,subuserNames,permissionsAccepter)
     subuserNames = [x for x in subuserNames if x not in failedSubuserNames]
     subuserNames += ensureServiceSubusersAreSetup(user,subuserNames)
-    ensureImagesAreInstalledAndUpToDate(user,subuserNames=subuserNames,checkForUpdatesExternally=checkForUpdatesExternally)
+    subusers = [user.getRegistry().getSubusers()[subuserName] for subuserName in subuserNames]
+    installationTask = InstallationTask(user,subusersToBeUpdatedOrInstalled=subusers,checkForUpdatesExternally=checkForUpdatesExternally)
+    outOfDateSubusers = installationTask.getOutOfDateSubusers()
+    if outOfDateSubusers:
+      user.getRegistry().log("New images for the following subusers need to be installed:")
+      for subuser in outOfDateSubusers:
+        user.getRegistry().log(subuser.getName())
+      if (not prompt) or (prompt and (not raw_input("Would you like to install those images now? [Y/n]") == "n")):
+        installationTask.updateOutOfDateSubusers()
     for exception in permissionParsingExceptions:
       user.getRegistry().log(str(exception))
+    subusersWhosImagesFailedToBuild = installationTask.getSubusersWhosImagesFailedToBuild()
+    if subusersWhosImagesFailedToBuild:
+      user.getRegistry().log("Images for the following subusers failed to build:")
+    for subuser in subusersWhosImagesFailedToBuild:
+      user.getRegistry().log(subuser.getName())
+    for subuser in subusers:
+      try:
+        subuser.getRunReadyImage().setup()
+      except subuserlib.classes.subuserSubmodules.run.runtimeCache.NoRuntimeCacheForSubusersWhichDontHaveExistantImagesException:
+        pass
   user.getInstalledImages().save()
   trimUnneededTempRepos(user)
   rebuildBinDir(user)
@@ -77,26 +102,6 @@ def ensureServiceSubusersAreSetup(user,subuserNames):
     if not subuser.getPermissions()["gui"] is None:
       newServiceSubusers += subuser.getX11Bridge().setup()
   return newServiceSubusers
-
-def ensureImagesAreInstalledAndUpToDate(user,subuserNames,checkForUpdatesExternally=False):
-  user.getRegistry().log("Checking if images need to be updated or installed...")
-  subusersWhosImagesFailedToBuild = []
-  for subuserName in subuserNames:
-    subuser = user.getRegistry().getSubusers()[subuserName]
-    if not subuser.locked(): # TODO: We should install images for locked subusers if their images have dissappered.
-      try:
-        subuserlib.install.ensureSubuserImageIsInstalledAndUpToDate(subuser,checkForUpdatesExternally=checkForUpdatesExternally)
-        subuser.getRunReadyImage().setup()
-      except exceptions.ImageBuildException as e:
-        try:
-          user.getRegistry().log(unicode(e))
-        except NameError: #Python3
-          user.getRegistry().log(str(e))
-        subusersWhosImagesFailedToBuild.append(subuser)
-  if subusersWhosImagesFailedToBuild:
-    user.getRegistry().log("Images for the following subusers failed to build:")
-    for subuser in subusersWhosImagesFailedToBuild:
-      user.getRegistry().log(subuser.getName())
 
 def trimUnneededTempRepos(user):
   user.getRegistry().log("Running garbage collector on temporary repositories...")

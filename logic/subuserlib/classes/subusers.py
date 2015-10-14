@@ -34,14 +34,16 @@ class Subusers(dict,UserOwnedObject,FileBackedObject):
   Verifying registry consistency...
   Unregistering any non-existant installed images.
   foo would like to have the following permissions:
-   Description: 
-   Maintainer: 
+   Description:
+   Maintainer:
    Executable: /usr/bin/foo
   A - Accept and apply changes
   E - Apply changes and edit result
   A
   Checking if images need to be updated or installed...
   Checking if subuser foo is up to date.
+  New images for the following subusers need to be installed:
+  foo
   Installing foo ...
   Building...
   Building...

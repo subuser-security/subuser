@@ -26,6 +26,7 @@ This is usefull when migrating from one machine to another.  You can copy your ~
 """
   parser = optparse.OptionParser(usage=usage,description=description,formatter=subuserlib.commandLineArguments.HelpFormatterThatDoesntReformatDescription())
   parser.add_option("--accept",dest="accept",action="store_true",default=False,help="Acceppt permissions without asking.")
+  parser.add_option("--prompt",dest="prompt",action="store_true",default=False,help="Prompt before installing new images.")
   return parser.parse_args(args=realArgs)
 
 @subuserlib.profile.do_cprofile
@@ -36,8 +37,8 @@ def verify(realArgs):
   with user.getRegistry().getLock() as LockFileHandle:
     subuserNames = list(user.getRegistry().getSubusers().keys())
     subuserNames.sort()
-    subuserlib.verify.verify(user,subuserNames=subuserNames,permissionsAccepter=permissionsAccepter)
+    subuserlib.verify.verify(user,subuserNames=subuserNames,permissionsAccepter=permissionsAccepter,prompt=options.prompt)
     user.getRegistry().commit()
-  
+
 if __name__ == "__main__":
   verify(sys.argv[1:])

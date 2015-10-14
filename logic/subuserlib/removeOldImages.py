@@ -6,7 +6,6 @@
 #import
 #internal imports
 import subuserlib.verify
-import subuserlib.install
 
 def getInstalledImagesThatAreInUse(user):
   """

@@ -23,7 +23,7 @@ def parseCliArgs(realArgs):
   usage = "usage: subuser update [options]"
   description = """Update subuser images.
 
-  all 
+  all
       Updates all subuser images which have been marked as out of date.
 
   EXAMPLE:
@@ -44,6 +44,7 @@ def parseCliArgs(realArgs):
 """
   parser=optparse.OptionParser(usage=usage,description=description,formatter=subuserlib.commandLineArguments.HelpFormatterThatDoesntReformatDescription())
   parser.add_option("--accept",dest="accept",action="store_true",default=False,help="Accept permissions without asking.")
+  parser.add_option("--prompt",dest="prompt",action="store_true",default=False,help="Prompt before installing new images.")
   return parser.parse_args(args=realArgs)
 
 #################################################################################################
@@ -83,7 +84,7 @@ def update(realArgs):
   Unregistering any non-existant installed images.
   dependent would like to have the following permissions:
    Description: a dependent
-   Maintainer: 
+   Maintainer:
    Is a library.
    Moderate permissions(These are probably safe):
     - user-dirs: To access to the following user directories: '~/Downloads'
@@ -98,6 +99,8 @@ def update(realArgs):
   A
   Checking if images need to be updated or installed...
   Checking if subuser dependent is up to date.
+  New images for the following subusers need to be installed:
+  dependent
   Installing dependency1 ...
   Building...
   Building...
@@ -227,6 +230,10 @@ def update(realArgs):
   Unregistering any non-existant installed images.
   Checking if images need to be updated or installed...
   Checking if subuser dependent is up to date.
+  Checking if subuser foo is up to date.
+  Checking for updates to: foo@default
+  New images for the following subusers need to be installed:
+  dependent
   Installing dependency2 ...
   Building...
   Building...
@@ -255,8 +262,6 @@ def update(realArgs):
   Building...
   Successfully built 26
   Installed new image <26> for subuser dependent
-  Checking if subuser foo is up to date.
-  Checking for updates to: foo@default
   Running garbage collector on temporary repositories...
 
   >>> user = User()
@@ -314,6 +319,8 @@ def update(realArgs):
   Unregistering any non-existant installed images.
   Checking if images need to be updated or installed...
   Checking if subuser dependent is up to date.
+  New images for the following subusers need to be installed:
+  dependent
   Installing dependency3 ...
   Building...
   Building...
@@ -358,10 +365,10 @@ def update(realArgs):
     sys.exit("No arguments given. Please use subuser update -h for help.")
   elif ["all"] == args:
     with user.getRegistry().getLock():
-      subuserlib.update.all(user,permissionsAccepter=permissionsAccepter)
+      subuserlib.update.all(user,permissionsAccepter=permissionsAccepter,prompt=options.prompt)
   elif "subusers" == args[0]:
     with user.getRegistry().getLock():
-      subuserlib.update.subusers(user,args[1:],permissionsAccepter=permissionsAccepter)
+      subuserlib.update.subusers(user,args[1:],permissionsAccepter=permissionsAccepter,prompt=options.prompt)
   elif "lock-subuser-to" == args[0]:
     try:
       subuserName = args[1]
@@ -376,7 +383,7 @@ def update(realArgs):
     except KeyError:
       sys.exit("Wrong number of arguments.  Expected a subuser's name. Try running\nsubuser update --help\nfor more information.")
     with user.getRegistry().getLock():
-      subuserlib.update.unlockSubuser(user,subuserName=subuserName,permissionsAccepter=permissionsAccepter)
+      subuserlib.update.unlockSubuser(user,subuserName=subuserName,permissionsAccepter=permissionsAccepter,prompt=options.prompt)
   elif len(args) == 1:
     sys.exit(" ".join(args) + " is not a valid update subcommand. Please use subuser update -h for help.")
   else:

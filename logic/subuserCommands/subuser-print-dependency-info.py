@@ -12,9 +12,9 @@ import optparse
 #internal imports
 import subuserlib.classes.user
 import subuserlib.resolve
-import subuserlib.install
 import subuserlib.commandLineArguments
 import subuserlib.profile
+import subuserlib.classes.installationTask
 
 def parseCliArgs(realArgs):
   usage = "usage: subuser print-dependency-info IMAGE_NAME(s) SETS_OF_IMAGES"
@@ -31,26 +31,26 @@ Example:
 def printDependencies(realArgs):
   """
   Print the dependencies of the listed progam sources.
- 
+
   Tests
   -----
- 
+
   **Setup:**
   >>> print_dependency_info = __import__("subuser-print-dependency-info")#import self
- 
+
   Prints a list of images that the image depends on, including itself.
- 
+
   >>> print_dependency_info.printDependencies(["foo@default"])
   foo@default
- 
+
   If the image doesn't exist, tell us.
- 
+
   >>> try:
   ...  print_dependency_info.printDependencies(["non-existant@default"])
   ... except SystemExit as e:
   ...  print(e)
   The image non-existant@default does not exist.
- 
+
   """
   (options,imageSourceIds) = parseCliArgs(realArgs)
   if len(imageSourceIds) == 0:
@@ -62,7 +62,7 @@ def printDependencies(realArgs):
     except KeyError:
       sys.exit("The image "+imageSourceId+" does not exist.")
     indent = 0
-    for imageSourceInLineage in subuserlib.install.getImageSourceLineage(imageSource):
+    for imageSourceInLineage in subuserlib.classes.installationTask.getTargetLineage(imageSource):
       displayLine = (" "*indent) + imageSourceInLineage.getIdentifier()
       print(displayLine)
       indent = indent + 1
@@ -71,4 +71,3 @@ def printDependencies(realArgs):
 
 if __name__ == "__main__":
   printDependencies(sys.argv[1:])
- 

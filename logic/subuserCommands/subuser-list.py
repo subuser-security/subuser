@@ -58,8 +58,8 @@ def list(sysargs):
   >>> list.list(["available"])
   Images available for instalation from the repo: default
   foo@default
-   Description: 
-   Maintainer: 
+   Description:
+   Maintainer:
    Executable: /usr/bin/foo
 
   Similar result when listing subusers.
@@ -69,8 +69,8 @@ def list(sysargs):
   Subuser: foo
   ------------------
   foo@default
-   Description: 
-   Maintainer: 
+   Description:
+   Maintainer:
    Executable: /usr/bin/foo
   <BLANKLINE>
 
@@ -192,6 +192,6 @@ def list(sysargs):
       else:
         repo.describe()
         print("")
-      
+
 if __name__ == "__main__":
   list(sys.argv[1:])

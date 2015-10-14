@@ -44,6 +44,7 @@ def parseCliArgs(realArgs):
   """
   parser=optparse.OptionParser(usage=usage,description=description,formatter=subuserlib.commandLineArguments.HelpFormatterThatDoesntReformatDescription())
   parser.add_option("--accept",dest="accept",action="store_true",default=False,help="When testing images, accept permissions without asking.")
+  parser.add_option("--prompt",dest="prompt",action="store_true",default=False,help="Prompt before installing new images.")
   parser.add_option("--image-sources-dir", dest="imageSourcesDir",default=None,help="When initializing a new repository, set where the image source directories will be stored. This may be set when you are working with an existing git repository which you would like to unobtrusively add subuser image sources too.")
   parser.add_option("--permissions-file", dest="permissionsFile",default=None,help="When adding a new image source, the path to the new permissions.json file for the image source. Note: This flag should not be used to import permissions files from outside of the repository. Use the POSIX cp command for that.")
   parser.add_option("--image-file", dest="imageFile",default=None,help="When adding a new image source, the path to the new image file which will be used to build the image source. Note: This flag should not be used to import build files from outside of the repository. Use the POSIX cp command for that.")
@@ -143,11 +144,11 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y PKG""")
         subuserName = subuserNamePrefix+imageSourceName
         subuserNames.append(subuserName)
         subuserlib.subuser.addFromImageSourceNoVerify(user,subuserName,repo[imageSourceName])
-      subuserlib.verify.verify(user,subuserNames=subuserNames,permissionsAccepter=permissionsAccepter)
+      subuserlib.verify.verify(user,subuserNames=subuserNames,permissionsAccepter=permissionsAccepter,prompt=options.prompt)
       for subuserName in subuserNames:
         if user.getRegistry().getSubusers()[subuserName].getImageId() is None and not raw_input(subuserName+" failed to build. Edit its image file and try again? [Y/n]") == "n":
           subuserlib.subprocessExtras.runEditor(user.getRegistry().getSubusers()[subuserName].getImageSource().getImageFile())
-          subuserlib.verify.verify(user,subuserNames=[subuserName],permissionsAccepter=permissionsAccepter)
+          subuserlib.verify.verify(user,subuserNames=[subuserName],permissionsAccepter=permissionsAccepter,prompt=options.prompt)
       user.getRegistry().commit()
       # Create a list of the names of the new subusers
       subuserNames = []

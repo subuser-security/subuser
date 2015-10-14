@@ -17,7 +17,7 @@ import subuserlib.verify
 import subuserlib.update
 import subuserlib.classes.exceptions as exceptions
 
-def add(user,subuserName,imageSourceIdentifier,permissionsAccepter):
+def add(user,subuserName,imageSourceIdentifier,permissionsAccepter,prompt=False):
   if subuserName.startswith("!"):
     sys.exit("A subusers may not have names beginning with ! as these names are reserved for internal use.")
   if subuserName in user.getRegistry().getSubusers():
@@ -27,17 +27,12 @@ def add(user,subuserName,imageSourceIdentifier,permissionsAccepter):
     imageSource = subuserlib.resolve.resolveImageSource(user,imageSourceIdentifier)
   except KeyError as keyError:
     sys.exit("Could not add subuser.  The image source "+imageSourceIdentifier+" does not exist.\n"+str(keyError))
-  addFromImageSource(user,subuserName,imageSource,permissionsAccepter)
+  addFromImageSource(user,subuserName,imageSource,permissionsAccepter,prompt)
 
-def addFromImageSource(user,subuserName,imageSource,permissionsAccepter):
-  try:
-    addFromImageSourceNoVerify(user,subuserName,imageSource)
-    subuserlib.verify.verify(user,subuserNames=[subuserName],permissionsAccepter=permissionsAccepter)
-    user.getRegistry().commit()
-  except exceptions.ImageBuildException as e:
-    print("Adding subuser failed.")
-    print(str(e))
-    subuserlib.update.checkoutNoCommit(user,"HEAD")
+def addFromImageSource(user,subuserName,imageSource,permissionsAccepter,prompt=False):
+  addFromImageSourceNoVerify(user,subuserName,imageSource)
+  subuserlib.verify.verify(user,subuserNames=[subuserName],permissionsAccepter=permissionsAccepter,prompt=prompt)
+  user.getRegistry().commit()
 
 def addFromImageSourceNoVerify(user,subuserName,imageSource):
   subuser = subuserlib.classes.subuser.Subuser(user,subuserName,None,False,False,[],imageSource=imageSource)

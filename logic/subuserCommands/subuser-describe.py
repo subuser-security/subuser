@@ -33,7 +33,7 @@ EXAMPLE:
 def describe(sysargs):
   """
   Describe subusers and images.
-  
+
   >>> describe = __import__("subuser-describe") #import self
 
   Describing a subuser prints its permissions.
@@ -42,8 +42,8 @@ def describe(sysargs):
   Subuser: foo
   ------------------
   foo@default
-   Description: 
-   Maintainer: 
+   Description:
+   Maintainer:
    Executable: /usr/bin/foo
   <BLANKLINE>
 
@@ -51,16 +51,16 @@ def describe(sysargs):
 
   >>> describe.describe(["image","foo"])
   foo@default
-   Description: 
-   Maintainer: 
+   Description:
+   Maintainer:
    Executable: /usr/bin/foo
 
   Images can be refered to with their full paths as well.  Even remote images can be described.
 
   >>> describe.describe(["image","foo@default"])
   foo@default
-   Description: 
-   Maintainer: 
+   Description:
+   Maintainer:
    Executable: /usr/bin/foo
   """
   user = subuserlib.classes.user.User()

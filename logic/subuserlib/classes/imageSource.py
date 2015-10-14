@@ -24,6 +24,9 @@ class ImageSource(UserOwnedObject,Describable):
     self.__explicitConfig = explicitConfig
     UserOwnedObject.__init__(self,user)
 
+  def __hash__(self):
+    return hash(self.getIdentifier())
+
   def getName(self):
     return self.__name
 
