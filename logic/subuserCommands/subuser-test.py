@@ -21,6 +21,7 @@ Options include:
  - ``--no-fail`` - do not stop the test suit from running after a test fails.
  - ``--x11-bridge`` - run x11 bridge test suit. To run the test suit, you must have a subuser named xterm which has the gui option enabled. You will be shown a series of xterms and two series of counters. You should close the xterms and see that the counters go up linearly.
  -- ``--skip-codetests`` - do not run doctests. Usefull for testing the X11 bridge exclusively.
+ -- ``--diff`` - Show diffs rather than full comparisons for doctest outputs.
 
 """)
   sys.exit()
@@ -53,7 +54,8 @@ if subuserlib.docker.getExecutable():
       try:
         subuserDir = BasicFileStructure(subuserlib.paths.getSubuserDir())
         id = dockerDaemon.build(repositoryFileStructure=subuserDir,relativeBuildContextPath="./",useCache=True,dockerfile=dockerfileContents)
-        if dockerDaemon.execute(["run","-it","--volume",subuserlib.paths.getSubuserDir()+":/root/subuser:ro",id,"/root/subuser/logic/subuser","test"]) != 0:
+        passedOnArgs = set(["--diff"])
+        if dockerDaemon.execute(["run","-it","--volume",subuserlib.paths.getSubuserDir()+":/root/subuser:ro",id,"/root/subuser/logic/subuser","test"]+list(passedOnArgs.intersection(set(sys.argv)))) != 0:
           raise Exception()
       except Exception as e:
         print(subuserlib.terminalColors.FAIL+"Tests failed!"+subuserlib.terminalColors.ENDC)
@@ -133,7 +135,10 @@ if not "--travis" in sys.argv:
 
 for module in modules:
   print(subuserlib.terminalColors.OKGREEN+"Testing module: " + module.__name__+subuserlib.terminalColors.ENDC)
-  (failures,_) = doctest.testmod(module)
+  optionflags = 0
+  if "--diff" in sys.argv:
+    optionflags = doctest.REPORT_UDIFF
+  (failures,_) = doctest.testmod(module,optionflags=optionflags)
   if failures:
     sys.exit(failures)
 
