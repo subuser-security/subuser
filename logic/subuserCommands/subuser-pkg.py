@@ -22,7 +22,6 @@ except NameError:
 #internal imports
 from subuserlib.classes.user import User
 import subuserlib.commandLineArguments
-import subuserlib.packaging
 import subuserlib.permissions
 from subuserlib.classes.permissionsAccepters.acceptPermissionsAtCLI import AcceptPermissionsAtCLI
 from subuserlib.classes.permissions import Permissions
