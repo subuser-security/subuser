@@ -42,7 +42,6 @@ class InstallationTask(UserOwnedObject):
                 upToDate = False
               else:
                 upToDate = self.isUpToDate(imageSource)
-              print("Image source "+imageSource.getName()+" is up to date:"+str(upToDate))
               if upToDate:
                 self.__upToDateImageSources.add(imageSource)
               else:
