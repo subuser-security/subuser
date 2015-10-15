@@ -42,12 +42,15 @@ class InstallationTask(UserOwnedObject):
                 upToDate = False
               else:
                 upToDate = self.isUpToDate(imageSource)
+              print("Image source "+imageSource.getName()+" is up to date:"+str(upToDate))
               if upToDate:
                 self.__upToDateImageSources.add(imageSource)
               else:
                 self.__outOfDateImageSources.add(imageSource)
                 self.__outOfDateSubusers.add(subuser)
                 break
+          if subuser.getImageId() is None:
+            self.__outOfDateSubusers.add(subuser)
         except exceptions.ImageBuildException as e:
           try:
             self.getUser().getRegistry().log(unicode(e))
@@ -108,7 +111,6 @@ class InstallationTask(UserOwnedObject):
 
   def getSubusersWhosImagesFailedToBuild(self):
     return self.__subusersWhosImagesFailedToBuild
-
 
 def installImage(imageSource,parent=None):
   """
