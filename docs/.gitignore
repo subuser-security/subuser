@@ -3,6 +3,7 @@ commands/*
 !commands/index.rst.head
 !commands/generate-command-docs.py
 _themes/sphinx_rtd_theme/static/images/subuser-website.svg
+_themes/sphinx_rtd_theme/static/images/subuser-vision.mp4
 subuser-standard
 developers/pylint.rst
 developers/images/*
