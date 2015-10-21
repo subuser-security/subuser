@@ -39,9 +39,10 @@ while True:
       rpc = json.loads(line)
       if rpc["command"] == ["exit"]:
         sys.exit()
-      stdin = None
       if "stdin" in rpc:
         stdin = open(rpc["stdin"],"r")
+      else:
+        stdin = open("/dev/null","r")
       stdout = None
       if "stdout" in rpc:
         stdout = open(rpc["stdout"],"w")
