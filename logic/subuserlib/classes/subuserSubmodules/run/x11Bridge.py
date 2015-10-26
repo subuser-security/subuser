@@ -33,6 +33,7 @@ import time
 import shutil
 import errno
 import sys
+import hashlib
 #internal imports
 from subuserlib.classes.service import Service
 import subuserlib.verify
@@ -118,10 +119,11 @@ class XpraX11Bridge(Service):
     return os.path.join(self.getXpraHomeDir(),".xpra",self.getServerSubuserHostname()+"-100")
 
   def getServerSubuserHostname(self):
-    return "service-subuser-"+self.getSubuser().getName()+"-xpra-server"
+    longHostName = "xpra-server"+hashlib.sha256(self.getSubuser().getName().encode("utf-8")).hexdigest()
+    return longHostName[:64]
 
   def getServerSubuserName(self):
-    return "!"+self.getServerSubuserHostname()
+    return "!service-subuser-"+self.getSubuser().getName()+"-xpra-server"
 
   def getServerSubuser(self):
     return self.getUser().getRegistry().getSubusers()[self.getServerSubuserName()]
