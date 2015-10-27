@@ -40,19 +40,21 @@ while True:
       if rpc["command"] == ["exit"]:
         sys.exit()
       if "stdin" in rpc:
-        stdin = open(rpc["stdin"],"r")
+        stdin = open(rpc["stdin"],"r+")
       else:
         stdin = open("/dev/null","r")
-      stdout = None
       if "stdout" in rpc:
         stdout = open(rpc["stdout"],"w")
-      stderr = None
+      else:
+        stdout = open("/dev/null","w")
       if "stderr" in rpc:
         stderr = open(rpc["stderr"],"w")
+      else:
+        stderr = open("/dev/null","w")
       cwd = None
       if "cwd" in rpc:
         cwd = rpc["cwd"]
       env = None
       if "env" in rpc:
         env = rpc["env"]
-      subprocess.Popen(rpc["command"],stdin=stdin,stdout=stdout,stderr=stderr,cwd=cwd,env=env)
+      subprocess.Popen(rpc["command"],stdin=stdin,stdout=stdout,stderr=stderr,cwd=cwd,env=env,close_fds=True)
