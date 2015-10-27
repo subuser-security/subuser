@@ -149,23 +149,25 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y PKG""")
           subuserlib.subprocessExtras.runEditor(user.getRegistry().getSubusers()[subuserName].getImageSource().getImageFile())
           subuserlib.verify.verify(user,subuserNames=[subuserName],permissionsAccepter=permissionsAccepter,prompt=options.prompt)
       user.getRegistry().commit()
-      # Create a list of the names of the new subusers
-      subuserNames = []
-      for imageSourceName in imageSourceNames:
-        subuserNames.append(subuserNamePrefix+imageSourceName)
-      # Run the images
-      for subuserName in subuserNames:
-        arguments = raw_input("Running "+subuserName+" enter arguments and press enter to continue:")
-        arguments = arguments.split(" ")
-        if arguments == [""]:
-          arguments = []
-        subuser = user.getRegistry().getSubusers()[subuserName]
-        if subuser.getPermissions()["executable"]:
-          runtime = subuser.getRuntime(os.environ)
-          if runtime:
-            runtime.run(arguments)
+    # Create a list of the names of the new subusers
+    subuserNames = []
+    for imageSourceName in imageSourceNames:
+      subuserNames.append(subuserNamePrefix+imageSourceName)
+    # Run the images
+    for subuserName in subuserNames:
+      arguments = raw_input("Running "+subuserName+" enter arguments and press enter to continue:")
+      arguments = arguments.split(" ")
+      if arguments == [""]:
+        arguments = []
+      subuser = user.getRegistry().getSubusers()[subuserName]
+      if subuser.getPermissions()["executable"]:
+        runtime = subuser.getRuntime(os.environ)
+        if runtime:
+          runtime.run(arguments)
+    with user.getRegistry().getLock() as lockFileHandler:
       # Remove the subusers
       subuserlib.subuser.remove(user,subuserNames)
+      user.getRegistry().commit()
 
 #################################################################################################
 
