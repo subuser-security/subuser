@@ -83,9 +83,9 @@ def registry(realArgs):
             pass
         elif selection == sys.stdin:
           stdinLine = sys.stdin.readline()
-          if "q" in stdinLine:
+          if "q" in stdinLine or not stdinLine:
             q = True
-            print("Quiting...")
+            print("Quitting...")
             break
         else:
           raise Exception("IMPOSSIBLE!"+str(selection))
