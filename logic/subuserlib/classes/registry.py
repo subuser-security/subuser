@@ -99,14 +99,25 @@ class Registry(userOwnedObject.UserOwnedObject):
       self.getSubusers().save()
       self.getGitRepository().run(["add","."])
       self.getGitRepository().commit(self.__changeLog)
-      liveLogPath=os.path.join(self.getUser().homeDir,".subuser/registry-live-log")
-      if os.path.exists(liveLogPath):
-        announcement = {}
-        announcement["commit"] = self.getGitRepository().getHashOfRef("master")
-        with open(liveLogPath,"a") as liveLog:
-          liveLog.write(json.dumps(announcement))
+      # Log to live log
+      announcement = {}
+      announcement["commit"] = self.getGitRepository().getHashOfRef("master")
+      self.logToLiveLog(announcement)
       self.__changed = False
       self.__changeLog = u""
+
+  def logToLiveLog(self,announcement):
+    announcementJson = json.dumps(announcement)
+    liveLogDir=os.path.join(self.getUser().homeDir,".subuser/registry-live-log")
+    if os.path.isdir(liveLogDir):
+      for liveLogPid in os.listdir(liveLogDir):
+        liveLogPath = os.path.join(liveLogDir,liveLogPid)
+        try:
+          liveLog = os.open(liveLogPath,os.O_WRONLY|os.O_NONBLOCK)
+          os.write(liveLog,announcementJson)
+        except OSError:
+          pass
+        # TODO Note: We don't close the file descriptors, because doing so makes the pipe close on the other end too. This would be a file descriptor leak if this method was used in any long running process(which it is not).
 
   @contextmanager
   def getLock(self):

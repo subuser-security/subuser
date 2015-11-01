@@ -58,40 +58,38 @@ def registry(realArgs):
     with user.getRegistry().getLock():
       subuserlib.registry.rollback(user,commit=commit)
   elif ["live-log"] == args:
-    liveLogPath=os.path.join(user.homeDir,".subuser/registry-live-log")
-    try:
-      os.mkfifo(liveLogPath)
-    except OSError:
-      pass
+    liveLogDir = os.path.join(user.homeDir,".subuser/registry-live-log")
+    liveLogPath = os.path.join(liveLogDir,str(os.getpid()))
+    if not os.path.exists(liveLogDir):
+      os.makedirs(liveLogDir)
+    os.mkfifo(liveLogPath)
     # Why use os.open? http://stackoverflow.com/questions/5782279/why-does-a-read-only-open-of-a-named-pipe-block
-    liveLog = os.open(liveLogPath, os.O_RDONLY|os.O_NONBLOCK)
-    liveLog = os.fdopen(liveLog)
+    liveLog = os.open(liveLogPath,os.O_RDONLY|os.O_NONBLOCK)
     q = False
+    line = ""
     while not q:
       ready,_,_ = select.select([sys.stdin,liveLog],[],[])
       for selection in ready:
         if selection == liveLog:
-          line = liveLog.readline()
-          if not line:
-            liveLog.close()
-            liveLog = os.open(liveLogPath, os.O_RDONLY|os.O_NONBLOCK)
-            liveLog = os.fdopen(liveLog)
-            break
-          if options.json:
-            print(line)
-          else:
-            try:
-              announcement = json.loads(line)
-              print(announcement["commit"])
-            except ValueError:
-              pass
+          line += os.read(liveLog,1)
+          try:
+            announcement = json.loads(line)
+            if options.json:
+              print(line)
+            else:
+              print("New commit to registry:" + announcement["commit"])
+            line = ""
+          except ValueError:
+            pass
         elif selection == sys.stdin:
-          if "q" in sys.stdin.readline():
+          stdinLine = sys.stdin.readline()
+          if "q" in stdinLine:
             q = True
+            print("Quiting...")
             break
         else:
           raise Exception("IMPOSSIBLE!"+str(selection))
-    liveLog.close()
+    os.close(liveLog)
     os.remove(liveLogPath)
     sys.exit()
   elif len(args) == 1:
