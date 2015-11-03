@@ -154,6 +154,7 @@ $ subuser repair
 
   def tearDownExecutionSpool(self):
     self.__executionSpoolReader.terminate()
+    shutil.rmtree(self.getExecutionSpoolDir())
 
   def setEnvVar(self,envVar,value):
     self.__extraFlags.append("-e")
