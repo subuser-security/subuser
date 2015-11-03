@@ -166,6 +166,7 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y PKG""")
           runtime.run(arguments)
     with user.getRegistry().getLock() as lockFileHandler:
       # Remove the subusers
+      user = User()
       subuserlib.subuser.remove(user,subuserNames)
       user.getRegistry().commit()
 
