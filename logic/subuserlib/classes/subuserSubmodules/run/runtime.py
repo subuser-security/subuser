@@ -114,7 +114,7 @@ $ subuser repair
      ("inherit-timezone", lambda p : self.passOnEnvVar("TZ")+["-v=/etc/localtime:/etc/localtime:ro"] if p else []),
      # Moderate permissions
      ("gui", lambda p : ["-e","DISPLAY=unix:100","-v",self.getSubuser().getX11Bridge().getServerSideX11Path()+":/tmp/.X11-unix"] if p else []),
-     ("user-dirs", lambda userDirs : ["-v="+os.path.join(self.getSubuser().getUser().getEndUser().homeDir,userDir)+":"+os.path.join("/userdirs/",userDir)+":rw" for userDir in userDirs]),
+     ("user-dirs", lambda userDirs : ["-v="+os.path.join(self.getSubuser().getUser().getEndUser().homeDir,userDir)+":"+os.path.join("/subuser/userdirs/",userDir)+":rw" for userDir in userDirs]),
      ("inherit-envvars", lambda envVars: [arg for var in envVars for arg in self.passOnEnvVar (var)]),
      ("sound-card", lambda p: self.getSoundArgs() if p else []),
      ("webcam", lambda p: ["--device=/dev/"+device for device in os.listdir("/dev/") if device.startswith("video")] if p else []),
@@ -253,6 +253,11 @@ $ subuser repair
     def reallyRun():
       if not self.getSubuser().getPermissions()["executable"]:
         sys.exit("Cannot run subuser, no executable configured in permissions.json file.")
+      if self.getSubuser().getPermissions()["stateful-home"] and self.getSubuser().getPermissions()["user-dirs"]:
+        userDirsDir = os.path.join(self.getSubuser().getHomeDirOnHost(),"Userdirs")
+        if os.path.islink(userDirsDir):
+          self.getSubuser().setupHomeDir()
+          sys.exit("Please remove the old Userdirs directory, it is no longer needed. The path is:"+userDirsDir)
       if self.getSubuser().getPermissions()["x11"]:
         self.setupXauth()
       if self.getSubuser().getPermissions()["run-commands-on-host"]:

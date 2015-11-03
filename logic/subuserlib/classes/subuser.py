@@ -206,7 +206,7 @@ To repair your subuser installation.\n""")
         # http://stackoverflow.com/questions/15718006/check-if-directory-is-symlink
         if symlinkPath.endswith("/"):
           symlinkPath = symlinkPath[:-1]
-        destinationPath = os.path.join("/userdirs",userDir)
+        destinationPath = os.path.join("/subuser/userdirs",userDir)
         if not os.path.islink(symlinkPath):
           if os.path.exists(symlinkPath):
             os.makedirs(os.path.join(self.getHomeDirOnHost(),"subuser-user-dirs-backups"))
