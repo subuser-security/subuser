@@ -69,6 +69,7 @@ def verify(user,permissionsAccepter=None,checkForUpdatesExternally=False,subuser
     for subuser in subusers:
       try:
         subuser.getRunReadyImage().setup()
+        subuser.setupHomeDir()
       except subuserlib.classes.subuserSubmodules.run.runtimeCache.NoRuntimeCacheForSubusersWhichDontHaveExistantImagesException:
         pass
   user.getInstalledImages().save()

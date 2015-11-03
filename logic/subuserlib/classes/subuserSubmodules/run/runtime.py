@@ -244,24 +244,6 @@ $ subuser repair
       xauthFile.write(hostname)
       xauthFile.write(rest)
 
-  def createHomeDir(self):
-    try:
-      self.getUser().getEndUser().makedirs(self.getSubuser().getHomeDirOnHost())
-    except OSError:
-      pass
-
-  def setupSymlinks(self):
-    if self.getSubuser().getPermissions()["user-dirs"] and self.getSubuser().getPermissions()["stateful-home"]:
-      symlinkPath = os.path.join(self.getSubuser().getHomeDirOnHost(),"Userdirs")
-      destinationPath = "/userdirs"
-      if not os.path.exists(symlinkPath):
-        try:
-          os.symlink(destinationPath,symlinkPath) #Arg, why are source and destination switched?
-        #os.symlink(where does the symlink point to, where is the symlink)
-        #I guess it's to be like cp...
-        except OSError:
-          pass
-
   def run(self,args):
     """
     Run the subuser in a container.
@@ -271,9 +253,6 @@ $ subuser repair
     def reallyRun():
       if not self.getSubuser().getPermissions()["executable"]:
         sys.exit("Cannot run subuser, no executable configured in permissions.json file.")
-      if self.getSubuser().getPermissions()["stateful-home"]:
-        self.createHomeDir()
-      self.setupSymlinks()
       if self.getSubuser().getPermissions()["x11"]:
         self.setupXauth()
       if self.getSubuser().getPermissions()["run-commands-on-host"]:

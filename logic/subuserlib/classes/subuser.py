@@ -192,6 +192,33 @@ To repair your subuser installation.\n""")
       self.__runtimeCache.reload()
     return self.__runtimeCache
 
+  def setupHomeDir(self):
+    """
+    Sets up the subuser's home dir, along with creating symlinks to shared user dirs.
+    """
+    if self.getPermissions()["user-dirs"] and self.getPermissions()["stateful-home"]:
+      try:
+        self.getUser().getEndUser().makedirs(self.getHomeDirOnHost())
+      except OSError:
+        pass
+      for userDir in self.getPermissions()["user-dirs"]:
+        symlinkPath = os.path.join(self.getHomeDirOnHost(),userDir)
+        # http://stackoverflow.com/questions/15718006/check-if-directory-is-symlink
+        if symlinkPath.endswith("/"):
+          symlinkPath = symlinkPath[:-1]
+        destinationPath = os.path.join("/userdirs",userDir)
+        if not os.path.islink(symlinkPath):
+          if os.path.exists(symlinkPath):
+            os.makedirs(os.path.join(self.getHomeDirOnHost(),"subuser-user-dirs-backups"))
+            os.rename(symlinkPath,os.path.join(self.getHomeDirOnHost(),"subuser-user-dirs-backups",userDir))
+          try:
+            os.symlink(destinationPath,symlinkPath)
+            # Arg, why are source and destination switched?
+            # os.symlink(where does the symlink point to, where is the symlink)
+            # I guess it's to be like cp...
+          except OSError:
+            pass
+
   def locked(self):
     """
     Returns True if the subuser is locked.  Users lock subusers in order to prevent updates and rollbacks from effecting them.
