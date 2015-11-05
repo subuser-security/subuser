@@ -149,10 +149,13 @@ def cleanupRuntimeDirs(user):
       return True
     except OSError:
       return False
-  for pid in os.listdir(executeDir):
-    try:
-      numericPid = int(pid)
-      if not is_process_running(numericPid):
-        shutil.rmtree(os.path.join(executeDir,pid))
-    except ValueError:
-      pass
+  try:
+    for pid in os.listdir(executeDir):
+      try:
+        numericPid = int(pid)
+        if not is_process_running(numericPid):
+          shutil.rmtree(os.path.join(executeDir,pid))
+      except ValueError:
+        pass
+  except OSError:
+    pass
