@@ -75,6 +75,7 @@ def verify(user,permissionsAccepter=None,checkForUpdatesExternally=False,subuser
   user.getInstalledImages().save()
   trimUnneededTempRepos(user)
   rebuildBinDir(user)
+  cleanupRuntimeDirs(user)
 
 def approvePermissions(user,subuserNames,permissionsAccepter):
   subusersWhosPermissionsFailedToParse = []
@@ -132,3 +133,26 @@ def rebuildBinDir(user):
   for _,subuser in user.getRegistry().getSubusers().items():
     if subuser.isExecutableShortcutInstalled():
       subuser.installExecutableShortcut()
+
+def cleanupRuntimeDirs(user):
+  """
+  Remove left overs that were not properly cleaned up after running subusers.
+  """
+  # Clean up ~/.subuser/volumes/execute
+  executeDir = os.path.join(user.getConfig()["volumes-dir"],"execute")
+  def is_process_running(process_id):
+    """
+    Taken from: http://stackoverflow.com/questions/7647167/check-if-a-process-is-running-in-python-in-linux-unix
+    """
+    try:
+      os.kill(process_id, 0)
+      return True
+    except OSError:
+      return False
+  for pid in os.listdir(executeDir):
+    try:
+      numericPid = int(pid)
+      if not is_process_running(numericPid):
+        shutil.rmtree(os.path.join(executeDir,pid))
+    except ValueError:
+      pass
