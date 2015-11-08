@@ -33,7 +33,7 @@ def parseCliArgs(realArgs):
       Updates the specified subusers
 
   EXAMPLE:
-    $ subuser update subuser iceweasel git
+    $ subuser update subusers iceweasel git
 
   lock-subuser-to SUBUSER GIT-COMMIT
       Don't want a subuser to be updated?  No problem, lock it to a given version with this update sub-command.  Use subuser update log to see a list of possible hashes.
