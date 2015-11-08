@@ -25,7 +25,7 @@ def all(user,permissionsAccepter,prompt=False):
   subuserlib.verify.verify(user,checkForUpdatesExternally=True,subuserNames=subuserNames,permissionsAccepter=permissionsAccepter,prompt=prompt)
   user.getRegistry().commit()
 
-def subusers(user,subuserNames,permissionsAccepter):
+def subusers(user,subuserNames,permissionsAccepter,prompt=False):
   """
   This command updates the specified subusers' images.
   """
