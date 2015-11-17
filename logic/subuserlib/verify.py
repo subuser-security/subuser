@@ -29,7 +29,7 @@ import subuserlib.classes.subuser
 def verify(user,permissionsAccepter=None,checkForUpdatesExternally=False,subuserNames=[],prompt=False):
   """
    Ensure that:
-      - Registry is consistent; warns the user about subusers that point to non-existant source images.
+     - Registry is consistent; warns the user about subusers that point to non-existant source images.
      - For each subuser there is an up-to-date image installed.
      - No-longer-needed temporary repositories are removed. All temporary repositories have at least one subuser who's image is built from one of the repository's image sources.
      - No-longer-needed installed images are removed.
@@ -76,6 +76,7 @@ def verify(user,permissionsAccepter=None,checkForUpdatesExternally=False,subuser
   trimUnneededTempRepos(user)
   rebuildBinDir(user)
   cleanupRuntimeDirs(user)
+  cleanUpRuntimeCache(user)
 
 def approvePermissions(user,subuserNames,permissionsAccepter):
   subusersWhosPermissionsFailedToParse = []
@@ -159,3 +160,12 @@ def cleanupRuntimeDirs(user):
         pass
   except OSError:
     pass
+
+def cleanUpRuntimeCache(user):
+  """
+  Remove runtime cache directories for no longer existant images.
+  """
+  runtimeCacheDir = user.getConfig()["runtime-cache"]
+  for imageId in os.listdir(runtimeCacheDir):
+    if not imageId in user.getInstalledImages():
+      shutil.rmtree(os.path.join(runtimeCacheDir,imageId))
