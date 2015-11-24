@@ -15,7 +15,7 @@ import json
 import os
 import errno
 import fcntl
-import signal
+import shutil
 #internal imports
 from subuserlib.classes.userOwnedObject import UserOwnedObject
 
@@ -41,6 +41,10 @@ class Service(UserOwnedObject):
     pass
 
   @abc.abstractmethod
+  def cleanUp(self):
+    pass
+
+  @abc.abstractmethod
   def isRunning(self,serviceStatus):
     """
     Returns True if the services is running.
@@ -56,6 +60,13 @@ class Service(UserOwnedObject):
 
   def getLockfilePath(self):
     return os.path.join(self.getLockfileDir(),self.getName()+".json")
+
+  def removeLockFile(self):
+    os.remove(self.getLockfilePath())
+    try:
+      os.rmdir(self.getLockfileDir())
+    except OSError:
+      pass
 
   def getLock(self):
     try:
@@ -76,8 +87,6 @@ class Service(UserOwnedObject):
     """
     Increase the services client counter, starting the service if necessary. Blocks untill the service is ready to accept the new client.
     """
-    #originalHandler = signal.getsignal(signal.SIGINT)
-    #signal.signal(signal.SIGINT, signal.SIG_IGN)
     with self.getLock() as lockFile:
       try:
         serviceStatus = json.load(lockFile)
@@ -92,13 +101,12 @@ class Service(UserOwnedObject):
       lockFile.truncate()
       json.dump(serviceStatus,lockFile)
       fcntl.flock(lockFile,fcntl.LOCK_UN)
-    #signal.signal(signal.SIGINT, originalHandler)
 
   def removeClient(self):
     """
     Decrease the services client counter, stopping the service if no longer necessary.
     """
-    sig = signal.signal(signal.SIGINT, signal.SIG_IGN)
+    noMoreClients = False
     with self.getLock() as lockFile:
       serviceStatus = json.load(lockFile)
       serviceStatus["client-counter"] = serviceStatus["client-counter"] - 1
@@ -106,11 +114,30 @@ class Service(UserOwnedObject):
         raise RemoveClientException("The client-counter is already zero. Client cannot be removed!")
       if serviceStatus["client-counter"] == 0:
         self.stop(serviceStatus)
+        noMoreClients = True
       lockFile.seek(0)
       lockFile.truncate()
       json.dump(serviceStatus,lockFile)
+      if noMoreClients:
+        self.removeLockFile()
       fcntl.flock(lockFile,fcntl.LOCK_UN)
-    signal.signal(signal.SIGINT, sig)
+
+  def cleanUpIfNotRunning(self):
+    """
+    Check if running.
+    If not running, run cleanUp method.
+    """
+    with self.getLock() as lockFile:
+      try:
+        serviceStatus = json.load(lockFile)
+      except ValueError:
+        serviceStatus = {}
+        serviceStatus["client-counter"] = 0
+      if serviceStatus["client-counter"] == 0 or not self.isRunning(serviceStatus):
+        self.cleanUp()
+        self.removeLockFile()
+      fcntl.flock(lockFile,fcntl.LOCK_UN)
+
 
 class RemoveClientException(Exception):
   pass

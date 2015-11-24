@@ -77,6 +77,7 @@ def verify(user,permissionsAccepter=None,checkForUpdatesExternally=False,subuser
   rebuildBinDir(user)
   cleanupRuntimeDirs(user)
   cleanUpRuntimeCache(user)
+  cleanUpAfterImproperlyTerminatedServices(user)
 
 def approvePermissions(user,subuserNames,permissionsAccepter):
   subusersWhosPermissionsFailedToParse = []
@@ -169,3 +170,30 @@ def cleanUpRuntimeCache(user):
   for imageId in os.listdir(runtimeCacheDir):
     if not imageId in user.getInstalledImages():
       shutil.rmtree(os.path.join(runtimeCacheDir,imageId))
+
+def cleanUpAfterImproperlyTerminatedServices(user):
+  """
+  Remove service lock files and service volumes in the case that a service has terminated improperly.
+  """
+  # Go through xpra volumes.
+  try:
+    xpraVolumeDir = os.path.join(user.getConfig()["volumes-dir"],"xpra")
+    serviceVolumes = os.listdir(xpraVolumeDir)
+    serviceLocksDir = os.path.join(user.getConfig()["lock-dir"],"services")
+    serviceLockDirs = os.listdir(serviceLocksDir)
+    subusersWithServiceDirs = set(serviceLockDirs) | set(serviceVolumes)
+  except OSError:
+    subusersWithServiceDirs = []
+  for subuserWithServiceDirs in subusersWithServiceDirs:
+    user.getRegistry().log("Removing left over service files for subuser "+ subuserWithServiceDirs)
+    if not subuserWithServiceDirs in user.getRegistry().getSubusers():
+      try:
+        shutil.rmtree(os.path.join(xpraVolumeDir,subuserWithServiceDirs))
+      except OSError as e:
+        print(e)
+      try:
+        shutil.rmtree(os.path.join(serviceLocksDir,subuserWithServiceDirs))
+      except OSError as e:
+        print(e)
+    else:
+      user.getRegistry().getSubusers()[subuserWithServiceDirs].getX11Bridge().cleanUpIfNotRunning()

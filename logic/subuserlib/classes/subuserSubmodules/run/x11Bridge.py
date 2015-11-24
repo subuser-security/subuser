@@ -155,16 +155,15 @@ class XpraX11Bridge(Service):
     try:
       shutil.rmtree(os.path.join(self.getUser().getConfig()["volumes-dir"],"xpra",self.getSubuser().getName()))
     except OSError:
-      pass
-
-  def createAndSetupSpecialVolumes(self):
-    def clearAndTryAgain():
       # We need to clean this up.
-      # Unfortunately, the X11 socket will be owned by root.
+      # Unfortunately, the X11 socket may still exist and will be owned by root.
       # So we cannot do the clean up as a normal user.
       # Fortunately, being a member of the docker group is the same as having root access.
       self.getUser().getDockerDaemon().execute(["run","--rm","--volume",os.path.join(self.getUser().getConfig()["volumes-dir"],"xpra")+":/xpra-volume","--entrypoint","/bin/rm",self.getServerSubuser().getImageId(),"-rf",os.path.join("/xpra-volume/",self.getSubuser().getName())])
-      # Having preformed our clean up steps, we try again.
+
+  def createAndSetupSpecialVolumes(self):
+    def clearAndTryAgain():
+      self.cleanUp()
       self.createAndSetupSpecialVolumes()
     def mkdirs(directory):
       try:
