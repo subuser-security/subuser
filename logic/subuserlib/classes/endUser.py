@@ -54,6 +54,7 @@ class EndUser(UserOwnedObject,object):
     """
     # Taken from http://stackoverflow.com/questions/3167154/how-to-split-a-dos-path-into-its-components-in-python
     folders = []
+    path = os.path.realpath(path)
     while 1:
       path, folder = os.path.split(path)
       if folder:
