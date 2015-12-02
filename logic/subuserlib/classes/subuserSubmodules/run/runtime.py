@@ -253,10 +253,11 @@ $ subuser repair
     def reallyRun():
       if not self.getSubuser().getPermissions()["executable"]:
         sys.exit("Cannot run subuser, no executable configured in permissions.json file.")
+      if self.getSubuser().getPermissions()["stateful-home"]:
+        self.getSubuser().setupHomeDir()
       if self.getSubuser().getPermissions()["stateful-home"] and self.getSubuser().getPermissions()["user-dirs"]:
         userDirsDir = os.path.join(self.getSubuser().getHomeDirOnHost(),"Userdirs")
         if os.path.islink(userDirsDir):
-          self.getSubuser().setupHomeDir()
           sys.exit("Please remove the old Userdirs directory, it is no longer needed. The path is:"+userDirsDir)
       if self.getSubuser().getPermissions()["x11"]:
         self.setupXauth()

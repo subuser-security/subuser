@@ -9,6 +9,7 @@ A subuser is an entity that runs within a Docker container and has a home direct
 #external imports
 import os
 import stat
+import errno
 # Python 2.x/Python 3 compatibility
 try:
   input = raw_input
@@ -196,28 +197,30 @@ To repair your subuser installation.\n""")
     """
     Sets up the subuser's home dir, along with creating symlinks to shared user dirs.
     """
-    if self.getPermissions()["user-dirs"] and self.getPermissions()["stateful-home"]:
+    if self.getPermissions()["stateful-home"]:
       try:
         self.getUser().getEndUser().makedirs(self.getHomeDirOnHost())
-      except OSError:
-        pass
-      for userDir in self.getPermissions()["user-dirs"]:
-        symlinkPath = os.path.join(self.getHomeDirOnHost(),userDir)
-        # http://stackoverflow.com/questions/15718006/check-if-directory-is-symlink
-        if symlinkPath.endswith("/"):
-          symlinkPath = symlinkPath[:-1]
-        destinationPath = os.path.join("/subuser/userdirs",userDir)
-        if not os.path.islink(symlinkPath):
-          if os.path.exists(symlinkPath):
-            os.makedirs(os.path.join(self.getHomeDirOnHost(),"subuser-user-dirs-backups"))
-            os.rename(symlinkPath,os.path.join(self.getHomeDirOnHost(),"subuser-user-dirs-backups",userDir))
-          try:
-            os.symlink(destinationPath,symlinkPath)
-            # Arg, why are source and destination switched?
-            # os.symlink(where does the symlink point to, where is the symlink)
-            # I guess it's to be like cp...
-          except OSError:
-            pass
+      except OSError as e:
+        if e.errno() == errno.EEXIST:
+          pass
+      if self.getPermissions()["user-dirs"]:
+        for userDir in self.getPermissions()["user-dirs"]:
+          symlinkPath = os.path.join(self.getHomeDirOnHost(),userDir)
+          # http://stackoverflow.com/questions/15718006/check-if-directory-is-symlink
+          if symlinkPath.endswith("/"):
+            symlinkPath = symlinkPath[:-1]
+          destinationPath = os.path.join("/subuser/userdirs",userDir)
+          if not os.path.islink(symlinkPath):
+            if os.path.exists(symlinkPath):
+              os.makedirs(os.path.join(self.getHomeDirOnHost(),"subuser-user-dirs-backups"))
+              os.rename(symlinkPath,os.path.join(self.getHomeDirOnHost(),"subuser-user-dirs-backups",userDir))
+            try:
+              os.symlink(destinationPath,symlinkPath)
+              # Arg, why are source and destination switched?
+              # os.symlink(where does the symlink point to, where is the symlink)
+              # I guess it's to be like cp...
+            except OSError:
+              pass
 
   def locked(self):
     """
