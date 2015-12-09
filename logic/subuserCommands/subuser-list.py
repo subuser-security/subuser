@@ -26,21 +26,21 @@ def parseCliArgs(sysargs):
   subusers
       List all installed subusers
   installed-images
-      List all installed images. The --short option prints with the format "<image-source> <image-id>"
+      List all installed images. The the format is "<image-source> <image-id>". If the --long option is used, then information about each image is displayed.
   repositories
-      List all repositories. The --short option only lists their names(or their paths in case they are temporary).
+      List all repositories. By default, lists repository names(or their paths in case they are temporary). With the --long option, more info about each repository is printed.
 
   EXAMPLES:
 
-    $ subuser list available --short
+    $ subuser list available --long
     $ subuser list subusers
     $ subuser list installed-images
 """
   parser=optparse.OptionParser(usage=usage,description=description,formatter=subuserlib.commandLineArguments.HelpFormatterThatDoesntReformatDescription())
-  parser.add_option("--short",dest="short",action="store_true",default=False,help="Only display the names of the images to be listed, and no other information.")
+  parser.add_option("--long",dest="long",action="store_true",default=False,help="Display more information about each item.")
   parser.add_option("--json",dest="json",action="store_true",default=False,help="Display results in JSON format.")
   parser.add_option("--internal",dest="internal",action="store_true",default=False,help="Include internal subusers in the list. These are subusers which are automatically created and used by subuser internally.")
-  parser.add_option("--broken",dest="broken",action="store_true",default=False,help="When listing installed images with the --short option, list the Ids of broken/orphaned images. Otherwise has no effect. Without this option, broken/orphaned images are simply not listed in the --short mode.")
+  parser.add_option("--broken",dest="broken",action="store_true",default=False,help="When listing installed images option, list the Ids of broken/orphaned images. Otherwise has no effect. Without this option, broken/orphaned images are simply not listed.")
   return parser.parse_args(args=sysargs)
 
 #################################################################################################
@@ -56,15 +56,31 @@ def list(sysargs):
   Listing available images lists the images along with their default permissions.
 
   >>> list.list(["available"])
-  Images available for instalation from the repo: default
   foo@default
-   Description:
-   Maintainer:
-   Executable: /usr/bin/foo
 
   Similar result when listing subusers.
 
   >>> list.list(["subusers"])
+  foo
+
+  And listing installed images:
+
+  >>> list.list(["installed-images"])
+  foo@default 2
+
+  > list.list(["repositories"])
+  foo
+
+  In all cases, there is a ``--long`` option. (We don't test this, because the hash changes every time.)
+
+  >> list.list(["repositories","--long"])
+  Repository: default
+  ------------
+  Cloned from: file:///home/travis/default-test-repo
+  Currently at commit: 7ef30a4e1267f9f026e3be064f120290c28ef29e
+  <BLANKLINE>
+
+  >>> list.list(["subusers","--long"])
   The following subusers are registered.
   Subuser: foo
   ------------------
@@ -74,44 +90,32 @@ def list(sysargs):
    Executable: /usr/bin/foo
   <BLANKLINE>
 
-  And listing installed images:
-
-  >>> list.list(["installed-images"])
-  The following images are installed.
-  ------------------
-  Image Id: 2
-  Image source: foo@default
-  Last update time: 1
-
-  > list.list(["repositories"])
-  Repository: default
-  ------------
-  Cloned from: file:///home/travis/default-test-repo
-  Currently at commit: 72e7d9c17192d47b2b2344d9eb8a325262d738fe
-
-  In all cases, there is a ``--short`` option.
-
-  >>> list.list(["subusers","--short"])
-  foo
-
-  >>> list.list(["available","--short"])
+  >>> list.list(["available","--long"])
+  Images available for instalation from the repo: default
   foo@default
+   Description:
+   Maintainer:
+   Executable: /usr/bin/foo
 
   You can specify which repository to list image sources from.
 
-  >>> list.list(["available","default","--short"])
+  >>> list.list(["available","default","--long"])
+  Images available for instalation from the repo: default
   foo@default
+   Description:
+   Maintainer:
+   Executable: /usr/bin/foo
 
   When listing available image sources, refering to a repository via a URI works as well.
 
-  >>> list.list(["available","file:///home/travis/version-constrained-test-repo","--short"])
+  >>> list.list(["available","file:///home/travis/version-constrained-test-repo"])
   Adding new temporary repository file:///home/travis/version-constrained-test-repo
   bop@file:///home/travis/version-constrained-test-repo
 
-  >>> list.list(["installed-images","--short"])
+  >>> list.list(["installed-images"])
   foo@default 2
 
-  >>> list.list(["repositories","--short"])
+  >>> list.list(["repositories"])
   default
 
   """
@@ -143,10 +147,10 @@ def list(sysargs):
       else:
         temp = True
       repository =  subuserlib.resolve.resolveRepository(user,repoIdentifier)
-      if not options.short:
+      if options.long:
         print("Images available for instalation from the repo: " + repository.getName())
       for _,imageSource in repository.items():
-        if options.short:
+        if not options.long:
           print(imageSource.getIdentifier())
         else:
           imageSource.describe()
@@ -156,11 +160,11 @@ def list(sysargs):
     if options.json:
       print(json.dumps(user.getRegistry().getSubusers().serializeToDict(),indent=1,separators=(",",": ")))
       sys.exit()
-    if not options.short:
+    if options.long:
       print("The following subusers are registered.")
     for name,subuser in user.getRegistry().getSubusers().items():
       if options.internal or not name.startswith("!"):
-        if options.short:
+        if not options.long:
           print(name)
         else:
           subuser.describe()
@@ -168,10 +172,10 @@ def list(sysargs):
     if options.json:
       print(json.dumps(user.getInstalledImages().serializeToDict(),indent=1,separators=(",",": ")))
       sys.exit()
-    if not options.short:
+    if options.long:
       print("The following images are installed.")
     for id,installedImage in user.getInstalledImages().items():
-      if options.short:
+      if not options.long:
         try:
           identifier = installedImage.getImageSource().getIdentifier()
           if not options.broken:
@@ -187,11 +191,13 @@ def list(sysargs):
       print(json.dumps(user.getRegistry().getRepositories().serializeToDict(),indent=1,separators=(",",": ")))
       sys.exit()
     for name,repo in user.getRegistry().getRepositories().items():
-      if options.short:
+      if not options.long:
         print(repo.getDisplayName())
       else:
         repo.describe()
         print("")
+  else:
+    sys.exit(args[0] + " cannot be listed. Option unrecognized.")
 
 if __name__ == "__main__":
   list(sys.argv[1:])
