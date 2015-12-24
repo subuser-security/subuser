@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 # This file should be compatible with both Python 2 and 3.
 # If it is not, please file a bug report.
 
@@ -212,7 +213,7 @@ $ subuser repair
     self.__backgroundCollectStderr = collectStderr
 
   def getXautorityDirPath(self):
-    return os.path.join(self.getUser().getConfig()["volumes-dir"],"x11",self.getSubuser().getName(),"subuser")
+    return os.path.join(self.getUser().getConfig()["volumes-dir"],"x11",str(os.getpid()),self.getSubuser().getName())
 
   def getXautorityFilePath(self):
     return os.path.join(self.getXautorityDirPath(),".Xauthority")

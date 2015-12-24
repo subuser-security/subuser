@@ -146,8 +146,6 @@ def cleanupRuntimeDirs(user):
   """
   Remove left overs that were not properly cleaned up after running subusers.
   """
-  # Clean up ~/.subuser/volumes/execute
-  executeDir = os.path.join(user.getConfig()["volumes-dir"],"execute")
   def is_process_running(process_id):
     """
     Taken from: http://stackoverflow.com/questions/7647167/check-if-a-process-is-running-in-python-in-linux-unix
@@ -157,16 +155,24 @@ def cleanupRuntimeDirs(user):
       return True
     except OSError:
       return False
-  try:
-    for pid in os.listdir(executeDir):
-      try:
-        numericPid = int(pid)
-        if not is_process_running(numericPid):
-          shutil.rmtree(os.path.join(executeDir,pid))
-      except ValueError:
-        pass
-  except OSError:
-    pass
+  def clearPIDSubdirs(pidDir):
+    """
+    Clear out a directory containing subdirectories named with the PIDs of processes by removing any directories corresponding to non-running processes.
+    """
+    try:
+      for pid in os.listdir(pidDir):
+        try:
+          numericPid = int(pid)
+          if not is_process_running(numericPid):
+            shutil.rmtree(os.path.join(pidDir,pid))
+        except ValueError:
+          pass
+    except OSError:
+      pass
+  # Clean up ~/.subuser/volumes/execute
+  clearPIDSubdirs(os.path.join(user.getConfig()["volumes-dir"],"execute"))
+  # Clean up ~/.subuser/volumes/x11
+  clearPIDSubdirs(os.path.join(user.getConfig()["volumes-dir"],"x11"))
 
 def cleanUpRuntimeCache(user):
   """
