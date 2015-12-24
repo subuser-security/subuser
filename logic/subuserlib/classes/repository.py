@@ -167,8 +167,8 @@ class Repository(dict,UserOwnedObject,Describable):
       subuserlib.subprocessExtras.call(["git","clone",self.getGitOriginURI(),self.getRepoPath()])
     else:
       new = False
-      self.getGitRepository().checkout("master")
-      self.getGitRepository().run(["pull"])
+    self.getGitRepository().checkout("master")
+    self.getGitRepository().run(["pull","--all"])
     if self.updateGitCommitHash():
       if not new:
         self.getUser().getRegistry().logChange("Updated repository "+self.getDisplayName())
