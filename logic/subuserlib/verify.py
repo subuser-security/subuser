@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 # This file should be compatible with both Python 2 and 3.
 # If it is not, please file a bug report.
 
@@ -37,7 +38,9 @@ def verify(user,permissionsAccepter=None,checkForUpdatesExternally=False,subuser
   user.getRegistry().log("Verifying subuser configuration.")
   user.getRegistry().log("Verifying registry consistency...")
   for _,subuser in user.getRegistry().getSubusers().items():
-    if not subuser.getImageSource().getName() in subuser.getImageSource().getRepository():
+    try:
+      subuser.getImageSource()
+    except subuserlib.classes.subuser.NoImageSourceException:
       user.getRegistry().log("WARNING: "+subuser.getName()+" is no longer present in it's source repository. Support for this progam may have been dropped.")
       try:
         subuserNames.remove(subuser.getName())
@@ -117,8 +120,11 @@ def trimUnneededTempRepos(user):
         if repoId == installedImage.getSourceRepoId():
           keep = True
       for _,subuser in user.getRegistry().getSubusers().items():
-        if repoId == subuser.getImageSource().getRepository().getName():
-          keep = True
+        try:
+          if repoId == subuser.getImageSource().getRepository().getName():
+            keep = True
+        except subuserlib.classes.subuser.NoImageSourceException:
+          pass
     else:
       keep = True
     if not keep:

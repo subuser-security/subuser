@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 # This file should be compatible with both Python 2 and 3.
 # If it is not, please file a bug report.
 
@@ -47,8 +48,14 @@ class Subuser(UserOwnedObject, Describable):
     return self.__name
 
   def getImageSource(self):
+    """
+    Note, it is posssible that the subuser's image source no longer exists, in which case this function raises a NoImageSourceException.
+    """
     if self.__imageSource is None:
-      self.__imageSource = self.getUser().getRegistry().getRepositories()[self.__repoName][self.__imageSourceName]
+      try:
+        self.__imageSource = self.getUser().getRegistry().getRepositories()[self.__repoName][self.__imageSourceName]
+      except KeyError:
+        raise NoImageSourceException()
     return self.__imageSource
 
   def getImageSourceName(self):
@@ -272,4 +279,7 @@ To repair your subuser installation.\n""")
       os.chmod(executablePath, stat.S_IMODE(st.st_mode) | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
 
 class SubuserHasNoPermissionsException(Exception):
+  pass
+
+class NoImageSourceException(Exception):
   pass
