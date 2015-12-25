@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 # This file should be compatible with both Python 2 and 3.
 # If it is not, please file a bug report.
 
@@ -9,6 +10,7 @@ This is a Class which allows one to manipulate a git repository.
 #external imports
 import os
 import tempfile
+import sys
 #internal imports
 import subuserlib.subprocessExtras as subprocessExtras
 from subuserlib.classes.fileStructure import FileStructure
@@ -24,13 +26,19 @@ class GitRepository():
     """
     Run git with the given command line arguments.
     """
-    return subprocessExtras.call(["git"]+args,cwd=self.getPath())
+    try:
+      return subprocessExtras.call(["git"]+args,cwd=self.getPath())
+    except OSError:
+      sys.exit("You must have git installed to use subuser.")
 
   def runCollectOutput(self,args):
     """
     Run git with the given command line arguments and return a tuple with (returncode,output).
     """
-    return subprocessExtras.callCollectOutput(["git"]+args,cwd=self.getPath())
+    try:
+      return subprocessExtras.callCollectOutput(["git"]+args,cwd=self.getPath())
+    except OSError:
+      sys.exit("You must have git installed to use subuser.")
 
   def getFileStructureAtCommit(self,commit):
     """
