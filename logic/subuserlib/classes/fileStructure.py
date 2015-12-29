@@ -1,6 +1,4 @@
-#!/usr/bin/env python
-# This file should be compatible with both Python 2 and 3.
-# If it is not, please file a bug report.
+# -*- coding: utf-8 -*-
 # pylint: disable=no-init,old-style-class
 
 """
@@ -142,7 +140,8 @@ class BasicFileStructure(FileStructure):
     bar,blah
     """
     paths = []
-    for path in os.listdir(self.getPathInStructure(subfolder)):
+    path = self.getPathInStructure(subfolder)
+    for path in os.listdir(path):
       paths.append(os.path.normpath(os.path.join(subfolder,path)))
     paths.sort()
     return paths
@@ -169,7 +168,8 @@ class BasicFileStructure(FileStructure):
     """
     folders = []
     for path in self.ls(subfolder):
-      if os.path.isdir(self.getPathInStructure(path)):
+      pathInStructure = self.getPathInStructure(path)
+      if os.path.isdir(pathInStructure):
         folders.append(os.path.normpath(path))
     return folders
 

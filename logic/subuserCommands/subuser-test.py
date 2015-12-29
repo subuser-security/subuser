@@ -1,4 +1,5 @@
-#!/usr/bin/python
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
 
 import pathConfig
 #external imports
@@ -51,17 +52,13 @@ if subuserlib.docker.getExecutable():
     for testDockerfileName in testDockerfileNames:
       with io.open(os.path.join(subuserlib.paths.getSubuserDir(),"test",testDockerfileName),encoding="utf-8",mode="r") as dockerfile:
         dockerfileContents = dockerfile.read()
-      try:
-        subuserDir = BasicFileStructure(subuserlib.paths.getSubuserDir())
-        id = dockerDaemon.build(repositoryFileStructure=subuserDir,relativeBuildContextPath="./",useCache=True,dockerfile=dockerfileContents)
-        passedOnArgs = set(["--diff"])
-        if dockerDaemon.execute(["run","-it","--volume",subuserlib.paths.getSubuserDir()+":/root/subuser:ro",id,"/root/subuser/logic/subuser","test"]+list(passedOnArgs.intersection(set(sys.argv)))) != 0:
-          raise Exception()
-      except Exception as e:
+      subuserDir = BasicFileStructure(subuserlib.paths.getSubuserDir())
+      id = dockerDaemon.build(repositoryFileStructure=subuserDir,relativeBuildContextPath="./",useCache=True,dockerfile=dockerfileContents)
+      passedOnArgs = set(["--diff"])
+      if dockerDaemon.execute(["run","-it","--volume",subuserlib.paths.getSubuserDir()+":/root/subuser:ro",id,"/root/subuser/logic/subuser","test"]+list(passedOnArgs.intersection(set(sys.argv)))) != 0:
         print(subuserlib.terminalColors.FAIL+"Tests failed!"+subuserlib.terminalColors.ENDC)
-        print(str(e))
         if not "--no-fail" in sys.argv:
-          exit(1)
+          sys.exit("Exiting...")
   if "--x11-bridge" in sys.argv:
     pid = os.fork()
     if pid:
@@ -78,6 +75,8 @@ import subuserlib.test
 
 subuserlib.test.testing = True
 
+import locale
+locale.setlocale(locale.LC_ALL, '')
 import subuserlib.docker
 import doctest
 
@@ -141,5 +140,6 @@ for module in modules:
   (failures,_) = doctest.testmod(module,optionflags=optionflags)
   if failures:
     sys.exit(failures)
+    sys.
 
 print(subuserlib.terminalColors.OKGREEN+"Tests passed."+subuserlib.terminalColors.ENDC)

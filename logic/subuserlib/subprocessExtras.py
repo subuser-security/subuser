@@ -1,6 +1,4 @@
-#!/usr/bin/env python
-# This file should be compatible with both Python 2 and 3.
-# If it is not, please file a bug report.
+# -*- coding: utf-8 -*-
 
 """
 Helper functions for running foreign executables.
@@ -11,7 +9,7 @@ import subprocess
 import os
 import tempfile
 #internal imports
-#import ...
+import subuserlib.test
 
 def call(args,cwd=None):
   """
@@ -54,11 +52,11 @@ def callBackground(args,cwd=None,suppressOutput=True,collectStdout=False,collect
 
 def callCollectOutput(args,cwd=None):
   """
-  Run the command and return a tuple with: (returncode,the output to stdout as a string).
+  Run the command and return a tuple with: (returncode,the output to stdout as a string,stderr as a string).
   """
   process = subprocess.Popen(args,stdout=subprocess.PIPE,stderr=subprocess.PIPE,cwd=cwd)
   (stdout,stderr) = process.communicate()
-  return (process.returncode,stdout.decode("utf-8"))
+  return (process.returncode,stdout.decode("utf-8"),stderr.decode("utf-8"))
 
 def runEditor(filePath):
   """
@@ -68,4 +66,11 @@ def runEditor(filePath):
     editor = os.environ["EDITOR"]
   except KeyError:
     editor = "/usr/bin/nano"
-  call([editor,filePath])
+  def actuallyRunEditor(filePath,editor):
+    try:
+      call([editor,filePath])
+    except FileNotFoundError:
+      if subuserlib.test.testing:
+        return
+      editor = input(editor+" not found. Please enter the name of your favorite editor:")
+      actuallyRunEditor(editor,filePath)

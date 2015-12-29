@@ -6,7 +6,7 @@ System Requirements
 
  * `Docker <http://www.docker.io/gettingstarted/#h_installation>`_ 1.3 or higher
 
- * Python >= 2.7
+ * Python >= 3
 
  * Git
 

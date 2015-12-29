@@ -1,6 +1,5 @@
-#!/usr/bin/env python
-# This file should be compatible with both Python 2 and 3.
-# If it is not, please file a bug report.
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
 
 try:
   import pathConfig
@@ -135,9 +134,9 @@ def removeOldImages(realArgs):
 
   Add another subuser blah
 
-  >>> subuser.subuser(["add","--accept","blah","blah@/home/travis/local-test-repo"])
-  Adding subuser blah blah@/home/travis/local-test-repo
-  Adding new temporary repository /home/travis/local-test-repo
+  >>> subuser.subuser(["add","--accept","blah",u"blah@/home/travis/local-test-repo-§€č"])
+  Adding subuser blah blah@/home/travis/local-test-repo-§€č
+  Adding new temporary repository /home/travis/local-test-repo-§€č
   Verifying subuser configuration.
   Verifying registry consistency...
   Unregistering any non-existant installed images.
@@ -207,13 +206,13 @@ def removeOldImages(realArgs):
 
   Now we use ``remove-old-images`` to remove images which belong to the local repository.
 
-  >>> remove_old_images.removeOldImages(["--repo=/home/travis/local-test-repo"])
-  Removing unneeded image 9 : blah@/home/travis/local-test-repo
+  >>> remove_old_images.removeOldImages(["--repo=/home/travis/local-test-repo-§€č"])
+  Removing unneeded image 9 : blah@/home/travis/local-test-repo-§€č
   Verifying subuser configuration.
   Verifying registry consistency...
   Unregistering any non-existant installed images.
   Running garbage collector on temporary repositories...
-  Removing uneeded temporary repository: /home/travis/local-test-repo
+  Removing uneeded temporary repository: /home/travis/local-test-repo-§€č
 
   Now we use ``remove-old-images`` to clean up the rest of our un-needed installed images.
 

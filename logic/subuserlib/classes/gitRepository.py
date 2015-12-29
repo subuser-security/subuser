@@ -1,7 +1,4 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# This file should be compatible with both Python 2 and 3.
-# If it is not, please file a bug report.
 
 """
 This is a Class which allows one to manipulate a git repository.
@@ -11,12 +8,15 @@ This is a Class which allows one to manipulate a git repository.
 import os
 import tempfile
 import sys
+import errno
 #internal imports
 import subuserlib.subprocessExtras as subprocessExtras
+from subuserlib.classes.userOwnedObject import UserOwnedObject
 from subuserlib.classes.fileStructure import FileStructure
 
-class GitRepository():
-  def __init__(self,path):
+class GitRepository(UserOwnedObject):
+  def __init__(self,user,path):
+    UserOwnedObject.__init__(self,user)
     self.__path = path
 
   def getPath(self):
@@ -27,18 +27,29 @@ class GitRepository():
     Run git with the given command line arguments.
     """
     try:
-      return subprocessExtras.call(["git"]+args,cwd=self.getPath())
-    except OSError:
-      sys.exit("You must have git installed to use subuser.")
+      (returncode,stdout,stderr) = subprocessExtras.callCollectOutput(["git"]+args,cwd=self.getPath())
+      self.getUser().getRegistry().logDebug(stdout)
+      self.getUser().getRegistry().logDebug(stderr)
+      return returncode
+    except OSError as e:
+      if e.errno == errno.EEXIST:
+        sys.exit("You must have git installed to use subuser.")
+      else:
+        raise e
 
   def runCollectOutput(self,args):
     """
     Run git with the given command line arguments and return a tuple with (returncode,output).
     """
     try:
-      return subprocessExtras.callCollectOutput(["git"]+args,cwd=self.getPath())
-    except OSError:
-      sys.exit("You must have git installed to use subuser.")
+      (returncode,stdout,stderr) = subprocessExtras.callCollectOutput(["git"]+args,cwd=self.getPath())
+      self.getUser().getRegistry().logDebug(stderr)
+      return (returncode,stdout)
+    except OSError as e:
+      if e.errno == errno.EEXIST:
+        sys.exit("You must have git installed to use subuser.")
+      else:
+        raise e
 
   def getFileStructureAtCommit(self,commit):
     """
@@ -50,13 +61,9 @@ class GitRepository():
     """
     Run git commit with the given commit message.
     """
-    try:
-      tempFile = tempfile.NamedTemporaryFile("w",encoding="utf-8")
-    except TypeError: # Older versions of python have broken tempfile implementation for which you cannot set the encoding.
-      tempFile = tempfile.NamedTemporaryFile("w")
-      message = message.encode('ascii', 'ignore').decode('ascii')
+    tempFile = tempfile.NamedTemporaryFile("w",encoding="utf-8")
     with tempFile as tempFile:
-      tempFile.write(message)
+      tempFile.write(message.encode("utf8","replace").decode("utf8"))
       tempFile.flush()
       return self.run(["commit","--file",tempFile.name])
 

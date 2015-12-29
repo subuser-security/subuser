@@ -1,6 +1,5 @@
-#!/usr/bin/env python
-# This file should be compatible with both Python 2 and 3.
-# If it is not, please file a bug report.
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
 
 try:
   import pathConfig
@@ -123,4 +122,3 @@ def repository(sysargs):
 
 if __name__ == "__main__":
   repository(sys.argv[1:])
-

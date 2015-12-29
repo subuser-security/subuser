@@ -1,7 +1,5 @@
-#!/usr/bin/env python
-# This file should be compatible with both Python 2 and 3.
-# If it is not, please file a bug report.
-
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
 try:
   import pathConfig
 except ImportError:
@@ -16,6 +14,7 @@ import subuserlib.classes.user
 import subuserlib.commandLineArguments
 import subuserlib.resolve
 import subuserlib.profile
+import subuserlib.print
 
 def parseCliArgs(sysargs):
   usage = "usage: subuser list WHAT_TO_LIST [options]"
@@ -49,75 +48,6 @@ def parseCliArgs(sysargs):
 def list(sysargs):
   """
   List various things: image sources, subusers, ect.
-
-  >>> import sys
-  >>> list = __import__("subuser-list") #import self
-
-  Listing available images lists the images along with their default permissions.
-
-  >>> list.list(["available"])
-  foo@default
-
-  Similar result when listing subusers.
-
-  >>> list.list(["subusers"])
-  foo
-
-  And listing installed images:
-
-  >>> list.list(["installed-images"])
-  foo@default 2
-
-  > list.list(["repositories"])
-  foo
-
-  In all cases, there is a ``--long`` option. (We don't test this, because the hash changes every time.)
-
-  >> list.list(["repositories","--long"])
-  Repository: default
-  ------------
-  Cloned from: file:///home/travis/default-test-repo
-  Currently at commit: 7ef30a4e1267f9f026e3be064f120290c28ef29e
-  <BLANKLINE>
-
-  >>> list.list(["subusers","--long"])
-  The following subusers are registered.
-  Subuser: foo
-  ------------------
-  foo@default
-   Description:
-   Maintainer:
-   Executable: /usr/bin/foo
-  <BLANKLINE>
-
-  >>> list.list(["available","--long"])
-  Images available for instalation from the repo: default
-  foo@default
-   Description:
-   Maintainer:
-   Executable: /usr/bin/foo
-
-  You can specify which repository to list image sources from.
-
-  >>> list.list(["available","default","--long"])
-  Images available for instalation from the repo: default
-  foo@default
-   Description:
-   Maintainer:
-   Executable: /usr/bin/foo
-
-  When listing available image sources, refering to a repository via a URI works as well.
-
-  >>> list.list(["available","file:///home/travis/version-constrained-test-repo"])
-  Adding new temporary repository file:///home/travis/version-constrained-test-repo
-  bop@file:///home/travis/version-constrained-test-repo
-
-  >>> list.list(["installed-images"])
-  foo@default 2
-
-  >>> list.list(["repositories"])
-  default
-
   """
   options,args = parseCliArgs(sysargs)
   if len(args)==0:
@@ -131,71 +61,85 @@ def list(sysargs):
     if options.json:
       availableDict = {}
       for repoIdentifier in reposToList:
+        repoIdentifier = repoIdentifier.decode("utf-8")
         if repoIdentifier in user.getRegistry().getRepositories():
           temp = False
         else:
           temp = True
-        repository = subuserlib.resolve.resolveRepository(user,repoIdentifier)
+        try:
+          repository = subuserlib.resolve.resolveRepository(user,repoIdentifier)
+        except (OSError,subuserlib.resolve.ResolutionError):
+          sys.exit("Repository id: "+repoIdentifier+" could not be resolved.")
         availableDict[repository.getName()] = repository.serializeToDict()
         if temp:
           repository.removeGitRepo()
-      print(json.dumps(availableDict,indent=1,separators=(",",": ")))
+      subuserlib.print.printWithoutCrashing(json.dumps(availableDict,indent=1,separators=(",",": ")))
       sys.exit()
-    for repoIdentifier in reposToList:
-      if repoIdentifier in user.getRegistry().getRepositories():
-        temp = False
-      else:
-        temp = True
-      repository =  subuserlib.resolve.resolveRepository(user,repoIdentifier)
-      if options.long:
-        print("Images available for instalation from the repo: " + repository.getName())
-      for _,imageSource in repository.items():
-        if not options.long:
-          print(imageSource.getIdentifier())
+    else:
+      for repoIdentifier in reposToList:
+        repoIdentifier = repoIdentifier
+        if repoIdentifier in user.getRegistry().getRepositories():
+          temp = False
         else:
-          imageSource.describe()
-      if temp:
-        repository.removeGitRepo()
+          temp = True
+        try:
+          repository =  subuserlib.resolve.resolveRepository(user,repoIdentifier)
+        except (OSError,subuserlib.resolve.ResolutionError):
+          sys.exit("Repository id: "+repoIdentifier+" could not be resolved.")
+        if options.long:
+          subuserlib.print.printWithoutCrashing("Images available for instalation from the repo: " + repository.getName())
+        for _,imageSource in repository.items():
+          if not options.long:
+            identifier = imageSource.getIdentifier()
+            subuserlib.print.printWithoutCrashing(identifier)
+          else:
+            try:
+              imageSource.describe()
+            except SyntaxError as e:
+              subuserlib.print.printWithoutCrashing(str(e))
+              subuserlib.print.printWithoutCrashing("Cannot describe this image source as loading it is forbidden.")
+        if temp:
+          repository.removeGitRepo()
   elif args[0] == 'subusers':
     if options.json:
-      print(json.dumps(user.getRegistry().getSubusers().serializeToDict(),indent=1,separators=(",",": ")))
+      subuserlib.print.printWithoutCrashing(json.dumps(user.getRegistry().getSubusers().serializeToDict(),indent=1,separators=(",",": ")))
       sys.exit()
     if options.long:
-      print("The following subusers are registered.")
+      subuserlib.print.printWithoutCrashing("The following subusers are registered.")
     for name,subuser in user.getRegistry().getSubusers().items():
       if options.internal or not name.startswith("!"):
         if not options.long:
-          print(name)
+          subuserlib.print.printWithoutCrashing(name)
         else:
           subuser.describe()
   elif args[0] == 'installed-images':
     if options.json:
-      print(json.dumps(user.getInstalledImages().serializeToDict(),indent=1,separators=(",",": ")))
+      subuserlib.print.printWithoutCrashing(json.dumps(user.getInstalledImages().serializeToDict(),indent=1,separators=(",",": ")))
       sys.exit()
     if options.long:
-      print("The following images are installed.")
+      subuserlib.print.printWithoutCrashing("The following images are installed.")
     for id,installedImage in user.getInstalledImages().items():
       if not options.long:
         try:
           identifier = installedImage.getImageSource().getIdentifier()
           if not options.broken:
-            print(identifier+" "+id)
+            subuserlib.print.printWithoutCrashing(identifier+" "+id)
         except KeyError:
           if options.broken:
-            print(id)
+            subuserlib.print.printWithoutCrashing(id)
       else:
-        print("------------------")
+        subuserlib.print.printWithoutCrashing("------------------")
         installedImage.describe()
   elif args[0] == 'repositories':
     if options.json:
-      print(json.dumps(user.getRegistry().getRepositories().serializeToDict(),indent=1,separators=(",",": ")))
+      subuserlib.print.printWithoutCrashing(json.dumps(user.getRegistry().getRepositories().serializeToDict(),indent=1,separators=(",",": ")))
       sys.exit()
     for name,repo in user.getRegistry().getRepositories().items():
       if not options.long:
-        print(repo.getDisplayName())
+        subuserlib.print.printWithoutCrashing(repo.getDisplayName())
       else:
         repo.describe()
-        print("")
+        subuserlib.print.printWithoutCrashing("")
   else:
     sys.exit(args[0] + " cannot be listed. Option unrecognized.")
 

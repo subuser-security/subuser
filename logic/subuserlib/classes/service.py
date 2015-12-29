@@ -1,7 +1,4 @@
-#!/usr/bin/env python
-# This file should be compatible with both Python 2 and 3.
-# If it is not, please file a bug report.
-# pylint: disable=no-init,old-style-class
+# -*- coding: utf-8 -*-
 
 """
 This is an abstract class providing common methods shared by all service types.

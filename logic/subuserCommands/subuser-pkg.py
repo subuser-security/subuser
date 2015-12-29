@@ -1,7 +1,5 @@
-#!/usr/bin/env python
-# This file should be compatible with both Python 2 and 3.
-# If it is not, please file a bug report.
-
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
 try:
   import pathConfig
 except ImportError:
@@ -12,13 +10,6 @@ import optparse
 import json
 import os
 import copy
-
-# Python 2.x/Python 3 compatibility
-try:
-  input = raw_input
-except NameError:
-  raw_input = input
-
 #internal imports
 from subuserlib.classes.user import User
 import subuserlib.commandLineArguments
@@ -26,6 +17,7 @@ import subuserlib.permissions
 from subuserlib.classes.permissionsAccepters.acceptPermissionsAtCLI import AcceptPermissionsAtCLI
 from subuserlib.classes.permissions import Permissions
 import subuserlib.profile
+import subuserlib.test
 
 def parseCliArgs(realArgs):
   usage = "usage: subuser pkg [init|add|test] IMAGE-SOURCE-NAMES <args>"
@@ -50,6 +42,14 @@ def parseCliArgs(realArgs):
   parser.add_option("--build-context", dest="buildContext",default=None,help="When adding a new image source, the path to the build context for building the image.")
   return parser.parse_args(args=realArgs)
 
+defaultImageFileTemplate = """FROM-SUBUSER-IMAGE libx11@default
+RUN apt-get update && apt-get upgrade -y && apt-get install -y PKG"""
+defaultPermissions = copy.deepcopy(subuserlib.permissions.defaults)
+if subuserlib.test.testing:
+  defaultImageFileTemplate = """FROM-SUBUSER-IMAGE foo@default"""
+  defaultPermissions["executable"] = "/usr/bin/nothing"
+
+
 @subuserlib.profile.do_cprofile
 def pkg(realArgs):
   """
@@ -68,9 +68,9 @@ def pkg(realArgs):
         if options.imageSourcesDir:
           user.getEndUser().makedirs(options.imageSourcesDir)
       user.getEndUser().chown("./.subuser.json")
-      print("Subuser repository initialized successfully!")
-      print("You can add new image sources with:")
-      print("$ subuser pkg add image-source-name")
+      subuserlib.print.printWithoutCrashing("Subuser repository initialized successfully!")
+      subuserlib.print.printWithoutCrashing("You can add new image sources with:")
+      subuserlib.print.printWithoutCrashing("$ subuser pkg add image-source-name")
     else:
       sys.exit("Subuser repository already initialized. Exiting.")
   if subcommand == "add":
@@ -78,6 +78,7 @@ def pkg(realArgs):
     imageSourceToAdd = args[1]
     if imageSourceToAdd in repo:
       sys.exit("An image source named "+imageSourceToAdd+" is already present in the repository. Cannot add. Exiting.")
+    subuserlib.print.printWithoutCrashing("Adding new image source "+imageSourceToAdd)
     useDefaultLocations = options.imageFile is None and options.permissionsFile is None and options.buildContext is None
     if useDefaultLocations:
       imageSourceDir = os.path.join(repo.getImageSourcesDir(),imageSourceToAdd)
@@ -89,6 +90,8 @@ def pkg(realArgs):
       except OSError:
         pass
     else:
+      if repo.getRepoConfig() is None:
+        sys.exit("You must initialize your repository with 'pkg init' before adding image sources to it.")
       if options.buildContext is None or options.imageFile is None or options.permissionsFile is None:
         sys.exit("If you specify non-default paths you must specify all of them. That is --image-file, --build-context AND --permissions-file. Cannot add image. Exiting...")
       imageFile = options.imageFile
@@ -98,7 +101,7 @@ def pkg(realArgs):
         pass
       buildContext = options.buildContext
       try:
-        user.getEndUser().makedirs(os.path.dirname(buildContext))
+        user.getEndUser().makedirs(buildContext)
       except OSError:
         pass
       permissionsFile = options.permissionsFile
@@ -112,9 +115,11 @@ def pkg(realArgs):
       repoConfig["explicit-image-sources"][imageSourceToAdd] = {"image-file":imageFile,"build-context":buildContext,"permissions-file":permissionsFile}
       with open("./.subuser.json","w") as subuserDotJson:
         json.dump(repoConfig,subuserDotJson,indent=1,separators=(",",": "))
-    permissions = copy.deepcopy(subuserlib.permissions.defaults)
-    (returncode,maintainerName) = subuserlib.subprocessExtras.callCollectOutput(["git","config","user.name"])
-    (returncode,maintainerEmail) = subuserlib.subprocessExtras.callCollectOutput(["git","config","user.email"])
+    permissions = defaultPermissions
+    (returncode,maintainerName,stderr) = subuserlib.subprocessExtras.callCollectOutput(["git","config","user.name"])
+    subuserlib.print.printWithoutCrashing(stderr)
+    (returncode,maintainerEmail,stderr) = subuserlib.subprocessExtras.callCollectOutput(["git","config","user.email"])
+    subuserlib.print.printWithoutCrashing(stderr)
     permissions["maintainer"] = maintainerName.rstrip("\n")+" <"+maintainerEmail.rstrip("\n")+">"
     if not os.path.exists(permissionsFile):
       with open(permissionsFile,"w") as pf:
@@ -124,12 +129,16 @@ def pkg(realArgs):
     user.getEndUser().chown(permissionsFile)
     if not os.path.exists(imageFile):
       with open(imageFile,"w") as imgf:
-        imgf.write("""FROM-SUBUSER-IMAGE libx11@default
-RUN apt-get update && apt-get upgrade -y && apt-get install -y PKG""")
+        imgf.write(defaultImageFileTemplate)
       user.getEndUser().chown(imageFile)
     subuserlib.subprocessExtras.runEditor(imageFile)
-    if raw_input("Would you like to test your new image? [Y/n]") == "n":
-      sys.exit(0)
+    try:
+      if input("Would you like to test your new image? [Y/n]") == "n":
+        sys.exit(0)
+    except EOFError:
+      subuserlib.print.printWithoutCrashing("")
+      if not subuserlib.test.testing:
+        sys.exit(0)
   if subcommand == "test" or subcommand == "add":
     user = User()
     repo = subuserlib.resolve.getRepositoryFromPath(user,os.environ["PWD"])
@@ -144,23 +153,33 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y PKG""")
         subuserNames.append(subuserName)
         subuserlib.subuser.addFromImageSourceNoVerify(user,subuserName,repo[imageSourceName])
       subuserlib.verify.verify(user,subuserNames=subuserNames,permissionsAccepter=permissionsAccepter,prompt=options.prompt)
-      for subuserName in subuserNames:
-        if user.getRegistry().getSubusers()[subuserName].getImageId() is None and not raw_input(subuserName+" failed to build. Edit its image file and try again? [Y/n]") == "n":
-          subuserlib.subprocessExtras.runEditor(user.getRegistry().getSubusers()[subuserName].getImageSource().getImageFile())
-          subuserlib.verify.verify(user,subuserNames=[subuserName],permissionsAccepter=permissionsAccepter,prompt=options.prompt)
+      subusersToTryBuildingAgain = None
+      while not subusersToTryBuildingAgain == []:
+        subusersToTryBuildingAgain = []
+        for subuserName in subuserNames:
+          if user.getRegistry().getSubusers()[subuserName].getImageId() is None:
+            try:
+              if not input(subuserName+" failed to build. Edit its image file and try again? [Y/n]") == "n":
+                subusersToTryBuildingAgain.append(subuserName)
+                subuserlib.subprocessExtras.runEditor(user.getRegistry().getSubusers()[subuserName].getImageSource().getImageFile())
+            except EOFError:
+              subuserlib.print.printWithoutCrashing("")
+              subuserlib.print.printWithoutCrashing("Not editing and not trying again due to lack of terminal.")
+        if subusersToTryBuildingAgain:
+          subuserlib.verify.verify(user,subuserNames=subusersToTryBuildingAgain,permissionsAccepter=permissionsAccepter,prompt=options.prompt)
       user.getRegistry().commit()
-    # Create a list of the names of the new subusers
-    subuserNames = []
-    for imageSourceName in imageSourceNames:
-      subuserNames.append(subuserNamePrefix+imageSourceName)
     # Run the images
     for subuserName in subuserNames:
-      arguments = raw_input("Running "+subuserName+" enter arguments and press enter to continue:")
-      arguments = arguments.split(" ")
-      if arguments == [""]:
-        arguments = []
       subuser = user.getRegistry().getSubusers()[subuserName]
-      if subuser.getPermissions()["executable"]:
+      if subuser.getPermissions()["executable"] and subuser.getImageId():
+        try:
+          arguments = input("Running "+subuserName+" enter arguments and press enter to continue:")
+        except EOFError:
+          subuserlib.print.printWithoutCrashing("")
+          arguments = ""
+        arguments = arguments.split(" ")
+        if arguments == [""]:
+          arguments = []
         runtime = subuser.getRuntime(os.environ)
         if runtime:
           runtime.run(arguments)

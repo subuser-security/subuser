@@ -27,7 +27,7 @@ git checkout master
 git mv bip baz
 bit add .
 git commit -m 'change bop to baz'
-cp -r  $1/test/local-test-repo /home/travis/local-test-repo
+cp -r  $1/test/local-test-repo-§€č /home/travis/local-test-repo-§€č
 cp -r $1/test/hashtest/ /home/travis/hashtest/
 echo User is $USER id $UID
 echo ls -la /home/travis/hashtest

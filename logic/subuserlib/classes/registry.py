@@ -1,6 +1,4 @@
-#!/usr/bin/env python
-# This file should be compatible with both Python 2 and 3.
-# If it is not, please file a bug report.
+# -*- coding: utf-8 -*-
 
 """
 Each user's settings are stored in a "registry". This is a git repository with a set of json files which store the state of the subuser installation.
@@ -18,6 +16,7 @@ from subuserlib.classes import subusers
 from subuserlib.classes import userOwnedObject
 from subuserlib.classes.gitRepository import GitRepository
 import subuserlib.lock
+import subuserlib.print
 
 class Registry(userOwnedObject.UserOwnedObject):
   def __init__(self,user,gitReadHash="master"):
@@ -29,7 +28,7 @@ class Registry(userOwnedObject.UserOwnedObject):
     self.__gitRepository = None
     self.__gitReadHash = gitReadHash
     userOwnedObject.UserOwnedObject.__init__(self,user)
-    self.__gitRepository = GitRepository(self.getUser().getConfig()["registry-dir"])
+    self.__gitRepository = GitRepository(self.getUser(),self.getUser().getConfig()["registry-dir"])
     self._ensureGitRepoInitialized()
 
   def getGitRepository(self):
@@ -70,9 +69,18 @@ class Registry(userOwnedObject.UserOwnedObject):
     Add a log message to the registry's change log and print it to the screen, but do not mark the registry as changed.
     """
     message = message.rstrip()
-    self.__changeLog = self.__changeLog + message+u"\n"
+    self.__changeLog = self.__changeLog + message + u"\n"
     if self.getLogOutputVerbosity() > 0:
-      print(message)
+      subuserlib.print.printWithoutCrashing(message)
+
+  def logDebug(self,message):
+    """
+    Add a log message to the registry's change log and print it to the screen if the log output verbosity is >2 , but do not mark the registry as changed.
+    """
+    message = message.rstrip()
+    self.__changeLog = self.__changeLog + message + u"\n"
+    if self.getLogOutputVerbosity() > 2:
+      subuserlib.print.printWithoutCrashing(message)
 
   def logChange(self,message):
     """

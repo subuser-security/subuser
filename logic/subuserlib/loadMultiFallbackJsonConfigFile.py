@@ -1,6 +1,4 @@
-#!/usr/bin/env python
-# This file should be compatible with both Python 2 and 3.
-# If it is not, please file a bug report.
+# -*- coding: utf-8 -*-
 
 """
 Module used for loading multiple json config files, where attributes consequtively over-ride eachother.
@@ -23,8 +21,17 @@ def expandPathInDict(homeDir,pathAttribute,dictionary):
   """
   Expand the environment variables in a dictionary of setting-value pairs given that the setting holds a path.
   """
+  realHome = os.environ["HOME"]
   os.environ["HOME"] = homeDir
-  dictionary[pathAttribute] = os.path.normpath(os.path.expandvars(dictionary[pathAttribute])) # Norpath because os.path.expandvars is buggy and expands $HOME/foo to /home/user-name//foo
+  try:
+    path = dictionary[pathAttribute]
+    path = os.path.expandvars(path)
+    if not "://" in path:
+      path = os.path.normpath(path)# Norpath because os.path.expandvars is buggy and expands $HOME/foo to /home/user-name//foo
+    dictionary[pathAttribute] = path
+  except KeyError:
+    pass
+  os.environ["HOME"] = realHome
 
 def expandPathsInDict(homeDir,pathAttributes,dictionary):
   for pathAttribute in pathAttributes:

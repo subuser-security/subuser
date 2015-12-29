@@ -1,6 +1,4 @@
-#!/usr/bin/env python
-# This file should be compatible with both Python 2 and 3.
-# If it is not, please file a bug report.
+# -*- coding: utf-8 -*-
 # Taken from: http://www.openpanel.com/2007/08/http-on-unix-sockets-with-python/
 
 """
@@ -30,4 +28,3 @@ class UHTTPConnection(httplib.HTTPConnection):
     sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
     sock.connect(self.path)
     self.sock = sock
-

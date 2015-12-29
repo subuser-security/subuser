@@ -1,6 +1,4 @@
-#!/usr/bin/env python
-# This file should be compatible with both Python 2 and 3.
-# If it is not, please file a bug report.
+# -*- coding: utf-8 -*-
 
 """
 This module is used to parse the image source identifiers used to identify image sources during instalation.  For more information see the image-source-identifiers section of the subuser standard.
@@ -71,19 +69,19 @@ def resolveRepository(user,repoIdentifier,allowLocalRepositories=True):
     if allowLocalRepositories:
       return getRepositoryFromURIOrPath(user,os.environ["PWD"])
     else:
-      raise Exception("Error when resolving ImageSource "+imageSourcePath+". Refering to local repositories is forbidden in this context.")
+      raise ResolutionError("Error when resolving repository identifier "+repoIdentifier+". Refering to local repositories is forbidden in this context.")
   # "/home/timothy/subuser-repo"
   elif repoIdentifier.startswith("/"):
     if allowLocalRepositories:
       return getRepositoryFromURIOrPath(user,repoIdentifier)
     else:
-      raise Exception("Error when resolving ImageSource "+imageSourcePath+". Refering to local repositories is forbidden in this context.")
+      raise ResolutionError("Error when resolving repository identifier "+repoIdentifier+". Refering to local repositories is forbidden in this context.")
   # "file:///home/timothy/subuser-repo"
   elif repoIdentifier.startswith("file:///"):
     if allowLocalRepositories:
       return getRepositoryFromURIOrPath(user,repoIdentifier)
     else:
-      raise Exception("Error when resolving ImageSource "+imageSourcePath+". Refering to local repositories is forbidden in this context.")
+      raise ResolutionError("Error when resolving repository identifier "+repoIdentifier+". Refering to local repositories is forbidden in this context.")
   # "https://github.com/subuser-security/some-repo.git"
   elif repoIdentifier.startswith("https://") or repoIdentifier.startswith("http://"):
     return getRepositoryFromURIOrPath(user,repoIdentifier)
@@ -92,9 +90,9 @@ def resolveRepository(user,repoIdentifier,allowLocalRepositories=True):
     if allowLocalRepositories or repoIdentifier == "default":
       return user.getRegistry().getRepositories()[repoIdentifier]
     else:
-      raise Exception("Error when resolving ImageSource "+imageSourcePath+". Refering to repositories by name is forbidden in this context.")
+      raise ResolutionError("Error when resolving repository identifier "+repoIdentifier+". Refering to repositories by name is forbidden in this context.")
   else:
-    raise Exception("Error when resolving ImageSource "+imageSourcePath+".")
+    raise ResolutionError("Error when resolving repository identifier "+repoIdentifier+".")
 
 def lookupRepositoryByURI(user,uri):
   """
@@ -150,3 +148,6 @@ def getRepositoryFromURIOrPath(user,uriOrPath):
     return getRepositoryFromPath(user,uriOrPath)
   else:
     return getRepositoryFromURI(user,uriOrPath)
+
+class ResolutionError(Exception):
+  pass

@@ -1,6 +1,4 @@
-#!/usr/bin/env python
-# This file should be compatible with both Python 2 and 3.
-# If it is not, please file a bug report.
+# -*- coding: utf-8 -*-
 
 """
 A repository is a collection of ``ImageSource`` s which are published in a git repo.
@@ -31,7 +29,7 @@ class Repository(dict,UserOwnedObject,Describable):
     self.__sourceDir = sourceDir
     self.__fileStructure = None
     UserOwnedObject.__init__(self,user)
-    self.__gitRepository = GitRepository(self.getRepoPath())
+    self.__gitRepository = GitRepository(user,self.getRepoPath())
     if not os.path.exists(self.getRepoPath()):
       self.updateSources(initialUpdate=True)
     self.__repoConfig = self.loadRepoConfig()
@@ -164,11 +162,17 @@ class Repository(dict,UserOwnedObject,Describable):
       return
     if not os.path.exists(self.getRepoPath()):
       new = True
-      subuserlib.subprocessExtras.call(["git","clone",self.getGitOriginURI(),self.getRepoPath()])
+      self.getUser().getRegistry().log("Cloning repository "+self.getName()+" from "+self.getGitOriginURI())
+      (returncode,stdout,stderr) = subuserlib.subprocessExtras.callCollectOutput(["git","clone",self.getGitOriginURI(),self.getRepoPath()])
+      self.getUser().getRegistry().logDebug(stdout)
+      self.getUser().getRegistry().logDebug(stderr)
+      if not returncode == 0:
+        self.getUser().getRegistry().log("Clone failed.")
+        return
     else:
       new = False
     self.getGitRepository().checkout("master")
-    self.getGitRepository().run(["pull","--all"])
+    self.getGitRepository().run(["fetch","--all"])
     if self.updateGitCommitHash():
       if not new:
         self.getUser().getRegistry().logChange("Updated repository "+self.getDisplayName())
@@ -206,7 +210,7 @@ class Repository(dict,UserOwnedObject,Describable):
     Otherwise false.
     """
     if self.isLocal():
-      return None
+      return True
     # Default
     newCommitHash = self.getGitRepository().getHashOfRef("refs/remotes/origin/master")
     # First we check for version constraints on the repository.
@@ -215,7 +219,7 @@ class Repository(dict,UserOwnedObject,Describable):
       configAtMaster = json.loads(configFileContents)
       if "subuser-version-constraints" in configAtMaster:
         versionConstraints = configAtMaster["subuser-version-constraints"]
-        subuserVersion = subuserlib.version.getSubuserVersion()
+        subuserVersion = subuserlib.version.getSubuserVersion(self.getUser())
         for constraint in versionConstraints:
           if not len(constraint) == 3:
             raise SyntaxError("Error in .subuser.json file. Invalid subuser-version-constraints."+ str(versionConstraints))
@@ -230,14 +234,14 @@ class Repository(dict,UserOwnedObject,Describable):
             try:
               newCommitHash = self.getGitRepository().getHashOfRef("refs/remotes/origin/"+commit)
             except OSError as e:
-              if len(commit)==40:
+              if len(commit) == 40:
                 newCommitHash = commit
               else:
                 raise e
             break
         else:
           raise SyntaxError("Error reading .subuser.json file, no version constraints matched the current subuser version ("+subuserVersion+").\n\n"+str(versionConstraints))
-    updated = not newCommitHash == self.__lastGitCommitHash
+    updated = not (newCommitHash == self.__lastGitCommitHash)
     self.__lastGitCommitHash = newCommitHash
     self.__fileStructure = None
     return updated

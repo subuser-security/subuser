@@ -1,0 +1,3 @@
+Subuser repository initialized successfully!
+You can add new image sources with:
+$ subuser pkg add image-source-name

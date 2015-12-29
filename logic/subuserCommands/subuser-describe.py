@@ -1,6 +1,5 @@
-#!/usr/bin/env python
-# This file should be compatible with both Python 2 and 3.
-# If it is not, please file a bug report.
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
 
 try:
   import pathConfig
@@ -33,35 +32,6 @@ EXAMPLE:
 def describe(sysargs):
   """
   Describe subusers and images.
-
-  >>> describe = __import__("subuser-describe") #import self
-
-  Describing a subuser prints its permissions.
-
-  >>> describe.describe(["subuser","foo"])
-  Subuser: foo
-  ------------------
-  foo@default
-   Description:
-   Maintainer:
-   Executable: /usr/bin/foo
-  <BLANKLINE>
-
-  Describing an image prints the default permissions for that image.
-
-  >>> describe.describe(["image","foo"])
-  foo@default
-   Description:
-   Maintainer:
-   Executable: /usr/bin/foo
-
-  Images can be refered to with their full paths as well.  Even remote images can be described.
-
-  >>> describe.describe(["image","foo@default"])
-  foo@default
-   Description:
-   Maintainer:
-   Executable: /usr/bin/foo
   """
   user = subuserlib.classes.user.User()
   (options,args) = parseCliArgs(sysargs)

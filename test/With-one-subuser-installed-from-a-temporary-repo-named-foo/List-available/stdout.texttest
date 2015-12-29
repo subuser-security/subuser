@@ -1,0 +1,10 @@
+foo@default
+dependency2@file:////home/timothy/.texttest/tmp/texttest.27Dec212800.23960/texttest/With-one-subuser-installed-from-a-temporary-repo-named-foo/List-available/test-repos/remote-test-repo
+intermediary@file:////home/timothy/.texttest/tmp/texttest.27Dec212800.23960/texttest/With-one-subuser-installed-from-a-temporary-repo-named-foo/List-available/test-repos/remote-test-repo
+dependency1@file:////home/timothy/.texttest/tmp/texttest.27Dec212800.23960/texttest/With-one-subuser-installed-from-a-temporary-repo-named-foo/List-available/test-repos/remote-test-repo
+dependency3@file:////home/timothy/.texttest/tmp/texttest.27Dec212800.23960/texttest/With-one-subuser-installed-from-a-temporary-repo-named-foo/List-available/test-repos/remote-test-repo
+broken-permissions-file@file:////home/timothy/.texttest/tmp/texttest.27Dec212800.23960/texttest/With-one-subuser-installed-from-a-temporary-repo-named-foo/List-available/test-repos/remote-test-repo
+broken-non-existant-dependency@file:////home/timothy/.texttest/tmp/texttest.27Dec212800.23960/texttest/With-one-subuser-installed-from-a-temporary-repo-named-foo/List-available/test-repos/remote-test-repo
+bar@file:////home/timothy/.texttest/tmp/texttest.27Dec212800.23960/texttest/With-one-subuser-installed-from-a-temporary-repo-named-foo/List-available/test-repos/remote-test-repo
+broken-syntax@file:////home/timothy/.texttest/tmp/texttest.27Dec212800.23960/texttest/With-one-subuser-installed-from-a-temporary-repo-named-foo/List-available/test-repos/remote-test-repo
+dependent@file:////home/timothy/.texttest/tmp/texttest.27Dec212800.23960/texttest/With-one-subuser-installed-from-a-temporary-repo-named-foo/List-available/test-repos/remote-test-repo

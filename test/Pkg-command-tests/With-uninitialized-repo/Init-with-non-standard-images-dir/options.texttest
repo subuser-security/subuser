@@ -1,0 +1,1 @@
+pkg init --image-sources-dir=foobar

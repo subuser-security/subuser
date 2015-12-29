@@ -1,0 +1,9 @@
+{
+ "explicit-image-sources": {
+  "texttest": {
+   "image-file": "test/texttest/image/SubuserImagefile",
+   "permissions-file": "test/texttest/permissions.json",
+   "build-context": "test/texttest/image/"
+  }
+ }
+}

@@ -1,6 +1,4 @@
-#!/usr/bin/env python
-# This file should be compatible with both Python 2 and 3.
-# If it is not, please file a bug report.
+# -*- coding: utf-8 -*-
 # pylint: disable=no-init,old-style-class
 
 """
@@ -23,4 +21,3 @@ class PermissionsAccepter():
     userApproved may be None if no permissions have been accepted yet.
     """
     pass
-

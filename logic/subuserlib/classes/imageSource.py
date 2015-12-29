@@ -1,6 +1,4 @@
-#!/usr/bin/env python
-# This file should be compatible with both Python 2 and 3.
-# If it is not, please file a bug report.
+# -*- coding: utf-8 -*-
 
 """
 Images in subuser are built from ImageSource objects.
@@ -15,6 +13,7 @@ from subuserlib.classes.describable import Describable
 import subuserlib.permissions
 import subuserlib.classes.docker.dockerDaemon as dockerDaemon
 import subuserlib.classes.exceptions as exceptions
+import subuserlib.print
 
 class ImageSource(UserOwnedObject,Describable):
   def __init__(self,user,repo,name,explicitConfig=None):
@@ -118,7 +117,7 @@ class ImageSource(UserOwnedObject,Describable):
 
     Prints to standard output.
     """
-    print(self.getIdentifier())
+    subuserlib.print.printWithoutCrashing(self.getIdentifier())
     self.getPermissions().describe()
 
   def build(self,parent):

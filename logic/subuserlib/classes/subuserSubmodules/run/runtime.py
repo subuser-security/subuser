@@ -1,7 +1,4 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# This file should be compatible with both Python 2 and 3.
-# If it is not, please file a bug report.
 
 """
 Runtime environments which are prepared for subusers to run in.

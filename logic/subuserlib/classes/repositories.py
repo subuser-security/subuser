@@ -1,6 +1,4 @@
-#!/usr/bin/env python
-# This file should be compatible with both Python 2 and 3.
-# If it is not, please file a bug report.
+# -*- coding: utf-8 -*-
 
 """
 This is the list of repositories from which subuser images may be installed or updated.
@@ -56,6 +54,7 @@ class Repositories(collections.Mapping,UserOwnedObject,FileBackedObject):
       """
       repositories = {}
       for repoName,repoAttributes in repositoryDict.items():
+        subuserlib.loadMultiFallbackJsonConfigFile.expandPathsInDict(self.getUser().homeDir,["git-origin","source-dir"],repoAttributes)
         if repoName in repositoryStates:
           gitCommitHash = repositoryStates[repoName]["git-commit-hash"]
         else:

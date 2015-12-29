@@ -1,0 +1,1 @@
+pkg add foo --accept --permissions-file=foolitz/permissions.json --image-file=foobar/SubuserImagefile --build-context=buildfiles

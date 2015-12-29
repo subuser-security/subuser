@@ -1,6 +1,4 @@
-#!/usr/bin/env python
-# This file should be compatible with both Python 2 and 3.
-# If it is not, please file a bug report.
+# -*- coding: utf-8 -*-
 
 """
 This module provides the usefull function C{which} which allows us to find the full path of a given executable and determine if an executable is present on the given system.

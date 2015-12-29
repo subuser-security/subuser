@@ -1,7 +1,4 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# This file should be compatible with both Python 2 and 3.
-# If it is not, please file a bug report.
 
 """
 This is one of the most important modules in subuser.  This module has one function `verify` which is used to apply the changes for most commands that change the user's configuration:
@@ -16,12 +13,6 @@ This is one of the most important modules in subuser.  This module has one funct
 #external imports
 import shutil
 import os
-# Python 2.x/Python 3 compatibility
-try:
-  input = raw_input
-except NameError:
-  raw_input = input
-
 #internal imports
 from subuserlib.classes.installationTask import InstallationTask
 import subuserlib.classes.exceptions as exceptions
@@ -60,7 +51,7 @@ def verify(user,permissionsAccepter=None,checkForUpdatesExternally=False,subuser
       user.getRegistry().log("New images for the following subusers need to be installed:")
       for subuser in outOfDateSubusers:
         user.getRegistry().log(subuser.getName())
-      if (not prompt) or (prompt and (not raw_input("Would you like to install those images now? [Y/n]") == "n")):
+      if (not prompt) or (prompt and (not input("Would you like to install those images now? [Y/n]") == "n")):
         installationTask.updateOutOfDateSubusers()
     for exception in permissionParsingExceptions:
       user.getRegistry().log(str(exception))
@@ -179,9 +170,12 @@ def cleanUpRuntimeCache(user):
   Remove runtime cache directories for no longer existant images.
   """
   runtimeCacheDir = user.getConfig()["runtime-cache"]
-  for imageId in os.listdir(runtimeCacheDir):
-    if not imageId in user.getInstalledImages():
-      shutil.rmtree(os.path.join(runtimeCacheDir,imageId))
+  try:
+    for imageId in os.listdir(runtimeCacheDir):
+      if not imageId in user.getInstalledImages():
+        shutil.rmtree(os.path.join(runtimeCacheDir,imageId))
+  except FileNotFoundError:
+    pass
 
 def cleanUpAfterImproperlyTerminatedServices(user):
   """

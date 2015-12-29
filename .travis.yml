@@ -1,7 +1,5 @@
 language: python
 python:
-  - "2.6"
-  - "2.7"
   - "3.2"
   - "3.3"
   - "3.4"
@@ -10,6 +8,7 @@ before_install:
   - sudo git config --system user.email "you@example.com"
   - sudo git config --system user.name "Your Name"
 install:
-  - sudo apt-get install -y git
+  - sudo apt-get install -y git python-pip
+  - sudo pip install texttest
 script:
  - logic/subuserCommands/subuser-test.py --travis

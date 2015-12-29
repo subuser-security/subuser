@@ -1,0 +1,13 @@
+Dryrun-foo
+Describe-subuser-foo
+Describe-image-foo
+Describe-image-foo-full-path
+List-available
+List-available-long
+List-subusers
+List-subusers-long
+List-installed-images
+List-installed-images-long
+List-repositories
+List-repositories-long
+List-available-specifying-repo

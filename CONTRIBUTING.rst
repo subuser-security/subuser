@@ -8,7 +8,7 @@ There is no need to sign a contributor agreement.  All changes bellong to you an
 Coding guidelines
 -----------------
 
- * One of the major aims of this project is to be as easy to install as possible while still maintaining a maintainable code base.  For this reason, I have chosen to aim for compatibility with all python versions later than 2.7 including the 3.x range.  Furthermore, there are to be NO EXTERNAL DEPENDENCIES!
+ * One of the major aims of this project is to be as easy to install as possible while still maintaining a maintainable code base. Besides Docker, git and Python3, there are to be NO EXTERNAL DEPENDENCIES!
 
  * Do not maintain 80 collumn code formatting.  Any pull requests to refill to 80 collumns will be rejected.  Refilling is based on some meaningless and ancient standard.  I often use 60 collumn terminals which make 80 collumns hard to read, it is far easier to read line wrapped code that is of its natural length then to read line-wrapped filled code.
 
@@ -25,4 +25,3 @@ Coding guidelines
  * Do not shorten words/leave out vowels.
 
    + There are a few cases in which I have used shortened versions of things: ``dir`` for directory, ``arg`` for argument.  These are cases where the short version is as widely known as the long version.
-

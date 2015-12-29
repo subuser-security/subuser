@@ -1,0 +1,49 @@
+Images available for instalation from the repo: default
+foo@default
+ Description:
+ Maintainer:
+ Executable: /usr/bin/foo
+Images available for instalation from the repo: 0
+broken-non-existant-dependency@file:////home/timothy/.texttest/tmp/texttest.27Dec212800.23960/texttest/With-one-subuser-installed-from-a-temporary-repo-named-foo/List-available-long/test-repos/remote-test-repo
+ Description: broken-non-existant-dependency
+ Maintainer: fred
+ Is a library.
+broken-permissions-file@file:////home/timothy/.texttest/tmp/texttest.27Dec212800.23960/texttest/With-one-subuser-installed-from-a-temporary-repo-named-foo/List-available-long/test-repos/remote-test-repo
+Error, user dir permissions may not contain system wide absolute paths. The user dir: "/etc/" is forbidden.
+Cannot describe this image source as loading it is forbidden.
+bar@file:////home/timothy/.texttest/tmp/texttest.27Dec212800.23960/texttest/With-one-subuser-installed-from-a-temporary-repo-named-foo/List-available-long/test-repos/remote-test-repo
+ Description: bar
+ Maintainer: fred
+ Executable: /usr/bin/bar
+broken-syntax@file:////home/timothy/.texttest/tmp/texttest.27Dec212800.23960/texttest/With-one-subuser-installed-from-a-temporary-repo-named-foo/List-available-long/test-repos/remote-test-repo
+ Description: broken-syntax
+ Maintainer: fred
+ Is a library.
+dependency3@file:////home/timothy/.texttest/tmp/texttest.27Dec212800.23960/texttest/With-one-subuser-installed-from-a-temporary-repo-named-foo/List-available-long/test-repos/remote-test-repo
+ Description:
+ Maintainer:
+ Is a library.
+intermediary@file:////home/timothy/.texttest/tmp/texttest.27Dec212800.23960/texttest/With-one-subuser-installed-from-a-temporary-repo-named-foo/List-available-long/test-repos/remote-test-repo
+ Description:
+ Maintainer:
+ Is a library.
+dependency2@file:////home/timothy/.texttest/tmp/texttest.27Dec212800.23960/texttest/With-one-subuser-installed-from-a-temporary-repo-named-foo/List-available-long/test-repos/remote-test-repo
+ Description:
+ Maintainer:
+ Is a library.
+dependent@file:////home/timothy/.texttest/tmp/texttest.27Dec212800.23960/texttest/With-one-subuser-installed-from-a-temporary-repo-named-foo/List-available-long/test-repos/remote-test-repo
+ Description: a dependent
+ Maintainer:
+ Is a library.
+ Moderate permissions(These are probably safe):
+  - user-dirs: To access to the following user directories: '~/Downloads'
+  - sound-card: To access to your soundcard, can play sounds/record sound.
+ Liberal permissions(These may pose a security risk):
+  - x11: To display X11 windows and interact with your X11 server directly(log keypresses, read over your shoulder, steal your passwords, controll your computer ect.)
+  - system-dirs: To read and write to the host's `/var/log` directory, mounted in the container as:`/var/log`
+ WARNING: These permissions give the subuser full access to your system when run.
+  - privileged: To have full access to your system.  To even do things as root outside of its container.
+dependency1@file:////home/timothy/.texttest/tmp/texttest.27Dec212800.23960/texttest/With-one-subuser-installed-from-a-temporary-repo-named-foo/List-available-long/test-repos/remote-test-repo
+ Description:
+ Maintainer:
+ Is a library.
