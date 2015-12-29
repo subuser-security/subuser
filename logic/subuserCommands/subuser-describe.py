@@ -13,6 +13,7 @@ import subuserlib.classes.user
 import subuserlib.commandLineArguments
 import subuserlib.resolve
 import subuserlib.profile
+import subuserlib.print
 
 def parseCliArgs(sysargs):
   usage = "usage: subuser describe [subuser|image] SUBUSER(s)/IMAGE(s)"
@@ -36,9 +37,7 @@ def describe(sysargs):
   user = subuserlib.classes.user.User()
   (options,args) = parseCliArgs(sysargs)
   if len(args) < 2:
-    print("Args: '"+"' '".join(args)+"'")
-    print("Wrong number of arguments.")
-    #parseCliArgs(["","subuser","describe","--help"])
+    subuserlib.print.printWithoutCrashing("Nothing to describe. Use -h for help.")
   elif args[0] == "image":
     for image in args[1:]:
       subuserlib.resolve.resolveImageSource(user,image).describe()
@@ -49,8 +48,8 @@ def describe(sysargs):
       except KeyError:
         sys.exit("Subuser "+subuser+" does not exist.")
   else:
-    print("Args: '"+"' '".join(args)+"'")
-    print("Option not supported.")
+    subuserlib.print.printWithoutCrashing("Args: '"+"' '".join(args)+"'")
+    subuserlib.print.printWithoutCrashing("Option not supported.")
 
 if __name__ == "__main__":
   describe(sys.argv[1:])

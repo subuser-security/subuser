@@ -56,8 +56,11 @@ def pkg(realArgs):
   Run packaging subcommands.
   """
   options,args = parseCliArgs(realArgs)
+  try:
+    subcommand = args[0]
+  except IndexError:
+    sys.exit("No command given, use -h for help.")
   user = User()
-  subcommand = args[0]
   if subcommand == "init":
     if not os.path.exists("./.subuser.json"):
       repoConfig = {}

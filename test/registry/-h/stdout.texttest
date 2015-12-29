@@ -1,0 +1,16 @@
+Usage: subuser registry [options]
+
+Interact with the subuser registry.
+
+  log
+      Prints a log of recent .
+
+  rollback HASH
+      Subuser's undo function.  Roll back to an old version of your subuser configuration.  Find the commit hash using subuser update log.  Note: This command is less usefull than lock-subuser-to.
+
+  livelog
+      Prints the hash of each new commit to the registry to standard output as the hashes appear. Type q <newline> to exit.
+
+Options:
+  -h, --help  show this help message and exit
+  --json      Print output in machine readable json format.

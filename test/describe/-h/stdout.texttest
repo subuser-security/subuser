@@ -1,0 +1,13 @@
+Usage: subuser describe [subuser|image] SUBUSER(s)/IMAGE(s)
+
+Show basic information about a subuser or image: Whether it is installed, what it's permissions are ect.
+
+EXAMPLE:
+
+    $ subuser describe image iceweasel
+    <lots of info>
+
+    $ subuser describe subuser iceweasel
+
+Options:
+  -h, --help  show this help message and exit

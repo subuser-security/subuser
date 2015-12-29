@@ -1,0 +1,28 @@
+Usage: subuser list WHAT_TO_LIST [options]
+
+   List subuser-images.  You can use this command to list images that are:
+
+  available
+      List all subuser images available for instalation
+  subusers
+      List all installed subusers
+  installed-images
+      List all installed images. The the format is "<image-source> <image-id>". If the --long option is used, then information about each image is displayed.
+  repositories
+      List all repositories. By default, lists repository names(or their paths in case they are temporary). With the --long option, more info about each repository is printed.
+
+  EXAMPLES:
+
+    $ subuser list available --long
+    $ subuser list subusers
+    $ subuser list installed-images
+
+Options:
+  -h, --help  show this help message and exit
+  --long      Display more information about each item.
+  --json      Display results in JSON format.
+  --internal  Include internal subusers in the list. These are subusers which
+              are automatically created and used by subuser internally.
+  --broken    When listing installed images option, list the Ids of
+              broken/orphaned images. Otherwise has no effect. Without this
+              option, broken/orphaned images are simply not listed.

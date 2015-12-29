@@ -1,4 +1,9 @@
-With-one-subuser-named-foo
-With-one-subuser-installed-from-a-temporary-repo-named-foo
-Things-that-work-with-no-setup
-Pkg-command-tests
+pkg
+print-dependency-info
+version
+list
+dry-run
+describe
+base-executable
+subuser
+registry
