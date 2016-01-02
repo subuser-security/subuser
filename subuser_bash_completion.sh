@@ -101,8 +101,9 @@ _subuser_bash_completion()
     #
     #  The basic options we'll complete.
     #
-    opts="describe dry-run list print-dependency-info remove-old-images"
-    opts="$opts repair repository run subuser test test-images update"
+    opts="describe dry-run list pkg print-dependency-info remove-old-images"
+    opts="$opts repair repository registry run subuser test test-images update"
+    opts="$opts version"
 
     #
     #  Complete the arguments of the commands.
@@ -164,10 +165,54 @@ _subuser_bash_completion()
             ;;
 
         #
+        #  Complete the "pkg" command
+        #
+        pkg)
+            opts="add init test"
+
+            case "${COMP_WORDS[2]}" in
+                add)
+                    # Complete with directories and exit
+                    COMPREPLY=($(compgen -d -- ${cur}))
+
+                    return 0
+                ;;
+
+                init)
+                ;;
+
+                test)
+                    # Complete with directories and exit
+                    COMPREPLY=($(compgen -d -- ${cur}))
+
+                    return 0
+                ;;
+            esac
+            ;;
+
+        #
         #  Complete the "print-dependency-info" command
         #
         print-dependency-info)
             opts=`_subuser_get_images`
+            ;;
+
+        #
+        #  Complete the "registry" command
+        #
+        registry)
+            opts="livelog log rollback"
+
+            case "${COMP_WORDS[2]}" in
+                livelog)
+                    ;;
+
+                log)
+                    ;;
+
+                rollback)
+                    ;;
+            esac
             ;;
 
         #
@@ -190,6 +235,7 @@ _subuser_bash_completion()
         repository)
             case "${COMP_WORDS[2]}" in
                 add)
+                    # Complete with directories and exit
                     COMPREPLY=($(compgen -d -- ${cur}))
 
                     return 0
@@ -290,6 +336,14 @@ _subuser_bash_completion()
                 *)
                     opts="all lock-subuser-to log rollback subusers unlock-subuser"
             esac
+            ;;
+
+        #
+        #  Version can only take a parameter
+        #
+        version)
+            opts="--json"
+            ;;
     esac
 
     #
