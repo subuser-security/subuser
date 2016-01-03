@@ -170,24 +170,29 @@ _subuser_bash_completion()
         pkg)
             opts="add init test"
 
-            case "${COMP_WORDS[2]}" in
-                add)
-                    # Complete with directories and exit
-                    COMPREPLY=($(compgen -d -- ${cur}))
+            # If current word starts with "-", autocomplete with options
+            if [[ "$cur" == -* ]];then
+                opts="--accept --build-context= --image-file= --image-sources-dir= --prompt"
+            else
+                case "${COMP_WORDS[2]}" in
+                    add)
+                        # Complete with directories and exit
+                        COMPREPLY=($(compgen -d -- ${cur}))
 
-                    return 0
-                ;;
+                        return 0
+                        ;;
 
-                init)
-                ;;
+                    init)
+                        ;;
 
-                test)
-                    # Complete with directories and exit
-                    COMPREPLY=($(compgen -d -- ${cur}))
+                    test)
+                        # Complete with directories and exit
+                        COMPREPLY=($(compgen -d -- ${cur}))
 
-                    return 0
-                ;;
-            esac
+                        return 0
+                        ;;
+                esac
+            fi
             ;;
 
         #
@@ -203,16 +208,21 @@ _subuser_bash_completion()
         registry)
             opts="livelog log rollback"
 
-            case "${COMP_WORDS[2]}" in
-                livelog)
+            # If current word starts with "-", autocomplete with options
+            if [[ "$cur" == -* ]];then
+                opts="--json"
+            else
+                case "${COMP_WORDS[2]}" in
+                    livelog)
                     ;;
 
-                log)
+                    log)
                     ;;
 
-                rollback)
+                    rollback)
                     ;;
-            esac
+                esac
+            fi
             ;;
 
         #
@@ -227,6 +237,11 @@ _subuser_bash_completion()
         #
         repair)
             opts=`_subuser_get_user_subusers`
+
+            # If current word starts with "-", autocomplete with options
+            if [[ "$cur" == -* ]];then
+                opts="--accept --prompt"
+            fi
             ;;
 
         #
@@ -261,34 +276,39 @@ _subuser_bash_completion()
         #  Complete the "subuser" command
         #
         subuser)
-            case "${COMP_WORDS[2]}" in
-                add)
-                    opts=`_subuser_get_user_subusers`
-                    ;;
+            # If current word starts with "-", autocomplete with options
+            if [[ "$cur" == -* ]];then
+                opts="--accept --prefix= --prompt"
+            else
+                case "${COMP_WORDS[2]}" in
+                    add)
+                        opts=`_subuser_get_user_subusers`
+                        ;;
 
-                create-shortcut)
-                    opts=`_subuser_get_user_subusers`
-                    ;;
+                    create-shortcut)
+                        opts=`_subuser_get_user_subusers`
+                        ;;
 
-                edit-permissions)
-                    opts=`_subuser_get_user_subusers`
-                    ;;
+                    edit-permissions)
+                        opts=`_subuser_get_user_subusers`
+                        ;;
 
-                remove)
-                    opts=`_subuser_get_user_subusers`
-                    ;;
+                    remove)
+                        opts=`_subuser_get_user_subusers`
+                        ;;
 
-                remove-shortcut)
-                    opts=`_subuser_get_shortcuts`
-                    ;;
+                    remove-shortcut)
+                        opts=`_subuser_get_shortcuts`
+                        ;;
 
-                run)
-                    opts=`_subuser_get_user_subusers`
-                    ;;
+                    run)
+                        opts=`_subuser_get_user_subusers`
+                        ;;
 
-                *)
-                    opts="add create-shortcut edit-permissions remove remove-shortcut run"
-            esac
+                    *)
+                        opts="add create-shortcut edit-permissions remove remove-shortcut run"
+                esac
+            fi
             ;;
 
         #
@@ -312,30 +332,35 @@ _subuser_bash_completion()
         #  Complete the "test-images" command
         #
         update)
-            case "${COMP_WORDS[2]}" in
-                all)
-                ;;
-
-                lock-subuser-to)
-                    opts=`_subuser_get_user_subusers`
+            # If current word starts with "-", autocomplete with options
+            if [[ "$cur" == -* ]];then
+                opts="--accept --prompt"
+            else
+                case "${COMP_WORDS[2]}" in
+                    all)
                     ;;
 
-                log)
-                ;;
+                    lock-subuser-to)
+                        opts=`_subuser_get_user_subusers`
+                        ;;
 
-                rollback)
-                ;;
+                    log)
+                        ;;
 
-                subusers)
-                ;;
+                    rollback)
+                        ;;
 
-                unlock-subuser)
-                    opts=`_subuser_get_user_subusers`
-                    ;;
+                    subusers)
+                        ;;
 
-                *)
-                    opts="all lock-subuser-to log rollback subusers unlock-subuser"
-            esac
+                    unlock-subuser)
+                        opts=`_subuser_get_user_subusers`
+                        ;;
+
+                    *)
+                        opts="all lock-subuser-to log rollback subusers unlock-subuser"
+                esac
+            fi
             ;;
 
         #
