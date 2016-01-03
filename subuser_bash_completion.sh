@@ -295,6 +295,7 @@ _subuser_bash_completion()
                         ;;
 
                     subusers)
+                        opts=`_subuser_get_subusers`
                         ;;
 
                     unlock-subuser)
