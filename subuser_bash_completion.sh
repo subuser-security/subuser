@@ -102,8 +102,7 @@ _subuser_bash_completion()
     #  The basic options we'll complete.
     #
     opts="describe dry-run list pkg print-dependency-info remove-old-images"
-    opts="$opts repair repository registry run subuser test test-images update"
-    opts="$opts version"
+    opts="$opts repair repository registry run subuser test update version"
 
     #
     #  Complete the arguments of the commands.
@@ -315,17 +314,6 @@ _subuser_bash_completion()
         #  Test doesn't take parameters
         #
         test)
-            ;;
-
-        #
-        #  Complete the "test-images" command
-        #
-        test-images)
-            if [ "$COMP_CWORD" -eq 2 ];then
-                opts=`_subuser_get_repositories`
-            else
-                opts=`_subuser_get_images_from_repo "${COMP_WORDS[2]}"`
-            fi
             ;;
 
         #
