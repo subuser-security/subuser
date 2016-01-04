@@ -1,0 +1,24 @@
+Initial commit.
+Cloning repository default from file:///home/timothy/.texttest/tmp/texttest.04Jan015552.79/texttest/subuser/add-broken-non-existant-dependency/test-repos/default-test-repo
+Adding subuser broken-non-existant-dependency with image broken-non-existant-dependency@file:////home/timothy/.texttest/tmp/texttest.04Jan015552.79/texttest/subuser/add-broken-non-existant-dependency/test-repos/remote-test-repo
+Cloning repository 0 from file:////home/timothy/.texttest/tmp/texttest.04Jan015552.79/texttest/subuser/add-broken-non-existant-dependency/test-repos/remote-test-repo
+Adding new temporary repository file:////home/timothy/.texttest/tmp/texttest.04Jan015552.79/texttest/subuser/add-broken-non-existant-dependency/test-repos/remote-test-repo
+Verifying subuser configuration.
+Verifying registry consistency...
+Unregistering any non-existant installed images.
+broken-non-existant-dependency: would like to have the following permissions:
+ Description: broken-non-existant-dependency
+ Maintainer: fred
+ Is a library.
+A - Accept and apply changes
+E - Apply changes and edit result
+r - Reject permissions.
+A
+Checking if images need to be updated or installed...
+Checking if subuser broken-non-existant-dependency is up to date.
+Error in broken-non-existant-dependency's SubuserImagefile on line 0
+ Subuser image does not exist: "non-existant-I-do-not-exist!!!!!"
+Images for the following subusers failed to build:
+broken-non-existant-dependency
+Running garbage collector on temporary repositories...
+Removing uneeded temporary repository: file:////home/timothy/.texttest/tmp/texttest.04Jan015552.79/texttest/subuser/add-broken-non-existant-dependency/test-repos/remote-test-repo

@@ -1,0 +1,9 @@
+run-non-existant-subuser
+
+# Copy of With-one-subuser-named-foo
+With-one-subuser-named-foo
+
+# Copy of With-one-subuser-installed-from-a-temporary-repo-named-foo
+With-one-subuser-installed-from-a-temporary-repo-named-foo
+no-arguments
+-h

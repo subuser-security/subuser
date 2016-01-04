@@ -1,0 +1,7 @@
+Usage: subuser version
+
+Prints subuser's version and other usefull debugging info.
+
+Options:
+  -h, --help  show this help message and exit
+  --json      Display results in JSON format.

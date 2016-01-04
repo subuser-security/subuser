@@ -1,0 +1,1 @@
+subuser add --accept broken-syntax broken-syntax@file:///$TEXTTEST_SANDBOX/test-repos/remote-test-repo

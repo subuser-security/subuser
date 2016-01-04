@@ -130,8 +130,11 @@ def getRepositoryFromURI(user,uri):
     return repository
   # If it doesn't, create a new repo and return it.
   newTempRepo = Repository(user=user,name=user.getRegistry().getRepositories().getNewUniqueTempRepoId(),gitOriginURI=uri,gitCommitHash="master",temporary=True)
-  user.getRegistry().getRepositories().addRepository(newTempRepo)
-  return newTempRepo
+  if newTempRepo.isPresent():
+    user.getRegistry().getRepositories().addRepository(newTempRepo)
+    return newTempRepo
+  else:
+    raise ResolutionError("Repo at "+uri+" does not exist.")
 
 def getRepositoryFromPath(user,path):
   repository = lookupRepositoryByPath(user,path)
@@ -140,8 +143,11 @@ def getRepositoryFromPath(user,path):
   else:
     # If it doesn't, create a new repo and return it.
     newTempRepo = Repository(user=user,name=user.getRegistry().getRepositories().getNewUniqueTempRepoId(),temporary=True,sourceDir=path)
-    user.getRegistry().getRepositories().addRepository(newTempRepo)
-    return newTempRepo
+    if newTempRepo.isPresent():
+      user.getRegistry().getRepositories().addRepository(newTempRepo)
+      return newTempRepo
+    else:
+      raise ResolutionError("Repo at "+uri+" does not exist.")
 
 def getRepositoryFromURIOrPath(user,uriOrPath):
   if uriOrPath.startswith("/"):

@@ -6,6 +6,7 @@ This module provides version info and other usefull debugging stuff.
 
 #external imports
 import os
+import collections
 #internal imports
 import subuserlib.subprocessExtras as subprocessExtras
 import subuserlib.paths
@@ -14,7 +15,7 @@ from subuserlib.classes.docker.dockerDaemon import DockerDaemon
 import subuserlib.test
 
 def getInfo(user):
-  info = {}
+  info = collections.OrderedDict()
   info["subuser-version"] = getSubuserVersion(user)
   info["docker-info"] = getDockerInfo(user)
   return info

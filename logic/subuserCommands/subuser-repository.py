@@ -39,65 +39,6 @@ def parseCliArgs(sysargs):
 def repository(sysargs):
   """
   Manage named subuser repositories.
-
-  Tests
-  -----
-
-  **Setup:**
-
-  >>> repository = __import__("subuser-repository") #import self
-
-  Check our assumptions about the initial state of the test environment.
-
-  >>> user = User()
-  >>> set(user.getRegistry().getRepositories().keys()) == set([u'default'])
-  True
-
-  Add a new repository named ``remote-repo``.
-
-  >>> repository.repository(["add","remote-repo","file:///home/travis/remote-test-repo"])
-  Adding new repository remote-repo
-
-  See that it was actually successfully added.
-
-  >>> user = User()
-  >>> set(user.getRegistry().getRepositories().keys()) == set([u'default', 'remote-repo'])
-  True
-
-  Remove the ``remote-repo`` repository.
-
-  >>> repository.repository(["remove","remote-repo"])
-  Removing repository remote-repo
-
-  See that it was actually removed.
-
-  >>> user = User()
-  >>> set(user.getRegistry().getRepositories().keys()) == set([u'default'])
-  True
-
-
-  Add a new repository named ``local-repo`` which is just a folder on the local system.
-
-  >>> repository.repository(["add","local-repo","/home/travis/remote-test-repo"])
-  Adding new repository local-repo
-
-  See that it was actually successfully added.
-
-  >>> user = User()
-  >>> set(user.getRegistry().getRepositories().keys()) == set([u'default', 'local-repo'])
-  True
-
-  Remove the ``local-repo`` repository.
-
-  >>> repository.repository(["remove","local-repo"])
-  Removing repository local-repo
-
-  See that it was actually removed.
-
-  >>> user = User()
-  >>> set(user.getRegistry().getRepositories().keys()) == set([u'default'])
-  True
-
   """
   options,args = parseCliArgs(sysargs)
   user = User()

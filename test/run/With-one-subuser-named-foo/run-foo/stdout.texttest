@@ -1,0 +1,2 @@
+Execute docker with args: ['run', '--rm', '-i', '-e', 'HOME=/home/timothy', '--workdir=/home/timothy', '--net=none', '--user=1000', '--hostname', '<random-hostname>', '--entrypoint', '/usr/bin/foo', '3']
+Cwd:None
