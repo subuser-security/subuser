@@ -75,7 +75,7 @@ class Repositories(collections.Mapping,UserOwnedObject,FileBackedObject):
       return repositories
     self.systemRepositories = loadRepositoryDict(subuserlib.loadMultiFallbackJsonConfigFile.getConfig(self.systemRepositoryListPaths))
     registryFileStructure = self.getUser().getRegistry().getGitRepository().getFileStructureAtCommit(self.getUser().getRegistry().getGitReadHash())
-    if "repositories.json" in registryFileStructure.lsFiles("./"):
+    if self.getUser().getRegistry().initialized and "repositories.json" in registryFileStructure.lsFiles("./"):
       self.userRepositories = loadRepositoryDict(json.loads(registryFileStructure.read("repositories.json")))
     else:
       self.userRepositories = {}
@@ -85,6 +85,8 @@ class Repositories(collections.Mapping,UserOwnedObject,FileBackedObject):
     Load the repository states from disk.
     Return them as a dictionary object.
     """
+    if not self.getUser().getRegistry().initialized:
+      return {}
     gitFileStructure = self.getUser().getRegistry().getGitRepository().getFileStructureAtCommit(self.getUser().getRegistry().getGitReadHash())
     if "repository-states.json" in gitFileStructure.lsFiles("./"):
       return json.loads(gitFileStructure.read("repository-states.json"))
@@ -103,6 +105,8 @@ class Repositories(collections.Mapping,UserOwnedObject,FileBackedObject):
       repository = self.userRepositories[name]
     except KeyError:
       sys.exit("Cannot remove repository "+name+". Repository does not exist.")
+    if repository.isInUse():
+      sys.exit("Cannot remove repository "+name+". Repository is in use. Subusers or installed images exist which rely on this repository.")
     if not repository.isTemporary():
       self.getUser().getRegistry().logChange("Removing repository "+name)
     else:

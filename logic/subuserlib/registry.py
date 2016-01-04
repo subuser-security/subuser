@@ -11,7 +11,7 @@ import subuserlib.verify
 import subuserlib.subprocessExtras as subprocessExtras
 
 def showLog(user):
-  user.getRegistry().getGitRepository().run(["log"])
+  user.getRegistry().getGitRepository().runShowOutput(["log"])
 
 def checkoutNoCommit(user,commit):
   subprocessExtras.call(["rm","-rf","*"],cwd=user.getConfig()["registry-dir"])

@@ -46,7 +46,8 @@ class AcceptPermissionsAtCLI(PermissionsAccepter,UserOwnedObject):
             subuserlib.print.printWithoutCrashing("   - "+line)
     options = OrderedDict([("A","Accept and apply changes")
                           ,("E","Apply changes and edit result")
-                          ,("e","Ignore request and edit permissions by hand")])
+                          ,("e","Ignore request and edit permissions by hand")
+                          ,("r","Reject permissions.")])
     if createNewPermissions:
       del options["e"]
     for option,description in options.items():
@@ -57,7 +58,10 @@ class AcceptPermissionsAtCLI(PermissionsAccepter,UserOwnedObject):
     else:
       choice = None
     while not choice in options:
-      choice = input("Please select an option:")
+      try:
+        choice = input("Please select an option:")
+      except EOFError:
+        choice = "r"
     if (choice == "A") or (choice == "E"):
       if createNewPermissions:
         subuser.createPermissions(newDefaults)
@@ -66,3 +70,7 @@ class AcceptPermissionsAtCLI(PermissionsAccepter,UserOwnedObject):
       subuser.getPermissions().save()
     if (choice == "E") or (choice == "e"):
       subuser.editPermissionsCLI()
+    if choice == "r":
+      if createNewPermissions:
+        subuser.createPermissions(subuserlib.permissions.load(permissionsString="{}"))
+        subuser.getPermissions().save()

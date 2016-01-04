@@ -7,3 +7,6 @@ describe
 base-executable
 subuser
 registry
+remove-old-images
+repair
+repository

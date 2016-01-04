@@ -20,7 +20,7 @@ def add(user,subuserName,imageSourceIdentifier,permissionsAccepter,prompt=False)
     sys.exit("A subusers may not have names beginning with ! as these names are reserved for internal use.")
   if subuserName in user.getRegistry().getSubusers():
     sys.exit("A subuser named "+subuserName+" already exists.")
-  user.getRegistry().logChange("Adding subuser "+subuserName+" "+imageSourceIdentifier)
+  user.getRegistry().logChange("Adding subuser "+subuserName+" with image "+imageSourceIdentifier)
   try:
     imageSource = subuserlib.resolve.resolveImageSource(user,imageSourceIdentifier)
   except KeyError as keyError:
@@ -65,7 +65,7 @@ def remove(user,subuserNames):
       del user.getRegistry().getSubusers()[subuserName]
       didSomething = True
     else:
-      print("Cannot remove: subuser "+subuserName+" does not exist.")
+      user.getRegistry().log("Cannot remove: subuser "+subuserName+" does not exist.")
   if didSomething:
     subuserlib.verify.verify(user)
     user.getRegistry().commit()

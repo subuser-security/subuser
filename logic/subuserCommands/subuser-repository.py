@@ -101,7 +101,10 @@ def repository(sysargs):
   """
   options,args = parseCliArgs(sysargs)
   user = User()
-  action = args[0]
+  try:
+    action = args[0]
+  except IndexError:
+    sys.exit("Use subuser repository --help for help.")
   if action == "add":
     if not len(args) == 3:
       sys.exit("Use subuser repository --help for help.")

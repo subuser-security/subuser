@@ -1,0 +1,12 @@
+Usage: subuser remove-old-images
+
+ Remove old, no longer used, installed images.  Note, once you do this, you will no longer be able to return to previous configuration states with subuser registry rollback or subuser update lock-subuser-to.
+Options:
+  -h, --help            show this help message and exit
+  --dry-run             Don't actually delete the images. Print which images
+                        would be deleted.
+  --repo=REPOID         Only remove images from the given repository.
+  --image-source=IMAGESOURCENAME
+                        Remove old images from a specific image source. (Must
+                        be used in conjunction with --repo)
+  -y                    Don't ask, just delete unneeded images.

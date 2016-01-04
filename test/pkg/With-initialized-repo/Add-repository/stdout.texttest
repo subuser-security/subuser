@@ -1,13 +1,14 @@
 Subuser repository initialized successfully!
 You can add new image sources with:
 $ subuser pkg add image-source-name
-Cloning repository default from file:///home/timothy/.texttest/tmp/texttest.29Dec024033.5270/texttest/pkg/With-initialized-repo/Add-repository/test-repos/default-test-repo
-Adding new temporary repository /home/timothy/.texttest/tmp/texttest.29Dec024033.5270/texttest/pkg/With-initialized-repo/Add-repository
+Initial commit.
+Cloning repository default from file:///home/timothy/.texttest/tmp/texttest.04Jan004537.5539/texttest/pkg/With-initialized-repo/Add-repository/test-repos/default-test-repo
+Adding new temporary repository /home/timothy/.texttest/tmp/texttest.04Jan004537.5539/texttest/pkg/With-initialized-repo/Add-repository
 Adding new image source foo
 
 
 Would you like to test your new image? [Y/n]
-Adding new temporary repository /home/timothy/.texttest/tmp/texttest.29Dec024033.5270/texttest/pkg/With-initialized-repo/Add-repository
+Adding new temporary repository /home/timothy/.texttest/tmp/texttest.04Jan004537.5539/texttest/pkg/With-initialized-repo/Add-repository
 Verifying subuser configuration.
 Verifying registry consistency...
 Unregistering any non-existant installed images.
@@ -17,6 +18,7 @@ Unregistering any non-existant installed images.
  Executable: /usr/bin/nothing
 A - Accept and apply changes
 E - Apply changes and edit result
+r - Reject permissions.
 A
 Checking if images need to be updated or installed...
 Checking if subuser !test-image-subuser-foo is up to date.

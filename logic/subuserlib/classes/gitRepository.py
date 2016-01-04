@@ -27,9 +27,13 @@ class GitRepository(UserOwnedObject):
     Run git with the given command line arguments.
     """
     try:
-      (returncode,stdout,stderr) = subprocessExtras.callCollectOutput(["git"]+args,cwd=self.getPath())
-      self.getUser().getRegistry().logDebug(stdout)
-      self.getUser().getRegistry().logDebug(stderr)
+      gitArgs = ["git"]+args
+      (returncode,stdout,stderr) = subprocessExtras.callCollectOutput(gitArgs,cwd=self.getPath())
+      self.getUser().getRegistry().log(self.getPath()+": "+" ".join(gitArgs),verbosityLevel=3)
+      self.getUser().getRegistry().log(stdout,verbosityLevel=3)
+      self.getUser().getRegistry().log(stderr,verbosityLevel=3)
+      if stderr:
+        raise Exception(stderr)
       return returncode
     except OSError as e:
       if e.errno == errno.EEXIST:
@@ -37,13 +41,20 @@ class GitRepository(UserOwnedObject):
       else:
         raise e
 
-  def runCollectOutput(self,args):
+  def runShowOutput(self,args):
+    subprocessExtras.call(["git"]+args,cwd=self.getPath())
+
+  def runCollectOutput(self,args,eatStderr=False):
     """
     Run git with the given command line arguments and return a tuple with (returncode,output).
     """
     try:
-      (returncode,stdout,stderr) = subprocessExtras.callCollectOutput(["git"]+args,cwd=self.getPath())
-      self.getUser().getRegistry().logDebug(stderr)
+      gitArgs = ["git"]+args
+      (returncode,stdout,stderr) = subprocessExtras.callCollectOutput(gitArgs,cwd=self.getPath())
+      self.getUser().getRegistry().log(self.getPath()+": "+" ".join(gitArgs),verbosityLevel=3)
+      self.getUser().getRegistry().log(stderr,verbosityLevel=3)
+      if stderr and not eatStderr:
+        raise Exception(stderr)
       return (returncode,stdout)
     except OSError as e:
       if e.errno == errno.EEXIST:
@@ -203,7 +214,7 @@ class GitFileStructure(FileStructure):
     blahblah
     <BLANKLINE>
     """
-    (errorcode,content) = self.getRepository().runCollectOutput(["show",self.getCommit()+":"+path])
+    (errorcode,content) = self.getRepository().runCollectOutput(["show",self.getCommit()+":"+path],eatStderr=True)
     if errorcode != 0:
       raise OSError("Git show exited with error "+str(errorcode)+". File does not exist.\nPath: "+path+"\nCommit: "+self.getCommit()+"\n")
     return content

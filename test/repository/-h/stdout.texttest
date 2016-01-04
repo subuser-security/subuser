@@ -1,0 +1,19 @@
+Usage: subuser repository [options] [add|remove] NAME <URL>
+
+Add or remove a new named repository.
+
+- EXAMPLE
+    Add a new repository named foo with the URI http://www.example.com/repo.git.
+
+    $ subuser repository add foo http://www.example.com/repo.git
+    $ #You can also add a local repository:
+    $ subuser repository add local-foo file:///home/timothy/my-local-repo/
+
+- EXAMPLE
+    Remove the repository named foo.
+
+    $subuser repository remove foo
+
+  
+Options:
+  -h, --help  show this help message and exit

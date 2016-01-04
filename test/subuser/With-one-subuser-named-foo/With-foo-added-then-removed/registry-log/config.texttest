@@ -1,0 +1,3 @@
+[run_dependent_text]
+stdout:commit{WORD 2}
+stdout:Date:

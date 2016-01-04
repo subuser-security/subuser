@@ -30,10 +30,11 @@ class Repository(dict,UserOwnedObject,Describable):
     self.__fileStructure = None
     UserOwnedObject.__init__(self,user)
     self.__gitRepository = GitRepository(user,self.getRepoPath())
-    if not os.path.exists(self.getRepoPath()):
+    if not self.isPresent():
       self.updateSources(initialUpdate=True)
     self.__repoConfig = self.loadRepoConfig()
-    self.loadImageSources()
+    if self.isPresent():
+      self.loadImageSources()
 
   def getName(self):
     return self.__name
@@ -142,6 +143,21 @@ class Repository(dict,UserOwnedObject,Describable):
   def isTemporary(self):
     return self.__temporary
 
+  def isInUse(self):
+    """
+    Are there any installed images or subusers from this repository?
+    """
+    for _,installedImage in self.getUser().getInstalledImages().items():
+      if self.getName() == installedImage.getSourceRepoId():
+          return True
+      for _,subuser in self.getUser().getRegistry().getSubusers().items():
+        try:
+          if self.getName() == subuser.getImageSource().getRepository().getName():
+            return True
+        except subuserlib.classes.subuser.NoImageSourceException:
+          pass
+    return False
+
   def isLocal(self):
     if self.__sourceDir:
       return True
@@ -154,24 +170,29 @@ class Repository(dict,UserOwnedObject,Describable):
     if not self.isLocal():
       shutil.rmtree(self.getRepoPath())
 
+  def isPresent(self):
+    """
+    Returns True if the repository's files are present on the system. (Cloned or local)
+    """
+    return os.path.exists(self.getRepoPath())
+
   def updateSources(self,initialUpdate=False):
     """
     Pull(or clone) the repo's ImageSources from git origin.
     """
     if self.isLocal():
       return
-    if not os.path.exists(self.getRepoPath()):
+    if not self.isPresent():
       new = True
       self.getUser().getRegistry().log("Cloning repository "+self.getName()+" from "+self.getGitOriginURI())
       (returncode,stdout,stderr) = subuserlib.subprocessExtras.callCollectOutput(["git","clone",self.getGitOriginURI(),self.getRepoPath()])
-      self.getUser().getRegistry().logDebug(stdout)
-      self.getUser().getRegistry().logDebug(stderr)
+      self.getUser().getRegistry().log(stdout,verbosityLevel=3)
+      self.getUser().getRegistry().log(stderr,verbosityLevel=3)
       if not returncode == 0:
         self.getUser().getRegistry().log("Clone failed.")
         return
     else:
       new = False
-    self.getGitRepository().checkout("master")
     self.getGitRepository().run(["fetch","--all"])
     if self.updateGitCommitHash():
       if not new:

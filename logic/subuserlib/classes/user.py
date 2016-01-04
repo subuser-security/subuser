@@ -64,6 +64,7 @@ class User(object):
     """
     if self.__registry == None:
       self.__registry = registry.Registry(self)
+      self.__registry.ensureGitRepoInitialized()
     return self.__registry
 
   def reloadRegistry(self):

@@ -63,16 +63,16 @@ class Subusers(dict,UserOwnedObject,FileBackedObject):
       with open(self.getUser().getConfig()["locked-subusers-path"],"r") as fileHandle:
         self._loadSerializedSubusersDict(json.load(fileHandle, object_pairs_hook=collections.OrderedDict),locked=True)
     registryFileStructure = self.getUser().getRegistry().getGitRepository().getFileStructureAtCommit(self.getUser().getRegistry().getGitReadHash())
-    if "subusers.json" in registryFileStructure.lsFiles("./"):
+    if self.getUser().getRegistry().initialized and "subusers.json" in registryFileStructure.lsFiles("./"):
       serializedUnlockedSubusersDict = json.loads(registryFileStructure.read("subusers.json"), object_pairs_hook=collections.OrderedDict)
       self._loadSerializedSubusersDict(serializedUnlockedSubusersDict,locked=False)
 
   def serializeToDict(self):
-    serializedDict={}
-    serializedDict["locked"]={}
-    serializedDict["unlocked"]={}
+    serializedDict=collections.OrderedDict()
+    serializedDict["locked"]=collections.OrderedDict()
+    serializedDict["unlocked"]=collections.OrderedDict()
     for subuserName,subuser in self.items():
-      serializedSubuser = {}
+      serializedSubuser = collections.OrderedDict()
       serializedSubuser["source-repo"] = subuser.getSourceRepoName()
       serializedSubuser["image-source"] = subuser.getImageSourceName()
       serializedSubuser["executable-shortcut-installed"] = subuser.isExecutableShortcutInstalled()

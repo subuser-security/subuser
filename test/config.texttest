@@ -7,14 +7,16 @@ filename_convention_scheme:standard
 full_name:subuser
 
 view_program:mousepad
-lines_of_text_difference:200
+lines_of_text_difference:2000
 copy_test_path:docker
 copy_test_path:home/.subuser
 copy_test_path:test-repos
 
 [run_dependent_text]
-stdout:.texttest\/tmp.*\/texttest{REPLACE texttest-write-dir}
 stdout:Currently at commit{WORD 4}
 stdout:root-commit{WORD 3}
+stdout:home/[^/]*{REPLACE home/user}
+stdout:.texttest\/tmp.*\/texttest{REPLACE texttest-write-dir}
 
 stderr:.texttest\/tmp.*\/texttest{REPLACE texttest-write-dir}
+stderr:home/[^/]*{REPLACE home/user}

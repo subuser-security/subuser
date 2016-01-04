@@ -105,20 +105,7 @@ def trimUnneededTempRepos(user):
   user.getRegistry().log("Running garbage collector on temporary repositories...")
   reposToRemove = []
   for repoId,repo in user.getRegistry().getRepositories().userRepositories.items():
-    keep = False
-    if repo.isTemporary():
-      for _,installedImage in user.getInstalledImages().items():
-        if repoId == installedImage.getSourceRepoId():
-          keep = True
-      for _,subuser in user.getRegistry().getSubusers().items():
-        try:
-          if repoId == subuser.getImageSource().getRepository().getName():
-            keep = True
-        except subuserlib.classes.subuser.NoImageSourceException:
-          pass
-    else:
-      keep = True
-    if not keep:
+    if repo.isTemporary() and not repo.isInUse():
       user.getRegistry().logChange("Removing uneeded temporary repository: "+repo.getDisplayName())
       repo.removeGitRepo()
       reposToRemove.append(repoId)
