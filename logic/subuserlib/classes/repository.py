@@ -193,7 +193,10 @@ class Repository(dict,UserOwnedObject,Describable):
         return
     else:
       new = False
-    self.getGitRepository().run(["fetch","--all"])
+    try:
+      self.getGitRepository().run(["fetch","--all"])
+    except Exception: # For some reason, git outputs normal messages to stderr.
+      pass
     if self.updateGitCommitHash():
       if not new:
         self.getUser().getRegistry().logChange("Updated repository "+self.getDisplayName())

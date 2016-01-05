@@ -1,0 +1,11 @@
+# Copy of With-subuser-foo-added-then-removed
+With-subuser-dependent
+no-arguments
+-h
+update-all
+update-subusers-no-arguments
+lock-subuser-to-no-arguments
+unlock-subuser-no-arguments
+update-subusers-non-existant-subuser
+lock-subuser-to-non-existant-subuser
+unlock-subuser-non-existant-subuser

@@ -40,6 +40,7 @@ class AcceptPermissionsAtCLI(PermissionsAccepter,UserOwnedObject):
           for line in subuserlib.permissions.descriptions[permission](value):
             subuserlib.print.printWithoutCrashing("   - "+line)
       if not removedPermissions == []:
+        subuserlib.print.printWithoutCrashing("")
         subuserlib.print.printWithoutCrashing(subuser.getName()+" no longer needs the following permissions:")
         for removedPermission in removedPermissions:
           for line in subuserlib.permissions.descriptions[removedPermission](oldDefaults[removedPermission]):

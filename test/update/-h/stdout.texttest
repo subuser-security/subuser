@@ -1,0 +1,27 @@
+Usage: subuser update [options]
+
+Update subuser images.
+
+  all
+      Updates all subuser images which have been marked as out of date.
+
+  EXAMPLE:
+    $ subuser update all
+
+  subusers
+      Updates the specified subusers
+
+  EXAMPLE:
+    $ subuser update subusers iceweasel git
+
+  lock-subuser-to SUBUSER GIT-COMMIT
+      Don't want a subuser to be updated?  No problem, lock it to a given version with this update sub-command.  Use subuser update log to see a list of possible hashes.
+
+  unlock-subuser SUBUSER
+      Unlock the subuser and ensure that it is up-to-date.
+
+
+Options:
+  -h, --help  show this help message and exit
+  --accept    Accept permissions without asking.
+  --prompt    Prompt before installing new images.
