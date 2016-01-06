@@ -3,3 +3,5 @@ With-one-subuser-named-foo
 no-arguments
 -h
 non-existant-sub-command
+rollback
+log
