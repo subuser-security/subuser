@@ -12,3 +12,6 @@ add-subuser-foo
 no-arguments
 remove-non-existant-subuser
 add-broken-syntax
+non-existant-sub-command
+edit-permissions-no-arguments
+edit-permissions-non-existant-subuser

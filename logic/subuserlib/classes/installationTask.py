@@ -31,7 +31,7 @@ class InstallationTask(UserOwnedObject):
       self.__outOfDateSubusers = set()
       for subuser in self.__subusersToBeUpdated:
         try:
-          if not (subuser.locked() and (subuser.getImageSource().getLatestInstalledImage() is not None)):
+          if (not subuser.locked()) and (not (subuser.getImageSource().getLatestInstalledImage() is None)):
             self.getUser().getRegistry().log("Checking if subuser "+subuser.getName()+" is up to date.")
             for imageSource in getTargetLineage(subuser.getImageSource()):
               if imageSource in self.__upToDateImageSources:
@@ -47,6 +47,8 @@ class InstallationTask(UserOwnedObject):
                 self.__outOfDateSubusers.add(subuser)
                 break
           if subuser.getImageId() is None:
+            if subuser.locked():
+              self.getUser().getRegistry().log("Subuser "+subuser.getName()+" has no image. But is locked. Marking for installation anyways.")
             self.__outOfDateSubusers.add(subuser)
         except exceptions.ImageBuildException as e:
           self.getUser().getRegistry().log(str(e))

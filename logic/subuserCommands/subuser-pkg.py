@@ -58,6 +58,9 @@ def pkg(realArgs):
   options,args = parseCliArgs(realArgs)
   try:
     subcommand = args[0]
+    subcommands = ["init","add","test"]
+    if not subcommand in subcommands:
+      sys.exit(subcommand + " not a recognized subcommand of pkg. Use --help for help.")
   except IndexError:
     sys.exit("No command given, use -h for help.")
   user = User()
@@ -148,35 +151,34 @@ def pkg(realArgs):
     permissionsAccepter = AcceptPermissionsAtCLI(user,alwaysAccept = options.accept)
     imageSourceNames=args[1:]
     with user.getRegistry().getLock() as lockFileHandler:
-      subuserNames = []
+      subusers = []
       subuserNamePrefix = "!test-image-subuser-"
       # Build the images
       for imageSourceName in imageSourceNames:
         subuserName = subuserNamePrefix+imageSourceName
-        subuserNames.append(subuserName)
         subuserlib.subuser.addFromImageSourceNoVerify(user,subuserName,repo[imageSourceName])
-      subuserlib.verify.verify(user,subuserNames=subuserNames,permissionsAccepter=permissionsAccepter,prompt=options.prompt)
+        subusers.append(user.getRegistry().getSubusers()[subuserName])
+      subuserlib.verify.verify(user,subusers=subusers,permissionsAccepter=permissionsAccepter,prompt=options.prompt)
       subusersToTryBuildingAgain = None
       while not subusersToTryBuildingAgain == []:
         subusersToTryBuildingAgain = []
-        for subuserName in subuserNames:
-          if user.getRegistry().getSubusers()[subuserName].getImageId() is None:
+        for subuser in subusers:
+          if subuser.getImageId() is None:
             try:
-              if not input(subuserName+" failed to build. Edit its image file and try again? [Y/n]") == "n":
-                subusersToTryBuildingAgain.append(subuserName)
-                subuserlib.subprocessExtras.runEditor(user.getRegistry().getSubusers()[subuserName].getImageSource().getImageFile())
+              if not input(subuser.getName()+" failed to build. Edit its image file and try again? [Y/n]") == "n":
+                subusersToTryBuildingAgain.append(subuser)
+                subuserlib.subprocessExtras.runEditor(subuser.getImageSource().getImageFile())
             except EOFError:
               subuserlib.print.printWithoutCrashing("")
               subuserlib.print.printWithoutCrashing("Not editing and not trying again due to lack of terminal.")
         if subusersToTryBuildingAgain:
-          subuserlib.verify.verify(user,subuserNames=subusersToTryBuildingAgain,permissionsAccepter=permissionsAccepter,prompt=options.prompt)
+          subuserlib.verify.verify(user,subusers=subusersToTryBuildingAgain,permissionsAccepter=permissionsAccepter,prompt=options.prompt)
       user.getRegistry().commit()
     # Run the images
-    for subuserName in subuserNames:
-      subuser = user.getRegistry().getSubusers()[subuserName]
+    for subuser in subusers:
       if subuser.getPermissions()["executable"] and subuser.getImageId():
         try:
-          arguments = input("Running "+subuserName+" enter arguments and press enter to continue:")
+          arguments = input("Running "+subuser.getName()+" enter arguments and press enter to continue:")
         except EOFError:
           subuserlib.print.printWithoutCrashing("")
           arguments = ""
@@ -189,7 +191,7 @@ def pkg(realArgs):
     with user.getRegistry().getLock() as lockFileHandler:
       # Remove the subusers
       user = User()
-      subuserlib.subuser.remove(user,subuserNames)
+      subuserlib.subuser.remove(user,subusers)
       user.getRegistry().commit()
 
 #################################################################################################

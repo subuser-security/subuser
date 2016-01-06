@@ -1,6 +1,6 @@
-commit 2b32f11fb883e80f09889d799b138f2e86a8b54c
+commit 35441aa78ea0b8d831b94c5dba55e68a2353f669
 Author: Your Name <you@example.com>
-Date:   Sun Jan 3 21:41:53 2016 +0100
+Date:   Wed Jan 6 12:18:18 2016 +0100
 
     Removing subuser foo
      If you wish to remove the subusers image, issue the command $ subuser remove-old-images
@@ -9,9 +9,9 @@ Date:   Sun Jan 3 21:41:53 2016 +0100
     Unregistering any non-existant installed images.
     Running garbage collector on temporary repositories...
 
-commit 907fb10dac78684f80979aafbdabc29c28cac860
+commit 86503291fae3b67ddd3d7da369a1df1b7c592b6c
 Author: Your Name <you@example.com>
-Date:   Sun Jan 3 21:41:53 2016 +0100
+Date:   Wed Jan 6 12:18:18 2016 +0100
 
     Adding subuser foo with image foo
     Verifying subuser configuration.
@@ -21,7 +21,6 @@ Date:   Sun Jan 3 21:41:53 2016 +0100
      Maintainer:
      Executable: /usr/bin/foo
     Checking if images need to be updated or installed...
-    Checking if subuser foo is up to date.
     New images for the following subusers need to be installed:
     foo
     Installing foo ...
@@ -36,9 +35,9 @@ Date:   Sun Jan 3 21:41:53 2016 +0100
     Installed new image <2> for subuser foo
     Running garbage collector on temporary repositories...
 
-commit d720ee98a7fd5f4f09718e7f93976f3a56cd0942
+commit 979a8292065d5748ba6fa595f83de22699dd85b0
 Author: Your Name <you@example.com>
-Date:   Sun Jan 3 21:41:52 2016 +0100
+Date:   Wed Jan 6 12:18:18 2016 +0100
 
     Initial commit.
-    Cloning repository default from file:///home/timothy/.texttest/tmp/texttest.03Jan214121.29835/texttest/subuser/With-one-subuser-named-foo/With-foo-added-then-removed/registry-log/test-repos/default-test-repo
+    Cloning repository default from file:///home/timothy/.texttest/tmp/texttest.06Jan121747.1655/texttest/subuser/With-one-subuser-named-foo/With-foo-added-then-removed/registry-log/test-repos/default-test-repo

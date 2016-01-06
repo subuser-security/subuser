@@ -29,43 +29,41 @@ def add(user,subuserName,imageSourceIdentifier,permissionsAccepter,prompt=False)
 
 def addFromImageSource(user,subuserName,imageSource,permissionsAccepter,prompt=False):
   addFromImageSourceNoVerify(user,subuserName,imageSource)
-  subuserlib.verify.verify(user,subuserNames=[subuserName],permissionsAccepter=permissionsAccepter,prompt=prompt)
+  subuser = user.getRegistry().getSubusers()[subuserName]
+  subuserlib.verify.verify(user,subusers=[subuser],permissionsAccepter=permissionsAccepter,prompt=prompt)
   user.getRegistry().commit()
 
 def addFromImageSourceNoVerify(user,subuserName,imageSource):
   subuser = subuserlib.classes.subuser.Subuser(user,subuserName,None,False,False,[],imageSource=imageSource)
   user.getRegistry().getSubusers()[subuserName] = subuser
 
-def remove(user,subuserNames):
+def remove(user,subusers):
   didSomething = False
-  for subuserName in subuserNames:
-    if subuserName in user.getRegistry().getSubusers():
-      user.getRegistry().logChange("Removing subuser "+str(subuserName))
+  for subuser in subusers:
+    user.getRegistry().logChange("Removing subuser "+str(subuser.getName()))
+    try:
+      subuserHome = subuser.getHomeDirOnHost()
+      if subuserHome and os.path.exists(subuserHome):
+        user.getRegistry().logChange(" If you wish to remove the subusers home directory, issule the command $ rm -r "+subuserHome)
+    except:
+      pass
+    user.getRegistry().logChange(" If you wish to remove the subusers image, issue the command $ subuser remove-old-images")
+    for serviceSubuserName in subuser.getServiceSubuserNames():
       try:
-        subuserHome = user.getRegistry().getSubusers()[subuserName].getHomeDirOnHost()
-        if subuserHome and os.path.exists(subuserHome):
-          user.getRegistry().logChange(" If you wish to remove the subusers home directory, issule the command $ rm -r "+subuserHome)
-      except:
+        serviceSubuser = user.getRegistry().getSubusers()[serviceSubuser]
+        serviceSubuser.removePermissions()
+        del user.getRegistry().getSubusers()[serviceSubuserName]
+      except KeyError:
         pass
-      user.getRegistry().logChange(" If you wish to remove the subusers image, issue the command $ subuser remove-old-images")
-      subuser = user.getRegistry().getSubusers()[subuserName]
-      for serviceSubuser in subuser.getServiceSubuserNames():
-        try:
-          user.getRegistry().getSubusers()[serviceSubuser].removePermissions()
-          del user.getRegistry().getSubusers()[serviceSubuser]
-        except KeyError:
-          pass
-      # Remove service locks
-      try:
-        shutil.rmtree(os.path.join(user.getConfig()["lock-dir"],"services",subuserName))
-      except OSError:
-        pass
-      # Remove permission files
-      user.getRegistry().getSubusers()[subuserName].removePermissions()
-      del user.getRegistry().getSubusers()[subuserName]
-      didSomething = True
-    else:
-      user.getRegistry().log("Cannot remove: subuser "+subuserName+" does not exist.")
+    # Remove service locks
+    try:
+      shutil.rmtree(os.path.join(user.getConfig()["lock-dir"],"services",subuser.getName()))
+    except OSError:
+      pass
+    # Remove permission files
+    subuser.removePermissions()
+    del user.getRegistry().getSubusers()[subuser.getName()]
+    didSomething = True
   if didSomething:
     subuserlib.verify.verify(user)
     user.getRegistry().commit()

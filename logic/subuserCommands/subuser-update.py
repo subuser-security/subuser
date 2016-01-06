@@ -149,10 +149,16 @@ def update(realArgs):
     with user.getRegistry().getLock():
       subuserlib.update.all(user,permissionsAccepter=permissionsAccepter,prompt=options.prompt)
   elif "subusers" == args[0]:
-    subusersToUpdate = args[1:]
+    subuserNamesToUpdate = args[1:]
+    subusersToUpdate = []
+    for subuserName in subuserNamesToUpdate:
+      try:
+        subusersToUpdate.append(user.getRegistry().getSubusers()[subuserName])
+      except KeyError:
+        sys.exit("Subuser "+subuserName+" does not exist. Use --help for help.")
     if subusersToUpdate:
       with user.getRegistry().getLock():
-        subuserlib.update.subusers(user,subusersToUpdate,permissionsAccepter=permissionsAccepter,prompt=options.prompt)
+        subuserlib.update.subusers(user,subusers=subusersToUpdate,permissionsAccepter=permissionsAccepter,prompt=options.prompt)
     else:
       sys.exit("You did not specify any subusers to be updated. Use --help for help. Exiting...")
   elif "lock-subuser-to" == args[0]:
@@ -162,14 +168,22 @@ def update(realArgs):
     except IndexError:
       sys.exit("Wrong number of arguments.  Expected a subuser name and a commit.  Try running\nsubuser update --help\n for more info.")
     with user.getRegistry().getLock():
-      subuserlib.update.lockSubuser(user,subuserName=subuserName,commit=commit)
+      try:
+        subuser = user.getRegistry().getSubusers()[subuserName]
+      except KeyError:
+        sys.exit("Subuser "+subuserName+" does not exist and therefore cannot be locked. Use --help for help.")
+      subuserlib.update.lockSubuser(user,subuser=subuser,commit=commit)
   elif "unlock-subuser" == args[0]:
     try:
       subuserName = args[1]
     except IndexError:
       sys.exit("Wrong number of arguments.  Expected a subuser's name. Try running\nsubuser update --help\nfor more information.")
+    try:
+      subuser = user.getRegistry().getSubusers()[subuserName]
+    except KeyError:
+      sys.exit("Subuser "+subuserName+" does not exist. Cannot lock. Use --help for help.")
     with user.getRegistry().getLock():
-      subuserlib.update.unlockSubuser(user,subuserName=subuserName,permissionsAccepter=permissionsAccepter,prompt=options.prompt)
+      subuserlib.update.unlockSubuser(user,subuser=subuser,permissionsAccepter=permissionsAccepter,prompt=options.prompt)
   elif len(args) == 1:
     sys.exit(" ".join(args) + " is not a valid update subcommand. Please use subuser update -h for help.")
   else:

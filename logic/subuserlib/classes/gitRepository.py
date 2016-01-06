@@ -62,6 +62,19 @@ class GitRepository(UserOwnedObject):
       else:
         raise e
 
+  def doesCommitExist(self,commit):
+    """
+    Return true if the commit or reference exists.
+    """
+    try:
+      (returncode,stdout) = self.runCollectOutput(["cat-file","-t",commit])
+    except Exception:
+      return False
+    if returncode == 0 and "commit" in stdout:
+      return True
+    else:
+      return False
+
   def getFileStructureAtCommit(self,commit):
     """
     Get a ``FileStructure`` object which relates to the given git commit.

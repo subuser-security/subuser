@@ -34,9 +34,9 @@ def verify(realArgs):
   user = User()
   permissionsAccepter = AcceptPermissionsAtCLI(user,alwaysAccept = options.accept)
   with user.getRegistry().getLock() as LockFileHandle:
-    subuserNames = list(user.getRegistry().getSubusers().keys())
-    subuserNames.sort()
-    subuserlib.verify.verify(user,subuserNames=subuserNames,permissionsAccepter=permissionsAccepter,prompt=options.prompt)
+    subusers = user.getRegistry().getSubusers().getSortedList()
+    subusers.sort()
+    subuserlib.verify.verify(user,subusers=subusers,permissionsAccepter=permissionsAccepter,prompt=options.prompt)
     user.getRegistry().commit()
 
 if __name__ == "__main__":

@@ -141,7 +141,7 @@ def list(sysargs):
         repo.describe()
         subuserlib.print.printWithoutCrashing("")
   else:
-    sys.exit(args[0] + " cannot be listed. Option unrecognized.")
+    sys.exit(args[0] + " cannot be listed. Option unrecognized. Use --help for help.")
 
 if __name__ == "__main__":
   list(sys.argv[1:])

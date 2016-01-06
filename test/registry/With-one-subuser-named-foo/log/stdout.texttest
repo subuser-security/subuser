@@ -1,6 +1,6 @@
-commit e897e33a633dae90bc9b2c4bb4d0ead81332d058
+commit 3e36aab935b165f134f1032a8e64e954c1af131a
 Author: Your Name <you@example.com>
-Date:   Sun Jan 3 21:40:26 2016 +0100
+Date:   Wed Jan 6 12:18:22 2016 +0100
 
     Adding subuser foo with image foo
     Verifying subuser configuration.
@@ -10,7 +10,6 @@ Date:   Sun Jan 3 21:40:26 2016 +0100
      Maintainer:
      Executable: /usr/bin/foo
     Checking if images need to be updated or installed...
-    Checking if subuser foo is up to date.
     New images for the following subusers need to be installed:
     foo
     Installing foo ...
@@ -25,9 +24,9 @@ Date:   Sun Jan 3 21:40:26 2016 +0100
     Installed new image <2> for subuser foo
     Running garbage collector on temporary repositories...
 
-commit 786f61013651d3b08ba2de9816aa6b534ca51cbf
+commit 25328711e8c5c5cfeb77616f1e5691d2853a4269
 Author: Your Name <you@example.com>
-Date:   Sun Jan 3 21:40:26 2016 +0100
+Date:   Wed Jan 6 12:18:22 2016 +0100
 
     Initial commit.
-    Cloning repository default from file:///home/timothy/.texttest/tmp/texttest.8_from_03Jan212708.29727/texttest/registry/With-one-subuser-named-foo/log/test-repos/default-test-repo
+    Cloning repository default from file:///home/timothy/.texttest/tmp/texttest.06Jan121747.1655/texttest/registry/With-one-subuser-named-foo/log/test-repos/default-test-repo

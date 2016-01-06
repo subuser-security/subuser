@@ -9,3 +9,4 @@ unlock-subuser-no-arguments
 update-subusers-non-existant-subuser
 lock-subuser-to-non-existant-subuser
 unlock-subuser-non-existant-subuser
+non-existant-sub-command

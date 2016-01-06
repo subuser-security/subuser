@@ -6,3 +6,4 @@ List-available-from-non-existant-URI
 List-available-from-invalid-URI
 no-arguments
 -h
+non-existant-sub-command

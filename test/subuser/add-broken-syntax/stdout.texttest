@@ -1,8 +1,8 @@
 Initial commit.
-Cloning repository default from file:///home/timothy/.texttest/tmp/texttest.04Jan014916.19441/texttest/subuser/add-broken-syntax/test-repos/default-test-repo
-Adding subuser broken-syntax with image broken-syntax@file:////home/timothy/.texttest/tmp/texttest.04Jan014916.19441/texttest/subuser/add-broken-syntax/test-repos/remote-test-repo
-Cloning repository 0 from file:////home/timothy/.texttest/tmp/texttest.04Jan014916.19441/texttest/subuser/add-broken-syntax/test-repos/remote-test-repo
-Adding new temporary repository file:////home/timothy/.texttest/tmp/texttest.04Jan014916.19441/texttest/subuser/add-broken-syntax/test-repos/remote-test-repo
+Cloning repository default from file:///home/timothy/.texttest/tmp/texttest.06Jan121747.1655/texttest/subuser/add-broken-syntax/test-repos/default-test-repo
+Adding subuser broken-syntax with image broken-syntax@file:////home/timothy/.texttest/tmp/texttest.06Jan121747.1655/texttest/subuser/add-broken-syntax/test-repos/remote-test-repo
+Cloning repository 0 from file:////home/timothy/.texttest/tmp/texttest.06Jan121747.1655/texttest/subuser/add-broken-syntax/test-repos/remote-test-repo
+Adding new temporary repository file:////home/timothy/.texttest/tmp/texttest.06Jan121747.1655/texttest/subuser/add-broken-syntax/test-repos/remote-test-repo
 Verifying subuser configuration.
 Verifying registry consistency...
 Unregistering any non-existant installed images.
@@ -15,10 +15,11 @@ E - Apply changes and edit result
 r - Reject permissions.
 A
 Checking if images need to be updated or installed...
-Checking if subuser broken-syntax is up to date.
+New images for the following subusers need to be installed:
+broken-syntax
 Error in broken-syntax's SubuserImagefile on line 0
  Subuser image does not exist: ""
 Images for the following subusers failed to build:
 broken-syntax
 Running garbage collector on temporary repositories...
-Removing uneeded temporary repository: file:////home/timothy/.texttest/tmp/texttest.04Jan014916.19441/texttest/subuser/add-broken-syntax/test-repos/remote-test-repo
+Removing uneeded temporary repository: file:////home/timothy/.texttest/tmp/texttest.06Jan121747.1655/texttest/subuser/add-broken-syntax/test-repos/remote-test-repo

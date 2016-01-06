@@ -2,3 +2,4 @@ With-initialized-repo
 With-uninitialized-repo
 no-arguments
 -h
+non-existant-sub-command

@@ -84,7 +84,13 @@ def subuser(sysargs):
       allSubuserNames = user.getRegistry().getSubusers().keys()
       names.extend([subuserName for subuserName in allSubuserNames if subuserName.startswith(options.prefix)])
     with user.getRegistry().getLock():
-      subuserlib.subuser.remove(user,names)
+      subusers = []
+      for subuserName in names:
+        try:
+          subusers.append(user.getRegistry().getSubusers()[subuserName])
+        except KeyError:
+          sys.exit("Subuser "+subuserName+" does not exist and therefore cannot be removed. Use --help for help.")
+      subuserlib.subuser.remove(user,subusers)
   elif action == "create-shortcut":
     name = args[1]
     with user.getRegistry().getLock():
@@ -94,12 +100,18 @@ def subuser(sysargs):
     with user.getRegistry().getLock():
       subuserlib.subuser.setExecutableShortcutInstalled(user,name,False)
   elif action == "edit-permissions":
-    name = args[1]
+    try:
+      name = args[1]
+    except IndexError:
+      sys.exit("No subusers specified for editing. Use --help for help.")
     with user.getRegistry().getLock():
       user.getRegistry().logChange("Edit "+name+"'s permissions.")
-      subuser = user.getRegistry().getSubusers()[name]
+      try:
+        subuser = user.getRegistry().getSubusers()[name]
+      except KeyError:
+        sys.exit("Subuser "+name+" does not exist. Use --help for help.")
       subuser.editPermissionsCLI()
-      subuserlib.verify.verify(user,subuserNames=[name],permissionsAccepter=permissionsAccepter,prompt=options.prompt)
+      subuserlib.verify.verify(user,subusers=[subuser],permissionsAccepter=permissionsAccepter,prompt=options.prompt)
       user.getRegistry().commit()
   else:
     sys.exit("Action "+args[0]+" does not exist. Try:\n subuser subuser --help")

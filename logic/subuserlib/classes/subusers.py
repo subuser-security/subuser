@@ -111,3 +111,9 @@ class Subusers(dict,UserOwnedObject,FileBackedObject):
         serviceSubusers = []
       executableShortcutInstalled = subuserAttributes["executable-shortcut-installed"]
       self[subuserName] = Subuser(self.getUser(),subuserName,imageSourceName=imageSourceName,repoName=repoName,imageId=imageId,executableShortcutInstalled=executableShortcutInstalled,locked=locked,serviceSubusers=serviceSubusers)
+
+  def getSortedList(self):
+    """
+    Return a list of subusers sorted by name.
+    """
+    return list(sorted(self.values(),key=lambda subuser:subuser.getName()))
