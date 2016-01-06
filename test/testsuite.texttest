@@ -12,3 +12,6 @@ remove-old-images
 repair
 repository
 update
+
+# Repositories specially designed to break things.
+Weird-repositories

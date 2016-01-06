@@ -99,7 +99,8 @@ class FileStructure():
     # TODO - what about sockets?
     # TODO - what about named pipes?
     def hashFile(path):
-      SHAhash.update(path.encode("utf-8"))
+      encodedPath = path.encode("utf-8","replace")
+      SHAhash.update(encodedPath)
       SHAhash.update(self.getModeString(path).encode("utf-8"))
       SHAhash.update(self.readBinary(path))
     def hashDir(path):
@@ -192,7 +193,7 @@ class BasicFileStructure(FileStructure):
     blahblah
     <BLANKLINE>
     """
-    with open(self.getPathInStructure(path),"r") as fd:
+    with open(self.getPathInStructure(path),"r",encoding="utf-8") as fd:
       return fd.read()
 
   def readBinary(self,path):
