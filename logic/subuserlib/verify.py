@@ -136,12 +136,16 @@ def cleanupRuntimeDirs(user):
     """
     Clear out a directory containing subdirectories named with the PIDs of processes by removing any directories corresponding to non-running processes.
     """
+    user.getRegistry().log("Clearing directory "+ pidDir)
     try:
       for pid in os.listdir(pidDir):
         try:
           numericPid = int(pid)
           if not is_process_running(numericPid):
             shutil.rmtree(os.path.join(pidDir,pid))
+            user.getRegistry().log("Removing "+ os.path.join(pidDir,pid)+" process is no longer running.",verbosityLevel=3)
+          else:
+            user.getRegistry().log("Not removing "+ os.path.join(pidDir,pid)+" process is still running.",verbosityLevel=3)
         except ValueError:
           pass
     except OSError:
