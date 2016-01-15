@@ -68,11 +68,11 @@ def remove(user,subusers):
     subuserlib.verify.verify(user)
     user.getRegistry().commit()
 
-def setExecutableShortcutInstalled(user,subuserName,installed):
+def setExecutableShortcutInstalled(user,subuser,installed):
   if installed:
-    user.getRegistry().logChange("Creating shortcut for subuser "+subuserName)
+    user.getRegistry().logChange("Adding launcher for subuser "+subuser.getName()+" to $PATH.")
   else:
-    user.getRegistry().logChange("Removing shortcut for subuser "+subuserName)
-  user.getRegistry().getSubusers()[subuserName].setExecutableShortcutInstalled(installed)
+    user.getRegistry().logChange("Removing launcher for subuser "+subuser.getName()+" from $PATH.")
+  subuser.setExecutableShortcutInstalled(installed)
   subuserlib.verify.verify(user)
   user.getRegistry().commit()

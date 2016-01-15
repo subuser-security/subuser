@@ -1,0 +1,7 @@
+Removing launcher for subuser foo from $PATH.
+Verifying subuser configuration.
+Verifying registry consistency...
+Unregistering any non-existant installed images.
+Running garbage collector on temporary repositories...
+Clearing directory /home/timothy/.texttest/tmp/texttest.1_from_15Jan135030.16096/texttest/subuser/With-one-subuser-named-foo/remove-from-path-foo/.subuser/volumes/execute
+Clearing directory /home/timothy/.texttest/tmp/texttest.1_from_15Jan135030.16096/texttest/subuser/With-one-subuser-named-foo/remove-from-path-foo/.subuser/volumes/x11
