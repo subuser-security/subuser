@@ -30,6 +30,14 @@ The permissions object always begins with the following permissions:
 
   **Default**: The image has no executable and cannot be run(but it can be depended upon, as a library).
 
+ * ``entry-points``: This optional feild allows you to add "entry-points" to your subuser. These are executables that can be added, if the user so wishes, to the PATH on the host system. This is a dictionary which maps "desired name on host" to "path within subuser image".
+
+  Ex::
+
+    ,"entry-points"                : {"mk":"/usr/bin/mk","cc","/usr/local/bin/cc"}
+
+  **Default**: There are no entry points.
+
 Permissions
 -----------
 
