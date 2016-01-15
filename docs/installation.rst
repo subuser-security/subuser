@@ -25,9 +25,9 @@ Install with pip: Stable version
 
 Find ``docker`` and add your username to the end of the line.
 
-2. Install subuser from pip.
+2. Install subuser from pip3.
 
-  $ sudo pip install subuser
+  $ sudo pip3 install subuser
 
 3. Add ``~/.subuser/bin`` to your path by adding the line ``PATH=$HOME/.subuser/bin:$PATH`` to the end of your ``.bashrc`` file.
 

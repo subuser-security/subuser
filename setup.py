@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 import setuptools
 import os
 import inspect
