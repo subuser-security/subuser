@@ -1,8 +1,8 @@
 Initial commit.
-Cloning repository default from file:///home/timothy/.texttest/tmp/texttest.06Jan121747.1655/texttest/Weird-repositories/add-broken-non-existant-dependency/test-repos/default-test-repo
-Adding subuser broken-non-existant-dependency with image broken-non-existant-dependency@file:////home/timothy/.texttest/tmp/texttest.06Jan121747.1655/texttest/Weird-repositories/add-broken-non-existant-dependency/test-repos/remote-test-repo
-Cloning repository 0 from file:////home/timothy/.texttest/tmp/texttest.06Jan121747.1655/texttest/Weird-repositories/add-broken-non-existant-dependency/test-repos/remote-test-repo
-Adding new temporary repository file:////home/timothy/.texttest/tmp/texttest.06Jan121747.1655/texttest/Weird-repositories/add-broken-non-existant-dependency/test-repos/remote-test-repo
+Cloning repository default from file:///home/timothy/.texttest/tmp/texttest.15Jan133835.1341/texttest/Weird-repositories/add-broken-non-existant-dependency/test-repos/default-test-repo
+Adding subuser broken-non-existant-dependency with image broken-non-existant-dependency@file:////home/timothy/.texttest/tmp/texttest.15Jan133835.1341/texttest/Weird-repositories/add-broken-non-existant-dependency/test-repos/remote-test-repo
+Cloning repository 0 from file:////home/timothy/.texttest/tmp/texttest.15Jan133835.1341/texttest/Weird-repositories/add-broken-non-existant-dependency/test-repos/remote-test-repo
+Adding new temporary repository file:////home/timothy/.texttest/tmp/texttest.15Jan133835.1341/texttest/Weird-repositories/add-broken-non-existant-dependency/test-repos/remote-test-repo
 Verifying subuser configuration.
 Verifying registry consistency...
 Unregistering any non-existant installed images.
@@ -22,4 +22,6 @@ Error in broken-non-existant-dependency's SubuserImagefile on line 0
 Images for the following subusers failed to build:
 broken-non-existant-dependency
 Running garbage collector on temporary repositories...
-Removing uneeded temporary repository: file:////home/timothy/.texttest/tmp/texttest.06Jan121747.1655/texttest/Weird-repositories/add-broken-non-existant-dependency/test-repos/remote-test-repo
+Removing uneeded temporary repository: file:////home/timothy/.texttest/tmp/texttest.15Jan133835.1341/texttest/Weird-repositories/add-broken-non-existant-dependency/test-repos/remote-test-repo
+Clearing directory /home/timothy/.texttest/tmp/texttest.15Jan133835.1341/texttest/Weird-repositories/add-broken-non-existant-dependency/.subuser/volumes/execute
+Clearing directory /home/timothy/.texttest/tmp/texttest.15Jan133835.1341/texttest/Weird-repositories/add-broken-non-existant-dependency/.subuser/volumes/x11

@@ -1,7 +1,7 @@
 Initial commit.
-Cloning repository default from file:///home/timothy/.texttest/tmp/texttest.1_from_06Jan131327.20736/texttest/Weird-repositories/subuser-add-€-from-€@local-test-repo-§€č/test-repos/default-test-repo
-Adding subuser € with image €@//home/timothy/.texttest/tmp/texttest.1_from_06Jan131327.20736/texttest/Weird-repositories/subuser-add-€-from-€@local-test-repo-§€č/test-repos/local-test-repo-§€č
-Adding new temporary repository //home/timothy/.texttest/tmp/texttest.1_from_06Jan131327.20736/texttest/Weird-repositories/subuser-add-€-from-€@local-test-repo-§€č/test-repos/local-test-repo-§€č
+Cloning repository default from file:///home/timothy/.texttest/tmp/texttest.15Jan133835.1341/texttest/Weird-repositories/subuser-add-€-from-€@local-test-repo-§€č/test-repos/default-test-repo
+Adding subuser € with image €@//home/timothy/.texttest/tmp/texttest.15Jan133835.1341/texttest/Weird-repositories/subuser-add-€-from-€@local-test-repo-§€č/test-repos/local-test-repo-§€č
+Adding new temporary repository //home/timothy/.texttest/tmp/texttest.15Jan133835.1341/texttest/Weird-repositories/subuser-add-€-from-€@local-test-repo-§€č/test-repos/local-test-repo-§€č
 Verifying subuser configuration.
 Verifying registry consistency...
 Unregistering any non-existant installed images.
@@ -32,3 +32,5 @@ Building...
 Successfully built 2
 Installed new image <2> for subuser €
 Running garbage collector on temporary repositories...
+Clearing directory /home/timothy/.texttest/tmp/texttest.15Jan133835.1341/texttest/Weird-repositories/subuser-add-€-from-€@local-test-repo-§€č/.subuser/volumes/execute
+Clearing directory /home/timothy/.texttest/tmp/texttest.15Jan133835.1341/texttest/Weird-repositories/subuser-add-€-from-€@local-test-repo-§€č/.subuser/volumes/x11
