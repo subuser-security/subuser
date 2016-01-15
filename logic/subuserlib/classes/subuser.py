@@ -1,7 +1,4 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# This file should be compatible with both Python 2 and 3.
-# If it is not, please file a bug report.
 
 """
 A subuser is an entity that runs within a Docker container and has a home directory and a set of permissions that allow it to access a limited part of the host system.
@@ -11,11 +8,6 @@ A subuser is an entity that runs within a Docker container and has a home direct
 import os
 import stat
 import errno
-# Python 2.x/Python 3 compatibility
-try:
-  input = raw_input
-except NameError:
-  raw_input = input
 #internal imports
 import subuserlib.permissions
 from subuserlib.classes.userOwnedObject import UserOwnedObject
@@ -100,12 +92,7 @@ class Subuser(UserOwnedObject, Describable):
     else:
       raise SubuserHasNoPermissionsException("The subuser <"+self.getName()+"""> has no permissions.
 
-If you are updating sometime around August 2015, you should move ~/.subuser/permissions to ~/.subuser/registry/permissions and run:
-
-$ git add .
-$ git commit
-
-Otherwise, please run:
+Please run:
 
 $ subuser repair
 
@@ -140,7 +127,7 @@ To repair your subuser installation.\n""")
         break
       except SyntaxError as e:
         print(e)
-        raw_input("Press ENTER to edit the permission file again.")
+        input("Press ENTER to edit the permission file again.")
     self.__permissions = Permissions(self.getUser(),initialPermissions,writePath=self.getPermissionsDotJsonWritePath())
     self.getPermissions().save()
 

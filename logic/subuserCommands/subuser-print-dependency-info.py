@@ -1,6 +1,5 @@
-#!/usr/bin/env python
-# This file should be compatible with both Python 2 and 3.
-# If it is not, please file a bug report.
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
 
 try:
   import pathConfig
@@ -15,6 +14,7 @@ import subuserlib.resolve
 import subuserlib.commandLineArguments
 import subuserlib.profile
 import subuserlib.classes.installationTask
+import subuserlib.print
 
 def parseCliArgs(realArgs):
   usage = "usage: subuser print-dependency-info IMAGE_NAME(s) SETS_OF_IMAGES"
@@ -31,26 +31,6 @@ Example:
 def printDependencies(realArgs):
   """
   Print the dependencies of the listed progam sources.
-
-  Tests
-  -----
-
-  **Setup:**
-  >>> print_dependency_info = __import__("subuser-print-dependency-info")#import self
-
-  Prints a list of images that the image depends on, including itself.
-
-  >>> print_dependency_info.printDependencies(["foo@default"])
-  foo@default
-
-  If the image doesn't exist, tell us.
-
-  >>> try:
-  ...  print_dependency_info.printDependencies(["non-existant@default"])
-  ... except SystemExit as e:
-  ...  print(e)
-  The image non-existant@default does not exist.
-
   """
   (options,imageSourceIds) = parseCliArgs(realArgs)
   if len(imageSourceIds) == 0:
@@ -64,7 +44,7 @@ def printDependencies(realArgs):
     indent = 0
     for imageSourceInLineage in subuserlib.classes.installationTask.getTargetLineage(imageSource):
       displayLine = (" "*indent) + imageSourceInLineage.getIdentifier()
-      print(displayLine)
+      subuserlib.print.printWithoutCrashing(displayLine)
       indent = indent + 1
 
 #################################################################################################

@@ -1,6 +1,4 @@
-#!/usr/bin/env python
-# This file should be compatible with both Python 2 and 3.
-# If it is not, please file a bug report.
+# -*- coding: utf-8 -*-
 # pylint: disable=no-init,old-style-class
 
 """
@@ -14,7 +12,9 @@ import os
 import stat
 import sys
 #internal imports
-#import ...
+import subuserlib.test
+if subuserlib.test.testing:
+  hashtestDir = subuserlib.test.hashtestDir
 
 class FileStructure():
   __metaclass__ = abc.ABCMeta
@@ -90,9 +90,9 @@ class FileStructure():
     Return the hash as a hexidecimal string.
 
     >>> from subuserlib.classes.fileStructure import FileStructure
-    >>> fileStructure = BasicFileStructure("/home/travis/hashtest")
+    >>> fileStructure = BasicFileStructure(subuserlib.classes.fileStructure.hashtestDir)
     >>> fileStructure.hash("./")
-    'c5c5368bf02e0105e98eca5f07eef6bb2907188e'
+    '6b9c28475016167ba6b58ad37ea9eb56d7364cb9'
     """
     SHAhash = hashlib.sha1()
     # TODO - what about symlinks?
@@ -101,7 +101,8 @@ class FileStructure():
     # TODO - what about sockets?
     # TODO - what about named pipes?
     def hashFile(path):
-      SHAhash.update(path.encode("utf-8"))
+      encodedPath = path.encode("utf-8","replace")
+      SHAhash.update(encodedPath)
       SHAhash.update(self.getModeString(path).encode("utf-8"))
       SHAhash.update(self.readBinary(path))
     def hashDir(path):
@@ -137,12 +138,13 @@ class BasicFileStructure(FileStructure):
   def ls(self, subfolder):
     """
     >>> from subuserlib.classes.fileStructure import FileStructure
-    >>> fileStructure = BasicFileStructure("/home/travis/hashtest")
+    >>> fileStructure = BasicFileStructure(subuserlib.classes.fileStructure.hashtestDir)
     >>> print(",".join(fileStructure.ls("./")))
     bar,blah
     """
     paths = []
-    for path in os.listdir(self.getPathInStructure(subfolder)):
+    path = self.getPathInStructure(subfolder)
+    for path in os.listdir(path):
       paths.append(os.path.normpath(os.path.join(subfolder,path)))
     paths.sort()
     return paths
@@ -150,7 +152,8 @@ class BasicFileStructure(FileStructure):
   def lsFiles(self,subfolder):
     """
     >>> from subuserlib.classes.fileStructure import FileStructure
-    >>> fileStructure = BasicFileStructure("/home/travis/hashtest")
+    >>> import os
+    >>> fileStructure = BasicFileStructure(subuserlib.classes.fileStructure.hashtestDir)
     >>> print(",".join(fileStructure.lsFiles("./")))
     blah
     """
@@ -163,20 +166,23 @@ class BasicFileStructure(FileStructure):
   def lsFolders(self,subfolder):
     """
     >>> from subuserlib.classes.fileStructure import FileStructure
-    >>> fileStructure = BasicFileStructure("/home/travis/hashtest")
+    >>> import os
+    >>> fileStructure = BasicFileStructure(subuserlib.classes.fileStructure.hashtestDir)
     >>> print(",".join(fileStructure.lsFolders("./")))
     bar
     """
     folders = []
     for path in self.ls(subfolder):
-      if os.path.isdir(self.getPathInStructure(path)):
+      pathInStructure = self.getPathInStructure(path)
+      if os.path.isdir(pathInStructure):
         folders.append(os.path.normpath(path))
     return folders
 
   def exists(self,path):
     """
     >>> from subuserlib.classes.fileStructure import FileStructure
-    >>> fileStructure = BasicFileStructure("/home/travis/hashtest")
+    >>> import os
+    >>> fileStructure = BasicFileStructure(subuserlib.classes.fileStructure.hashtestDir)
     >>> fileStructure.exists("./blah")
     True
     >>> fileStructure.exists("./non-existant")
@@ -186,19 +192,21 @@ class BasicFileStructure(FileStructure):
 
   def read(self,path):
     """
-    >>> from subuserlib.classes.fileStructure import FileStructure
-    >>> fileStructure = BasicFileStructure("/home/travis/hashtest")
+    >>> from subuserlib.classes.fileStructure import BasicFileStructure
+    >>> import os
+    >>> fileStructure = BasicFileStructure(subuserlib.classes.fileStructure.hashtestDir)
     >>> print(fileStructure.read("./blah"))
     blahblah
     <BLANKLINE>
     """
-    with open(self.getPathInStructure(path),"r") as fd:
+    with open(self.getPathInStructure(path),"r",encoding="utf-8") as fd:
       return fd.read()
 
   def readBinary(self,path):
     """
     >>> from subuserlib.classes.fileStructure import FileStructure
-    >>> fileStructure = BasicFileStructure("/home/travis/hashtest")
+    >>> import os
+    >>> fileStructure = BasicFileStructure(subuserlib.classes.fileStructure.hashtestDir)
     >>> print(fileStructure.read("./blah"))
     blahblah
     <BLANKLINE>
@@ -209,8 +217,9 @@ class BasicFileStructure(FileStructure):
   def getMode(self,path):
     """
     >>> from subuserlib.classes.fileStructure import FileStructure
-    >>> fileStructure = BasicFileStructure("/home/travis/hashtest")
+    >>> import os
+    >>> fileStructure = BasicFileStructure(subuserlib.classes.fileStructure.hashtestDir)
     >>> print(fileStructure.getModeString("./blah"))
-    100644
+    100664
     """
     return os.stat(self.getPathInStructure(path))[stat.ST_MODE]

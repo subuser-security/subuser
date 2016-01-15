@@ -1,7 +1,4 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# This file should be compatible with both Python 2 and 3.
-# If it is not, please file a bug report.
 
 """
 This is one of the most important modules in subuser.  This module has one function `verify` which is used to apply the changes for most commands that change the user's configuration:
@@ -16,18 +13,12 @@ This is one of the most important modules in subuser.  This module has one funct
 #external imports
 import shutil
 import os
-# Python 2.x/Python 3 compatibility
-try:
-  input = raw_input
-except NameError:
-  raw_input = input
-
 #internal imports
 from subuserlib.classes.installationTask import InstallationTask
 import subuserlib.classes.exceptions as exceptions
 import subuserlib.classes.subuser
 
-def verify(user,permissionsAccepter=None,checkForUpdatesExternally=False,subuserNames=[],prompt=False):
+def verify(user,permissionsAccepter=None,checkForUpdatesExternally=False,subusers=[],prompt=False):
   """
    Ensure that:
      - Registry is consistent; warns the user about subusers that point to non-existant source images.
@@ -43,24 +34,23 @@ def verify(user,permissionsAccepter=None,checkForUpdatesExternally=False,subuser
     except subuserlib.classes.subuser.NoImageSourceException:
       user.getRegistry().log("WARNING: "+subuser.getName()+" is no longer present in it's source repository. Support for this progam may have been dropped.")
       try:
-        subuserNames.remove(subuser.getName())
+        subusers.remove(subuser)
       except ValueError:
         pass
   user.getRegistry().log("Unregistering any non-existant installed images.")
   user.getInstalledImages().unregisterNonExistantImages()
-  if subuserNames:
+  if subusers:
     user.getRegistry().setChanged(True)
-    (failedSubuserNames,permissionParsingExceptions) = approvePermissions(user,subuserNames,permissionsAccepter)
-    subuserNames = [x for x in subuserNames if x not in failedSubuserNames]
-    subuserNames += ensureServiceSubusersAreSetup(user,subuserNames)
-    subusers = [user.getRegistry().getSubusers()[subuserName] for subuserName in subuserNames]
+    (failedSubusers,permissionParsingExceptions) = approvePermissions(user,subusers,permissionsAccepter)
+    subusers = [x for x in subusers if x not in failedSubusers]
+    subusers += ensureServiceSubusersAreSetup(user,subusers)
     installationTask = InstallationTask(user,subusersToBeUpdatedOrInstalled=subusers,checkForUpdatesExternally=checkForUpdatesExternally)
     outOfDateSubusers = installationTask.getOutOfDateSubusers()
     if outOfDateSubusers:
       user.getRegistry().log("New images for the following subusers need to be installed:")
       for subuser in outOfDateSubusers:
         user.getRegistry().log(subuser.getName())
-      if (not prompt) or (prompt and (not raw_input("Would you like to install those images now? [Y/n]") == "n")):
+      if (not prompt) or (prompt and (not input("Would you like to install those images now? [Y/n]") == "n")):
         installationTask.updateOutOfDateSubusers()
     for exception in permissionParsingExceptions:
       user.getRegistry().log(str(exception))
@@ -82,11 +72,12 @@ def verify(user,permissionsAccepter=None,checkForUpdatesExternally=False,subuser
   cleanUpRuntimeCache(user)
   cleanUpAfterImproperlyTerminatedServices(user)
 
-def approvePermissions(user,subuserNames,permissionsAccepter):
+def approvePermissions(user,subusers,permissionsAccepter):
   subusersWhosPermissionsFailedToParse = []
   exceptions = []
-  for subuserName in subuserNames:
-    subuser = user.getRegistry().getSubusers()[subuserName]
+  for subuser in subusers:
+    if subuser.locked():
+      continue
     try:
       userApproved = subuser.getPermissions()
     except subuserlib.classes.subuser.SubuserHasNoPermissionsException:
@@ -98,14 +89,13 @@ def approvePermissions(user,subuserNames,permissionsAccepter):
       subuser.getPermissionsTemplate().update(subuser.getImageSource().getPermissions())
       subuser.getPermissionsTemplate().save()
     except SyntaxError as e:
-      subusersWhosPermissionsFailedToParse.append(subuserName)
+      subusersWhosPermissionsFailedToParse.append(subuser)
       exceptions.append(e)
   return (subusersWhosPermissionsFailedToParse,exceptions)
 
-def ensureServiceSubusersAreSetup(user,subuserNames):
+def ensureServiceSubusersAreSetup(user,subusers):
   newServiceSubusers = []
-  for subuserName in subuserNames:
-    subuser = user.getRegistry().getSubusers()[subuserName]
+  for subuser in subusers:
     if not subuser.getPermissions()["gui"] is None:
       newServiceSubusers += subuser.getX11Bridge().setup()
   return newServiceSubusers
@@ -114,20 +104,7 @@ def trimUnneededTempRepos(user):
   user.getRegistry().log("Running garbage collector on temporary repositories...")
   reposToRemove = []
   for repoId,repo in user.getRegistry().getRepositories().userRepositories.items():
-    keep = False
-    if repo.isTemporary():
-      for _,installedImage in user.getInstalledImages().items():
-        if repoId == installedImage.getSourceRepoId():
-          keep = True
-      for _,subuser in user.getRegistry().getSubusers().items():
-        try:
-          if repoId == subuser.getImageSource().getRepository().getName():
-            keep = True
-        except subuserlib.classes.subuser.NoImageSourceException:
-          pass
-    else:
-      keep = True
-    if not keep:
+    if repo.isTemporary() and not repo.isInUse():
       user.getRegistry().logChange("Removing uneeded temporary repository: "+repo.getDisplayName())
       repo.removeGitRepo()
       reposToRemove.append(repoId)
@@ -179,9 +156,12 @@ def cleanUpRuntimeCache(user):
   Remove runtime cache directories for no longer existant images.
   """
   runtimeCacheDir = user.getConfig()["runtime-cache"]
-  for imageId in os.listdir(runtimeCacheDir):
-    if not imageId in user.getInstalledImages():
-      shutil.rmtree(os.path.join(runtimeCacheDir,imageId))
+  try:
+    for imageId in os.listdir(runtimeCacheDir):
+      if not imageId in user.getInstalledImages():
+        shutil.rmtree(os.path.join(runtimeCacheDir,imageId))
+  except FileNotFoundError:
+    pass
 
 def cleanUpAfterImproperlyTerminatedServices(user):
   """

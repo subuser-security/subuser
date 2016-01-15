@@ -1,0 +1,10 @@
+# Copy of With-one-subuser-named-foo
+With-one-subuser-named-foo
+add-subuser-§€č
+add-subuser-foo
+-h
+no-arguments
+remove-non-existant-subuser
+non-existant-sub-command
+edit-permissions-no-arguments
+edit-permissions-non-existant-subuser

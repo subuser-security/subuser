@@ -1,6 +1,4 @@
-#!/usr/bin/env python
-# This file should be compatible with both Python 2 and 3.
-# If it is not, please file a bug report.
+# -*- coding: utf-8 -*-
 
 """
 File locking helper functions. Originally taken from http://stackoverflow.com/questions/5255220/fcntl-flock-how-to-implement-a-timeout

@@ -1,0 +1,6 @@
+Removing subuser foo
+ If you wish to remove the subusers image, issue the command $ subuser remove-old-images
+Verifying subuser configuration.
+Verifying registry consistency...
+Unregistering any non-existant installed images.
+Running garbage collector on temporary repositories...

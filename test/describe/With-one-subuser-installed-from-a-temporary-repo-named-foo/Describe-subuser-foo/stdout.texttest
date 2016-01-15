@@ -1,0 +1,7 @@
+ Description: bar
+Subuser: foo
+------------------
+bar@file:////home/timothy/.texttest/tmp/texttest.27Dec211543.21006/texttest/describe/With-one-subuser-installed-from-a-temporary-repo-named-foo/Describe-subuser-foo/test-repos/remote-test-repo
+ Maintainer: fred
+ Executable: /usr/bin/bar
+

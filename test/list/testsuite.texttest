@@ -1,0 +1,9 @@
+With-one-subuser-installed-from-a-temporary-repo-named-foo
+With-one-subuser-named-foo
+List-available-from-UTF8-URI
+List-available-from-URI
+List-available-from-non-existant-URI
+List-available-from-invalid-URI
+no-arguments
+-h
+non-existant-sub-command

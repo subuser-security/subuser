@@ -1,6 +1,4 @@
-#!/usr/bin/env python
-# This file should be compatible with both Python 2 and 3.
-# If it is not, please file a bug report.
+# -*- coding: utf-8 -*-
 
 """
 High level operations used for interacting with the subuser registry.
@@ -13,7 +11,7 @@ import subuserlib.verify
 import subuserlib.subprocessExtras as subprocessExtras
 
 def showLog(user):
-  user.getRegistry().getGitRepository().run(["log"])
+  user.getRegistry().getGitRepository().runShowOutput(["log"])
 
 def checkoutNoCommit(user,commit):
   subprocessExtras.call(["rm","-rf","*"],cwd=user.getConfig()["registry-dir"])

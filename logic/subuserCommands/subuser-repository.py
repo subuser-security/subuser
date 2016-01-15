@@ -1,6 +1,5 @@
-#!/usr/bin/env python
-# This file should be compatible with both Python 2 and 3.
-# If it is not, please file a bug report.
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
 
 try:
   import pathConfig
@@ -40,69 +39,13 @@ def parseCliArgs(sysargs):
 def repository(sysargs):
   """
   Manage named subuser repositories.
-
-  Tests
-  -----
-
-  **Setup:**
-
-  >>> repository = __import__("subuser-repository") #import self
-
-  Check our assumptions about the initial state of the test environment.
-
-  >>> user = User()
-  >>> set(user.getRegistry().getRepositories().keys()) == set([u'default'])
-  True
-
-  Add a new repository named ``remote-repo``.
-
-  >>> repository.repository(["add","remote-repo","file:///home/travis/remote-test-repo"])
-  Adding new repository remote-repo
-
-  See that it was actually successfully added.
-
-  >>> user = User()
-  >>> set(user.getRegistry().getRepositories().keys()) == set([u'default', 'remote-repo'])
-  True
-
-  Remove the ``remote-repo`` repository.
-
-  >>> repository.repository(["remove","remote-repo"])
-  Removing repository remote-repo
-
-  See that it was actually removed.
-
-  >>> user = User()
-  >>> set(user.getRegistry().getRepositories().keys()) == set([u'default'])
-  True
-
-
-  Add a new repository named ``local-repo`` which is just a folder on the local system.
-
-  >>> repository.repository(["add","local-repo","/home/travis/remote-test-repo"])
-  Adding new repository local-repo
-
-  See that it was actually successfully added.
-
-  >>> user = User()
-  >>> set(user.getRegistry().getRepositories().keys()) == set([u'default', 'local-repo'])
-  True
-
-  Remove the ``local-repo`` repository.
-
-  >>> repository.repository(["remove","local-repo"])
-  Removing repository local-repo
-
-  See that it was actually removed.
-
-  >>> user = User()
-  >>> set(user.getRegistry().getRepositories().keys()) == set([u'default'])
-  True
-
   """
   options,args = parseCliArgs(sysargs)
   user = User()
-  action = args[0]
+  try:
+    action = args[0]
+  except IndexError:
+    sys.exit("Use subuser repository --help for help.")
   if action == "add":
     if not len(args) == 3:
       sys.exit("Use subuser repository --help for help.")
@@ -123,4 +66,3 @@ def repository(sysargs):
 
 if __name__ == "__main__":
   repository(sys.argv[1:])
-

@@ -1,6 +1,4 @@
-#!/usr/bin/env python
-# This file should be compatible with both Python 2 and 3.
-# If it is not, please file a bug report.
+# -*- coding: utf-8 -*-
 
 """
 An x11 bridge provides a secure/firewalled link between a desktop application and the host x11 server. In this case, we use XPRA to do the bridging.
@@ -101,7 +99,10 @@ class XpraX11Bridge(Service):
       self.setupServerPermissions()
       self.setupClientPermissions()
       newSubuserNames = [self.getServerSubuserName(),self.getClientSubuserName()]
-    return newSubuserNames
+    newSubusers = []
+    for newSubuserName in newSubuserNames:
+      newSubusers.append(self.getUser().getRegistry().getSubusers()[newSubuserName])
+    return newSubusers
 
   def getXpraVolumePath(self):
     return os.path.join(self.getUser().getConfig()["volumes-dir"],"xpra",self.getSubuser().getName())
@@ -236,14 +237,14 @@ class XpraX11Bridge(Service):
     while True:
       where = process.stderr_file.tell()
       line = process.stderr_file.readline()
-      if (not line) or (line[-1:] != '\n'):
+      while (not line):# or (line[-1:] != '\n'):
         time.sleep(0.1)
         process.stderr_file.seek(where)
-      else:
-        if not suppressOutput:
-          print(line[:-1])
-        if readyString in line:
-          break
+        line = process.stderr_file.readline()
+      if not suppressOutput:
+        subuserlib.print.printWithoutCrashing(line[:-1])
+      if readyString in line:
+        break
     process.stderr_file.close()
 
   def stop(self,serviceStatus):

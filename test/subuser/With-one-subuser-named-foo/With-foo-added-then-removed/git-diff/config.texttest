@@ -1,0 +1,4 @@
+executable:/pwd/test/subuser/With-one-subuser-named-foo/With-foo-added-then-removed/git-diff/run.sh
+
+[run_dependent_text]
+stdout:index

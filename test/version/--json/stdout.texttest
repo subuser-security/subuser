@@ -1,0 +1,6 @@
+{
+ "subuser-version": "0.5",
+ "docker-info": {
+  "Foo": "bar"
+ }
+}

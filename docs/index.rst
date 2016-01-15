@@ -48,7 +48,7 @@ Subuser - Portability, Security, Maintainability
   function toggleAutoplay(){
     playPauseButton = document.getElementById("playPauseButton")
     playPauseButtonText = "Play";
-    autoplay = !autoplay 
+    autoplay = !autoplay
     if(autoplay){
       playPauseButtonText = "Pause"
     }
@@ -74,7 +74,7 @@ This is a talk I did back before subuser 0.3 came out. Back before I had the :do
     <video width="480" height="320" controls>
      <source src="_static/images/subuser-vision.mp4" type="video/mp4">
      Your browser does not support the video tag. You can download the video of the talk <a href="_static/images/subuser-vision.mp4">here</a>.
-    </video> 
+    </video>
 
 Howerver, the vision remains...
 
@@ -88,6 +88,7 @@ Index
   :maxdepth: 2
 
   what-is-subuser
+  features
   news
   security
   installation

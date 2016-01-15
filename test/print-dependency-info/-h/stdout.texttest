@@ -1,0 +1,10 @@
+Usage: subuser print-dependency-info IMAGE_NAME(s) SETS_OF_IMAGES
+
+Prints information about how the listed images relate to each other:
+
+Example:
+
+    $ subuser print-dependency-info foo@default
+
+Options:
+  -h, --help  show this help message and exit

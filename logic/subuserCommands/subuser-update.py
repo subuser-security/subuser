@@ -1,6 +1,5 @@
-#!/usr/bin/env python
-# This file should be compatible with both Python 2 and 3.
-# If it is not, please file a bug report.
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
 
 # This command updates all or some of the installed subuser images.
 try:
@@ -53,310 +52,6 @@ def parseCliArgs(realArgs):
 def update(realArgs):
   """
   Update your subuser installation.
-
-  Tests
-  -----
-
-  **Setup:**
-
-  >>> import os
-  >>> import subuserlib.permissions
-  >>> from subuserlib.classes.permissions import Permissions
-  >>> update = __import__("subuser-update")
-  >>> subuser = __import__("subuser-subuser")
-  >>> repository = __import__("subuser-repository")
-  >>> import subuserlib.classes.gitRepository
-
-  Check initial test environment:
-
-  >>> user = User()
-  >>> set(user.getRegistry().getSubusers().keys()) == set([u'foo'])
-  True
-  >>> set([i.getImageSourceName() for i in user.getInstalledImages().values()]) == set([u'foo', u'bar'])
-  True
-
-  Add a subuser who's image has a lot of dependencies.
-
-  >>> subuser.subuser(["add","--accept","dependent","dependent@file:///home/travis/remote-test-repo"])
-  Adding subuser dependent dependent@file:///home/travis/remote-test-repo
-  Verifying subuser configuration.
-  Verifying registry consistency...
-  Unregistering any non-existant installed images.
-  dependent would like to have the following permissions:
-   Description: a dependent
-   Maintainer:
-   Is a library.
-   Moderate permissions(These are probably safe):
-    - user-dirs: To access to the following user directories: '~/Downloads'
-    - sound-card: To access to your soundcard, can play sounds/record sound.
-   Liberal permissions(These may pose a security risk):
-    - x11: To display X11 windows and interact with your X11 server directly(log keypresses, read over your shoulder, steal your passwords, controll your computer ect.)
-    - system-dirs: To read and write to the host's `/var/log` directory, mounted in the container as:`/var/log`
-   WARNING: These permissions give the subuser full access to your system when run.
-    - privileged: To have full access to your system.  To even do things as root outside of its container.
-  A - Accept and apply changes
-  E - Apply changes and edit result
-  A
-  Checking if images need to be updated or installed...
-  Checking if subuser dependent is up to date.
-  New images for the following subusers need to be installed:
-  dependent
-  Installing dependency1 ...
-  Building...
-  Building...
-  Building...
-  Successfully built 13
-  Building...
-  Building...
-  Building...
-  Successfully built 14
-  Installing intermediary ...
-  Building...
-  Building...
-  Building...
-  Successfully built 15
-  Building...
-  Building...
-  Building...
-  Successfully built 16
-  Installing dependent ...
-  Building...
-  Building...
-  Building...
-  Successfully built 17
-  Building...
-  Building...
-  Building...
-  Successfully built 18
-  Installed new image <18> for subuser dependent
-  Running garbage collector on temporary repositories...
-
-  Check that our new subuser was successfully added.
-
-  >>> user = User()
-  >>> subuserNamesBeforeUpdate = user.getRegistry().getSubusers().keys()
-  >>> set(subuserNamesBeforeUpdate) == set(['dependent', u'foo'])
-  True
-
-  And that its image, along with all of its dependencies were added as well.
-
-  >>> installedImagesBeforeUpdate = [i.getImageSourceName() for i in user.getInstalledImages().values()]
-  >>> set(installedImagesBeforeUpdate) == set([u'foo', u'dependency1', u'bar', u'dependent', u'intermediary'])
-  True
-
-  Running update, when there is nothing to be updated, does nothing.
-
-  >>> update.update(["all","--accept"])
-  Updating...
-  Verifying subuser configuration.
-  Verifying registry consistency...
-  Unregistering any non-existant installed images.
-  Checking if images need to be updated or installed...
-  Checking if subuser dependent is up to date.
-  Checking for updates to: dependency1@file:///home/travis/remote-test-repo
-  Checking for updates to: intermediary@file:///home/travis/remote-test-repo
-  Checking for updates to: dependent@file:///home/travis/remote-test-repo
-  Checking if subuser foo is up to date.
-  Checking for updates to: foo@default
-  Running garbage collector on temporary repositories...
-
-  The same subusers are still installed.
-
-  >>> user = User()
-  >>> set(user.getRegistry().getSubusers().keys()) == set(subuserNamesBeforeUpdate)
-  True
-
-  And the same images too.
-
-  >>> set([i.getImageSourceName() for i in user.getInstalledImages().values()]) == set(installedImagesBeforeUpdate)
-  True
-
-  However, if we change ``dependent``'s image source's permissions, the user is asked to approve the new permissions:
-
-  >>> permissionsPath = "/home/travis/remote-test-repo/dependent/permissions.json"
-  >>> permissions = Permissions(user,subuserlib.permissions.load(permissionsFilePath=permissionsPath),writePath=permissionsPath)
-  >>> del permissions["sound-card"]
-  >>> permissions["user-dirs"] = ["Images","Downloads"]
-  >>> permissions.save()
-
-  >>> try:
-  ...   import urlparse
-  ... except ImportError:
-  ...   import urllib.parse as urlparse
-  >>> repo1 = subuserlib.classes.gitRepository.GitRepository("/home/travis/remote-test-repo/")
-  >>> repo1.run(["commit","-a","-m","changed dependent's permissions"])
-  0
-
-  >>> update.update(["all","--accept"])
-  Updating...
-  Updated repository file:///home/travis/remote-test-repo
-  Verifying subuser configuration.
-  Verifying registry consistency...
-  Unregistering any non-existant installed images.
-  dependent would like to add/change the following permissions:
-     - To access to the following user directories: '~/Images' '~/Downloads'
-  dependent no longer needs the following permissions:
-     - To access to your soundcard, can play sounds/record sound.
-  A - Accept and apply changes
-  E - Apply changes and edit result
-  e - Ignore request and edit permissions by hand
-  A
-  Checking if images need to be updated or installed...
-  Checking if subuser dependent is up to date.
-  Checking for updates to: dependency1@file:///home/travis/remote-test-repo
-  Checking for updates to: intermediary@file:///home/travis/remote-test-repo
-  Checking for updates to: dependent@file:///home/travis/remote-test-repo
-  Checking if subuser foo is up to date.
-  Checking for updates to: foo@default
-  Running garbage collector on temporary repositories...
-
-  Now we change the ImageSource for the ``intermediary`` image.
-
-  >>> with open("/home/travis/remote-test-repo/images/intermediary/image/SubuserImagefile",mode="w") as subuserImagefile:
-  ...   _ = subuserImagefile.write("FROM-SUBUSER-IMAGE dependency2")
-
-  And commit the changes to git.
-
-  >>> repo1.run(["commit","-a","-m","changed dependency for intermediate from dependency1 to dependency2"])
-  0
-
-  Running an update after a change installs new images and registers them with their subusers.  But it does not delete the old ones.
-
-  >>> update.update(["all","--accept"])
-  Updating...
-  Updated repository file:///home/travis/remote-test-repo
-  Verifying subuser configuration.
-  Verifying registry consistency...
-  Unregistering any non-existant installed images.
-  Checking if images need to be updated or installed...
-  Checking if subuser dependent is up to date.
-  Checking if subuser foo is up to date.
-  Checking for updates to: foo@default
-  New images for the following subusers need to be installed:
-  dependent
-  Installing dependency2 ...
-  Building...
-  Building...
-  Building...
-  Successfully built 21
-  Building...
-  Building...
-  Building...
-  Successfully built 22
-  Installing intermediary ...
-  Building...
-  Building...
-  Building...
-  Successfully built 23
-  Building...
-  Building...
-  Building...
-  Successfully built 24
-  Installing dependent ...
-  Building...
-  Building...
-  Building...
-  Successfully built 25
-  Building...
-  Building...
-  Building...
-  Successfully built 26
-  Installed new image <26> for subuser dependent
-  Running garbage collector on temporary repositories...
-
-  >>> user = User()
-  >>> set(user.getRegistry().getSubusers().keys()) == set(['dependent', u'foo'])
-  True
-
-  >>> set([i.getImageSourceName() for i in user.getInstalledImages().values()]) == set([u'foo', u'dependency1', u'bar', u'dependent', u'intermediary', u'intermediary', u'dependency2', u'dependent'])
-  True
-
-  Old images are not deleted so that update lock-subuser-to and update rollback still work. In this example, dependency1 stays installed.
-
-  Now we lock the dependent subuser and try changing it again.
-
-  >>> update.update(["lock-subuser-to","dependent","HEAD"])
-  Locking subuser dependent to commit: HEAD
-  Verifying subuser configuration.
-  Verifying registry consistency...
-  Unregistering any non-existant installed images.
-  Running garbage collector on temporary repositories...
-
-  >>> with open("/home/travis/remote-test-repo/images/intermediary/image/SubuserImagefile",mode="w") as subuserImagefile:
-  ...   _ = subuserImagefile.write("FROM-SUBUSER-IMAGE dependency3")
-
-  And commit the changes to git.
-
-  >>> repo1.run(["commit","-a","-m","changed dependency for intermediate from dependency2 to dependency3"])
-  0
-
-  Running an update after a change does nothing because the affected subuser is locked.
-
-  >>> update.update(["all","--accept"])
-  Updating...
-  Updated repository file:///home/travis/remote-test-repo
-  Verifying subuser configuration.
-  Verifying registry consistency...
-  Unregistering any non-existant installed images.
-  Checking if images need to be updated or installed...
-  Checking if subuser foo is up to date.
-  Checking for updates to: foo@default
-  Running garbage collector on temporary repositories...
-
-  >>> user = User()
-  >>> set(user.getRegistry().getSubusers().keys()) == set(['dependent', u'foo'])
-  True
-
-  >>> set([i.getImageSourceName() for i in user.getInstalledImages().values()]) == set([u'foo', u'dependency1', u'bar', u'dependent', u'intermediary', u'intermediary', u'dependency2', u'dependent'])
-  True
-
-  When we unlock the subuser it gets updated imediately.
-
-  >>> update.update(["unlock-subuser","--accept","dependent"])
-  Unlocking subuser dependent
-  Verifying subuser configuration.
-  Verifying registry consistency...
-  Unregistering any non-existant installed images.
-  Checking if images need to be updated or installed...
-  Checking if subuser dependent is up to date.
-  New images for the following subusers need to be installed:
-  dependent
-  Installing dependency3 ...
-  Building...
-  Building...
-  Building...
-  Successfully built 28
-  Building...
-  Building...
-  Building...
-  Successfully built 29
-  Installing intermediary ...
-  Building...
-  Building...
-  Building...
-  Successfully built 30
-  Building...
-  Building...
-  Building...
-  Successfully built 31
-  Installing dependent ...
-  Building...
-  Building...
-  Building...
-  Successfully built 32
-  Building...
-  Building...
-  Building...
-  Successfully built 33
-  Installed new image <33> for subuser dependent
-  Running garbage collector on temporary repositories...
-
-  >>> user = User()
-  >>> set(user.getRegistry().getSubusers().keys()) == set(['dependent', u'foo'])
-  True
-
-  >>> set([i.getImageSourceName() for i in user.getInstalledImages().values()]) == set([u'foo', u'dependency1', u'bar', u'dependent', u'intermediary', u'intermediary', u'dependency2',u'dependency3', u'dependent'])
-  True
   """
   options,args = parseCliArgs(realArgs)
   user = User()
@@ -367,23 +62,41 @@ def update(realArgs):
     with user.getRegistry().getLock():
       subuserlib.update.all(user,permissionsAccepter=permissionsAccepter,prompt=options.prompt)
   elif "subusers" == args[0]:
-    with user.getRegistry().getLock():
-      subuserlib.update.subusers(user,args[1:],permissionsAccepter=permissionsAccepter,prompt=options.prompt)
+    subuserNamesToUpdate = args[1:]
+    subusersToUpdate = []
+    for subuserName in subuserNamesToUpdate:
+      try:
+        subusersToUpdate.append(user.getRegistry().getSubusers()[subuserName])
+      except KeyError:
+        sys.exit("Subuser "+subuserName+" does not exist. Use --help for help.")
+    if subusersToUpdate:
+      with user.getRegistry().getLock():
+        subuserlib.update.subusers(user,subusers=subusersToUpdate,permissionsAccepter=permissionsAccepter,prompt=options.prompt)
+    else:
+      sys.exit("You did not specify any subusers to be updated. Use --help for help. Exiting...")
   elif "lock-subuser-to" == args[0]:
     try:
       subuserName = args[1]
       commit = args[2]
-    except KeyError:
+    except IndexError:
       sys.exit("Wrong number of arguments.  Expected a subuser name and a commit.  Try running\nsubuser update --help\n for more info.")
     with user.getRegistry().getLock():
-      subuserlib.update.lockSubuser(user,subuserName=subuserName,commit=commit)
+      try:
+        subuser = user.getRegistry().getSubusers()[subuserName]
+      except KeyError:
+        sys.exit("Subuser "+subuserName+" does not exist and therefore cannot be locked. Use --help for help.")
+      subuserlib.update.lockSubuser(user,subuser=subuser,commit=commit)
   elif "unlock-subuser" == args[0]:
     try:
       subuserName = args[1]
-    except KeyError:
+    except IndexError:
       sys.exit("Wrong number of arguments.  Expected a subuser's name. Try running\nsubuser update --help\nfor more information.")
+    try:
+      subuser = user.getRegistry().getSubusers()[subuserName]
+    except KeyError:
+      sys.exit("Subuser "+subuserName+" does not exist. Cannot lock. Use --help for help.")
     with user.getRegistry().getLock():
-      subuserlib.update.unlockSubuser(user,subuserName=subuserName,permissionsAccepter=permissionsAccepter,prompt=options.prompt)
+      subuserlib.update.unlockSubuser(user,subuser=subuser,permissionsAccepter=permissionsAccepter,prompt=options.prompt)
   elif len(args) == 1:
     sys.exit(" ".join(args) + " is not a valid update subcommand. Please use subuser update -h for help.")
   else:

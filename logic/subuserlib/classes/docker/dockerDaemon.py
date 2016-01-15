@@ -1,6 +1,4 @@
-#!/usr/bin/env python
-# This file should be compatible with both Python 2 and 3.
-# If it is not, please file a bug report.
+# -*- coding: utf-8 -*-
 
 """
 The DockerDaemon object allows us to communicate with the Docker daemon via the Docker HTTP REST API.
@@ -90,7 +88,7 @@ def readAndPrintStreamingBuildStatus(user,response):
       elif "status" in lineDict:
         user.getRegistry().log(lineDict["status"])
       elif "errorDetail" in lineDict:
-        raise exceptions.ImageBuildException("Build error:"+lineDict["errorDetail"]["message"]+"\n"+response.read())
+        raise exceptions.ImageBuildException("Build error:"+lineDict["errorDetail"]["message"]+"\n"+response.read().decode())
       else:
         raise excpetions.ImageBuildException("Build error:"+jsonSegmentBytes.decode("utf-8")+"\n"+response.read())
       jsonSegmentBytes = b''
@@ -174,16 +172,9 @@ class DockerDaemon(UserOwnedObject):
       dockerignore = "./.dockerignore"
       if repositoryFileStructure.exists(dockerignore):
         exclude = list(filter(bool, repositoryFileStructure.read(dockerignore).split('\n')))
-    # Python 2.x ONLY works with unnamed temporary files.
-    # Python 3.x ONLY works with named temporary files
-    if sys.version_info[0] == 2:
-      with tempfile.TemporaryFile() as tmpArchive:
-        archiveBuildContext(tmpArchive,relativeBuildContextPath=relativeBuildContextPath,repositoryFileStructure=repositoryFileStructure,excludePatterns=excludePatterns,dockerfile=dockerfile)
-        self.getConnection().request("POST","/v1.13/build?"+queryParametersString,body=tmpArchive)
-    if sys.version_info[0] == 3:
-      with tempfile.NamedTemporaryFile() as tmpArchive:
-        archiveBuildContext(tmpArchive,relativeBuildContextPath=relativeBuildContextPath,repositoryFileStructure=repositoryFileStructure,excludePatterns=excludePatterns,dockerfile=dockerfile)
-        self.getConnection().request("POST","/v1.13/build?"+queryParametersString,body=tmpArchive)
+    with tempfile.NamedTemporaryFile() as tmpArchive:
+      archiveBuildContext(tmpArchive,relativeBuildContextPath=relativeBuildContextPath,repositoryFileStructure=repositoryFileStructure,excludePatterns=excludePatterns,dockerfile=dockerfile)
+      self.getConnection().request("POST","/v1.13/build?"+queryParametersString,body=tmpArchive)
     try:
       response = self.getConnection().getresponse()
     except httplib.ResponseNotReady as rnr:

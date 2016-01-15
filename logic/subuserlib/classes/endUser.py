@@ -1,6 +1,4 @@
-#!/usr/bin/env python
-# This file should be compatible with both Python 2 and 3.
-# If it is not, please file a bug report.
+# -*- coding: utf-8 -*-
 
 """
 The ``EndUser`` object the object that represents the user account owned by the human user of the system. It is possible to run subuser using a different user account, in order to isolate root from the end user's user account.

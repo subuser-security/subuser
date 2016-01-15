@@ -1,6 +1,4 @@
-#!/usr/bin/env python
-# This file should be compatible with both Python 2 and 3.
-# If it is not, please file a bug report.
+# -*- coding: utf-8 -*-
 # pylint: disable=unused-argument
 
 """
@@ -13,6 +11,7 @@ import os
 #internal imports
 from subuserlib.classes.userOwnedObject import UserOwnedObject
 import subuserlib.classes.docker.dockerDaemon
+import subuserlib.print
 
 class MockDockerDaemon(UserOwnedObject):
   def __init__(self,user):
@@ -20,7 +19,7 @@ class MockDockerDaemon(UserOwnedObject):
     self.nextImageId = 1
     self.newId = None
     UserOwnedObject.__init__(self,user)
-    self.imagesPath = "/home/travis/docker/images.json"
+    self.imagesPath = os.path.join(user.homeDir,"docker/images.json")
     self.__load()
     self.dockerDaemon = subuserlib.classes.docker.dockerDaemon.RealDockerDaemon(user)
     self.connection = MockConnection(self)
@@ -69,14 +68,15 @@ class MockDockerDaemon(UserOwnedObject):
   def getInfo(self):
     return {"Foo":"bar"}
 
-  def execute(self,args,cwd=None):
-    pass
+  def execute(self,args,cwd=None,background=False,backgroundSuppressOutput=True,backgroundCollectStdout=False,backgroundCollectStderr=False):
+    subuserlib.print.printWithoutCrashing("Execute docker with args: "+str(args))
+    subuserlib.print.printWithoutCrashing("Cwd:"+str(cwd))
 
 class MockResponse():
   def __init__(self,mockDockerDaemon):
     self.mockDockerDaemon = mockDockerDaemon
     self.status = 200
-    self.body = b"{\"stream\":\"Building...\"}\n{\"stream\":\"Building...\"}\n{\"stream\":\"Building...\"}\n{\"stream\":\"Successfully built "+mockDockerDaemon.newId.encode("utf-8")+b"\"}"
+    self.body = b"{\"stream\":\"Building"+"→→→".encode("utf-8")+b"\"}\n{\"stream\":\"Building...\"}\n{\"stream\":\"Building...\"}\n{\"stream\":\"Successfully built "+mockDockerDaemon.newId.encode("utf-8")+b"\"}"
 
   def read(self,bytes=None):
     if bytes:

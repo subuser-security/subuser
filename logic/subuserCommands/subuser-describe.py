@@ -1,6 +1,5 @@
-#!/usr/bin/env python
-# This file should be compatible with both Python 2 and 3.
-# If it is not, please file a bug report.
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
 
 try:
   import pathConfig
@@ -14,6 +13,7 @@ import subuserlib.classes.user
 import subuserlib.commandLineArguments
 import subuserlib.resolve
 import subuserlib.profile
+import subuserlib.print
 
 def parseCliArgs(sysargs):
   usage = "usage: subuser describe [subuser|image] SUBUSER(s)/IMAGE(s)"
@@ -33,42 +33,11 @@ EXAMPLE:
 def describe(sysargs):
   """
   Describe subusers and images.
-
-  >>> describe = __import__("subuser-describe") #import self
-
-  Describing a subuser prints its permissions.
-
-  >>> describe.describe(["subuser","foo"])
-  Subuser: foo
-  ------------------
-  foo@default
-   Description:
-   Maintainer:
-   Executable: /usr/bin/foo
-  <BLANKLINE>
-
-  Describing an image prints the default permissions for that image.
-
-  >>> describe.describe(["image","foo"])
-  foo@default
-   Description:
-   Maintainer:
-   Executable: /usr/bin/foo
-
-  Images can be refered to with their full paths as well.  Even remote images can be described.
-
-  >>> describe.describe(["image","foo@default"])
-  foo@default
-   Description:
-   Maintainer:
-   Executable: /usr/bin/foo
   """
   user = subuserlib.classes.user.User()
   (options,args) = parseCliArgs(sysargs)
   if len(args) < 2:
-    print("Args: '"+"' '".join(args)+"'")
-    print("Wrong number of arguments.")
-    #parseCliArgs(["","subuser","describe","--help"])
+    subuserlib.print.printWithoutCrashing("Nothing to describe. Use -h for help.")
   elif args[0] == "image":
     for image in args[1:]:
       subuserlib.resolve.resolveImageSource(user,image).describe()
@@ -79,8 +48,8 @@ def describe(sysargs):
       except KeyError:
         sys.exit("Subuser "+subuser+" does not exist.")
   else:
-    print("Args: '"+"' '".join(args)+"'")
-    print("Option not supported.")
+    subuserlib.print.printWithoutCrashing("Args: '"+"' '".join(args)+"'")
+    subuserlib.print.printWithoutCrashing("Option not supported.")
 
 if __name__ == "__main__":
   describe(sys.argv[1:])

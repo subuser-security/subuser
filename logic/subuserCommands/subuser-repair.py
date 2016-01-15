@@ -1,6 +1,5 @@
-#!/usr/bin/env python
-# This file should be compatible with both Python 2 and 3.
-# If it is not, please file a bug report.
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
 
 try:
   import pathConfig
@@ -35,9 +34,8 @@ def verify(realArgs):
   user = User()
   permissionsAccepter = AcceptPermissionsAtCLI(user,alwaysAccept = options.accept)
   with user.getRegistry().getLock() as LockFileHandle:
-    subuserNames = list(user.getRegistry().getSubusers().keys())
-    subuserNames.sort()
-    subuserlib.verify.verify(user,subuserNames=subuserNames,permissionsAccepter=permissionsAccepter,prompt=options.prompt)
+    subusers = user.getRegistry().getSubusers().getSortedList()
+    subuserlib.verify.verify(user,subusers=subusers,permissionsAccepter=permissionsAccepter,prompt=options.prompt)
     user.getRegistry().commit()
 
 if __name__ == "__main__":

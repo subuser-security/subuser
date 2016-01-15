@@ -1,6 +1,4 @@
-#!/usr/bin/env python
-# This file should be compatible with both Python 2 and 3.
-# If it is not, please file a bug report.
+# -*- coding: utf-8 -*-
 
 """
 Each user's settings are stored in a "registry". This is a git repository with a set of json files which store the state of the subuser installation.
@@ -18,19 +16,25 @@ from subuserlib.classes import subusers
 from subuserlib.classes import userOwnedObject
 from subuserlib.classes.gitRepository import GitRepository
 import subuserlib.lock
+import subuserlib.print
 
 class Registry(userOwnedObject.UserOwnedObject):
   def __init__(self,user,gitReadHash="master"):
     self.__subusers = None
     self.__changeLog = u""
     self.__changed = False
-    self.__logOutputVerbosity = 2
+    self.__logOutputVerbosity = 1
+    self.initialized = False
+    if "SUBUSER_VERBOSITY" in os.environ:
+      try:
+        self.__logOutputVerbosity = int(os.environ["SUBUSER_VERBOSITY"])
+      except ValueError:
+        subuserlib.print.printWithoutCrashing("Invalid verbosity setting! Verbosity may be set to any integer.")
     self.__repositories = None
     self.__gitRepository = None
     self.__gitReadHash = gitReadHash
     userOwnedObject.UserOwnedObject.__init__(self,user)
-    self.__gitRepository = GitRepository(self.getUser().getConfig()["registry-dir"])
-    self._ensureGitRepoInitialized()
+    self.__gitRepository = GitRepository(self.getUser(),self.getUser().getConfig()["registry-dir"])
 
   def getGitRepository(self):
     return self.__gitRepository
@@ -39,25 +43,23 @@ class Registry(userOwnedObject.UserOwnedObject):
     return self.__gitReadHash
 
   def getSubusers(self):
-    if not self.__subusers:
+    if self.__subusers is None:
       self.__subusers = subusers.Subusers(self.getUser())
     return self.__subusers
-
-  def reloadSubusersFromDisk(self):
-    """
-    Discard all changes to the subusers list in memory and reload from disk.
-    """
-    self.__subusers = None
 
   def getRepositories(self):
     if not self.__repositories:
       self.__repositories = repositories.Repositories(self.getUser())
     return self.__repositories
 
-  def _ensureGitRepoInitialized(self):
+  def ensureGitRepoInitialized(self):
     if not os.path.exists(self.getUser().getConfig()["registry-dir"]):
+      self.initialized = False
       os.makedirs(self.getUser().getConfig()["registry-dir"])
       self.getGitRepository().run(["init"])
+      self.logChange("Initial commit.")
+      self.commit()
+    self.initialized = True
 
   def setLogOutputVerbosity(self,level):
     self.__logOutputVerbosity = level
@@ -65,20 +67,23 @@ class Registry(userOwnedObject.UserOwnedObject):
   def getLogOutputVerbosity(self):
     return self.__logOutputVerbosity
 
-  def log(self,message):
+  def log(self,message,verbosityLevel=1):
     """
-    Add a log message to the registry's change log and print it to the screen, but do not mark the registry as changed.
+    If the current verbosity level is equal to or greater than verbosityLevel, print the message to the screen.
+    If the current verbosity level is equal to or greater than verbosityLevel minus one, add the message to the log.
+    Do not mark the registry as changed.
     """
     message = message.rstrip()
-    self.__changeLog = self.__changeLog + message+u"\n"
-    if self.getLogOutputVerbosity() > 0:
-      print(message)
+    if (verbosityLevel-1) <= self.getLogOutputVerbosity():
+      self.__changeLog = self.__changeLog + message + u"\n"
+    if verbosityLevel <= self.getLogOutputVerbosity():
+      subuserlib.print.printWithoutCrashing(message)
 
-  def logChange(self,message):
+  def logChange(self,message,verbosityLevel=1):
     """
     Add a log message to the registry's change log, and mark the registry as changed.
     """
-    self.log(message)
+    self.log(message,verbosityLevel=verbosityLevel)
     self.__changed = True
 
   def setChanged(self,changed=True):

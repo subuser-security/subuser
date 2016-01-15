@@ -1,0 +1,9 @@
+
+Repository: file:////home/timothy/.texttest/tmp/texttest.27Dec215714.3120/texttest/list/With-one-subuser-installed-from-a-temporary-repo-named-foo/List-repositories-long/test-repos/remote-test-repo
+------------
+Is a temporary repository.
+
+Repository: default
+------------
+Cloned from: file:///home/timothy/.texttest/tmp/texttest.27Dec215714.3120/texttest/list/With-one-subuser-installed-from-a-temporary-repo-named-foo/List-repositories-long/test-repos/default-test-repo
+Currently at commit: 05addf0f3c4a75a692bdb6b466127947aa411e59

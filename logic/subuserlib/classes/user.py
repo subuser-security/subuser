@@ -1,6 +1,4 @@
-#!/usr/bin/env python
-# This file should be compatible with both Python 2 and 3.
-# If it is not, please file a bug report.
+# -*- coding: utf-8 -*-
 
 """
 The ``User`` object is the base object which owns all other objects in a running subuser instance.
@@ -40,7 +38,7 @@ class User(object):
     if homeDir:
       self.homeDir = homeDir
     elif test.testing:
-      self.homeDir = "/home/travis/test-home"
+      self.homeDir = os.getcwd()
     else:
       self.homeDir = os.path.expanduser("~")
     self.__endUser = EndUser(self)
@@ -66,6 +64,7 @@ class User(object):
     """
     if self.__registry == None:
       self.__registry = registry.Registry(self)
+      self.__registry.ensureGitRepoInitialized()
     return self.__registry
 
   def reloadRegistry(self):

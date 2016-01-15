@@ -1,0 +1,40 @@
+Usage: subuser pkg [init|add|test] IMAGE-SOURCE-NAMES <args>
+
+ Packaging subucommands. These commands are to be issued from the root of a subuser repository.
+
+  init - Initialize a subuser repository.
+
+  add - Add an image source to the repository.
+  Usage: $ subuser pkg add image-source-name
+
+  test - Test image sources by building and running them.
+  Usage: $ subuser pkg test image-source-name
+  Note: after running test, you may want to run ``$ subuser remove-old-images --repo=./``
+
+  
+Options:
+  -h, --help            show this help message and exit
+  --accept              When testing images, accept permissions without
+                        asking.
+  --prompt              Prompt before installing new images.
+  --image-sources-dir=IMAGESOURCESDIR
+                        When initializing a new repository, set where the
+                        image source directories will be stored. This may be
+                        set when you are working with an existing git
+                        repository which you would like to unobtrusively add
+                        subuser image sources too.
+  --permissions-file=PERMISSIONSFILE
+                        When adding a new image source, the path to the new
+                        permissions.json file for the image source. Note: This
+                        flag should not be used to import permissions files
+                        from outside of the repository. Use the POSIX cp
+                        command for that.
+  --image-file=IMAGEFILE
+                        When adding a new image source, the path to the new
+                        image file which will be used to build the image
+                        source. Note: This flag should not be used to import
+                        build files from outside of the repository. Use the
+                        POSIX cp command for that.
+  --build-context=BUILDCONTEXT
+                        When adding a new image source, the path to the build
+                        context for building the image.

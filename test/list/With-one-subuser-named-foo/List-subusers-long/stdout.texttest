@@ -1,0 +1,8 @@
+The following subusers are registered.
+ Description:
+Subuser: foo
+------------------
+foo@default
+ Maintainer:
+ Executable: /usr/bin/foo
+

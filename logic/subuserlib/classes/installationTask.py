@@ -1,6 +1,4 @@
-#!/usr/bin/env python
-# This file should be compatible with both Python 2 and 3.
-# If it is not, please file a bug report.
+# -*- coding: utf-8 -*-
 
 """
 Implements functions involved in building/installing/updating subuser images.
@@ -33,7 +31,7 @@ class InstallationTask(UserOwnedObject):
       self.__outOfDateSubusers = set()
       for subuser in self.__subusersToBeUpdated:
         try:
-          if not (subuser.locked() and (subuser.getImageSource().getLatestInstalledImage() is not None)):
+          if (not subuser.locked()) and (not (subuser.getImageSource().getLatestInstalledImage() is None)):
             self.getUser().getRegistry().log("Checking if subuser "+subuser.getName()+" is up to date.")
             for imageSource in getTargetLineage(subuser.getImageSource()):
               if imageSource in self.__upToDateImageSources:
@@ -49,12 +47,11 @@ class InstallationTask(UserOwnedObject):
                 self.__outOfDateSubusers.add(subuser)
                 break
           if subuser.getImageId() is None:
+            if subuser.locked():
+              self.getUser().getRegistry().log("Subuser "+subuser.getName()+" has no image. But is locked. Marking for installation anyways.")
             self.__outOfDateSubusers.add(subuser)
         except exceptions.ImageBuildException as e:
-          try:
-            self.getUser().getRegistry().log(unicode(e))
-          except NameError: #Python3
-            self.getUser().getRegistry().log(str(e))
+          self.getUser().getRegistry().log(str(e))
           self.__subusersWhosImagesFailedToBuild.add(subuser)
     return self.__outOfDateSubusers
 
@@ -102,10 +99,7 @@ class InstallationTask(UserOwnedObject):
           subuser.setImageId(parent)
           subuser.getUser().getRegistry().logChange("Installed new image <"+subuser.getImageId()+"> for subuser "+subuser.getName())
       except exceptions.ImageBuildException as e:
-        try:
-          self.getUser().getRegistry().log(unicode(e))
-        except NameError: #Python3
-          self.getUser().getRegistry().log(str(e))
+        self.getUser().getRegistry().log(str(e))
         self.__subusersWhosImagesFailedToBuild.add(subuser)
 
   def getSubusersWhosImagesFailedToBuild(self):

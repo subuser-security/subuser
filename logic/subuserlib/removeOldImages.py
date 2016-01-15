@@ -1,11 +1,10 @@
-#!/usr/bin/env python
-# This file should be compatible with both Python 2 and 3.
-# If it is not, please file a bug report.
+# -*- coding: utf-8 -*-
 
 #external imports
 #import
 #internal imports
 import subuserlib.verify
+import subuserlib.print
 
 def getInstalledImagesThatAreInUse(user):
   """
@@ -20,24 +19,35 @@ def getInstalledImagesThatAreInUse(user):
         installedImagesThatAreInUse[inUseInstalledImage.getImageId()] = inUseInstalledImage
   return installedImagesThatAreInUse
 
-def removeOldImages(user,dryrun,sourceRepoId=None,imageSourceName=None):
+def removeOldImages(user,dryrun=False,yes=False,sourceRepo=None,imageSourceName=None):
   installedImagesThatAreInUse = getInstalledImagesThatAreInUse(user)
+  imagesToBeRemoved = []
   for installedImageId,installedImage in user.getInstalledImages().items():
-    filterOut = False
-    # If a sourceRepoId or sourceImageId have been specified, only remove images from that repo/soure
-    if sourceRepoId:
-      filterOut = True
-      if installedImage.getSourceRepoId() == sourceRepoId:
-        filterOut = False
-        if imageSourceName:
-          filterOut = True
-          if installedImage.getImageSourceName() == imageSourceName:
-            filterOut = False
-    if not installedImageId in installedImagesThatAreInUse and not filterOut:
-      user.getRegistry().log("Removing unneeded image "+installedImage.getImageId() + " : " + installedImage.getImageSource().getIdentifier())
-      if not dryrun:
-        installedImage.removeCachedRuntimes()
-        installedImage.removeDockerImage()
-  if not dryrun:
+    if (   (not installedImageId in installedImagesThatAreInUse)
+       and (not sourceRepo or installedImage.getSourceRepoId() == sourceRepo.getId())
+       and (not imageSourceName or installedImage.getImageSourceName() == imageSourceName)):
+      imagesToBeRemoved.append(installedImage)
+  if not imagesToBeRemoved:
+    user.getRegistry().log("There are no unused images to be removed.")
+    return
+  user.getRegistry().log("The following images are uneeded and would be deleted.")
+  user.getRegistry().log("DOCKER-ID : SUBUSER-ID")
+  # List images to be removed
+  for installedImage in imagesToBeRemoved:
+    user.getRegistry().log("Removing unneeded image "+installedImage.getImageId() + " : " + installedImage.getImageSource().getIdentifier())
+  if dryrun:
+    return
+  # Ask user if we should continue?
+  try:
+    user.getRegistry().log("Would you like to remove these images now? [Y/n]:",verbosityLevel=4)
+    answer = input("Would you like to remove these images now? [Y/n]:")
+    removeImages = not (answer == "n")
+  except EOFError: # When not running interactively...
+    user.getRegistry().log("")
+    removeImages = True
+  if yes or removeImages:
+    for installedImage in imagesToBeRemoved:
+      installedImage.removeCachedRuntimes()
+      installedImage.removeDockerImage()
     subuserlib.verify.verify(user)
     user.getRegistry().commit()

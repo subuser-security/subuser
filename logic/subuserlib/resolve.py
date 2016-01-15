@@ -1,6 +1,4 @@
-#!/usr/bin/env python
-# This file should be compatible with both Python 2 and 3.
-# If it is not, please file a bug report.
+# -*- coding: utf-8 -*-
 
 """
 This module is used to parse the image source identifiers used to identify image sources during instalation.  For more information see the image-source-identifiers section of the subuser standard.
@@ -15,12 +13,15 @@ def resolveImageSource(user,imageSourcePath,contextRepository=None,allowLocalRep
   """
   From a image source identifier path return a ImageSource object.
 
+  >>> import os
   >>> from subuserlib.classes.user import User
   >>> user = User()
 
   Usually, the syntax is image-name@repository-name.
 
-  >>> print(resolveImageSource(user,"foo@default").getName())
+  >>> print(resolveImageSource(user,"foo@default").getName()) # doctest: +ELLIPSIS
+  Initial commit.
+  Cloning repository default from ...
   foo
 
   If there is no @, then we assume that the repository is the contextRepository.  The default contextRepository is the "default" repository.
@@ -30,14 +31,15 @@ def resolveImageSource(user,imageSourcePath,contextRepository=None,allowLocalRep
 
   If the repository identifier is a URI and a repository with the same URI already exists, then the URI is resolved to the name of the existing repository. Otherwise, a temporary repository is created.
 
-  >>> print(resolveImageSource(user,"bar@file:///home/travis/remote-test-repo").getName())
-  Adding new temporary repository file:///home/travis/remote-test-repo
+  >>> print(resolveImageSource(user,"bar@file://"+os.getcwd()+"/test-repos/remote-test-repo").getName()) # doctest: +ELLIPSIS
+  Cloning repository 0 from file://...
+  Adding new temporary repository file://...
   bar
 
   If the repository identifier is a path to a folder on the local machine and a repository pointing to this folder already exists, then the identifier is resolved to the name of the existing repository. Otherwise, a temporary repository is created.
 
-  >>> print(resolveImageSource(user,"bar@/home/travis/remote-test-repo").getName())
-  Adding new temporary repository /home/travis/remote-test-repo
+  >>> print(resolveImageSource(user,"bar@"+os.getcwd()+"/test-repos/remote-test-repo").getName()) # doctest: +ELLIPSIS
+  Adding new temporary repository ...
   bar
 
   Throws an Key error:
@@ -71,19 +73,19 @@ def resolveRepository(user,repoIdentifier,allowLocalRepositories=True):
     if allowLocalRepositories:
       return getRepositoryFromURIOrPath(user,os.environ["PWD"])
     else:
-      raise Exception("Error when resolving ImageSource "+imageSourcePath+". Refering to local repositories is forbidden in this context.")
+      raise ResolutionError("Error when resolving repository identifier "+repoIdentifier+". Refering to local repositories is forbidden in this context.")
   # "/home/timothy/subuser-repo"
   elif repoIdentifier.startswith("/"):
     if allowLocalRepositories:
       return getRepositoryFromURIOrPath(user,repoIdentifier)
     else:
-      raise Exception("Error when resolving ImageSource "+imageSourcePath+". Refering to local repositories is forbidden in this context.")
+      raise ResolutionError("Error when resolving repository identifier "+repoIdentifier+". Refering to local repositories is forbidden in this context.")
   # "file:///home/timothy/subuser-repo"
   elif repoIdentifier.startswith("file:///"):
     if allowLocalRepositories:
       return getRepositoryFromURIOrPath(user,repoIdentifier)
     else:
-      raise Exception("Error when resolving ImageSource "+imageSourcePath+". Refering to local repositories is forbidden in this context.")
+      raise ResolutionError("Error when resolving repository identifier "+repoIdentifier+". Refering to local repositories is forbidden in this context.")
   # "https://github.com/subuser-security/some-repo.git"
   elif repoIdentifier.startswith("https://") or repoIdentifier.startswith("http://"):
     return getRepositoryFromURIOrPath(user,repoIdentifier)
@@ -92,9 +94,9 @@ def resolveRepository(user,repoIdentifier,allowLocalRepositories=True):
     if allowLocalRepositories or repoIdentifier == "default":
       return user.getRegistry().getRepositories()[repoIdentifier]
     else:
-      raise Exception("Error when resolving ImageSource "+imageSourcePath+". Refering to repositories by name is forbidden in this context.")
+      raise ResolutionError("Error when resolving repository identifier "+repoIdentifier+". Refering to repositories by name is forbidden in this context.")
   else:
-    raise Exception("Error when resolving ImageSource "+imageSourcePath+".")
+    raise ResolutionError("Error when resolving repository identifier "+repoIdentifier+".")
 
 def lookupRepositoryByURI(user,uri):
   """
@@ -132,8 +134,11 @@ def getRepositoryFromURI(user,uri):
     return repository
   # If it doesn't, create a new repo and return it.
   newTempRepo = Repository(user=user,name=user.getRegistry().getRepositories().getNewUniqueTempRepoId(),gitOriginURI=uri,gitCommitHash="master",temporary=True)
-  user.getRegistry().getRepositories().addRepository(newTempRepo)
-  return newTempRepo
+  if newTempRepo.isPresent():
+    user.getRegistry().getRepositories().addRepository(newTempRepo)
+    return newTempRepo
+  else:
+    raise ResolutionError("Repo at "+uri+" does not exist.")
 
 def getRepositoryFromPath(user,path):
   repository = lookupRepositoryByPath(user,path)
@@ -142,11 +147,17 @@ def getRepositoryFromPath(user,path):
   else:
     # If it doesn't, create a new repo and return it.
     newTempRepo = Repository(user=user,name=user.getRegistry().getRepositories().getNewUniqueTempRepoId(),temporary=True,sourceDir=path)
-    user.getRegistry().getRepositories().addRepository(newTempRepo)
-    return newTempRepo
+    if newTempRepo.isPresent():
+      user.getRegistry().getRepositories().addRepository(newTempRepo)
+      return newTempRepo
+    else:
+      raise ResolutionError("Repo at "+path+" does not exist.")
 
 def getRepositoryFromURIOrPath(user,uriOrPath):
   if uriOrPath.startswith("/"):
     return getRepositoryFromPath(user,uriOrPath)
   else:
     return getRepositoryFromURI(user,uriOrPath)
+
+class ResolutionError(Exception):
+  pass

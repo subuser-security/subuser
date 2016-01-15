@@ -1,0 +1,18 @@
+run
+pkg
+print-dependency-info
+version
+list
+dry-run
+describe
+base-executable
+subuser
+registry
+remove-old-images
+repair
+repository
+update
+
+# Repositories specially designed to break things.
+Weird-repositories
+test

@@ -1,6 +1,4 @@
-#!/usr/bin/env python
-# This file should be compatible with both Python 2 and 3.
-# If it is not, please file a bug report.
+# -*- coding: utf-8 -*-
 
 """
 High level operations on repostories.
@@ -24,8 +22,11 @@ def add(user,name,url):
       repository = Repository(user,name=name,sourceDir=url)
     else:
       repository = Repository(user,name=name,gitOriginURI=url,gitCommitHash="master")
-    user.getRegistry().getRepositories().addRepository(repository)
-    user.getRegistry().commit()
+    if repository.isPresent():
+      user.getRegistry().getRepositories().addRepository(repository)
+      user.getRegistry().commit()
+    else:
+      sys.exit("Cannot load repository, path or URL not found.")
 
 def remove(user,name):
   user.getRegistry().getRepositories().removeRepository(name)

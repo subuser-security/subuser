@@ -1,0 +1,51 @@
+Initial commit.
+Cloning repository default from file:///home/timothy/.texttest/tmp/texttest.06Jan124516.7650/texttest/pkg/With-uninitialized-repo/Add-repository/test-repos/default-test-repo
+Adding new temporary repository /home/timothy/.texttest/tmp/texttest.06Jan124516.7650/texttest/pkg/With-uninitialized-repo/Add-repository
+Adding new image source foo
+
+
+Would you like to test your new image? [Y/n]
+Adding new temporary repository /home/timothy/.texttest/tmp/texttest.06Jan124516.7650/texttest/pkg/With-uninitialized-repo/Add-repository
+Verifying subuser configuration.
+Verifying registry consistency...
+Unregistering any non-existant installed images.
+!test-image-subuser-foo: would like to have the following permissions:
+ Description:
+ Maintainer: Your Name <you@example.com>
+ Executable: /usr/bin/nothing
+A - Accept and apply changes
+E - Apply changes and edit result
+r - Reject permissions.
+A
+Checking if images need to be updated or installed...
+New images for the following subusers need to be installed:
+!test-image-subuser-foo
+Installing foo ...
+Building→→→
+Building...
+Building...
+Successfully built 1
+Building→→→
+Building...
+Building...
+Successfully built 2
+Installing foo ...
+Building→→→
+Building...
+Building...
+Successfully built 3
+Building→→→
+Building...
+Building...
+Successfully built 4
+Installed new image <4> for subuser !test-image-subuser-foo
+Running garbage collector on temporary repositories...
+Running !test-image-subuser-foo enter arguments and press enter to continue:
+Execute docker with args: ['run', '--rm', '-i', '-e', 'HOME=/home/timothy', '--workdir=/home/timothy', '--net=none', '--user=1000', '--hostname', '<random-hostname>', '--entrypoint', '/usr/bin/nothing', '5']
+Cwd:None
+Removing subuser !test-image-subuser-foo
+ If you wish to remove the subusers image, issue the command $ subuser remove-old-images
+Verifying subuser configuration.
+Verifying registry consistency...
+Unregistering any non-existant installed images.
+Running garbage collector on temporary repositories...

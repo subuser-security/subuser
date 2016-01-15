@@ -1,0 +1,17 @@
+Command not found: non-existant
+You can use one of the following commands:
+remove-old-images
+print-dependency-info
+run
+repair
+subuser
+version
+update
+registry
+test
+dry-run
+pkg
+repository
+describe
+list
+for more info about each option use: subuser <option> -h

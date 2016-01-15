@@ -1,6 +1,5 @@
-#!/usr/bin/env python
-# This file should be compatible with both Python 2 and 3.
-# If it is not, please file a bug report.
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
 
 try:
   import pathConfig
@@ -14,6 +13,7 @@ import optparse
 import subuserlib.version
 import subuserlib.commandLineArguments
 import subuserlib.profile
+from subuserlib.classes.user import User
 
 def parseCliArgs(realArgs):
   usage = "usage: subuser version"
@@ -32,17 +32,17 @@ def printVersion(realArgs):
   Docker info:
    Foo: bar
   """
+  user = User()
   (options,args) = parseCliArgs(realArgs)
   if options.json:
-    print(json.dumps(subuserlib.version.getInfo(),indent=1,separators=(",",": ")))
+    print(json.dumps(subuserlib.version.getInfo(user),indent=1,separators=(",",": ")))
   else:
-    print("Subuser version: " + subuserlib.version.getSubuserVersion())
+    print("Subuser version: " + subuserlib.version.getSubuserVersion(user))
     print("Docker info:")
-    for key,value in subuserlib.version.getDockerInfo().items():
+    for key,value in subuserlib.version.getDockerInfo(user).items():
       print(" "+key+": "+str(value))
 
 #################################################################################################
 
 if __name__ == "__main__":
   printVersion(sys.argv[1:])
- 

@@ -1,0 +1,1 @@
+print-dependency-info dependent@file:///$TEXTTEST_SANDBOX/test-repos/remote-test-repo

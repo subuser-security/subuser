@@ -1,0 +1,8 @@
+The following images are uneeded and would be deleted.
+DOCKER-ID : SUBUSER-ID
+Removing unneeded image 2 : foo@default
+Would you like to remove these images now? [Y/n]:
+Verifying subuser configuration.
+Verifying registry consistency...
+Unregistering any non-existant installed images.
+Running garbage collector on temporary repositories...

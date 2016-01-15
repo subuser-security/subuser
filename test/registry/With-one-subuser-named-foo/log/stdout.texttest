@@ -1,0 +1,32 @@
+commit e05183f70a3860a36ac7418cbd2983880adbbd35
+Author: Your Name <you@example.com>
+Date:   Wed Jan 6 12:45:58 2016 +0100
+
+    Adding subuser foo with image foo
+    Verifying subuser configuration.
+    Verifying registry consistency...
+    Unregistering any non-existant installed images.
+     Description:
+     Maintainer:
+     Executable: /usr/bin/foo
+    Checking if images need to be updated or installed...
+    New images for the following subusers need to be installed:
+    foo
+    Installing foo ...
+    Building→→→
+    Building...
+    Building...
+    Successfully built 1
+    Building→→→
+    Building...
+    Building...
+    Successfully built 2
+    Installed new image <2> for subuser foo
+    Running garbage collector on temporary repositories...
+
+commit f2b7ce491c98615e3958de8b9b25561ec7ab8b54
+Author: Your Name <you@example.com>
+Date:   Wed Jan 6 12:45:58 2016 +0100
+
+    Initial commit.
+    Cloning repository default from file:///home/timothy/.texttest/tmp/texttest.06Jan124516.7650/texttest/registry/With-one-subuser-named-foo/log/test-repos/default-test-repo

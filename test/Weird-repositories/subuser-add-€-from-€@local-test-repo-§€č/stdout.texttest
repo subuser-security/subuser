@@ -1,0 +1,34 @@
+Initial commit.
+Cloning repository default from file:///home/timothy/.texttest/tmp/texttest.1_from_06Jan131327.20736/texttest/Weird-repositories/subuser-add-€-from-€@local-test-repo-§€č/test-repos/default-test-repo
+Adding subuser € with image €@//home/timothy/.texttest/tmp/texttest.1_from_06Jan131327.20736/texttest/Weird-repositories/subuser-add-€-from-€@local-test-repo-§€č/test-repos/local-test-repo-§€č
+Adding new temporary repository //home/timothy/.texttest/tmp/texttest.1_from_06Jan131327.20736/texttest/Weird-repositories/subuser-add-€-from-€@local-test-repo-§€č/test-repos/local-test-repo-§€č
+Verifying subuser configuration.
+Verifying registry consistency...
+Unregistering any non-existant installed images.
+€: would like to have the following permissions:
+ Description: €→øščf
+ Maintainer: Čáp
+ Executable: /usr/ø→→/↓↓↓
+ Moderate permissions(These are probably safe):
+  - user-dirs: To access to the following user directories: '~/→→→' '~/→→/→→'
+ Liberal permissions(These may pose a security risk):
+  - system-dirs:
+   * To read and write to the host's `/#čččč` directory, mounted in the container as:`/€`
+   * To read and write to the host's `/↓↓↓↓/→→→` directory, mounted in the container as:`/$ššš`
+A - Accept and apply changes
+E - Apply changes and edit result
+r - Reject permissions.
+Please select an option:Checking if images need to be updated or installed...
+New images for the following subusers need to be installed:
+€
+Installing € ...
+Building→→→
+Building...
+Building...
+Successfully built 1
+Building→→→
+Building...
+Building...
+Successfully built 2
+Installed new image <2> for subuser €
+Running garbage collector on temporary repositories...

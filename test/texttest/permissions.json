@@ -1,0 +1,14 @@
+{
+ "maintainer": "Timothy <timothyhobbs@seznam.cz>",
+ "stateful-home": true,
+ "executable": "/usr/local/bin/texttest",
+ "allow-network-access": true,
+ "basic-common-permissions": true,
+ "description": "Texttest test suit",
+ "access-working-directory": true,
+ "gui": {
+  "clipboard": true,
+  "cursors": false,
+  "system-tray": false
+ }
+}

@@ -1,7 +1,4 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# This file should be compatible with both Python 2 and 3.
-# If it is not, please file a bug report.
 
 """
 Runtime environments which are prepared for subusers to run in.
@@ -44,7 +41,7 @@ class Runtime(UserOwnedObject):
     if not subuserlib.test.testing:
       self.__hostname = binascii.b2a_hex(os.urandom(10))
     else:
-      self.__hostname = b"<random-hostname>"
+      self.__hostname = "<random-hostname>"
     UserOwnedObject.__init__(self,user)
 
   def getSubuser(self):
@@ -169,7 +166,7 @@ $ subuser repair
 
   def getHostnameFlag(self):
     if not self.__hostname is None:
-      return ["--hostname",self.__hostname.decode(encoding="ascii")]
+      return ["--hostname",self.__hostname]
     else:
       return []
 
