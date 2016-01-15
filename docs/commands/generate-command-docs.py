@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 import sys,subprocess
 sys.path.append("../../logic")
 import subuserlib.commands
@@ -10,6 +10,7 @@ for command in builtInCommands:
     commandDocs = command + "\n"+("="*len(command))+"\n"
     print("Collecting help for:"+command)
     commandHelpOutput = subprocess.check_output(["../../logic/subuser",command,"--help"])
+    commandHelpOutput= commandHelpOutput.decode()
     commandDocs += commandHelpOutput.replace("\n\n    $","\n::\n\n    $")
     command_file.write(commandDocs)
 
@@ -19,4 +20,3 @@ with open("index.rst",mode="w") as index:
   for command in builtInCommands:
     index.write("  "+command+"\n")
   index.write("\n")
-    
