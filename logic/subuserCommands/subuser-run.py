@@ -42,11 +42,14 @@ def run(args):
       extraDockerFlags = os.environ["SUBUSER_EXTRA_DOCKER_ARGS"].split(" ")
     except KeyError:
       extraDockerFlags = []
-    runtime = user.getRegistry().getSubusers()[subuserName].getRuntime(os.environ,extraDockerFlags=extraDockerFlags)
-    if runtime:
-      runtime.run(argsToPassToImage)
-    else:
-      sys.exit("The subuser's image failed to build. Please use the subuser registry log and subuser repair commands for more information.")
+    try:
+      runtime = user.getRegistry().getSubusers()[subuserName].getRuntime(os.environ,extraDockerFlags=extraDockerFlags)
+      if runtime:
+        runtime.run(argsToPassToImage)
+      else:
+        sys.exit("The subuser's image failed to build. Please use the subuser registry log and subuser repair commands for more information.")
+    except (subuserlib.classes.subuser.SubuserHasNoPermissionsException,subuserlib.classes.subuserSubmodules.run.runtimeCache.NoRuntimeCacheForSubusersWhichDontHaveExistantImagesException) as e:
+      sys.exit(str(e))
   else:
     sys.exit(subuserName + " not found.\n"+helpString)
 
