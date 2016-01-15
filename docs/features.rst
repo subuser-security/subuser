@@ -8,9 +8,11 @@ Security features
 
 - Editable permissions: If you don't like the permissions a program wants, you can change them! After all, its YOUR computer!
 
-.. image:: http://abstrusegoose.com/strips/usually_looks_scarier_than_it_is.png
+.. image:: ./images/usually_looks_scarier_than_it_is.png
 
 Comic by `Abstruse Goose <http://abstrusegoose.com/>`_.
+
+YOU HAVE THE RIGHT TO EDIT PERMISSIONS!
 
 Other features
 --------------
