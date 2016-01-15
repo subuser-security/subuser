@@ -89,6 +89,7 @@ Index
 
   what-is-subuser
   features
+  screenshots
   news
   security
   installation

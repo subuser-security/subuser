@@ -8,4 +8,5 @@ subuser-standard
 developers/pylint.rst
 developers/images/*
 news/images/*
+screenshots/*
 ?/*
