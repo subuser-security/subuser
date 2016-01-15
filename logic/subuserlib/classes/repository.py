@@ -90,6 +90,12 @@ class Repository(dict,UserOwnedObject,Describable):
         print("Cloned from: "+self.getGitOriginURI())
         print("Currently at commit: "+self.getGitCommitHash())
 
+  def getSortedList(self):
+    """
+    Return a list of image sources sorted by name.
+    """
+    return list(sorted(self.values(),key=lambda imageSource:imageSource.getName()))
+
   def getRepoPath(self):
     """ Get the path of the repo's sources on disk. """
     if self.isLocal():

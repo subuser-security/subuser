@@ -11,6 +11,7 @@ lines_of_text_difference:2000
 copy_test_path:docker
 copy_test_path:home/.subuser
 copy_test_path:test-repos
+copy_test_path:hashtest
 
 [run_dependent_text]
 stdout:Currently at commit{WORD 4}

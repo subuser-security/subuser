@@ -11,5 +11,11 @@ import os
 
 if "SUBUSER_TESTING" in os.environ:
   testing = True
+  import os
+  homeDir = os.getcwd()
+  hashtestDir = homeDir+"/hashtest"
+  def getUser():
+    from subuserlib.classes.user import User
+    return User(homeDir=homeDir)
 else:
   testing = False

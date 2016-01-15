@@ -57,6 +57,7 @@ Edit a subuser's permissions.
   parser.add_option("--prefix",dest="prefix",default=None,help="When removing subusers, remove all subusers who's names start with prefix.")
   parser.add_option("--accept",dest="accept",action="store_true",default=False,help="Accept permissions without asking.")
   parser.add_option("--prompt",dest="prompt",action="store_true",default=False,help="Prompt before installing new images.")
+  parser.add_option("--force-internal",dest="forceInternal",action="store_true",default=False,help="Force a subuser who's name starts with ! to be added, despite the fact that ! marks interal subusers and is normally forbidden.")
   return parser.parse_args(args=sysargs)
 
 @subuserlib.profile.do_cprofile
@@ -77,7 +78,7 @@ def subuser(sysargs):
     name = args[1]
     imageSourceId = args[2]
     with user.getRegistry().getLock():
-      subuserlib.subuser.add(user,name,imageSourceId,permissionsAccepter=permissionsAccepter,prompt=options.prompt)
+      subuserlib.subuser.add(user,name,imageSourceId,permissionsAccepter=permissionsAccepter,prompt=options.prompt,forceInternal=options.forceInternal)
   elif action == "remove":
     names = args[1:]
     if not options.prefix is None:

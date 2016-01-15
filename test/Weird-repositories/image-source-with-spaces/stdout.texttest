@@ -1,0 +1,29 @@
+Initial commit.
+Cloning repository default from file:///home/timothy/.texttest/tmp/texttest.1_from_06Jan171629.22755/texttest/Weird-repositories/image-source-with-spaces/test-repos/default-test-repo
+Clone failed.
+Adding subuser foo with image image source with spaces@//home/timothy/.texttest/tmp/texttest.1_from_06Jan171629.22755/texttest/Weird-repositories/image-source-with-spaces/test-repos/local-test-repo-§€č
+Adding new temporary repository //home/timothy/.texttest/tmp/texttest.1_from_06Jan171629.22755/texttest/Weird-repositories/image-source-with-spaces/test-repos/local-test-repo-§€č
+Verifying subuser configuration.
+Verifying registry consistency...
+Unregistering any non-existant installed images.
+foo: would like to have the following permissions:
+ Description:
+ Maintainer:
+ Is a library.
+A - Accept and apply changes
+E - Apply changes and edit result
+r - Reject permissions.
+Please select an option:Checking if images need to be updated or installed...
+New images for the following subusers need to be installed:
+foo
+Installing image source with spaces ...
+Building→→→
+Building...
+Building...
+Successfully built 1
+Building→→→
+Building...
+Building...
+Successfully built 2
+Installed new image <2> for subuser foo
+Running garbage collector on temporary repositories...

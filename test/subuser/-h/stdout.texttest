@@ -35,8 +35,11 @@ Edit a subuser's permissions.
     $ subuser subuser edit-permissions foo
 
 Options:
-  -h, --help       show this help message and exit
-  --prefix=PREFIX  When removing subusers, remove all subusers who's names
-                   start with prefix.
-  --accept         Accept permissions without asking.
-  --prompt         Prompt before installing new images.
+  -h, --help        show this help message and exit
+  --prefix=PREFIX   When removing subusers, remove all subusers who's names
+                    start with prefix.
+  --accept          Accept permissions without asking.
+  --prompt          Prompt before installing new images.
+  --force-internal  Force a subuser who's name starts with ! to be added,
+                    despite the fact that ! marks interal subusers and is
+                    normally forbidden.

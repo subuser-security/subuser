@@ -35,10 +35,10 @@ def callBackground(args,cwd=None,suppressOutput=True,collectStdout=False,collect
     stderr = devnull
 
   if collectStdout:
-    temp_stdout = tempfile.TemporaryFile()
+    temp_stdout = tempfile.TemporaryFile(mode="r")
     stdout = temp_stdout.fileno()
   if collectStderr:
-    temp_stderr = tempfile.TemporaryFile()
+    temp_stderr = tempfile.TemporaryFile(mode="r")
     stderr = temp_stderr.fileno()
 
   process = subprocess.Popen(args,cwd=cwd,stdout=stdout,stderr=stderr,close_fds=True)

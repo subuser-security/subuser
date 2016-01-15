@@ -18,44 +18,6 @@ import subuserlib.classes.imageSource
 class Subusers(dict,UserOwnedObject,FileBackedObject):
   """
   A subusers object stores the set of all subusers owned by a given user.
-
-  >>> import subuserlib.classes.user
-  >>> import subuserlib.classes.subusers
-  >>> import subuserlib.subuser
-  >>> from subuserlib.classes.permissionsAccepters.acceptPermissionsAtCLI import AcceptPermissionsAtCLI
-  >>> u = subuserlib.classes.user.User()
-  >>> permissionsAccepter = AcceptPermissionsAtCLI(u,alwaysAccept=True)
-
-  >>> subuserlib.subuser.add(u,"foo","foo@default",permissionsAccepter)
-  Adding subuser foo foo@default
-  Verifying subuser configuration.
-  Verifying registry consistency...
-  Unregistering any non-existant installed images.
-  foo would like to have the following permissions:
-   Description:
-   Maintainer:
-   Executable: /usr/bin/foo
-  A - Accept and apply changes
-  E - Apply changes and edit result
-  A
-  Checking if images need to be updated or installed...
-  Checking if subuser foo is up to date.
-  New images for the following subusers need to be installed:
-  foo
-  Installing foo ...
-  Building...
-  Building...
-  Building...
-  Successfully built 1
-  Building...
-  Building...
-  Building...
-  Successfully built 2
-  Installed new image <2> for subuser foo
-  Running garbage collector on temporary repositories...
-  >>> subusers = u.getRegistry().getSubusers()
-  >>> subusers["foo"].getName()
-  'foo'
   """
   def __init__(self,user):
     UserOwnedObject.__init__(self,user)

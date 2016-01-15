@@ -1,12 +1,12 @@
 Initial commit.
-Cloning repository default from file:///home/timothy/.texttest/tmp/texttest.04Jan015714.197/texttest/subuser/add-broken-permissions-file/test-repos/default-test-repo
-Adding subuser broken-permissions-file with image broken-permissions-file@file:////home/timothy/.texttest/tmp/texttest.04Jan015714.197/texttest/subuser/add-broken-permissions-file/test-repos/remote-test-repo
-Cloning repository 0 from file:////home/timothy/.texttest/tmp/texttest.04Jan015714.197/texttest/subuser/add-broken-permissions-file/test-repos/remote-test-repo
-Adding new temporary repository file:////home/timothy/.texttest/tmp/texttest.04Jan015714.197/texttest/subuser/add-broken-permissions-file/test-repos/remote-test-repo
+Cloning repository default from file:///home/timothy/.texttest/tmp/texttest.04Jan015714.197/texttest/Weird-repositories/add-broken-permissions-file/test-repos/default-test-repo
+Adding subuser broken-permissions-file with image broken-permissions-file@file:////home/timothy/.texttest/tmp/texttest.04Jan015714.197/texttest/Weird-repositories/add-broken-permissions-file/test-repos/remote-test-repo
+Cloning repository 0 from file:////home/timothy/.texttest/tmp/texttest.04Jan015714.197/texttest/Weird-repositories/add-broken-permissions-file/test-repos/remote-test-repo
+Adding new temporary repository file:////home/timothy/.texttest/tmp/texttest.04Jan015714.197/texttest/Weird-repositories/add-broken-permissions-file/test-repos/remote-test-repo
 Verifying subuser configuration.
 Verifying registry consistency...
 Unregistering any non-existant installed images.
 Checking if images need to be updated or installed...
 Error, user dir permissions may not contain system wide absolute paths. The user dir: "/etc/" is forbidden.
 Running garbage collector on temporary repositories...
-Removing uneeded temporary repository: file:////home/timothy/.texttest/tmp/texttest.04Jan015714.197/texttest/subuser/add-broken-permissions-file/test-repos/remote-test-repo
+Removing uneeded temporary repository: file:////home/timothy/.texttest/tmp/texttest.04Jan015714.197/texttest/Weird-repositories/add-broken-permissions-file/test-repos/remote-test-repo

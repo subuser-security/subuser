@@ -13,6 +13,11 @@ import errno
 import subuserlib.subprocessExtras as subprocessExtras
 from subuserlib.classes.userOwnedObject import UserOwnedObject
 from subuserlib.classes.fileStructure import FileStructure
+import subuserlib.test
+if subuserlib.test.testing:
+  hashtestDir = subuserlib.test.hashtestDir
+  def getUser():
+    return subuserlib.test.getUser()
 
 class GitRepository(UserOwnedObject):
   def __init__(self,user,path):
@@ -111,11 +116,12 @@ class GitFileStructure(FileStructure):
 
     Here we setup test stuff:
     >>> import subuserlib.subprocessExtras
-    >>> subuserlib.subprocessExtras.call(["git","init"],cwd="/home/travis/hashtest")
+    >>> import subuserlib.classes.gitRepository
+    >>> subuserlib.subprocessExtras.call(["git","init"],cwd=subuserlib.classes.gitRepository.hashtestDir)
     0
-    >>> subuserlib.subprocessExtras.call(["git","add","."],cwd="/home/travis/hashtest")
+    >>> subuserlib.subprocessExtras.call(["git","add","."],cwd=subuserlib.classes.gitRepository.hashtestDir)
     0
-    >>> subuserlib.subprocessExtras.call(["git","commit","-m","Initial commit"],cwd="/home/travis/hashtest")
+    >>> subuserlib.subprocessExtras.call(["git","commit","-m","Initial commit"],cwd=subuserlib.classes.gitRepository.hashtestDir)
     0
     """
     self.__gitRepository = gitRepository
@@ -163,7 +169,7 @@ class GitFileStructure(FileStructure):
     Paths are relative to the repository as a whole.
 
     >>> from subuserlib.classes.gitRepository import GitRepository
-    >>> gitRepository = GitRepository("/home/travis/hashtest")
+    >>> gitRepository = GitRepository(subuserlib.classes.gitRepository.getUser(),subuserlib.classes.gitRepository.hashtestDir)
     >>> fileStructure = gitRepository.getFileStructureAtCommit("master")
     >>> print(",".join(fileStructure.ls("./")))
     bar,blah
@@ -180,7 +186,7 @@ class GitFileStructure(FileStructure):
     Paths are relative to the repository as a whole.
 
     >>> from subuserlib.classes.gitRepository import GitRepository
-    >>> gitRepository = GitRepository("/home/travis/hashtest")
+    >>> gitRepository = GitRepository(subuserlib.classes.gitRepository.getUser(),subuserlib.classes.gitRepository.hashtestDir)
     >>> fileStructure = gitRepository.getFileStructureAtCommit("master")
     >>> print(",".join(fileStructure.lsFiles("./")))
     blah
@@ -193,7 +199,7 @@ class GitFileStructure(FileStructure):
     Paths are relative to the repository as a whole.
 
     >>> from subuserlib.classes.gitRepository import GitRepository
-    >>> gitRepository = GitRepository("/home/travis/hashtest")
+    >>> gitRepository = GitRepository(subuserlib.classes.gitRepository.getUser(),subuserlib.classes.gitRepository.hashtestDir)
     >>> fileStructure = gitRepository.getFileStructureAtCommit("master")
     >>> print(",".join(fileStructure.lsFolders("./")))
     bar
@@ -203,7 +209,7 @@ class GitFileStructure(FileStructure):
   def exists(self,path):
     """
     >>> from subuserlib.classes.gitRepository import GitRepository
-    >>> gitRepository = GitRepository("/home/travis/hashtest")
+    >>> gitRepository = GitRepository(subuserlib.classes.gitRepository.getUser(),subuserlib.classes.gitRepository.hashtestDir)
     >>> fileStructure = gitRepository.getFileStructureAtCommit("master")
     >>> fileStructure.exists("./blah")
     True
@@ -221,7 +227,7 @@ class GitFileStructure(FileStructure):
     Returns the contents of the given file at the given commit.
 
     >>> from subuserlib.classes.gitRepository import GitRepository
-    >>> gitRepository = GitRepository("/home/travis/hashtest")
+    >>> gitRepository = GitRepository(subuserlib.classes.gitRepository.getUser(),subuserlib.classes.gitRepository.hashtestDir)
     >>> fileStructure = gitRepository.getFileStructureAtCommit("master")
     >>> print(fileStructure.read("./blah"))
     blahblah
@@ -238,7 +244,7 @@ class GitFileStructure(FileStructure):
   def getMode(self,path):
     """
     >>> from subuserlib.classes.gitRepository import GitRepository
-    >>> gitRepository = GitRepository("/home/travis/hashtest")
+    >>> gitRepository = GitRepository(subuserlib.classes.gitRepository.getUser(),subuserlib.classes.gitRepository.hashtestDir)
     >>> fileStructure = gitRepository.getFileStructureAtCommit("master")
     >>> print(fileStructure.getModeString("./blah"))
     100644

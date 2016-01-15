@@ -58,48 +58,40 @@ def list(sysargs):
       reposToList = args[1:]
     else:
       reposToList = user.getRegistry().getRepositories().keys()
-    if options.json:
-      availableDict = {}
-      for repoIdentifier in reposToList:
+    availableDict = {}
+    for repoIdentifier in reposToList:
+      try:
         repoIdentifier = repoIdentifier.decode("utf-8")
-        if repoIdentifier in user.getRegistry().getRepositories():
-          temp = False
-        else:
-          temp = True
-        try:
-          repository = subuserlib.resolve.resolveRepository(user,repoIdentifier)
-        except (OSError,subuserlib.resolve.ResolutionError):
-          sys.exit("Repository id: "+repoIdentifier+" could not be resolved.")
+      except AttributeError:
+        pass
+      if repoIdentifier in user.getRegistry().getRepositories():
+        temp = False
+      else:
+        temp = True
+      try:
+        repository = subuserlib.resolve.resolveRepository(user,repoIdentifier)
+      except (OSError,subuserlib.resolve.ResolutionError):
+        sys.exit("Repository id: "+repoIdentifier+" could not be resolved.")
+      if options.json:
         availableDict[repository.getName()] = repository.serializeToDict()
-        if temp:
-          repository.removeGitRepo()
+      else:
+       if options.long:
+         subuserlib.print.printWithoutCrashing("Images available for instalation from the repo: " + repository.getName())
+       for imageSource in repository.getSortedList():
+         if not options.long:
+           identifier = imageSource.getIdentifier()
+           subuserlib.print.printWithoutCrashing(identifier)
+         else:
+           try:
+             imageSource.describe()
+           except SyntaxError as e:
+             subuserlib.print.printWithoutCrashing(str(e))
+             subuserlib.print.printWithoutCrashing("Cannot describe this image source as loading it is forbidden.")
+      if temp:
+        repository.removeGitRepo()
+    if options.json:
       subuserlib.print.printWithoutCrashing(json.dumps(availableDict,indent=1,separators=(",",": ")))
-      sys.exit()
-    else:
-      for repoIdentifier in reposToList:
-        repoIdentifier = repoIdentifier
-        if repoIdentifier in user.getRegistry().getRepositories():
-          temp = False
-        else:
-          temp = True
-        try:
-          repository =  subuserlib.resolve.resolveRepository(user,repoIdentifier)
-        except (OSError,subuserlib.resolve.ResolutionError):
-          sys.exit("Repository id: "+repoIdentifier+" could not be resolved.")
-        if options.long:
-          subuserlib.print.printWithoutCrashing("Images available for instalation from the repo: " + repository.getName())
-        for _,imageSource in repository.items():
-          if not options.long:
-            identifier = imageSource.getIdentifier()
-            subuserlib.print.printWithoutCrashing(identifier)
-          else:
-            try:
-              imageSource.describe()
-            except SyntaxError as e:
-              subuserlib.print.printWithoutCrashing(str(e))
-              subuserlib.print.printWithoutCrashing("Cannot describe this image source as loading it is forbidden.")
-        if temp:
-          repository.removeGitRepo()
+    sys.exit()
   elif args[0] == 'subusers':
     if options.json:
       subuserlib.print.printWithoutCrashing(json.dumps(user.getRegistry().getSubusers().serializeToDict(),indent=1,separators=(",",": ")))

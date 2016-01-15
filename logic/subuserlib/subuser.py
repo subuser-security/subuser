@@ -15,8 +15,8 @@ import subuserlib.verify
 import subuserlib.update
 import subuserlib.classes.exceptions as exceptions
 
-def add(user,subuserName,imageSourceIdentifier,permissionsAccepter,prompt=False):
-  if subuserName.startswith("!"):
+def add(user,subuserName,imageSourceIdentifier,permissionsAccepter,prompt=False,forceInternal=False):
+  if subuserName.startswith("!") and not forceInternal:
     sys.exit("A subusers may not have names beginning with ! as these names are reserved for internal use.")
   if subuserName in user.getRegistry().getSubusers():
     sys.exit("A subuser named "+subuserName+" already exists.")

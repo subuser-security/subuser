@@ -35,7 +35,6 @@ def verify(realArgs):
   permissionsAccepter = AcceptPermissionsAtCLI(user,alwaysAccept = options.accept)
   with user.getRegistry().getLock() as LockFileHandle:
     subusers = user.getRegistry().getSubusers().getSortedList()
-    subusers.sort()
     subuserlib.verify.verify(user,subusers=subusers,permissionsAccepter=permissionsAccepter,prompt=options.prompt)
     user.getRegistry().commit()
 
