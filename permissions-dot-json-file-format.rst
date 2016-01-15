@@ -19,7 +19,7 @@ The permissions object always begins with the following permissions:
  * ``maintainer``: This field marks who is responsible for the ``permissions.json`` file, and accompanying ``Dockerfile``.  It does NOT mark who is responsible for the image itself.
 
   Ex::
-  
+
     ,"maintainer"                : "Timothy Hobbs <timothyhobbs (at) seznam dot cz>"
 
  * ``executable``: This field denotes the absolute path within the Docker image where the given image's executable resides. This value is optional. if it is not present, than the subuser image cannot be run (but may be depended upon by other subuser images).
@@ -96,7 +96,7 @@ Moderate permissions
 
      ,"user-dirs"                 : ["Downloads"]
 
-  In this example, the subuser is able to access the ``~/Downloads`` directory on the host by visiting the ``~/Userdirs/Downloads`` directory within the container. 
+  In this example, the subuser is able to access the ``~/Downloads`` directory on the host by visiting the ``~/Userdirs/Downloads`` directory within the container.
 
 
   **Default**: ``[]``
@@ -136,7 +136,7 @@ Liberal permissions
 
   **Default**: ``false``
 
- * ``system-dirs``: A list of absolute paths to directories which are to be shared between the host and the given image. The subuser is given read-write access to any user directories listed.
+ * ``system-dirs``: A dictionary of absolute paths to directories which are to be shared between the host and the given image. The subuser is given read-write access to any user directories listed.
 
   Ex::
 
@@ -188,5 +188,3 @@ Depricated
   Ex::
 
     ,"last-update-time"          : "2014-02-12-12:59"
-
-
