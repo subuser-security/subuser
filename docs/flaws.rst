@@ -11,5 +11,5 @@ Design flaws/bugs in subuser
  - I hope this will be fixed by something more sophisticated like giving access only to paths specified in the command line arguments.
 
 * Disk usage is several times greater when installing one container per application due to the reduced ability to share dependencies
- - Docker will soon have `ZFS <http://zfsonlinux.org/>`_ support, which has limited support for block deduplication.  Maybe future versions of Docker will have a `venti <http://doc.cat-v.org/plan_9/4th_edition/papers/venti/>`_ based storage driver thus solving the problem prefectly and elegantly and also making updates even faster than on a traditional system.
+ - Docker will soon have `ZFS <http://zfsonlinux.org/>`_ support, which has limited support for block deduplication.  Maybe future versions of Docker will have a `venti <http://doc.cat-v.org/plan_9/4th_edition/papers/venti/>`_ based storage driver thus solving the problem perfectly and elegantly and also making updates even faster than on a traditional system.
 

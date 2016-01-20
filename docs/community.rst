@@ -1,12 +1,12 @@
 Community
 =========
 
-Don't be anxious about communicating with us. We won't yell at you for being off topic or disruptive. General chatting and "getting to know eachother" is encouraged!
+Don't be anxious about communicating with us. We won't yell at you for being off topic or disruptive. General chatting and "getting to know each other" is encouraged!
 
 Mailing list
 ------------
 
-If you want to engage in general discussions, ask questions ect. you can join `our mailing list <http://www.freelists.org/list/subuser>`_.
+If you want to engage in general discussions, ask questions etc. you can join `our mailing list <http://www.freelists.org/list/subuser>`_.
 
 Pull requests
 -------------
@@ -26,7 +26,7 @@ For design discussions file an issue at `our github repo <https://github.com/sub
 I want to learn Python and contribute to Open Source. Will you tutor me?
 ------------------------------------------------------------------------
 
-Yes! Just introduce yourself by filing an issue or sending a Pull Request `here <https://github.com/subuser-security/subuser>`_ or by writting to `our mailing list <http://www.freelists.org/list/subuser>`_ . Be sure to say that you're just staring out and wanting to learn. In the case of a PR, I'll guide you through the process of improving your code by suggesting changes and creating alternate PRs which you can learn from. If you are not ready to create a PR yet, I will find a small and simple task for you.  Happy hacking!
+Yes! Just introduce yourself by filing an issue or sending a Pull Request `here <https://github.com/subuser-security/subuser>`_ or by writing to `our mailing list <http://www.freelists.org/list/subuser>`_ . Be sure to say that you're just staring out and wanting to learn. In the case of a PR, I'll guide you through the process of improving your code by suggesting changes and creating alternate PRs which you can learn from. If you are not ready to create a PR yet, I will find a small and simple task for you.  Happy hacking!
 
 Last of all, don't take me or anyone else tutoring you to be some kind of programming god. Tutors are human too!
 

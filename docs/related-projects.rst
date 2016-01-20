@@ -7,11 +7,11 @@ Related projects
 
  * `Subgraph OS <https://subgraph.com/>`_
 
- Subgraph OS, like subuser, aims to securely partition the operating system at the application level. Subgraph's goals are purely security based, where-as subuser focuses on portability and maintainability as well. Subgraph is able to take advantage of specialized kernel features like grsec and thus has a level of security which excedes that of subuser. However, unlike subuser, the user of subgraph must specially configure their operating system/kernel for use with subgraph. In the security by isolation spectrum, subgraph is one step bellow QubesOS. It is less resource intensive and less secure than Qubes. Subuser is one step bellow subgraph. Subuser is more portable and less secure than subgraph.
+ Subgraph OS, like subuser, aims to securely partition the operating system at the application level. Subgraph's goals are purely security based, where-as subuser focuses on portability and maintainability as well. Subgraph is able to take advantage of specialized kernel features like grsec and thus has a level of security which exceeds that of subuser. However, unlike subuser, the user of subgraph must specially configure their operating system/kernel for use with subgraph. In the security by isolation spectrum, subgraph is one step bellow QubesOS. It is less resource intensive and less secure than Qubes. Subuser is one step bellow subgraph. Subuser is more portable and less secure than subgraph.
 
  * `Apiary Desktop <https://www.usenix.org/conference/usenix-atc-10/apiary-easy-use-desktop-application-fault-containment-commodity-operating>`_
 
- A 2010 accademic project which had a very similar design to subuser. No code has been published, however the talk is interesting.
+ A 2010 academic project which had a very similar design to subuser. No code has been published, however the talk is interesting.
 
  * `Bedrock linux <http://bedrocklinux.org>`_
 
@@ -19,7 +19,7 @@ Related projects
 
  * `Gnome sandboxes <https://wiki.gnome.org/Projects/SandboxedApps>`_
 
- This is a project started after Subuser was already around for a while. While this seems in some abstract sence to be quite similar to subuser it seems to be very Gnome specific.
+ This is a project started after Subuser was already around for a while. While this seems in some abstract sense to be quite similar to subuser it seems to be very Gnome specific.
 
  * `zero-install <http://zero-install.sourceforge.net/>`_, `Portable Linux Apps <http://portablelinuxapps.org/>`_, `Autopackage <https://en.wikipedia.org/wiki/Autopackage>`_, `Listaller <http://listaller.tenstral.net/>`_, `Limba <http://blog.tenstral.net/2015/03/limba-project-progress.html>`_, and to a lesser extent: `PPAs <http://www.ubuntu.com/news/launchpad-ppa>`_ and `One Click Install <http://en.opensuse.org/openSUSE:One_Click_Install>`_
 
@@ -36,7 +36,7 @@ Related projects
 
  * `Java Web Start <http://en.wikipedia.org/wiki/Java_Web_Start>`_
 
- Subuser has many of the same goals as Java Web Start.  We want users to be able to easilly and safely install and run programs that they find on the internet.  We mostly learn from Java Web Start's mistakes here.  Don't ask/warn users every time a program tries to open a file, don't restrict programs to using GUI toolkits with crapy fonts ect.
+ Subuser has many of the same goals as Java Web Start.  We want users to be able to easily and safely install and run programs that they find on the internet.  We mostly learn from Java Web Start's mistakes here.  Don't ask/warn users every time a program tries to open a file, don't restrict programs to using GUI toolkits with crappy fonts ect.
 
  * `The sub-identity toolkit <https://www3.nd.edu/~ccl/software/subid/>`_
 
