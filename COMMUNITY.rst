@@ -1,7 +1,7 @@
 Community guidelines
 ====================
 
-We are an engineering centric community
+We are an engineering-centric community
 ----------------------------
 
 We accept anyone into our community, regardless of race, gender, corporate affiliation, lack of corporate affiliation, age, education, experience, or ability to spell.  The only thing of important to us is your ability to think like an engineer.
