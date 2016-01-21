@@ -5,10 +5,10 @@ What is subuser?
 
   <div style="height: 10em;position:relative"><div id="marketingClaim" style="text-align:center;margin:auto;top:0;bottom:0;left:0;right:0;position:absolute"><h1>Docker on the Desktop</h1></div> </div>
   <dif id="slide1"><h1>Bedrock linux meets Android permissions</h1></div>
-  <div id="slide2"><h1>QubesOS light</h1></div>
+  <div id="slide2"><h1>Qubes OS light</h1></div>
   <div id="slide3"><h1>A package manager with an undo function</h1></div>
   <div id="slide4"><h1>Docker on the Desktop</h1></div>
- 
+
   <script>
   slides = ["slide1"
            ,"slide2"
@@ -25,17 +25,17 @@ What is subuser?
       if(slide == slides.length) {
         slide = 0
       }
-  
+
   }, 2000);
   </script>
 
 Subuser is free open-source software
 ------------------------------------
 
-Subuser is licenced under the LGPL v3. You can download the source code by clicking `here. <http://github.com/subuser-security/subuser>`_
+Subuser is licensed under the LGPL v3. You can download the source code by clicking `here. <http://github.com/subuser-security/subuser>`_
 
 `Download source  <http://github.com/subuser-security/subuser>`_
-^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The problem
 -----------
@@ -51,7 +51,7 @@ Furthermore, the fragmentation of the linux desktop means that packaging work is
 Subuser with Docker attacks both problems simultaneously.  Docker provides an isolated and consistent environment for your programs to run in.  Subuser gives your desktop programs access to the resources they need in order to function normally.
 
 Subuser turns Docker containers into normal linux programs
-------------------------------------------------------------
+----------------------------------------------------------
 
 Right now I'm editing this file in `vim`.  `vim` is not installed on my computer though.  It is installed in a docker container.  However, in order to edit this file, all I had to do was type::
 
