@@ -135,7 +135,7 @@ class ImageSource(UserOwnedObject,Describable):
     imageId = self.getUser().getDockerDaemon().build(relativeBuildContextPath=self.getImageDir(),repositoryFileStructure=self.getRepository().getFileStructure(),rm=True,dockerfile=dockerfileContents,useCache=False)
     subuserSetupDockerFile = ""
     subuserSetupDockerFile += "FROM "+imageId+"\n"
-    subuserSetupDockerFile += "RUN mkdir /subuser ; echo "+str(uuid.uuid4())+" > /subuser/uuid\n" # This ensures that all images have unique Ids.  Even images that are otherwise the same.
+    subuserSetupDockerFile += "RUN mkdir -p /subuser ; echo "+str(uuid.uuid4())+" > /subuser/uuid\n" # This ensures that all images have unique Ids.  Even images that are otherwise the same.
     return self.getUser().getDockerDaemon().build(dockerfile=subuserSetupDockerFile,useCache=False)
 
   def getImageFile(self):
