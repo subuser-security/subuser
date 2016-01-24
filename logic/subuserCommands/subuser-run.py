@@ -36,7 +36,8 @@ def run(args):
   argsToPassToImage = args[2:]
 
   user = User()
-  user.getRegistry().setLogOutputVerbosity(0)
+  if not "SUBUSER_VERBOSITY" in os.environ:
+    user.getRegistry().setLogOutputVerbosity(0)
   if subuserName in user.getRegistry().getSubusers():
     try:
       extraDockerFlags = os.environ["SUBUSER_EXTRA_DOCKER_ARGS"].split(" ")

@@ -39,7 +39,7 @@ class Runtime(UserOwnedObject):
       self.__extraFlags = extraDockerFlags
     self.__background = False
     if not subuserlib.test.testing:
-      self.__hostname = binascii.b2a_hex(os.urandom(10))
+      self.__hostname = binascii.b2a_hex(os.urandom(10)).decode()
     else:
       self.__hostname = "<random-hostname>"
     UserOwnedObject.__init__(self,user)
@@ -238,6 +238,7 @@ $ subuser repair
     with open(self.getXautorityFilePath(),"wb") as xauthFile:
       xauthFile.write(start)
       hostname = self.getHostname()
+      hostname = hostname.encode("ascii")
       xauthFile.write(struct.pack("b",len(hostname)))
       xauthFile.write(hostname)
       xauthFile.write(rest)
@@ -252,30 +253,47 @@ $ subuser repair
       if not self.getSubuser().getPermissions()["executable"]:
         sys.exit("Cannot run subuser, no executable configured in permissions.json file.")
       if self.getSubuser().getPermissions()["stateful-home"]:
+        self.getUser().getRegistry().log("Setting up subuser home dir.",verbosityLevel=4)
         self.getSubuser().setupHomeDir()
       if self.getSubuser().getPermissions()["stateful-home"] and self.getSubuser().getPermissions()["user-dirs"]:
+        self.getUser().getRegistry().log("Creating user dir symlinks in subuser home dir.",verbosityLevel=4)
         userDirsDir = os.path.join(self.getSubuser().getHomeDirOnHost(),"Userdirs")
         if os.path.islink(userDirsDir):
           sys.exit("Please remove the old Userdirs directory, it is no longer needed. The path is:"+userDirsDir)
       if self.getSubuser().getPermissions()["x11"]:
+        self.getUser().getRegistry().log("Generating xauth file.",verbosityLevel=4)
         self.setupXauth()
       if self.getSubuser().getPermissions()["run-commands-on-host"]:
+        self.getUser().getRegistry().log("Launching execution spool daemon.",verbosityLevel=4)
         self.setupExecutionSpool()
+      if self.getBackground():
+        try:
+          os.remove(self.getCidFile())
+        except OSError:
+          pass
       #Note, subusers with gui permission cannot be run in the background.
       # Make sure that everything is setup and ready to go.
       if not self.getSubuser().getPermissions()["gui"] is None:
+        self.getUser().getRegistry().log("Requesting connection to X11 bridge.",verbosityLevel=4)
         self.getSubuser().getX11Bridge().addClient()
+      self.getUser().getRegistry().log("Building run command.",verbosityLevel=4)
       command = self.getCommand(args)
       (collectStdout,collectStderr) = self.getBackgroundCollectOutput()
+      self.getUser().getRegistry().log("Running subuser with Docker.",verbosityLevel=4)
+      self.getUser().getRegistry().log(self.getPrettyCommand(args),verbosityLevel=4)
       returnValue = self.getUser().getDockerDaemon().execute(command,background=self.getBackground(),backgroundSuppressOutput=self.getBackgroundSuppressOutput(),backgroundCollectStdout=collectStdout,backgroundCollectStderr=collectStderr)
       if self.getSubuser().getPermissions()["run-commands-on-host"]:
+        self.getUser().getRegistry().log("Stopping execution spool.",verbosityLevel=4)
         self.tearDownExecutionSpool()
       if not self.getSubuser().getPermissions()["gui"] is None:
+        self.getUser().getRegistry().log("Disconnecting from X11 bridge.",verbosityLevel=4)
         self.getSubuser().getX11Bridge().removeClient()
       if self.getBackground():
+        self.getUser().getRegistry().log("Waiting for CID file to be generated.",verbosityLevel=4)
         while not os.path.exists(self.getCidFile()) or os.path.getsize(self.getCidFile()) == 0:
           time.sleep(0.05)
         with open(self.getCidFile(),"r") as cidFile:
+          self.getUser().getRegistry().log("Reading CID file.",verbosityLevel=4)
           containerId = cidFile.read()
           container = self.getUser().getDockerDaemon().getContainer(containerId)
           if container is None:
