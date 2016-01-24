@@ -153,6 +153,7 @@ class XpraX11Bridge(Service):
     """
     Clear special volumes. This ensures statelessness of stateless subusers.
     """
+    self.getUser().getRegistry().log("Cleaning up old bridge volume files.",verbosityLevel=4)
     try:
       shutil.rmtree(os.path.join(self.getUser().getConfig()["volumes-dir"],"xpra",self.getSubuser().getName()))
     except OSError as e:
@@ -170,6 +171,7 @@ class XpraX11Bridge(Service):
       self.cleanUp()
       self.createAndSetupSpecialVolumes()
     def mkdirs(directory):
+      self.getUser().getRegistry().log("Creating the "+directory+" directory.",verbosityLevel=4)
       try:
         self.getUser().getEndUser().makedirs(directory)
       except OSError as e:
