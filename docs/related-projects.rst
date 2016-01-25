@@ -1,5 +1,5 @@
 Related projects
-==============
+================
 
  * `Qubes OS <https://qubes-os.org/>`_
 
@@ -7,7 +7,7 @@ Related projects
 
  * `Subgraph OS <https://subgraph.com/>`_
 
- Subgraph OS, like subuser, aims to securely partition the operating system at the application level. Subgraph's goals are purely security based, where-as subuser focuses on portability and maintainability as well. Subgraph is able to take advantage of specialized kernel features like grsec and thus has a level of security which exceeds that of subuser. However, unlike subuser, the user of subgraph must specially configure their operating system/kernel for use with subgraph. In the security by isolation spectrum, subgraph is one step bellow QubesOS. It is less resource intensive and less secure than Qubes. Subuser is one step bellow subgraph. Subuser is more portable and less secure than subgraph.
+ Subgraph OS, like subuser, aims to securely partition the operating system at the application level. Subgraph's goals are purely security based, where-as subuser focuses on portability and maintainability as well. Subgraph is able to take advantage of specialized kernel features like grsec and thus has a level of security which exceeds that of subuser. However, unlike subuser, the user of subgraph must specially configure their operating system/kernel for use with subgraph. In the security by isolation spectrum, subgraph is one step bellow Qubes OS. It is less resource intensive and less secure than Qubes. Subuser is one step bellow subgraph. Subuser is more portable and less secure than subgraph.
 
  * `Apiary Desktop <https://www.usenix.org/conference/usenix-atc-10/apiary-easy-use-desktop-application-fault-containment-commodity-operating>`_
 
@@ -44,7 +44,7 @@ Related projects
 
  * `AppArmor <http://en.wikipedia.org/wiki/AppArmor>`_ , `SELinux <http://en.wikipedia.org/wiki/Security-Enhanced_Linux>`_, `TOMOYO <http://tomoyo.sourceforge.jp>`_, `Smack <http://schaufler-ca.com/home>`_
 
- These are competing programs which enforce `Mandatory Access Control(MAC) <http://en.wikipedia.org/wiki/Mandatory_access_control>`_ policies.  Those are either white lists or black lists of what the program is allowed to do.  While these pieces of software work fine for protecting the system, they are complicated to set up and provide overly wide access to user data.  Normally, when a program is expected to work with user data under SELinux or Apparmour, that program is given full access to the user's home directory.
+ These are competing programs which enforce `Mandatory Access Control(MAC) <http://en.wikipedia.org/wiki/Mandatory_access_control>`_ policies.  Those are either white lists or black lists of what the program is allowed to do.  While these pieces of software work fine for protecting the system, they are complicated to set up and provide overly wide access to user data.  Normally, when a program is expected to work with user data under SELinux or AppArmor, that program is given full access to the user's home directory.
 
  * `grsecurity <https://grsecurity.net>`_
 

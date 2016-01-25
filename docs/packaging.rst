@@ -53,7 +53,7 @@ Quick packaging tutorial
   $ subuser subuser add subuser-name my-subuser-image@https://github.com/timthelion/my-subuser-programs.git
 
 Creating a `permissions.json` file
----------------------------------
+----------------------------------
 
 Here is an example::
 
@@ -81,15 +81,15 @@ Example `SubuserImagefile`::
   FROM debian
   RUN apt-get update && apt-get install -yyq vim
 
-Example2::
+Example 2::
 
   FROM-SUBUSER-IMAGE libx11@default
   RUN apt-get update && apt-get install -yyq iceweasel
 
-Example3::
+Example 3::
 
   FROM debian
   RUN apt-get update && apt-get install -yyq iceweasel
 
-.. note :: Examples 2 and 3 do the **SAME** thing, it's just that Example3 takes a little longer to build and uses more space on disk.  There is **no magic** in the ``libx11`` image and never will be(we hope).
+.. note :: Examples 2 and 3 do the **SAME** thing, it's just that Example 3 takes a little longer to build and uses more space on disk.  There is **no magic** in the ``libx11`` image and never will be(we hope).
 

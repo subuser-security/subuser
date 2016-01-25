@@ -77,7 +77,7 @@ descriptions = {
   ,"executable":lambda executable : ["Executable: "+executable] if executable else ["Is a library."]
   # Conservative
   ,"stateful-home": lambda p : ["To have its own home directory where it can save files and settings."] if p else []
-  ,"inherit-locale": lambda p : ["To find out language you speak and what region you live in."] if p else []
+  ,"inherit-locale": lambda p : ["To find out which language you speak and what region you live in."] if p else []
   ,"inherit-timezone": lambda p : ["To find out your current timezone."] if p else []
   # Moderate
   ,"gui": lambda guiOptions : (["To be able to display windows."] + sum([guiDescriptions[permission](value) for permission,value in guiOptions.items()],[])) if guiOptions else []
@@ -88,10 +88,10 @@ descriptions = {
   ,"access-working-directory": lambda p: ["To access the directory from which it was launched."] if p else []
   ,"allow-network-access": lambda p : ["To access the network/internet."] if p else []
   # Liberal
-  ,"x11": lambda p : ["To display X11 windows and interact with your X11 server directly(log keypresses, read over your shoulder, steal your passwords, controll your computer ect.)"] if p else []
+  ,"x11": lambda p : ["To display X11 windows and interact with your X11 server directly(log keypresses, read over your shoulder, steal your passwords, control your computer ect.)"] if p else []
   ,"system-dirs": lambda systemDirs : ["To read and write to the host's `"+source+"` directory, mounted in the container as:`"+dest+"`" for source,dest in systemDirs.items()]
   ,"graphics-card": lambda p : ["To access your graphics-card directly for OpenGL tasks."] if p else []
-  ,"serial-devices": lambda p : ["To access serial devices such as programable micro-controlers and modems."] if p else []
+  ,"serial-devices": lambda p : ["To access serial devices such as programmable micro-controllers and modems."] if p else []
   ,"system-dbus": lambda p: ["To talk to the system dbus daemon."] if p else []
   ,"sudo": lambda p: ["To be allowed to use the sudo command to run subproccesses as root in the container."] if p else []
   ,"as-root": lambda p: ["To be allowed to run as root within the container."] if p else []
