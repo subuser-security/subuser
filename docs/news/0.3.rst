@@ -16,7 +16,7 @@ With the 0.3 release, subuser follows OZ's lead and uses Xpra to create a secure
 
 Each graphical application running in subuser gets its own container. This container shares an X11 unix socket with an Xpra server which in turn runs in its own container. The Xpra client runs in yet another container. This allows Xpra to transmit the graphical session on to the host without requiring the container to have Xpra installed. This ensures that subuser images are simple.
 
-.. image:: ./images/iceweasel.png
+.. image:: ../screenshots/liferea+firefox.png
 
 It is hard to tell when I am running iceweasel in subuser and when I'm running it on the host. For the most part, everything just works, including full screen video. The only thing that is obviously different is the file system access. When iceweasel is running in subuser it can only see my Downloads directory and not my full home dir.
 
