@@ -1,4 +1,4 @@
-Usage: subuser subuser [add|remove|create-shortcut|remove-shortcut|edit-permissions] NAME [IMAGESOURCE]
+Usage: subuser subuser [add|remove|add-to-path|remove-from-path|edit-permissions] NAME [IMAGESOURCE]
 
 
 
@@ -20,7 +20,7 @@ Remove subusers foo and bar.
 
 Create a launcher for the subuser named foo.
 
-    $ subuser subuser create-shorcut foo
+    $ subuser subuser add-to-path foo
 
 You can now launch foo directly.
 
@@ -28,7 +28,7 @@ You can now launch foo directly.
 
 Remove the launcher (if one exists) for the subuser named foo.
 
-    $ subuser subuser remove-shortcut foo
+    $ subuser subuser remove-from-path foo
 
 Edit a subuser's permissions.
 

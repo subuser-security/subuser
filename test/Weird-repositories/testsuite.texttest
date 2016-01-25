@@ -7,3 +7,5 @@ add-broken-syntax
 subuser-add-€-from-€@local-test-repo-§€č
 image-source-with-spaces
 incorrect-permission-types
+With-subuser-foo-having-broken-permissions
+With-subuser-foo-having-no-installed-image

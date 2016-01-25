@@ -18,7 +18,7 @@ import subuserlib.verify
 import subuserlib.profile
 
 def parseCliArgs(sysargs):
-  usage = "usage: subuser subuser [add|remove|create-shortcut|remove-shortcut|edit-permissions] NAME [IMAGESOURCE]"
+  usage = "usage: subuser subuser [add|remove|add-to-path|remove-from-path|edit-permissions] NAME [IMAGESOURCE]"
   description = """
 
 Add and remove subusers.  Create shorcuts for launching subusers.
@@ -39,7 +39,7 @@ Remove subusers foo and bar.
 
 Create a launcher for the subuser named foo.
 
-    $ subuser subuser create-shorcut foo
+    $ subuser subuser add-to-path foo
 
 You can now launch foo directly.
 
@@ -47,7 +47,7 @@ You can now launch foo directly.
 
 Remove the launcher (if one exists) for the subuser named foo.
 
-    $ subuser subuser remove-shortcut foo
+    $ subuser subuser remove-from-path foo
 
 Edit a subuser's permissions.
 
@@ -92,14 +92,18 @@ def subuser(sysargs):
         except KeyError:
           sys.exit("Subuser "+subuserName+" does not exist and therefore cannot be removed. Use --help for help.")
       subuserlib.subuser.remove(user,subusers)
-  elif action == "create-shortcut":
+  elif action == "add-to-path" or action == "remove-from-path":
     name = args[1]
+    try:
+      subuser = user.getRegistry().getSubusers()[name]
+    except KeyError:
+      sys.exit("Subuser "+name+" does not exist.")
+    if action == "add-to-path":
+      install = True
+    elif action == "remove-from-path":
+      install = False
     with user.getRegistry().getLock():
-      subuserlib.subuser.setExecutableShortcutInstalled(user,name,True)
-  elif action == "remove-shortcut":
-    name = args[1]
-    with user.getRegistry().getLock():
-      subuserlib.subuser.setExecutableShortcutInstalled(user,name,False)
+      subuserlib.subuser.setExecutableShortcutInstalled(user,subuser,install)
   elif action == "edit-permissions":
     try:
       name = args[1]

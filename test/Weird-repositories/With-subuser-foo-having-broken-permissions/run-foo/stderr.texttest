@@ -1,0 +1,8 @@
+The subuser <foo> has no permissions.
+
+Please run:
+
+$ subuser repair
+
+To repair your subuser installation.
+

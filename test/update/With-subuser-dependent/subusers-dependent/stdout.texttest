@@ -4,13 +4,15 @@ Verifying registry consistency...
 Unregistering any non-existant installed images.
 Checking if images need to be updated or installed...
 Checking if subuser dependent is up to date.
-Checking for updates to: dependency1@file:////home/timothy/.texttest/tmp/texttest.05Jan203342.5080/texttest/update/With-subuser-dependent/subusers-dependent/test-repos/remote-test-repo
+Checking for updates to: dependency1@file:////home/timothy/.texttest/tmp/texttest.15Jan133835.1341/texttest/update/With-subuser-dependent/subusers-dependent/test-repos/remote-test-repo
 Execute docker with args: ['run', '--rm', '--entrypoint', '/usr/bin/test', '2', '-e', '/subuser/check-for-updates']
 Cwd:None
-Checking for updates to: intermediary@file:////home/timothy/.texttest/tmp/texttest.05Jan203342.5080/texttest/update/With-subuser-dependent/subusers-dependent/test-repos/remote-test-repo
+Checking for updates to: intermediary@file:////home/timothy/.texttest/tmp/texttest.15Jan133835.1341/texttest/update/With-subuser-dependent/subusers-dependent/test-repos/remote-test-repo
 Execute docker with args: ['run', '--rm', '--entrypoint', '/usr/bin/test', '4', '-e', '/subuser/check-for-updates']
 Cwd:None
-Checking for updates to: dependent@file:////home/timothy/.texttest/tmp/texttest.05Jan203342.5080/texttest/update/With-subuser-dependent/subusers-dependent/test-repos/remote-test-repo
+Checking for updates to: dependent@file:////home/timothy/.texttest/tmp/texttest.15Jan133835.1341/texttest/update/With-subuser-dependent/subusers-dependent/test-repos/remote-test-repo
 Execute docker with args: ['run', '--rm', '--entrypoint', '/usr/bin/test', '6', '-e', '/subuser/check-for-updates']
 Cwd:None
 Running garbage collector on temporary repositories...
+Clearing directory /home/timothy/.texttest/tmp/texttest.15Jan133835.1341/texttest/update/With-subuser-dependent/subusers-dependent/.subuser/volumes/execute
+Clearing directory /home/timothy/.texttest/tmp/texttest.15Jan133835.1341/texttest/update/With-subuser-dependent/subusers-dependent/.subuser/volumes/x11

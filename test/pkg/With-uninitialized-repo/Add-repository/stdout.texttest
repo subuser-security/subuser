@@ -1,11 +1,11 @@
 Initial commit.
-Cloning repository default from file:///home/timothy/.texttest/tmp/texttest.06Jan124516.7650/texttest/pkg/With-uninitialized-repo/Add-repository/test-repos/default-test-repo
-Adding new temporary repository /home/timothy/.texttest/tmp/texttest.06Jan124516.7650/texttest/pkg/With-uninitialized-repo/Add-repository
+Cloning repository default from file:///home/timothy/.texttest/tmp/texttest.15Jan133835.1341/texttest/pkg/With-uninitialized-repo/Add-repository/test-repos/default-test-repo
+Adding new temporary repository /home/timothy/.texttest/tmp/texttest.15Jan133835.1341/texttest/pkg/With-uninitialized-repo/Add-repository
 Adding new image source foo
 
 
 Would you like to test your new image? [Y/n]
-Adding new temporary repository /home/timothy/.texttest/tmp/texttest.06Jan124516.7650/texttest/pkg/With-uninitialized-repo/Add-repository
+Adding new temporary repository /home/timothy/.texttest/tmp/texttest.15Jan133835.1341/texttest/pkg/With-uninitialized-repo/Add-repository
 Verifying subuser configuration.
 Verifying registry consistency...
 Unregistering any non-existant installed images.
@@ -40,6 +40,8 @@ Building...
 Successfully built 4
 Installed new image <4> for subuser !test-image-subuser-foo
 Running garbage collector on temporary repositories...
+Clearing directory /home/timothy/.texttest/tmp/texttest.15Jan133835.1341/texttest/pkg/With-uninitialized-repo/Add-repository/.subuser/volumes/execute
+Clearing directory /home/timothy/.texttest/tmp/texttest.15Jan133835.1341/texttest/pkg/With-uninitialized-repo/Add-repository/.subuser/volumes/x11
 Running !test-image-subuser-foo enter arguments and press enter to continue:
 Execute docker with args: ['run', '--rm', '-i', '-e', 'HOME=/home/timothy', '--workdir=/home/timothy', '--net=none', '--user=1000', '--hostname', '<random-hostname>', '--entrypoint', '/usr/bin/nothing', '5']
 Cwd:None
@@ -49,3 +51,5 @@ Verifying subuser configuration.
 Verifying registry consistency...
 Unregistering any non-existant installed images.
 Running garbage collector on temporary repositories...
+Clearing directory /home/timothy/.texttest/tmp/texttest.15Jan133835.1341/texttest/pkg/With-uninitialized-repo/Add-repository/.subuser/volumes/execute
+Clearing directory /home/timothy/.texttest/tmp/texttest.15Jan133835.1341/texttest/pkg/With-uninitialized-repo/Add-repository/.subuser/volumes/x11
