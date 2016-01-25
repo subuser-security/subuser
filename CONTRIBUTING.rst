@@ -8,7 +8,7 @@ There is no need to sign a contributor agreement.  All changes belong to you and
 Coding guidelines
 -----------------
 
-* One of the major aims of this project is to be as easy to install as possible while still provide a maintainable code base. At first I banned all external dependencies, fearing constant breakage and incompatibilities. However, I have grown to trust the pypi community a bit, and now only strongly discourage new external dependencies.
+* One of the major aims of this project is to be as easy to install as possible while still providing a maintainable code base. At first I banned all external dependencies, fearing constant breakage and incompatibilities. However, I have grown to trust the pypi community a bit, and now only strongly discourage new external dependencies.
 
 * Do not maintain 80 column code formatting.  Any pull requests to refill to 80 columns will be rejected.  Refilling is based on some meaningless and ancient standard.  I often use 60 column terminals which make 80 columns hard to read, it is far easier to read line wrapped code that is of its natural length then to read line-wrapped filled code.
 

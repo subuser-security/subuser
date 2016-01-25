@@ -77,7 +77,7 @@ descriptions = {
   ,"executable":lambda executable : ["Executable: "+executable] if executable else ["Is a library."]
   # Conservative
   ,"stateful-home": lambda p : ["To have its own home directory where it can save files and settings."] if p else []
-  ,"inherit-locale": lambda p : ["To find out the language you speak and what region you live in."] if p else []
+  ,"inherit-locale": lambda p : ["To find out which language you speak and what region you live in."] if p else []
   ,"inherit-timezone": lambda p : ["To find out your current timezone."] if p else []
   # Moderate
   ,"gui": lambda guiOptions : (["To be able to display windows."] + sum([guiDescriptions[permission](value) for permission,value in guiOptions.items()],[])) if guiOptions else []
