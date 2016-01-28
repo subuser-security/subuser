@@ -161,7 +161,7 @@ class XpraX11Bridge(Service):
       # Unfortunately, the X11 socket may still exist and will be owned by root.
       # So we cannot do the clean up as a normal user.
       # Fortunately, being a member of the docker group is the same as having root access.
-      if not e.errno == errno.EEXIST:
+      if not e.errno == errno.ENOENT:
         self.getUser().getRegistry().log("An error occured while setting up xpra X11 socket.",verbosityLevel=3)
         self.getUser().getRegistry().log(str(e),verbosityLevel=3)
         self.getUser().getDockerDaemon().execute(["run","--rm","--volume",os.path.join(self.getUser().getConfig()["volumes-dir"],"xpra")+":/xpra-volume","--entrypoint","/bin/rm",self.getServerSubuser().getImageId(),"-rf",os.path.join("/xpra-volume/",self.getSubuser().getName())])
