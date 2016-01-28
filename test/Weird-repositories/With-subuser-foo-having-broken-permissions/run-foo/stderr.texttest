@@ -1,8 +1,11 @@
-The subuser <foo> has no permissions.
+foo not found.
+Run the given subuser.
 
-Please run:
+For example:
 
-$ subuser repair
+    $ subuser run iceweasel
 
-To repair your subuser installation.
+Will launch the subuser named iceweasel
+
+If the SUBUSER_EXTRA_DOCKER_ARGS environment variable is set. Those arguments will be passed to Docker.
 

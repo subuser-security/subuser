@@ -1,0 +1,8 @@
+The following subusers are registered.
+ Description: bar
+Subuser: foo
+------------------
+bar@file:////home/timothy/.texttest/tmp/texttest.27Dec211543.21006/texttest/Weird-repositories/With-subuser-foo-having-no-installed-image/List-subusers-long/test-repos/remote-test-repo
+ Maintainer: fred
+ Executable: /usr/bin/bar
+

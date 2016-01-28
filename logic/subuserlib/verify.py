@@ -41,8 +41,15 @@ def verify(user,permissionsAccepter=None,checkForUpdatesExternally=False,subuser
   user.getInstalledImages().unregisterNonExistantImages()
   if subusers:
     user.getRegistry().setChanged(True)
+    user.getRegistry().log("Approving permissions...",verbosityLevel=3)
     (failedSubusers,permissionParsingExceptions) = approvePermissions(user,subusers,permissionsAccepter)
+    user.getRegistry().log("Permissions approved...",verbosityLevel=3)
     subusers = [x for x in subusers if x not in failedSubusers]
+    for failedSubuser in failedSubusers:
+      try:
+        failedSubuser.getPermissions()
+      except subuserlib.classes.subuser.SubuserHasNoPermissionsException:
+        del user.getRegistry().getSubusers()[failedSubuser.getName()]
     subusers += ensureServiceSubusersAreSetup(user,subusers)
     installationTask = InstallationTask(user,subusersToBeUpdatedOrInstalled=subusers,checkForUpdatesExternally=checkForUpdatesExternally)
     outOfDateSubusers = installationTask.getOutOfDateSubusers()

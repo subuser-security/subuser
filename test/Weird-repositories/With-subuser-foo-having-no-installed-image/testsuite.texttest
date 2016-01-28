@@ -1,1 +1,8 @@
 run-foo
+Describe-image-foo
+Describe-image-foo-full-path
+Describe-subuser-foo
+Dryrun-foo
+List-subusers-long
+edit-permissions-foo
+remove-foo
