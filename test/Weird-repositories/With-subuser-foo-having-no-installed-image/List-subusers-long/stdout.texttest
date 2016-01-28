@@ -1,8 +1,8 @@
 The following subusers are registered.
- Description: bar
+ Description: broken-syntax
 Subuser: foo
 ------------------
-bar@file:////home/timothy/.texttest/tmp/texttest.27Dec211543.21006/texttest/Weird-repositories/With-subuser-foo-having-no-installed-image/List-subusers-long/test-repos/remote-test-repo
+Warning: This subuser has no image, nor does it have a valid image source to install an image from.
  Maintainer: fred
- Executable: /usr/bin/bar
+ Executable: /usr/bin/foo
 

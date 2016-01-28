@@ -248,7 +248,10 @@ To repair your subuser installation.\n""")
   def describe(self):
     print("Subuser: "+self.getName())
     print("------------------")
-    print(self.getImageSource().getIdentifier())
+    try:
+      print(self.getImageSource().getIdentifier())
+    except subuserlib.classes.subuser.NoImageSourceException:
+      print("Warning: This subuser has no image, nor does it have a valid image source to install an image from.")
     self.getPermissions().describe()
     print("")
 

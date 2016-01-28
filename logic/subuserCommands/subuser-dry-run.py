@@ -41,10 +41,13 @@ def dryRun(args):
   user = subuserlib.classes.user.User()
   if subuserName in user.getRegistry().getSubusers():
     subuser = user.getRegistry().getSubusers()[subuserName]
-    print("The image will be prepared using the Dockerfile:")
-    print(subuser.getRunReadyImage().generateImagePreparationDockerfile())
-    print("The command to launch the image is:")
-    print(subuser.getRuntime(os.environ).getPrettyCommand(argsToPassToImage))
+    if subuser.getImageId():
+      print("The image will be prepared using the Dockerfile:")
+      print(subuser.getRunReadyImage().generateImagePreparationDockerfile())
+      print("The command to launch the image is:")
+      print(subuser.getRuntime(os.environ).getPrettyCommand(argsToPassToImage))
+    else:
+      print("The subuser "+subuserName+" has no installed image and therefore cannot be run.")
   else:
     availableSubusers = ",".join(user.getRegistry().getSubusers().keys())
     sys.exit(subuserName + " not found.\n"+helpString+"\n"+"The following subusers are available for use:"+ availableSubusers)

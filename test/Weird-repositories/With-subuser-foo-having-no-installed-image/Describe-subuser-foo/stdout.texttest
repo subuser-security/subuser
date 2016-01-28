@@ -1,7 +1,7 @@
- Description:
+ Description: broken-syntax
 Subuser: foo
 ------------------
-foo@default
- Maintainer:
+Warning: This subuser has no image, nor does it have a valid image source to install an image from.
+ Maintainer: fred
  Executable: /usr/bin/foo
 
