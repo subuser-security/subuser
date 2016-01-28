@@ -31,11 +31,19 @@ This object maps subuser names to json objects which have the following attribut
 
   **type**: A Docker image ``Id``.
 
- * ``executable-shortcut-installed``: Is an executable shortcut to be installed to the subuser bin directory?
+ * ``executable-shortcut-installed``: Is an executable shortcut to be installed to the subuser bin directory in order to add the subuser to the $PATH?
 
   Ex::
 
     ,"executable-shortcut-installed" :true
+
+  **type**: boolean
+
+ * ``entry-points-exposed``: Are there executable shortcuts installed for this subuser's entry points?
+
+  Ex::
+
+    ,"entry-points-exposed" :true
 
   **type**: boolean
 
@@ -46,4 +54,3 @@ This object maps subuser names to json objects which have the following attribut
     ,"service-subusers" : ["!service-subuser-firefox-xpra-server","!service-subuser-firefox-xpra-client"]
 
   **type**: List of strings(subuser names).
-
