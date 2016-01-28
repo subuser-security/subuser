@@ -1,15 +1,15 @@
 Initial commit.
-Cloning repository default from file:///home/timothy/.texttest/tmp/texttest.15Jan133835.1341/texttest/Weird-repositories/add-broken-syntax/test-repos/default-test-repo
-Adding subuser broken-syntax with image broken-syntax@file:////home/timothy/.texttest/tmp/texttest.15Jan133835.1341/texttest/Weird-repositories/add-broken-syntax/test-repos/remote-test-repo
-Cloning repository 0 from file:////home/timothy/.texttest/tmp/texttest.15Jan133835.1341/texttest/Weird-repositories/add-broken-syntax/test-repos/remote-test-repo
-Adding new temporary repository file:////home/timothy/.texttest/tmp/texttest.15Jan133835.1341/texttest/Weird-repositories/add-broken-syntax/test-repos/remote-test-repo
+Cloning repository default from file:///home/timothy/.texttest/tmp/texttest.28Jan232651.12502/texttest/Weird-repositories/add-broken-syntax/test-repos/default-test-repo
+Adding subuser broken-syntax with image broken-syntax@file:////home/timothy/.texttest/tmp/texttest.28Jan232651.12502/texttest/Weird-repositories/add-broken-syntax/test-repos/remote-test-repo
+Cloning repository 0 from file:////home/timothy/.texttest/tmp/texttest.28Jan232651.12502/texttest/Weird-repositories/add-broken-syntax/test-repos/remote-test-repo
+Adding new temporary repository file:////home/timothy/.texttest/tmp/texttest.28Jan232651.12502/texttest/Weird-repositories/add-broken-syntax/test-repos/remote-test-repo
 Verifying subuser configuration.
 Verifying registry consistency...
 Unregistering any non-existant installed images.
 broken-syntax: would like to have the following permissions:
  Description: broken-syntax
  Maintainer: fred
- Is a library.
+ Executable: /usr/bin/foo
 A - Accept and apply changes
 E - Apply changes and edit result
 r - Reject permissions.
@@ -22,6 +22,6 @@ Error in broken-syntax's SubuserImagefile on line 0
 Images for the following subusers failed to build:
 broken-syntax
 Running garbage collector on temporary repositories...
-Removing uneeded temporary repository: file:////home/timothy/.texttest/tmp/texttest.15Jan133835.1341/texttest/Weird-repositories/add-broken-syntax/test-repos/remote-test-repo
-Clearing directory /home/timothy/.texttest/tmp/texttest.15Jan133835.1341/texttest/Weird-repositories/add-broken-syntax/.subuser/volumes/execute
-Clearing directory /home/timothy/.texttest/tmp/texttest.15Jan133835.1341/texttest/Weird-repositories/add-broken-syntax/.subuser/volumes/x11
+Removing uneeded temporary repository: file:////home/timothy/.texttest/tmp/texttest.28Jan232651.12502/texttest/Weird-repositories/add-broken-syntax/test-repos/remote-test-repo
+Clearing directory /home/timothy/.texttest/tmp/texttest.28Jan232651.12502/texttest/Weird-repositories/add-broken-syntax/.subuser/volumes/execute
+Clearing directory /home/timothy/.texttest/tmp/texttest.28Jan232651.12502/texttest/Weird-repositories/add-broken-syntax/.subuser/volumes/x11
