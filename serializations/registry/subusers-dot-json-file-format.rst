@@ -39,11 +39,11 @@ This object maps subuser names to json objects which have the following attribut
 
   **type**: boolean
 
- * ``entry-points-exposed``: Are there executable shortcuts installed for this subuser's entry points?
+ * ``entrypoints-exposed``: Are there executable shortcuts installed for this subuser's entrypoints?
 
   Ex::
 
-    ,"entry-points-exposed" :true
+    ,"entrypoints-exposed" :true
 
   **type**: boolean
 
