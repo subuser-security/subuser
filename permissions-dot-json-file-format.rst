@@ -30,6 +30,14 @@ The permissions object always begins with the following permissions:
 
   **Default**: The image has no executable and cannot be run(but it can be depended upon, as a library).
 
+ * ``entrypoints``: This optional feild allows you to add "entrypoints" to your subuser. These are executables that can be added, if the user so wishes, to the PATH on the host system. This is a dictionary which maps "desired name on host" to "path within subuser image".
+
+  Ex::
+
+    ,"entrypoints"                : {"mk":"/usr/bin/mk","cc","/usr/local/bin/cc"}
+
+  **Default**: There are no entrypoints.
+
 Permissions
 -----------
 
@@ -66,14 +74,6 @@ Conservative permissions
  * ``inherit-timezone``: Automatically set the $TZ environment variable in the container to the value outside of the container.  Give the sub user read only access to the ``/etc/localtime`` file. Note: You do not have to set this if you have set ``basic-common-permissions``.
 
   **Default**: ``false``
-
- * ``entrypoints``: This optional feild allows you to add "entrypoints" to your subuser. These are executables that can be added, if the user so wishes, to the PATH on the host system. This is a dictionary which maps "desired name on host" to "path within subuser image".
-
-  Ex::
-
-    ,"entrypoints"                : {"mk":"/usr/bin/mk","cc","/usr/local/bin/cc"}
-
-  **Default**: There are no entrypoints.
 
 Moderate permissions
 --------------------
