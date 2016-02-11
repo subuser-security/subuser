@@ -57,7 +57,6 @@ class ArgParser():
 @subuserlib.profile.do_cprofile
 def run(args):
   preArgs = []
-  argsToPassToImage = []
   argParser = ArgParser()
   for arg in args[1:]:
     argParser.readArg(arg)
@@ -81,13 +80,13 @@ def run(args):
       runtime = subuser.getRuntime(os.environ,extraDockerFlags=extraDockerFlags,entrypoint=options.entrypoint)
       if runtime:
         if not options.dry:
-          runtime.run(argsToPassToImage)
+          runtime.run(argParser.subuserArgs)
         else:
           if subuser.getImageId():
             print("The image will be prepared using the Dockerfile:")
             print(subuser.getRunReadyImage().generateImagePreparationDockerfile())
             print("The command to launch the image is:")
-            print(runtime.getPrettyCommand(argsToPassToImage))
+            print(runtime.getPrettyCommand(argParser.subuserArgs))
       else:
         sys.exit("The subuser's image failed to build. Please use the subuser registry log and subuser repair commands for more information.")
     except (subuserlib.classes.subuser.SubuserHasNoPermissionsException,subuserlib.classes.subuserSubmodules.run.runtimeCache.NoRuntimeCacheForSubusersWhichDontHaveExistantImagesException) as e:
