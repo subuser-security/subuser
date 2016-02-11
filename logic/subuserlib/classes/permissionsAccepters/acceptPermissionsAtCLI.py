@@ -32,7 +32,7 @@ class AcceptPermissionsAtCLI(PermissionsAccepter,UserOwnedObject):
     else:
       createNewPermissions = False
       (removedPermissions,additionsAndChanges) = subuserlib.permissions.compare(newDefaults = newDefaults, oldDefaults=oldDefaults, userApproved=userApproved)
-      if additionsAndChanges == {} and removedPermissions == []:
+      if additionsAndChanges == {} and removedPermissions == [] and not subuser.wereEntryPointsExposedThisRun():
         return
       if not additionsAndChanges == {}:
         subuserlib.print.printWithoutCrashing(subuser.getName()+" would like to add/change the following permissions:")
@@ -45,6 +45,19 @@ class AcceptPermissionsAtCLI(PermissionsAccepter,UserOwnedObject):
         for removedPermission in removedPermissions:
           for line in subuserlib.permissions.descriptions[removedPermission](oldDefaults[removedPermission]):
             subuserlib.print.printWithoutCrashing("   - "+line)
+      if "entrypoints" in additionsAndChanges and subuser.areEntryPointsExposed():
+        subuserlib.print.printWithoutCrashing(subuser.getName()+" would like to expose the following entrypoints to the system PATH:")
+        for entrypoint in additionsAndChanges["entrypoints"].keys():
+          subuserlib.print.printWithoutCrashing(entrypoint)
+      if subuser.wereEntryPointsExposedThisRun():
+        if subuser.getPermissions()["entrypoints"]:
+          subuserlib.print.printWithoutCrashing(subuser.getName()+" would like to expose the following entrypoints to the system PATH:")
+          for entrypoint in subuser.getPermissions()["entrypoints"].keys():
+            subuserlib.print.printWithoutCrashing(entrypoint)
+        else:
+          subuserlib.print.printWithoutCrashing("Entrypoints marked to be exposed, but nothing to expose.")
+          if additionsAndChanges == {} and removedPermissions == []:
+            return
     options = OrderedDict([("A","Accept and apply changes")
                           ,("E","Apply changes and edit result")
                           ,("e","Ignore request and edit permissions by hand")

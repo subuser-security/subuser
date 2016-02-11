@@ -69,57 +69,52 @@ def subuser(sysargs):
   try:
     action = args[0]
   except IndexError:
+    print("Wrong number of arguments!")
     parseCliArgs(["--help"])
   user = User()
   permissionsAccepter = AcceptPermissionsAtCLI(user,alwaysAccept = options.accept)
   if action == "add":
     if not len(args) == 3:
       sys.exit("Wrong number of arguments to add.  See `subuser subuser -h`.")
-    name = args[1]
+    subuserName = args[1]
     imageSourceId = args[2]
     with user.getRegistry().getLock():
-      subuserlib.subuser.add(user,name,imageSourceId,permissionsAccepter=permissionsAccepter,prompt=options.prompt,forceInternal=options.forceInternal)
-  elif action == "remove":
-    names = args[1:]
-    if not options.prefix is None:
-      allSubuserNames = user.getRegistry().getSubusers().keys()
-      names.extend([subuserName for subuserName in allSubuserNames if subuserName.startswith(options.prefix)])
+      subuserlib.subuser.add(user,subuserName,imageSourceId,permissionsAccepter=permissionsAccepter,prompt=options.prompt,forceInternal=options.forceInternal)
+  else:
+    subuserNames = args[1:]
     with user.getRegistry().getLock():
       subusers = []
-      for subuserName in names:
+      if not options.prefix is None:
+        allSubuserNames = user.getRegistry().getSubusers().keys()
+        subuserNames.extend([subuserName for subuserName in allSubuserNames if subuserName.startswith(options.prefix)])
+
+      for subuserName in subuserNames:
         try:
           subusers.append(user.getRegistry().getSubusers()[subuserName])
         except KeyError:
-          sys.exit("Subuser "+subuserName+" does not exist and therefore cannot be removed. Use --help for help.")
-      subuserlib.subuser.remove(user,subusers)
-  elif action == "add-to-path" or action == "remove-from-path":
-    name = args[1]
-    try:
-      subuser = user.getRegistry().getSubusers()[name]
-    except KeyError:
-      sys.exit("Subuser "+name+" does not exist.")
-    if action == "add-to-path":
-      install = True
-    elif action == "remove-from-path":
-      install = False
-    with user.getRegistry().getLock():
-      subuserlib.subuser.setExecutableShortcutInstalled(user,subuser,install)
-  elif action == "edit-permissions":
-    try:
-      name = args[1]
-    except IndexError:
-      sys.exit("No subusers specified for editing. Use --help for help.")
-    with user.getRegistry().getLock():
-      user.getRegistry().logChange("Edit "+name+"'s permissions.")
-      try:
-        subuser = user.getRegistry().getSubusers()[name]
-      except KeyError:
-        sys.exit("Subuser "+name+" does not exist. Use --help for help.")
-      subuser.editPermissionsCLI()
-      subuserlib.verify.verify(user,subusers=[subuser],permissionsAccepter=permissionsAccepter,prompt=options.prompt)
-      user.getRegistry().commit()
-  else:
-    sys.exit("Action "+args[0]+" does not exist. Try:\n subuser subuser --help")
+          sys.exit("Subuser "+subuserName+" does not exist. Use --help for help.")
+      if subusers == []:
+        sys.exit("No subusers specified. Use --help for help.")
+      if action == "remove":
+          subuserlib.subuser.remove(user,subusers)
+          sys.exit()
+      addAndRemoveCommands = [("add-to-path","remove-from-path",subuserlib.subuser.setExecutableShortcutInstalled),("expose-entrypoints","hide-entrypoints",lambda user,subusers,install:subuserlib.subuser.setEntrypointsExposed(user,subusers,install,permissionsAccepter))]
+      for add,remove,command in addAndRemoveCommands:
+        if action == add or action == remove:
+          if action == add:
+            install = True
+          elif action == remove:
+            install = False
+          command(user,subusers,install)
+          sys.exit()
+      if action == "edit-permissions":
+        user.getRegistry().logChange("Edit the permissions of:"+ " ".join(subuserNames))
+        for subuser in subusers:
+          subuser.editPermissionsCLI()
+        subuserlib.verify.verify(user,subusers=subusers,permissionsAccepter=permissionsAccepter,prompt=options.prompt)
+        user.getRegistry().commit()
+        sys.exit()
+      sys.exit("Action "+args[0]+" does not exist. Try:\n subuser subuser --help")
 
 #################################################################################################
 

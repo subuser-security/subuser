@@ -8,6 +8,7 @@ A subuser is an entity that runs within a Docker container and has a home direct
 import os
 import stat
 import errno
+import json
 #internal imports
 import subuserlib.permissions
 from subuserlib.classes.userOwnedObject import UserOwnedObject
@@ -19,13 +20,15 @@ from subuserlib.classes.subuserSubmodules.run.runReadyImage import RunReadyImage
 from subuserlib.classes.subuserSubmodules.run.runtimeCache import RuntimeCache
 
 class Subuser(UserOwnedObject, Describable):
-  def __init__(self,user,name,imageId,executableShortcutInstalled,locked,serviceSubusers,imageSource=None,imageSourceName=None,repoName=None):
+  def __init__(self,user,name,imageId,executableShortcutInstalled,locked,serviceSubusers,imageSource=None,imageSourceName=None,repoName=None,entrypointsExposed=False):
     self.__name = name
     self.__imageSource = imageSource
     self.__repoName = repoName
     self.__imageSourceName = imageSourceName
     self.__imageId = imageId
     self.__executableShortcutInstalled = executableShortcutInstalled
+    self.__entryPointsExposed = entrypointsExposed
+    self.__entryPointsExposedThisRun = False
     self.__locked = locked
     self.__serviceSubusers = serviceSubusers
     self.__x11Bridge = None
@@ -67,6 +70,17 @@ class Subuser(UserOwnedObject, Describable):
 
   def setExecutableShortcutInstalled(self,installed):
     self.__executableShortcutInstalled = installed
+
+  def areEntryPointsExposed(self):
+    return self.__entryPointsExposed
+
+  def setEntrypointsExposed(self,exposed):
+    self.__entryPointsExposed = exposed
+    if exposed:
+      self.__entryPointsExposedThisRun = True
+
+  def wereEntryPointsExposedThisRun(self):
+    return self.__entryPointsExposedThisRun
 
   def getPermissionsDir(self):
     return os.path.join(self.getUser().getConfig()["registry-dir"],"permissions",self.getName())
@@ -172,12 +186,13 @@ To repair your subuser installation.\n""")
       self.__x11Bridge = X11Bridge(self.getUser(),self)
     return self.__x11Bridge
 
-  def getRuntime(self,environment,extraDockerFlags=None):
+  #TODO clean this up so that we aren't forwarding arguments in needless fluff.
+  def getRuntime(self,environment,extraDockerFlags=None,entrypoint=None):
     """
     Returns the subuser's Runtime object for it's current permissions, creating it if necessary.
     """
     if not self.__runtime:
-      self.__runtime = Runtime(self.getUser(),subuser=self,environment=environment,extraDockerFlags=extraDockerFlags)
+      self.__runtime = Runtime(self.getUser(),subuser=self,environment=environment,extraDockerFlags=extraDockerFlags,entrypoint=entrypoint)
     return self.__runtime
 
   def getRuntimeCache(self):
@@ -255,18 +270,32 @@ To repair your subuser installation.\n""")
     self.getPermissions().describe()
     print("")
 
-  def installExecutableShortcut(self):
+  def installLaunchScript(self,name,script):
     """
     Install a trivial executable script into the PATH which launches the subser image.
     """
-    redirect="""#!/bin/bash
-  subuser run """+self.getName()+""" $@
-  """
-    executablePath=os.path.join(self.getUser().getConfig()["bin-dir"], self.getName())
+    redirect = script
+    executablePath=os.path.join(self.getUser().getConfig()["bin-dir"], name)
     with open(executablePath, 'w') as file_f:
       file_f.write(redirect)
       st = os.stat(executablePath)
       os.chmod(executablePath, stat.S_IMODE(st.st_mode) | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
+
+  def installExecutableShortcut(self):
+    self.installLaunchScript(self.getName(),"#!/bin/bash\nsubuser run "+self.getName()+" $@")
+
+  def exposeEntrypoints(self):
+    """
+    Create launcher executables for the subuser's entrypoints.
+    """
+    for name,path in self.getPermissions()["entrypoints"].items():
+      launchScript = """#!/usr/bin/python3
+import subprocess,sys
+run = """+json.dumps({"subuser-name":self.getName(),"entrypoint":path})
+      launchScript +="""
+sys.exit(subprocess.call(["subuser","run","--entrypoint="+run["entrypoint"],run["subuser-name"]]))
+"""
+      self.installLaunchScript(name,launchScript)
 
 class SubuserHasNoPermissionsException(Exception):
   pass

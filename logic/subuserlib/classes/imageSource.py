@@ -129,9 +129,9 @@ class ImageSource(UserOwnedObject,Describable):
       dockerfileContents = ""
       for line in subuserImagefileContents.split("\n"):
         if line.startswith("FROM-SUBUSER-IMAGE"):
-          dockerfileContents = dockerfileContents + "FROM "+parent+"\n"
+          dockerfileContents = "FROM " + parent + "\n"
         else:
-          dockerfileContents = dockerfileContents +line+"\n"
+          dockerfileContents += line + "\n"
     imageId = self.getUser().getDockerDaemon().build(relativeBuildContextPath=self.getImageDir(),repositoryFileStructure=self.getRepository().getFileStructure(),rm=True,dockerfile=dockerfileContents,useCache=False)
     subuserSetupDockerFile = ""
     subuserSetupDockerFile += "FROM "+imageId+"\n"

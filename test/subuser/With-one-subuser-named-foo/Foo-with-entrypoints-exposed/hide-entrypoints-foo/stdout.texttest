@@ -1,0 +1,9 @@
+Removing entrypoints for subuser foo from $PATH.
+Verifying subuser configuration.
+Verifying registry consistency...
+Unregistering any non-existant installed images.
+Checking if images need to be updated or installed...
+Checking if subuser foo is up to date.
+Running garbage collector on temporary repositories...
+Clearing directory /home/timothy/.texttest/tmp/texttest.11Feb163213.30978/texttest/subuser/With-one-subuser-named-foo/Foo-with-entrypoints-exposed/hide-entrypoints-foo/.subuser/volumes/execute
+Clearing directory /home/timothy/.texttest/tmp/texttest.11Feb163213.30978/texttest/subuser/With-one-subuser-named-foo/Foo-with-entrypoints-exposed/hide-entrypoints-foo/.subuser/volumes/x11

@@ -94,6 +94,8 @@ class InstallationTask(UserOwnedObject):
           else:
             if not self.isUpToDate(imageSource):
               parent = installImage(imageSource,parent=parent)
+            else:
+              parent = imageSource.getLatestInstalledImage().getImageId()
             self.__upToDateImageSources.add(imageSource)
         if not subuser.getImageId() == parent:
           subuser.setImageId(parent)
@@ -105,13 +107,13 @@ class InstallationTask(UserOwnedObject):
   def getSubusersWhosImagesFailedToBuild(self):
     return self.__subusersWhosImagesFailedToBuild
 
-def installImage(imageSource,parent=None):
+def installImage(imageSource,parent):
   """
   Install a image by building the given ImageSource.
   Register the newly installed image in the user's InstalledImages list.
   Return the Id of the newly installedImage.
   """
-  imageSource.getUser().getRegistry().logChange("Installing "+imageSource.getName()+" ...")
+  imageSource.getUser().getRegistry().logChange("Installing " + imageSource.getName() + " ...")
   imageId = imageSource.build(parent)
   imageSource.getUser().getInstalledImages()[imageId] = subuserlib.classes.installedImage.InstalledImage(imageSource.getUser(),imageId,imageSource.getName(),imageSource.getRepository().getName(),imageSource.getHash())
   imageSource.getUser().getInstalledImages().save()

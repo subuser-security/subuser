@@ -24,6 +24,7 @@ defaults = {
  ,"stateful-home": False
  ,"inherit-locale": False
  ,"inherit-timezone": False
+ ,"entrypoints":{}
  # Moderate permissions
  ,"gui": None
  ,"user-dirs": []
@@ -55,26 +56,27 @@ basicCommonPermissions = ["stateful-home","inherit-locale","inherit-timezone"]
 
 levels = [
   {"name" : "prelude",
-   "permissions" : ["description", "maintainer", "executable"],
-   "description" : ""},
+   "description" : "",
+   "permissions" : ["description", "maintainer", "executable","entrypoints"]},
   {"name" : "conservative",
-   "permissions" : ["stateful-home", "inherit-locale", "inherit-timezone"],
-   "description" : "Conservative permissions(These are safe):"},
+   "description" : "Conservative permissions(These are safe):",
+   "permissions" : ["stateful-home", "inherit-locale", "inherit-timezone"]},
   {"name" : "moderate",
-   "permissions" : ["gui", "user-dirs", "sound-card", "webcam", "access-working-directory", "allow-network-access"],
-   "description" : "Moderate permissions(These are probably safe):"},
+   "description" : "Moderate permissions(These are probably safe):",
+   "permissions" : ["gui", "user-dirs", "sound-card", "webcam", "access-working-directory", "allow-network-access"]},
   {"name" : "liberal",
-   "permissions" : ["x11", "system-dirs", "graphics-card", "serial-devices", "system-dbus", "as-root"],
-   "description" : "Liberal permissions(These may pose a security risk):"},
+   "description" : "Liberal permissions(These may pose a security risk):",
+   "permissions" : ["x11", "system-dirs", "graphics-card", "serial-devices", "system-dbus", "as-root"]},
   {"name" : "anarchistic",
-   "permissions" : ["privileged","run-commands-on-host"],
-   "description" : "WARNING: These permissions give the subuser full access to your system when run."}]
+   "description" : "WARNING: These permissions give the subuser full access to your system when run.",
+   "permissions" : ["privileged","run-commands-on-host"]}]
 
 descriptions = {
   # Prelude
   "description":lambda description : ["Description: "+description]
   ,"maintainer":lambda maintainer : ["Maintainer: "+maintainer]
   ,"executable":lambda executable : ["Executable: "+executable] if executable else ["Is a library."]
+  ,"entrypoints": lambda entrypoints: ["Entry points: '"+ "' '".join(entrypoints.keys())+"'"] if entrypoints else []
   # Conservative
   ,"stateful-home": lambda p : ["To have its own home directory where it can save files and settings."] if p else []
   ,"inherit-locale": lambda p : ["To find out language you speak and what region you live in."] if p else []

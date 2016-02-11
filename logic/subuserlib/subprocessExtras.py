@@ -66,11 +66,12 @@ def runEditor(filePath):
     editor = os.environ["EDITOR"]
   except KeyError:
     editor = "/usr/bin/nano"
-  def actuallyRunEditor(filePath,editor):
+  def actuallyRunEditor(editor,filePath):
     try:
-      call([editor,filePath])
+      subprocess.call([editor,filePath])
     except FileNotFoundError:
       if subuserlib.test.testing:
         return
       editor = input(editor+" not found. Please enter the name of your favorite editor:")
       actuallyRunEditor(editor,filePath)
+  actuallyRunEditor(editor,filePath)

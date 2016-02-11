@@ -1,0 +1,16 @@
+Exposing entrypoints for subuser foo in the $PATH.
+Verifying subuser configuration.
+Verifying registry consistency...
+Unregistering any non-existant installed images.
+foo would like to expose the following entrypoints to the system PATH:
+foo
+bar
+A - Accept and apply changes
+E - Apply changes and edit result
+e - Ignore request and edit permissions by hand
+r - Reject permissions.
+Please select an option:Checking if images need to be updated or installed...
+Checking if subuser foo is up to date.
+Running garbage collector on temporary repositories...
+Clearing directory /home/timothy/.texttest/tmp/texttest.1_from_11Feb141127.15112/texttest/subuser/With-one-subuser-named-foo/expose-entrypoints-foo/.subuser/volumes/execute
+Clearing directory /home/timothy/.texttest/tmp/texttest.1_from_11Feb141127.15112/texttest/subuser/With-one-subuser-named-foo/expose-entrypoints-foo/.subuser/volumes/x11

@@ -3,35 +3,36 @@ foo@default
  Description:
  Maintainer:
  Executable: /usr/bin/foo
+ Entry points: 'foo' 'bar'
 Images available for instalation from the repo: 0
-bar@file:////home/timothy/.texttest/tmp/texttest.28Jan232651.12502/texttest/list/With-one-subuser-installed-from-a-temporary-repo-named-foo/List-available-long/test-repos/remote-test-repo
+bar@file:////home/timothy/.texttest/tmp/texttest.11Feb163213.30978/texttest/list/With-one-subuser-installed-from-a-temporary-repo-named-foo/List-available-long/test-repos/remote-test-repo
  Description: bar
  Maintainer: fred
  Executable: /usr/bin/bar
-broken-non-existant-dependency@file:////home/timothy/.texttest/tmp/texttest.28Jan232651.12502/texttest/list/With-one-subuser-installed-from-a-temporary-repo-named-foo/List-available-long/test-repos/remote-test-repo
+broken-non-existant-dependency@file:////home/timothy/.texttest/tmp/texttest.11Feb163213.30978/texttest/list/With-one-subuser-installed-from-a-temporary-repo-named-foo/List-available-long/test-repos/remote-test-repo
  Description: broken-non-existant-dependency
  Maintainer: fred
  Is a library.
-broken-permissions-file@file:////home/timothy/.texttest/tmp/texttest.28Jan232651.12502/texttest/list/With-one-subuser-installed-from-a-temporary-repo-named-foo/List-available-long/test-repos/remote-test-repo
+broken-permissions-file@file:////home/timothy/.texttest/tmp/texttest.11Feb163213.30978/texttest/list/With-one-subuser-installed-from-a-temporary-repo-named-foo/List-available-long/test-repos/remote-test-repo
 Error, user dir permissions may not contain system wide absolute paths. The user dir: "/etc/" is forbidden.
 Cannot describe this image source as loading it is forbidden.
-broken-syntax@file:////home/timothy/.texttest/tmp/texttest.28Jan232651.12502/texttest/list/With-one-subuser-installed-from-a-temporary-repo-named-foo/List-available-long/test-repos/remote-test-repo
+broken-syntax@file:////home/timothy/.texttest/tmp/texttest.11Feb163213.30978/texttest/list/With-one-subuser-installed-from-a-temporary-repo-named-foo/List-available-long/test-repos/remote-test-repo
  Description: broken-syntax
  Maintainer: fred
  Executable: /usr/bin/foo
-dependency1@file:////home/timothy/.texttest/tmp/texttest.28Jan232651.12502/texttest/list/With-one-subuser-installed-from-a-temporary-repo-named-foo/List-available-long/test-repos/remote-test-repo
+dependency1@file:////home/timothy/.texttest/tmp/texttest.11Feb163213.30978/texttest/list/With-one-subuser-installed-from-a-temporary-repo-named-foo/List-available-long/test-repos/remote-test-repo
  Description:
  Maintainer:
  Is a library.
-dependency2@file:////home/timothy/.texttest/tmp/texttest.28Jan232651.12502/texttest/list/With-one-subuser-installed-from-a-temporary-repo-named-foo/List-available-long/test-repos/remote-test-repo
+dependency2@file:////home/timothy/.texttest/tmp/texttest.11Feb163213.30978/texttest/list/With-one-subuser-installed-from-a-temporary-repo-named-foo/List-available-long/test-repos/remote-test-repo
  Description:
  Maintainer:
  Is a library.
-dependency3@file:////home/timothy/.texttest/tmp/texttest.28Jan232651.12502/texttest/list/With-one-subuser-installed-from-a-temporary-repo-named-foo/List-available-long/test-repos/remote-test-repo
+dependency3@file:////home/timothy/.texttest/tmp/texttest.11Feb163213.30978/texttest/list/With-one-subuser-installed-from-a-temporary-repo-named-foo/List-available-long/test-repos/remote-test-repo
  Description:
  Maintainer:
  Is a library.
-dependent@file:////home/timothy/.texttest/tmp/texttest.28Jan232651.12502/texttest/list/With-one-subuser-installed-from-a-temporary-repo-named-foo/List-available-long/test-repos/remote-test-repo
+dependent@file:////home/timothy/.texttest/tmp/texttest.11Feb163213.30978/texttest/list/With-one-subuser-installed-from-a-temporary-repo-named-foo/List-available-long/test-repos/remote-test-repo
  Description: a dependent
  Maintainer:
  Is a library.
@@ -43,7 +44,7 @@ dependent@file:////home/timothy/.texttest/tmp/texttest.28Jan232651.12502/texttes
   - system-dirs: To read and write to the host's `/var/log` directory, mounted in the container as:`/var/log`
  WARNING: These permissions give the subuser full access to your system when run.
   - privileged: To have full access to your system.  To even do things as root outside of its container.
-intermediary@file:////home/timothy/.texttest/tmp/texttest.28Jan232651.12502/texttest/list/With-one-subuser-installed-from-a-temporary-repo-named-foo/List-available-long/test-repos/remote-test-repo
+intermediary@file:////home/timothy/.texttest/tmp/texttest.11Feb163213.30978/texttest/list/With-one-subuser-installed-from-a-temporary-repo-named-foo/List-available-long/test-repos/remote-test-repo
  Description:
  Maintainer:
  Is a library.

@@ -125,6 +125,8 @@ def rebuildBinDir(user):
   for _,subuser in user.getRegistry().getSubusers().items():
     if subuser.isExecutableShortcutInstalled():
       subuser.installExecutableShortcut()
+    if subuser.areEntryPointsExposed():
+      subuser.exposeEntrypoints()
 
 def cleanupRuntimeDirs(user):
   """

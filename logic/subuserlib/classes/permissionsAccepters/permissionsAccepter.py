@@ -14,7 +14,7 @@ class PermissionsAccepter():
   __metaclass__ = abc.ABCMeta
 
   @abc.abstractmethod
-  def accept(self,oldDefaults,newDefaults,userApproved):
+  def accept(self,oldDefaults,newDefaults,userApproved,exposeEntrypoints):
     """
     Prompt the user to either accept or edit the given permissions.
     Writes the new user approved permissions to the subuser's permissions.json file.

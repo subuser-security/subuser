@@ -1,3 +1,4 @@
+Wrong number of arguments!
 Usage: subuser subuser [add|remove|add-to-path|remove-from-path|edit-permissions] NAME [IMAGESOURCE]
 
 

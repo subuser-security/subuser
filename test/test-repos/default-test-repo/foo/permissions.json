@@ -1,2 +1,3 @@
-{"executable" : "/usr/bin/foo"
+{"executable" : "/usr/bin/foo",
+"entrypoints":{"foo":"/usr/bin/foo","bar":"/usr/bin/bar"}
 }

@@ -1,6 +1,6 @@
-commit 05d64265e1eeb9040a250f38ae8998e5ee71b14b
+commit 3c13213855c10ddd3dc64b485e57b514e0b43eb0
 Author: Your Name <you@example.com>
-Date:   Fri Jan 15 13:36:54 2016 +0100
+Date:   Thu Feb 11 16:32:55 2016 +0100
 
     Removing subuser foo
      If you wish to remove the subusers image, issue the command $ subuser remove-old-images
@@ -8,12 +8,12 @@ Date:   Fri Jan 15 13:36:54 2016 +0100
     Verifying registry consistency...
     Unregistering any non-existant installed images.
     Running garbage collector on temporary repositories...
-    Clearing directory /home/timothy/.texttest/tmp/texttest.15Jan133649.40/texttest/subuser/With-one-subuser-named-foo/With-foo-added-then-removed/registry-log/.subuser/volumes/execute
-    Clearing directory /home/timothy/.texttest/tmp/texttest.15Jan133649.40/texttest/subuser/With-one-subuser-named-foo/With-foo-added-then-removed/registry-log/.subuser/volumes/x11
+    Clearing directory /home/timothy/.texttest/tmp/texttest.11Feb163213.30978/texttest/subuser/With-one-subuser-named-foo/With-foo-added-then-removed/registry-log/.subuser/volumes/execute
+    Clearing directory /home/timothy/.texttest/tmp/texttest.11Feb163213.30978/texttest/subuser/With-one-subuser-named-foo/With-foo-added-then-removed/registry-log/.subuser/volumes/x11
 
-commit 1c2da1d7bb5d547f274eea8c7a03be14511567ca
+commit e4fbb828aac3f1325f9e593c973308852eefe989
 Author: Your Name <you@example.com>
-Date:   Fri Jan 15 13:36:53 2016 +0100
+Date:   Thu Feb 11 16:32:55 2016 +0100
 
     Adding subuser foo with image foo
     Verifying subuser configuration.
@@ -22,6 +22,7 @@ Date:   Fri Jan 15 13:36:53 2016 +0100
      Description:
      Maintainer:
      Executable: /usr/bin/foo
+     Entry points: 'foo' 'bar'
     Checking if images need to be updated or installed...
     New images for the following subusers need to be installed:
     foo
@@ -36,12 +37,12 @@ Date:   Fri Jan 15 13:36:53 2016 +0100
     Successfully built 2
     Installed new image <2> for subuser foo
     Running garbage collector on temporary repositories...
-    Clearing directory /home/timothy/.texttest/tmp/texttest.15Jan133649.40/texttest/subuser/With-one-subuser-named-foo/With-foo-added-then-removed/registry-log/.subuser/volumes/execute
-    Clearing directory /home/timothy/.texttest/tmp/texttest.15Jan133649.40/texttest/subuser/With-one-subuser-named-foo/With-foo-added-then-removed/registry-log/.subuser/volumes/x11
+    Clearing directory /home/timothy/.texttest/tmp/texttest.11Feb163213.30978/texttest/subuser/With-one-subuser-named-foo/With-foo-added-then-removed/registry-log/.subuser/volumes/execute
+    Clearing directory /home/timothy/.texttest/tmp/texttest.11Feb163213.30978/texttest/subuser/With-one-subuser-named-foo/With-foo-added-then-removed/registry-log/.subuser/volumes/x11
 
-commit e7c181d3ef7f665ea43602bb4b7a6a02acdd4e40
+commit d19a90ab4f2c9a6616426d293b5f1d656e830d1d
 Author: Your Name <you@example.com>
-Date:   Fri Jan 15 13:36:53 2016 +0100
+Date:   Thu Feb 11 16:32:54 2016 +0100
 
     Initial commit.
-    Cloning repository default from file:///home/timothy/.texttest/tmp/texttest.15Jan133649.40/texttest/subuser/With-one-subuser-named-foo/With-foo-added-then-removed/registry-log/test-repos/default-test-repo
+    Cloning repository default from file:///home/timothy/.texttest/tmp/texttest.11Feb163213.30978/texttest/subuser/With-one-subuser-named-foo/With-foo-added-then-removed/registry-log/test-repos/default-test-repo

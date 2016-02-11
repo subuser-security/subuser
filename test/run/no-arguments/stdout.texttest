@@ -1,3 +1,6 @@
+Subuser name not listed.
+Usage: subuser run [arguments-for-run-command] SUBUSER-NAME [arguments-for-subuser]
+
 Run the given subuser.
 
 For example:
@@ -6,5 +9,13 @@ For example:
 
 Will launch the subuser named iceweasel
 
+To launch the subuser with another executable than it's default use the ``--entrypoint`` option.
+
 If the SUBUSER_EXTRA_DOCKER_ARGS environment variable is set. Those arguments will be passed to Docker.
 
+Options:
+  -h, --help            show this help message and exit
+  --entrypoint=ENTRYPOINT
+                        Override the default executable for this subuser.
+  --dry                 Dry run, only display what commands would be called by
+                        subuser, don't actually run anything.

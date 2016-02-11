@@ -10,3 +10,5 @@ edit-permissions-no-arguments
 edit-permissions-non-existant-subuser
 add-to-path-non-existant-subuser
 remove-from-path-non-existant-subuser
+expose-entrypoints-non-existant-subuser
+hide-entrypoints-non-existant-subuser

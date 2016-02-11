@@ -1,1 +1,3 @@
+run---dry-foo
 run-foo
+--entrypoint-set

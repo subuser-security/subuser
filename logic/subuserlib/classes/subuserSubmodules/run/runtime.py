@@ -26,7 +26,7 @@ def getRecursiveDirectoryContents(directory):
   return files
 
 class Runtime(UserOwnedObject):
-  def __init__(self,user,subuser,environment,extraDockerFlags=None):
+  def __init__(self,user,subuser,environment,extraDockerFlags=None,entrypoint = None):
     self.__subuser = subuser
     self.__environment = environment
     self.__backgroundSuppressOutput = True
@@ -37,6 +37,10 @@ class Runtime(UserOwnedObject):
       self.__extraFlags = []
     else:
       self.__extraFlags = extraDockerFlags
+    if not entrypoint:
+      self.entrypoint = self.getSubuser().getPermissions()["executable"]
+    else:
+      self.entrypoint = entrypoint
     self.__background = False
     if not subuserlib.test.testing:
       self.__hostname = binascii.b2a_hex(os.urandom(10))
@@ -181,7 +185,7 @@ $ subuser repair
     for permission, flagGenerator in permissionFlagDict.items():
       flags.extend(flagGenerator(permissions[permission]))
     flags.extend(self.getHostnameFlag())
-    return ["run"]+flags+["--entrypoint"]+[self.getSubuser().getPermissions()["executable"]]+[self.getRunReadyImageId()]+args
+    return ["run"]+flags+["--entrypoint"]+[self.entrypoint]+[self.getRunReadyImageId()]+args
 
   def getPrettyCommand(self,args):
     """
@@ -249,7 +253,7 @@ $ subuser repair
     Otherwise return the subuser's exit code.
     """
     def reallyRun():
-      if not self.getSubuser().getPermissions()["executable"]:
+      if not self.entrypoint:
         sys.exit("Cannot run subuser, no executable configured in permissions.json file.")
       if self.getSubuser().getPermissions()["stateful-home"]:
         self.getSubuser().setupHomeDir()

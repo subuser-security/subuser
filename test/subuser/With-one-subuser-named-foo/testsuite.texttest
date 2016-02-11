@@ -1,6 +1,9 @@
+# Copy of With-foo-added-then-removed
+Foo-with-entrypoints-exposed
 remove-foo
 With-foo-added-then-removed
 edit-permissions-foo
 add-foo-despite-foo-already-existin
 add-to-path-foo
 remove-from-path-foo
+expose-entrypoints-foo

@@ -4,4 +4,5 @@ Subuser: foo
 foo@default
  Maintainer:
  Executable: /usr/bin/foo
+ Entry points: 'foo' 'bar'
 

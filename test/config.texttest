@@ -16,8 +16,8 @@ copy_test_path:hashtest
 [run_dependent_text]
 stdout:Currently at commit{WORD 4}
 stdout:root-commit{WORD 3}
-stdout:home/[^/]*{REPLACE home/user}
+stdout:home/[^/\']*{REPLACE home/user}
 stdout:.texttest\/tmp.*\/texttest{REPLACE texttest-write-dir}
 
 stderr:.texttest\/tmp.*\/texttest{REPLACE texttest-write-dir}
-stderr:home/[^/]*{REPLACE home/user}
+stderr:home/[^/\']*{REPLACE home/user}

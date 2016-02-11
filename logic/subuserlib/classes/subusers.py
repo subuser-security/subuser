@@ -38,6 +38,7 @@ class Subusers(dict,UserOwnedObject,FileBackedObject):
       serializedSubuser["source-repo"] = subuser.getSourceRepoName()
       serializedSubuser["image-source"] = subuser.getImageSourceName()
       serializedSubuser["executable-shortcut-installed"] = subuser.isExecutableShortcutInstalled()
+      serializedSubuser["entrypoints-exposed"] = subuser.areEntryPointsExposed()
       serializedSubuser["docker-image"] = subuser.getImageId()
       serializedSubuser["service-subusers"] = subuser.getServiceSubuserNames()
       if subuser.locked():
@@ -61,18 +62,18 @@ class Subusers(dict,UserOwnedObject,FileBackedObject):
     Load the serialized subusers json file into memory.
     """
     for subuserName, subuserAttributes in serializedSubusersDict.items():
+      def retrieveAttribute(name,default):
+        if name in subuserAttributes:
+          return subuserAttributes[name]
+        else:
+          return default
       repoName = subuserAttributes["source-repo"]
       imageSourceName = subuserAttributes["image-source"]
-      if "docker-image" in subuserAttributes:
-        imageId = subuserAttributes["docker-image"]
-      else:
-        imageId = None
-      if "service-subusers" in subuserAttributes:
-        serviceSubusers = subuserAttributes["service-subusers"]
-      else:
-        serviceSubusers = []
-      executableShortcutInstalled = subuserAttributes["executable-shortcut-installed"]
-      self[subuserName] = Subuser(self.getUser(),subuserName,imageSourceName=imageSourceName,repoName=repoName,imageId=imageId,executableShortcutInstalled=executableShortcutInstalled,locked=locked,serviceSubusers=serviceSubusers)
+      imageId = retrieveAttribute("docker-image",None)
+      serviceSubusers = retrieveAttribute("service-subusers",[])
+      executableShortcutInstalled = retrieveAttribute("executable-shortcut-installed",False)
+      entrypointsExposed = retrieveAttribute("entrypoints-exposed",False)
+      self[subuserName] = Subuser(self.getUser(),subuserName,imageSourceName=imageSourceName,repoName=repoName,imageId=imageId,executableShortcutInstalled=executableShortcutInstalled,locked=locked,serviceSubusers=serviceSubusers,entrypointsExposed=entrypointsExposed)
 
   def getSortedList(self):
     """

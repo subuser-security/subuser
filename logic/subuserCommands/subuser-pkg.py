@@ -130,8 +130,13 @@ def pkg(realArgs):
     if not os.path.exists(permissionsFile):
       with open(permissionsFile,"w") as pf:
         json.dump(permissions,pf,indent=1,separators=(",",": "))
-    subuserlib.subprocessExtras.runEditor(permissionsFile)
-    Permissions(user,initialPermissions=subuserlib.permissions.load(permissionsFilePath=permissionsFile),writePath=permissionsFile).save()
+    while True:
+      subuserlib.subprocessExtras.runEditor(permissionsFile)
+      try:
+        Permissions(user,initialPermissions=subuserlib.permissions.load(permissionsFilePath=permissionsFile),writePath=permissionsFile).save()
+        break
+      except SyntaxError as e:
+        input(str(e)+"\nPress ENTER to edit the file again.")
     user.getEndUser().chown(permissionsFile)
     if not os.path.exists(imageFile):
       with open(imageFile,"w") as imgf:

@@ -3,7 +3,6 @@ pkg
 print-dependency-info
 version
 list
-dry-run
 describe
 base-executable
 subuser
