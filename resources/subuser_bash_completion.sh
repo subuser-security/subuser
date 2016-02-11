@@ -24,16 +24,6 @@ _subuser_get_subusers()
     subuser list subusers
 }
 
-
-#
-#  List all the shortcuts created by subuser.
-#
-_subuser_get_shortcuts()
-{
-    find ~/.subuser/bin/  -maxdepth 1 -type f -exec basename {} \;
-}
-
-
 #
 #  List all the added repositories.
 #
@@ -57,7 +47,7 @@ _subuser_bash_completion()
     #
     #  The basic options we'll complete.
     #
-    opts="describe dry-run list pkg print-dependency-info remove-old-images"
+    opts="describe list pkg print-dependency-info remove-old-images"
     opts="$opts repair repository registry run subuser test update version"
 
     #
@@ -85,13 +75,6 @@ _subuser_bash_completion()
             ;;
 
         #
-        #  Complete the "dry-run" command
-        #
-        dry-run)
-            opts=`_subuser_get_subusers`
-            ;;
-
-        #
         #  Complete the "list" command
         #
         list)
@@ -99,19 +82,19 @@ _subuser_bash_completion()
 
             case "${COMP_WORDS[2]}" in
                 available)
-                    opts="--broken --internal --short"
+                    opts="--broken --internal --long"
                     ;;
 
                 installed-images)
-                    opts="--broken --internal --short"
+                    opts="--broken --internal --long"
                     ;;
 
                 repositories)
-                    opts="--broken --internal --short"
+                    opts="--broken --internal --long"
                     ;;
 
                 subusers)
-                    opts="--broken --internal --short"
+                    opts="--broken --internal --long"
                     ;;
 
                 *)
@@ -240,7 +223,7 @@ _subuser_bash_completion()
                         opts=`_subuser_get_subusers`
                         ;;
 
-                    create-shortcut)
+                    add-to-path)
                         opts=`_subuser_get_subusers`
                         ;;
 
@@ -248,12 +231,20 @@ _subuser_bash_completion()
                         opts=`_subuser_get_subusers`
                         ;;
 
+		    expose-entrypoints)
+                        opts=`_subuser_get_subusers`
+                        ;;
+
+		    hide-entrypoints)
+                        opts=`_subuser_get_subusers`
+                        ;;
+
                     remove)
                         opts=`_subuser_get_subusers`
                         ;;
 
-                    remove-shortcut)
-                        opts=`_subuser_get_shortcuts`
+                    remove-from-path)
+                        opts=`_subuser_get_subusers`
                         ;;
 
                     run)
@@ -261,7 +252,7 @@ _subuser_bash_completion()
                         ;;
 
                     *)
-                        opts="add create-shortcut edit-permissions remove remove-shortcut run"
+                        opts="add add-to-path edit-permissions expose-entrypoints hide-entrypoints remove remove-from-path run"
                 esac
             fi
             ;;

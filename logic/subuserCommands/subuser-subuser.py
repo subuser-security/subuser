@@ -18,7 +18,7 @@ import subuserlib.verify
 import subuserlib.profile
 
 def parseCliArgs(sysargs):
-  usage = "usage: subuser subuser [add|remove|add-to-path|remove-from-path|edit-permissions] NAME [IMAGESOURCE]"
+  usage = "usage: subuser subuser [add|remove|add-to-path|remove-from-path|edit-permissions|expose-entrypoints|hide-entrypoints] NAME [IMAGESOURCE]"
   description = """
 
 Add and remove subusers.  Create shorcuts for launching subusers.
@@ -48,6 +48,19 @@ You can now launch foo directly.
 Remove the launcher (if one exists) for the subuser named foo.
 
     $ subuser subuser remove-from-path foo
+
+Expose a subuser's predefined entrypoints.
+
+    $ subuser subuser expose-entrypoints haskell-platform
+
+Now you can run the predefined entrypoints directly.
+
+    $ gcc
+    $ cabal install
+
+To remove the entrypoints from the PATH use
+
+    $ subuser subuser hide-entrypoints haskell-platform
 
 Edit a subuser's permissions.
 
