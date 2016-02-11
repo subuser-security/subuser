@@ -69,7 +69,8 @@ def run(args):
   options,_ = parseCliArgs(argParser.preArgs)
 
   user = User()
-  user.getRegistry().setLogOutputVerbosity(0)
+  if not "SUBUSER_VERBOSITY" in os.environ:
+    user.getRegistry().setLogOutputVerbosity(0)
   if argParser.subuserName in user.getRegistry().getSubusers():
     try:
       extraDockerFlags = os.environ["SUBUSER_EXTRA_DOCKER_ARGS"].split(" ")

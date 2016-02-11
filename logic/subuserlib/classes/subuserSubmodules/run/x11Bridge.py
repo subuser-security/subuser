@@ -153,27 +153,37 @@ class XpraX11Bridge(Service):
     """
     Clear special volumes. This ensures statelessness of stateless subusers.
     """
+    self.getUser().getRegistry().log("Cleaning up old bridge volume files.",verbosityLevel=4)
     try:
       shutil.rmtree(os.path.join(self.getUser().getConfig()["volumes-dir"],"xpra",self.getSubuser().getName()))
-    except OSError:
+    except OSError as e:
       # We need to clean this up.
       # Unfortunately, the X11 socket may still exist and will be owned by root.
       # So we cannot do the clean up as a normal user.
       # Fortunately, being a member of the docker group is the same as having root access.
-      self.getUser().getDockerDaemon().execute(["run","--rm","--volume",os.path.join(self.getUser().getConfig()["volumes-dir"],"xpra")+":/xpra-volume","--entrypoint","/bin/rm",self.getServerSubuser().getImageId(),"-rf",os.path.join("/xpra-volume/",self.getSubuser().getName())])
+      if not e.errno == errno.ENOENT:
+        self.getUser().getRegistry().log("An error occured while setting up xpra X11 socket.",verbosityLevel=3)
+        self.getUser().getRegistry().log(str(e),verbosityLevel=3)
+        self.getUser().getDockerDaemon().execute(["run","--rm","--volume",os.path.join(self.getUser().getConfig()["volumes-dir"],"xpra")+":/xpra-volume","--entrypoint","/bin/rm",self.getServerSubuser().getImageId(),"-rf",os.path.join("/xpra-volume/",self.getSubuser().getName())])
 
-  def createAndSetupSpecialVolumes(self):
+  def createAndSetupSpecialVolumes(self,errorCount=0):
     def clearAndTryAgain():
+      if errorCount >= 5:
+        sys.exit("Failed to setup XPRA bridge volumes. You have some permissions errors with your subuser volumes directory."+self.getXpraVolumePath()+" Look at the output above and try to resolve the problem yourself. Possible causes are simple ownership problems, apparmor, SELinux. If you fail to find a simple explanation for your permissions problems. Please file a bug report.")
       self.cleanUp()
-      self.createAndSetupSpecialVolumes()
+      self.createAndSetupSpecialVolumes(errorCount=errorCount+1)
     def mkdirs(directory):
+      self.getUser().getRegistry().log("Creating the "+directory+" directory.",verbosityLevel=4)
       try:
         self.getUser().getEndUser().makedirs(directory)
       except OSError as e:
         if e.errno == errno.EEXIST or e.errno == errno.EACCES:
+          self.getUser().getRegistry().log(str(e),verbosityLevel=3)
+          self.getUser().getRegistry().log("Clearing xpra X11 socket.",verbosityLevel=3)
           clearAndTryAgain()
         else:
           raise e
+    self.getUser().getRegistry().log("Setting up XPRA bridge volumes.",verbosityLevel=4)
     mkdirs(self.getServerSideX11Path())
     mkdirs(self.getXpraHomeDir())
     mkdirs(self.getXpraTmpDir())
@@ -181,7 +191,7 @@ class XpraX11Bridge(Service):
       os.chmod(self.getServerSideX11Path(),1023)
     except OSError as e:
       if e.errno == errno.EPERM:
-        print("X11 bridge perm error, clearing a trying again.")
+        self.getUser().getRegistry().log("X11 bridge perm error, clearing a trying again.")
         clearAndTryAgain()
 
   def start(self,serviceStatus):
@@ -212,11 +222,14 @@ class XpraX11Bridge(Service):
     serverRuntime = self.getServerSubuser().getRuntime(os.environ)
     serverRuntime.logIfInteractive("Starting xpra server...")
     serverRuntime.setHostname(self.getServerSubuserHostname())
+    self.getUser().getRegistry().log("Hostname set.",verbosityLevel=4)
     serverRuntime.setEnvVar("TMPDIR",os.path.join(self.getUser().getEndUser().homeDir,"tmp"))
     serverRuntime.setBackground(True)
     serverRuntime.setBackgroundSuppressOutput(suppressOutput)
     serverRuntime.setBackgroundCollectOutput(False,True)
+    self.getUser().getRegistry().log("Entering run subrutine.",verbosityLevel=4)
     (serverContainer, serverProcess) = serverRuntime.run(args=serverArgs)
+    self.getUser().getRegistry().log("Getting server CID",verbosityLevel=4)
     serviceStatus["xpra-server-service-cid"] = serverContainer.getId()
     self.waitForContainerToLaunch("xpra is ready", serverProcess, suppressOutput)
     # Launch xpra client
