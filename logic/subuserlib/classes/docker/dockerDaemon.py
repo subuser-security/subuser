@@ -90,7 +90,7 @@ def readAndPrintStreamingBuildStatus(user,response):
       elif "errorDetail" in lineDict:
         raise exceptions.ImageBuildException("Build error:"+lineDict["errorDetail"]["message"]+"\n"+response.read().decode())
       else:
-        raise excpetions.ImageBuildException("Build error:"+jsonSegmentBytes.decode("utf-8")+"\n"+response.read())
+        raise excpetions.ImageBuildException("Build error:"+jsonSegmentBytes.decode("utf-8")+"\n"+response.read().decode("utf-8"))
       jsonSegmentBytes = b''
     except ValueError:
       pass
@@ -138,11 +138,11 @@ class DockerDaemon(UserOwnedObject):
     self.getConnection().request("DELETE","/v1.13/images/"+imageId)
     response = self.getConnection().getresponse()
     if response.status == 404:
-      raise ImageDoesNotExistsException("The image "+imageId+" could not be deleted.\n"+response.read())
+      raise ImageDoesNotExistsException("The image "+imageId+" could not be deleted.\n"+response.read().decode("utf-8"))
     elif response.status == 409:
-      raise ContainerDependsOnImageException("The image "+imageId+" could not be deleted.\n"+response.read())
+      raise ContainerDependsOnImageException("The image "+imageId+" could not be deleted.\n"+response.read().decode("utf-8"))
     elif response.status == 500:
-      raise ServerErrorException("The image "+imageId+" could not be deleted.\n"+response.read())
+      raise ServerErrorException("The image "+imageId+" could not be deleted.\n"+response.read().decode("utf-8"))
     else:
       response.read()
 
