@@ -25,3 +25,15 @@ Coding guidelines
 * Do not shorten words/leave out vowels.
 
   + There are a few cases in which I have used shortened versions of things: ``dir`` for directory, ``arg`` for argument.  These are cases where the short version is as widely known as the long version.
+
+Maintainers
+-----------
+
+As the subuser project is still very small, there is not much of an organizational structure. Maintainers are people who have write access to the main subuser repository. They can review and merge pull requests as well as push commits. Maintainers cannot, however, tag releases. Releases may be tagged by the original author of subuser, Timothy Hobbs, and will be GPG signed by him as well.
+
+There are no clear guidelines on how to become a maintainer. It is expected that the number of maintainers will remain relatively low in the near future. However, there are several things that you should keep in mind if you wish to become a maintainer in the future:
+
+ - Respect the :doc:`community guidelines <../community>`. Don't be racist or sexist or otherwise unacceptable.
+
+ - Don't be pseudonymous. I know that a project like subuser which has security as one of its goals will attract pseudonymous users. However, security is also to some extent a matter of trust. Unfortunately, I cannot accept pseudonymous users as maintainers. You must have a real name associated with your online identity.
+
