@@ -53,7 +53,7 @@ class Registry(userOwnedObject.UserOwnedObject):
     return self.__repositories
 
   def ensureGitRepoInitialized(self):
-    if not os.path.exists(self.getUser().getConfig()["registry-dir"]):
+    if not os.path.exists(os.path.join(self.getUser().getConfig()["registry-dir"],".git")):
       self.initialized = False
       os.makedirs(self.getUser().getConfig()["registry-dir"])
       self.getGitRepository().run(["init"])
