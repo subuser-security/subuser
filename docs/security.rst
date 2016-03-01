@@ -1,5 +1,16 @@
+Subuser security
+================
+
+Security Bulletins
+------------------
+
+2016
+^^^^
+
+1. 02.03.2016 - Container break out possible when enabling the sound-card permission. Due to mounting the ``/dev/snd`` volume as read-write rather than read only it is possible to escape a subuser container when running the development version of Docker. This is a chain of two factors: It is possible to get root in a container using a `SUID binary <https://github.com/subuser-security/subuser/issues/229>`_.  The ``--device`` flag now `follows symlinks <https://github.com/docker/docker/pull/20684#discussion_r54466051>`_. This issue is fixed in subuser-0.5.3.
+
 How secure is subuser?
-======================
+----------------------
 
 Subuser provides security by isolation.  It isolates programs from one another so that one malicious or faulty program cannot harm the rest of the system.  Some paranoid people have been wondering just how secure/insecure subuser is.  It has been rightfully pointed out that Docker is not a specialized security solution and that there is a high likelihood that exploits for Docker will continue to appear at a relatively high rate.
 

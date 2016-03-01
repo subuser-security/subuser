@@ -95,10 +95,10 @@ $ subuser repair
   def getSoundArgs(self):
     soundArgs = []
     if os.path.exists("/dev/snd"):
-      soundArgs += ["--volume=/dev/snd:/dev/snd"]
+      soundArgs += ["--volume=/dev/snd:/dev/snd:ro"]
       soundArgs += ["--device=/dev/snd/"+device for device in os.listdir("/dev/snd") if not device == "by-id" and not device == "by-path"]
     if os.path.exists("/dev/dsp"):
-      soundArgs += ["--volume=/dev/dsp:/dev/dsp"]
+      soundArgs += ["--volume=/dev/dsp:/dev/dsp:ro"]
       if os.path.isdir('/dev/dsp'):
         soundArgs += ["--device=/dev/dsp/"+device for device in os.listdir("/dev/dsp")]
       else:
@@ -111,26 +111,26 @@ $ subuser repair
     """
     return collections.OrderedDict([
      # Conservative permissions
-     ("stateful-home", lambda p : ["-v="+self.getSubuser().getHomeDirOnHost()+":"+self.getSubuser().getDockersideHome()+":rw","-e","HOME="+self.getSubuser().getDockersideHome()] if p else ["-e","HOME="+self.getSubuser().getDockersideHome()]),
+     ("stateful-home", lambda p : ["--volume="+self.getSubuser().getHomeDirOnHost()+":"+self.getSubuser().getDockersideHome()+":rw","-e","HOME="+self.getSubuser().getDockersideHome()] if p else ["-e","HOME="+self.getSubuser().getDockersideHome()]),
      ("inherit-locale", lambda p : self.passOnEnvVar("LANG")+self.passOnEnvVar("LANGUAGE") if p else []),
-     ("inherit-timezone", lambda p : self.passOnEnvVar("TZ")+["-v=/etc/localtime:/etc/localtime:ro"] if p else []),
+     ("inherit-timezone", lambda p : self.passOnEnvVar("TZ")+["--volume=/etc/localtime:/etc/localtime:ro"] if p else []),
      # Moderate permissions
-     ("gui", lambda p : ["-e","DISPLAY=unix:100","-v",self.getSubuser().getX11Bridge().getServerSideX11Path()+":/tmp/.X11-unix"] if p else []),
-     ("user-dirs", lambda userDirs : ["-v="+os.path.join(self.getSubuser().getUser().getEndUser().homeDir,userDir)+":"+os.path.join("/subuser/userdirs/",userDir)+":rw" for userDir in userDirs]),
+     ("gui", lambda p : ["-e","DISPLAY=unix:100","--volume",self.getSubuser().getX11Bridge().getServerSideX11Path()+":/tmp/.X11-unix:rw"] if p else []),
+     ("user-dirs", lambda userDirs : ["--volume="+os.path.join(self.getSubuser().getUser().getEndUser().homeDir,userDir)+":"+os.path.join("/subuser/userdirs/",userDir)+":rw" for userDir in userDirs]),
      ("inherit-envvars", lambda envVars: [arg for var in envVars for arg in self.passOnEnvVar (var)]),
      ("sound-card", lambda p: self.getSoundArgs() if p else []),
      ("webcam", lambda p: ["--device=/dev/"+device for device in os.listdir("/dev/") if device.startswith("video")] if p else []),
-     ("access-working-directory", lambda p: ["-v="+os.getcwd()+":/pwd:rw","--workdir=/pwd"] if p else ["--workdir="+self.getSubuser().getDockersideHome()]),
+     ("access-working-directory", lambda p: ["--volume="+os.getcwd()+":/pwd:rw","--workdir=/pwd"] if p else ["--workdir="+self.getSubuser().getDockersideHome()]),
      ("allow-network-access", lambda p: ["--net=bridge"] if p else ["--net=none"]),
      # Liberal permissions
-     ("x11", lambda p: ["-e","DISPLAY=unix"+self.getEnvironment()['DISPLAY'],"-v=/tmp/.X11-unix:/tmp/.X11-unix:rw","-v="+self.getXautorityFilePath()+":/subuser/.Xauthority","-e","XAUTHORITY=/subuser/.Xauthority"] if p else []),
-     ("system-dirs", lambda systemDirs : ["-v="+source+":"+dest+":rw" for source,dest in systemDirs.items()]),
+     ("x11", lambda p: ["-e","DISPLAY=unix"+self.getEnvironment()['DISPLAY'],"--volume=/tmp/.X11-unix:/tmp/.X11-unix:rw","--volume="+self.getXautorityFilePath()+":/subuser/.Xauthority:ro","-e","XAUTHORITY=/subuser/.Xauthority"] if p else []),
+     ("system-dirs", lambda systemDirs : ["--volume="+source+":"+dest+":rw" for source,dest in systemDirs.items()]),
      ("graphics-card", lambda p: ["--device=/dev/dri/"+device for device in os.listdir("/dev/dri")] if p else []),
      ("serial-devices", lambda sd: ["--device=/dev/"+device for device in self.getSerialDevices()] if sd else []),
-     ("system-dbus", lambda dbus: ["--volume=/var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket"] if dbus else []),
+     ("system-dbus", lambda dbus: ["--volume=/var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket:rw"] if dbus else []),
      ("as-root", lambda root: ["--user=0"] if root else ["--user="+str(self.getUser().getEndUser().uid)]),
      # Anarchistic permissions
-     ("run-commands-on-host", lambda p : ["-v",self.getExecutionSpoolDir()+":/subuser/execute"] if p else []),
+     ("run-commands-on-host", lambda p : ["--volume",self.getExecutionSpoolDir()+":/subuser/execute:rw"] if p else []),
      ("privileged", lambda p: ["--privileged"] if p else [])])
 
   def getExecutionSpoolDir(self):
