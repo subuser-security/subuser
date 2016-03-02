@@ -87,6 +87,8 @@ def run(args):
             print(subuser.getRunReadyImage().generateImagePreparationDockerfile())
             print("The command to launch the image is:")
             print(runtime.getPrettyCommand(argParser.subuserArgs))
+          else:
+            sys.exit("There is no installed image for this subuser. Cannot run.")
       else:
         sys.exit("The subuser's image failed to build. Please use the subuser registry log and subuser repair commands for more information.")
     except (subuserlib.classes.subuser.SubuserHasNoPermissionsException,subuserlib.classes.subuserSubmodules.run.runtimeCache.NoRuntimeCacheForSubusersWhichDontHaveExistantImagesException) as e:

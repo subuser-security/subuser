@@ -1,5 +1,5 @@
-Initialized empty Git repository in /home/timothy/.texttest/tmp/texttest.14Jan014633.5843/texttest/test/doctests/hashtest/.git/
-[master (root-commit) 704084c] Initial commit
+Initialized empty Git repository in /home/timothy/.texttest/tmp/texttest.1_from_02Mar010307.15504/texttest/test/doctests/hashtest/.git/
+[master (root-commit) 9fbe66b] Initial commit
  2 files changed, 1012 insertions(+)
  create mode 100644 bar/New York
  create mode 100644 blah
@@ -7,7 +7,6 @@ Testing module: subuserlib.classes.user
 Testing module: subuserlib.classes.subusers
 Testing module: subuserlib.permissions
 Testing module: subuserlib.resolve
-Testing module: subuser-dry-run
 Testing module: subuser-list
 Testing module: subuser-version
 Testing module: subuser-describe

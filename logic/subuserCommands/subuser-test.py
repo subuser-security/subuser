@@ -62,7 +62,6 @@ elif "doctest" in sys.argv:
   repository = __import__("subuser-repository")
   subuser = __import__("subuser-subuser")
   update = __import__("subuser-update")
-  dry_run = __import__("subuser-dry-run")
   print_dependency_info = __import__("subuser-print-dependency-info")
   remove_old_images = __import__("subuser-remove-old-images")
   modules = [
@@ -73,7 +72,6 @@ elif "doctest" in sys.argv:
     ,subuserlib.permissions
     ,subuserlib.resolve
     # subuser commands
-    ,dry_run
     ,list
     ,version
     ,describe

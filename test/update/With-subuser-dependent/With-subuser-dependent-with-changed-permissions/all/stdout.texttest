@@ -1,5 +1,5 @@
 Updating...
-Updated repository file:////home/timothy/.texttest/tmp/texttest.15Jan133835.1341/texttest/update/With-subuser-dependent/With-subuser-dependent-with-changed-permissions/all/test-repos/remote-test-repo
+Updated repository file:////home/timothy/.texttest/tmp/texttest.02Mar010307.7/texttest/update/With-subuser-dependent/With-subuser-dependent-with-changed-permissions/all/test-repos/remote-test-repo
 Verifying subuser configuration.
 Verifying registry consistency...
 Unregistering any non-existant installed images.
@@ -8,7 +8,7 @@ dependent would like to add/change the following permissions:
 
 dependent no longer needs the following permissions:
    - Description: a dependent
-   - To display X11 windows and interact with your X11 server directly(log keypresses, read over your shoulder, steal your passwords, controll your computer ect.)
+   - To display X11 windows and interact with your X11 server directly(log keypresses, read over your shoulder, steal your passwords, control your computer ect.)
    - To access to your soundcard, can play sounds/record sound.
    - To read and write to the host's `/var/log` directory, mounted in the container as:`/var/log`
    - To have full access to your system.  To even do things as root outside of its container.
@@ -18,15 +18,15 @@ e - Ignore request and edit permissions by hand
 r - Reject permissions.
 Please select an option:Checking if images need to be updated or installed...
 Checking if subuser dependent is up to date.
-Checking for updates to: dependency1@file:////home/timothy/.texttest/tmp/texttest.15Jan133835.1341/texttest/update/With-subuser-dependent/With-subuser-dependent-with-changed-permissions/all/test-repos/remote-test-repo
+Checking for updates to: dependency1@file:////home/timothy/.texttest/tmp/texttest.02Mar010307.7/texttest/update/With-subuser-dependent/With-subuser-dependent-with-changed-permissions/all/test-repos/remote-test-repo
 Execute docker with args: ['run', '--rm', '--entrypoint', '/usr/bin/test', '2', '-e', '/subuser/check-for-updates']
 Cwd:None
-Checking for updates to: intermediary@file:////home/timothy/.texttest/tmp/texttest.15Jan133835.1341/texttest/update/With-subuser-dependent/With-subuser-dependent-with-changed-permissions/all/test-repos/remote-test-repo
+Checking for updates to: intermediary@file:////home/timothy/.texttest/tmp/texttest.02Mar010307.7/texttest/update/With-subuser-dependent/With-subuser-dependent-with-changed-permissions/all/test-repos/remote-test-repo
 Execute docker with args: ['run', '--rm', '--entrypoint', '/usr/bin/test', '4', '-e', '/subuser/check-for-updates']
 Cwd:None
-Checking for updates to: dependent@file:////home/timothy/.texttest/tmp/texttest.15Jan133835.1341/texttest/update/With-subuser-dependent/With-subuser-dependent-with-changed-permissions/all/test-repos/remote-test-repo
+Checking for updates to: dependent@file:////home/timothy/.texttest/tmp/texttest.02Mar010307.7/texttest/update/With-subuser-dependent/With-subuser-dependent-with-changed-permissions/all/test-repos/remote-test-repo
 Execute docker with args: ['run', '--rm', '--entrypoint', '/usr/bin/test', '6', '-e', '/subuser/check-for-updates']
 Cwd:None
 Running garbage collector on temporary repositories...
-Clearing directory /home/timothy/.texttest/tmp/texttest.15Jan133835.1341/texttest/update/With-subuser-dependent/With-subuser-dependent-with-changed-permissions/all/.subuser/volumes/execute
-Clearing directory /home/timothy/.texttest/tmp/texttest.15Jan133835.1341/texttest/update/With-subuser-dependent/With-subuser-dependent-with-changed-permissions/all/.subuser/volumes/x11
+Clearing directory /home/timothy/.texttest/tmp/texttest.02Mar010307.7/texttest/update/With-subuser-dependent/With-subuser-dependent-with-changed-permissions/all/.subuser/volumes/execute
+Clearing directory /home/timothy/.texttest/tmp/texttest.02Mar010307.7/texttest/update/With-subuser-dependent/With-subuser-dependent-with-changed-permissions/all/.subuser/volumes/x11
