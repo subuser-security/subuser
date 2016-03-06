@@ -50,7 +50,7 @@ def remove(user,subusers):
     user.getRegistry().logChange(" If you wish to remove the subusers image, issue the command $ subuser remove-old-images")
     for serviceSubuserName in subuser.getServiceSubuserNames():
       try:
-        serviceSubuser = user.getRegistry().getSubusers()[serviceSubuser]
+        serviceSubuser = user.getRegistry().getSubusers()[serviceSubuserName]
         serviceSubuser.removePermissions()
         del user.getRegistry().getSubusers()[serviceSubuserName]
       except KeyError:
