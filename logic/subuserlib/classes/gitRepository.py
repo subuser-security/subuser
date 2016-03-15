@@ -13,6 +13,7 @@ import errno
 import subuserlib.subprocessExtras as subprocessExtras
 from subuserlib.classes.userOwnedObject import UserOwnedObject
 from subuserlib.classes.fileStructure import FileStructure
+import subuserlib.executablePath
 import subuserlib.test
 if subuserlib.test.testing:
   hashtestDir = subuserlib.test.hashtestDir
@@ -27,12 +28,15 @@ class GitRepository(UserOwnedObject):
   def getPath(self):
     return self.__path
 
+  def getGitExecutable(self):
+    return subuserlib.executablePath.which("git",excludeDir=self.getUser().getConfig()["bin-dir"])
+
   def run(self,args):
     """
     Run git with the given command line arguments.
     """
     try:
-      gitArgs = ["git"]+args
+      gitArgs = [self.getGitExecutable()]+args
       (returncode,stdout,stderr) = subprocessExtras.callCollectOutput(gitArgs,cwd=self.getPath())
       self.getUser().getRegistry().log(self.getPath()+": "+" ".join(gitArgs),verbosityLevel=3)
       self.getUser().getRegistry().log(stdout,verbosityLevel=3)
@@ -47,14 +51,14 @@ class GitRepository(UserOwnedObject):
         raise e
 
   def runShowOutput(self,args):
-    subprocessExtras.call(["git"]+args,cwd=self.getPath())
+    subprocessExtras.call([self.getGitExecutable()]+args,cwd=self.getPath())
 
   def runCollectOutput(self,args,eatStderr=False):
     """
     Run git with the given command line arguments and return a tuple with (returncode,output).
     """
     try:
-      gitArgs = ["git"]+args
+      gitArgs = [self.getGitExecutable()]+args
       (returncode,stdout,stderr) = subprocessExtras.callCollectOutput(gitArgs,cwd=self.getPath())
       self.getUser().getRegistry().log(self.getPath()+": "+" ".join(gitArgs),verbosityLevel=3)
       self.getUser().getRegistry().log(stderr,verbosityLevel=3)

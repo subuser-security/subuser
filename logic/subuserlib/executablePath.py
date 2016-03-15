@@ -16,7 +16,7 @@ def isExecutable(fpath):
   return os.path.isfile(fpath) and os.access(fpath, os.X_OK)
 
 # Origonally taken from: http://stackoverflow.com/questions/377017/test-if-executable-exists-in-python
-def which(program):
+def which(program,excludeDir=None):
   """
   @type program: string
   @param program: The short name of the executable.  Ex: "vim"
@@ -32,8 +32,10 @@ def which(program):
       fpath,fname = os.path.split(path)
       return program == fname
     programMatches = queryPATH(matchesImage)
-    if len(programMatches) > 0:
-      return programMatches[0]
+    for match in programMatches:
+      if os.path.split(match)[0] == excludeDir:
+        continue
+      return match
   return None
 
 def queryPATH(test):
