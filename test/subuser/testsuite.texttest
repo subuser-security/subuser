@@ -12,3 +12,6 @@ add-to-path-non-existant-subuser
 remove-from-path-non-existant-subuser
 expose-entrypoints-non-existant-subuser
 hide-entrypoints-non-existant-subuser
+add-foo-non-existant-image-source
+add-foo-bar@non-existant-repo
+add-foo-bar@non-existant-repo-path

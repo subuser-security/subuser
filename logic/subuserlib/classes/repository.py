@@ -191,10 +191,7 @@ class Repository(dict,UserOwnedObject,Describable):
     if not self.isPresent():
       new = True
       self.getUser().getRegistry().log("Cloning repository "+self.getName()+" from "+self.getGitOriginURI())
-      (returncode,stdout,stderr) = subuserlib.subprocessExtras.callCollectOutput(["git","clone",self.getGitOriginURI(),self.getRepoPath()])
-      self.getUser().getRegistry().log(stdout,verbosityLevel=3)
-      self.getUser().getRegistry().log(stderr,verbosityLevel=3)
-      if not returncode == 0:
+      if self.getGitRepository().clone(self.getGitOriginURI()) != 0:
         self.getUser().getRegistry().log("Clone failed.")
         return
     else:

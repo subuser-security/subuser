@@ -24,12 +24,35 @@ class GitRepository(UserOwnedObject):
   def __init__(self,user,path):
     UserOwnedObject.__init__(self,user)
     self.__path = path
+    self.__gitExecutable = None
 
   def getPath(self):
     return self.__path
 
   def getGitExecutable(self):
-    return subuserlib.executablePath.which("git",excludeDir=self.getUser().getConfig()["bin-dir"])
+    if self.__gitExecutable is None:
+      self.__gitExecutable = subuserlib.executablePath.which("git",excludeDir=self.getUser().getConfig()["bin-dir"])
+      if self.__gitExecutable is None:
+        sys.exit("Git is not installed. Subuser requires git to run.")
+      def getConfig(key):
+        (returncode,stdout,stderr) = subprocessExtras.callCollectOutput([self.__gitExecutable,"config","--get",key])
+        if returncode == 0:
+          return stdout
+        else:
+          return None
+      if getConfig("user.name") is None or getConfig("user.email") is None:
+        sys.exit("""You must configure git's user.name and user.email options before using subuser.
+Do so by running
+$ git config --global user.name "John Doe"
+$ git config --global user.email johndoe@example.com
+""")
+    return self.__gitExecutable
+
+  def clone(self,origin):
+    """
+    Clone an external repository in order to create this repository.
+    """
+    return subprocessExtras.call([self.getGitExecutable(), "clone", origin, self.getPath()])
 
   def run(self,args):
     """
@@ -42,7 +65,7 @@ class GitRepository(UserOwnedObject):
       self.getUser().getRegistry().log(stdout,verbosityLevel=3)
       self.getUser().getRegistry().log(stderr,verbosityLevel=3)
       if stderr:
-        raise Exception(stderr)
+        raise GitException(stderr)
       return returncode
     except OSError as e:
       if e.errno == errno.EEXIST:
@@ -257,3 +280,6 @@ class GitFileStructure(FileStructure):
     for treeObject in allObjects:
       if os.path.normpath(treeObject[3]) == os.path.normpath(path):
         return int(treeObject[0],8)
+
+class GitException(Exception):
+  pass

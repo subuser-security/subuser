@@ -1,8 +1,7 @@
 Initial commit.
-Cloning repository default from file:///home/timothy/.texttest/tmp/texttest.15Jan133835.1341/texttest/Weird-repositories/image-source-with-spaces/test-repos/default-test-repo
-Clone failed.
-Adding subuser foo with image image source with spaces@//home/timothy/.texttest/tmp/texttest.15Jan133835.1341/texttest/Weird-repositories/image-source-with-spaces/test-repos/local-test-repo-§€č
-Adding new temporary repository //home/timothy/.texttest/tmp/texttest.15Jan133835.1341/texttest/Weird-repositories/image-source-with-spaces/test-repos/local-test-repo-§€č
+Cloning repository default from file:///home/timothy/.texttest/tmp/texttest.1_from_19Mar165801.18238/texttest/Weird-repositories/image-source-with-spaces/test-repos/default-test-repo
+Adding subuser foo with image image source with spaces@/home/timothy/.texttest/tmp/texttest.1_from_19Mar165801.18238/texttest/Weird-repositories/image-source-with-spaces/test-repos/local-test-repo-§€č
+Adding new temporary repository /home/timothy/.texttest/tmp/texttest.1_from_19Mar165801.18238/texttest/Weird-repositories/image-source-with-spaces/test-repos/local-test-repo-§€č
 Verifying subuser configuration.
 Verifying registry consistency...
 Unregistering any non-existant installed images.
@@ -27,5 +26,5 @@ Building...
 Successfully built 2
 Installed new image <2> for subuser foo
 Running garbage collector on temporary repositories...
-Clearing directory /home/timothy/.texttest/tmp/texttest.15Jan133835.1341/texttest/Weird-repositories/image-source-with-spaces/.subuser/volumes/execute
-Clearing directory /home/timothy/.texttest/tmp/texttest.15Jan133835.1341/texttest/Weird-repositories/image-source-with-spaces/.subuser/volumes/x11
+Clearing directory /home/timothy/.texttest/tmp/texttest.1_from_19Mar165801.18238/texttest/Weird-repositories/image-source-with-spaces/.subuser/volumes/execute
+Clearing directory /home/timothy/.texttest/tmp/texttest.1_from_19Mar165801.18238/texttest/Weird-repositories/image-source-with-spaces/.subuser/volumes/x11

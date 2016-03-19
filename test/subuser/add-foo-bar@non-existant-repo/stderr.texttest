@@ -1,0 +1,3 @@
+Cloning into '/home/timothy/.texttest/tmp/texttest.19Mar165105.17952/texttest/subuser/add-foo-bar@non-existant-repo/.subuser/repositories/default'...
+Could not add subuser.  The image source bar@non-existant-repo does not exist.
+'non-existant-repo'

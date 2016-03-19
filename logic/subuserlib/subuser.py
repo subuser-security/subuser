@@ -23,7 +23,7 @@ def add(user,subuserName,imageSourceIdentifier,permissionsAccepter,prompt=False,
   user.getRegistry().logChange("Adding subuser "+subuserName+" with image "+imageSourceIdentifier)
   try:
     imageSource = subuserlib.resolve.resolveImageSource(user,imageSourceIdentifier)
-  except KeyError as keyError:
+  except (KeyError,subuserlib.resolve.ResolutionError) as keyError:
     sys.exit("Could not add subuser.  The image source "+imageSourceIdentifier+" does not exist.\n"+str(keyError))
   addFromImageSource(user,subuserName,imageSource,permissionsAccepter,prompt)
 
