@@ -83,7 +83,9 @@ def readAndPrintStreamingBuildStatus(user,response):
     byte = response.read(1)
     try:
       lineDict = json.loads(jsonSegmentBytes.decode("utf-8"))
-      if "stream" in lineDict:
+      if lineDict == {}:
+        pass
+      elif "stream" in lineDict:
         user.getRegistry().log(lineDict["stream"])
       elif "status" in lineDict:
         user.getRegistry().log(lineDict["status"])
