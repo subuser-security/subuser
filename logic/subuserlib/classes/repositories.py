@@ -111,6 +111,7 @@ class Repositories(collections.Mapping,UserOwnedObject,FileBackedObject):
       self.getUser().getRegistry().logChange("Removing repository "+name)
     else:
       self.getUser().getRegistry().logChange("Removing temporary repository "+self[name].getDisplayName())
+    repository.removeGitRepo()
     del self.userRepositories[name]
 
   def serializeToDict(self):
