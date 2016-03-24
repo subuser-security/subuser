@@ -86,7 +86,7 @@ $ git config --global user.email johndoe@example.com
       self.getUser().getRegistry().log(self.getPath()+": "+" ".join(gitArgs),verbosityLevel=3)
       self.getUser().getRegistry().log(stderr,verbosityLevel=3)
       if stderr and not eatStderr:
-        raise Exception(stderr)
+        raise GitException(stderr)
       return (returncode,stdout)
     except OSError as e:
       if e.errno == errno.EEXIST:
@@ -100,7 +100,7 @@ $ git config --global user.email johndoe@example.com
     """
     try:
       (returncode,stdout) = self.runCollectOutput(["cat-file","-t",commit])
-    except Exception:
+    except GitException:
       return False
     if returncode == 0 and "commit" in stdout:
       return True

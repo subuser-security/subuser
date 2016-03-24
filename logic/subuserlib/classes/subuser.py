@@ -149,7 +149,14 @@ To repair your subuser installation.\n""")
     """
     Remove the user set and template permission files.
     """
-    self.getUser().getRegistry().getGitRepository().run(["rm",os.path.join(self.getRelativePermissionsDir(),"permissions.json"),os.path.join(self.getRelativePermissionsDir(),"permissions-template.json")])
+    try:
+      self.getUser().getRegistry().getGitRepository().run(["rm",os.path.join(self.getRelativePermissionsDir(),"permissions.json"),os.path.join(self.getRelativePermissionsDir(),"permissions-template.json")])
+    except subuserlib.classes.gitRepository.GitException:
+      pass
+    try:
+      self.getUser().getRegistry().getGitRepository().run(["rm",os.path.join(self.getRelativePermissionsDir(),"permissions.json"),os.path.join(self.getRelativePermissionsDir(),"permissions-template.json")])
+    except subuserlib.classes.gitRepository.GitException:
+      pass
 
   def getImageId(self):
     """
