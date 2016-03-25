@@ -96,7 +96,5 @@ elif "doctest" in sys.argv:
 else:
   if not "logic" in os.listdir(os.getcwd()):
     sys.exit("You must first cd to the subuser source directory to test subuser.")
-  texttestSubuserName = "!subuser-texttest"
-  addSubuserIfNoneExists(texttestSubuserName,"texttest@./")
-  command = [os.path.join(subuserlib.paths.getSubuserDir(),"logic","subuser"),"run",texttestSubuserName]
+  command = [os.path.join(subuserlib.paths.getSubuserDir(),"logic","subuser"),"dev","texttest"]
   subprocess.call(command)

@@ -7,13 +7,6 @@ SPHINXBUILD   = sphinx-build
 PAPER         =
 BUILDDIR      = _build
 
-.docs-build-environment: Dockerfile
-	docker build -t docs-build-environment .
-	touch .docs-build-environment
-
-shell: .docs-build-environment
-	docker run -i -t --rm --user=1000 -v $(PWD)/..:/home/sphynx-user -w /home/sphynx-user/docs -e HOME=/home/sphynx-user/ docs-build-environment /bin/bash
-
 command-docs:
 	cd commands ; ./generate-command-docs.py
 	echo DONE GENERATING COMMAND DOCS
@@ -28,7 +21,7 @@ developers/images:
 news/images:
 	mkdir news/images ; echo IMAGES DIR CREATED
 
-developers/images/object-hierarchy.png: developers/object-hierarchy.uxf developers/images 
+developers/images/object-hierarchy.png: developers/object-hierarchy.uxf developers/images
 	umlet -action=convert -format=png -filename=developers/object-hierarchy.uxf -output=developers/images/object-hierarchy
 
 news/images/x11-bridge.png: news/x11-bridge.uxf news/images

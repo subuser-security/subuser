@@ -10,3 +10,4 @@
 /*.egg-info
 /*.egg
 /build/
+.subuser-dev

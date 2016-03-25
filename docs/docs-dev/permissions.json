@@ -1,0 +1,8 @@
+{
+ "stateful-home": true,
+ "maintainer": "Timothy Hobbs <timothyhobbs@seznam.cz>",
+ "executable": "/bin/bash",
+ "basic-common-permissions": true,
+ "access-working-directory": true,
+ "description": "Docs build envirionment for subuser."
+}

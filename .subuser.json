@@ -1,9 +1,14 @@
 {
  "explicit-image-sources": {
-  "texttest": {
-   "image-file": "test/texttest/image/SubuserImagefile",
-   "permissions-file": "test/texttest/permissions.json",
-   "build-context": "test/texttest/image/"
+  "texttest-dev": {
+   "image-file": "test/texttest-dev/image/SubuserImagefile",
+   "permissions-file": "test/texttest-dev/permissions.json",
+   "build-context": "test/texttest-dev/image/"
+  },
+  "docs-dev": {
+   "image-file": "docs/docs-dev/image/SubuserImagefile",
+   "permissions-file": "docs/docs-dev/permissions.json",
+   "build-context": "docs/docs-dev/image"
   }
  }
 }

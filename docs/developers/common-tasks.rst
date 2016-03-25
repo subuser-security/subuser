@@ -12,6 +12,27 @@ Once it is accepted:
 
  2. Tell subuser how to apply the permission in the `runtime class <https://github.com/subuser-security/subuser/blob/master/logic/subuserlib/classes/subuserSubmodules/run/runtime.py>`_
 
+Running the test suit
+---------------------
+
+In the root source directory run::
+
+    subuser dev texttest
+
+Building the docs
+-----------------
+
+In order to build the docs, you must have the subuser-standard within the docs directory.  In order to get the subser-standard issue::
+
+    git clone https://github.com/subuser-security/subuser-standard.git
+
+To build the docs, cd to this repositories root, run ``subuser dev docs`` and run ``make html`` in the docs directory::
+
+    cd ..
+    subuser dev docs
+    cd docs
+    make html
+
 Profiling
 ---------
 
