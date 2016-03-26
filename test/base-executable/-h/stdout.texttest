@@ -1,15 +1,16 @@
 You can use one of the following commands:
-subuser
 update
-remove-old-images
 describe
-print-dependency-info
-registry
 repository
+registry
+subuser
 test
+dev
 repair
-list
-version
 run
+list
 pkg
+version
+print-dependency-info
+remove-old-images
 for more info about each option use: subuser <option> -h
