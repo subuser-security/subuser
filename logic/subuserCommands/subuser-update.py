@@ -44,6 +44,7 @@ def parseCliArgs(realArgs):
   parser=optparse.OptionParser(usage=usage,description=description,formatter=subuserlib.commandLineArguments.HelpFormatterThatDoesntReformatDescription())
   parser.add_option("--accept",dest="accept",action="store_true",default=False,help="Accept permissions without asking.")
   parser.add_option("--prompt",dest="prompt",action="store_true",default=False,help="Prompt before installing new images.")
+  parser.add_option("--use-cache",dest="useCache",action="store_true",default=False,help="Use the layer cache when building images.")
   return parser.parse_args(args=realArgs)
 
 #################################################################################################
@@ -60,7 +61,7 @@ def update(realArgs):
     sys.exit("No arguments given. Please use subuser update -h for help.")
   elif ["all"] == args:
     with user.getRegistry().getLock():
-      subuserlib.update.all(user,permissionsAccepter=permissionsAccepter,prompt=options.prompt)
+      subuserlib.update.all(user,permissionsAccepter=permissionsAccepter,prompt=options.prompt,useCache=options.useCache)
   elif "subusers" == args[0]:
     subuserNamesToUpdate = args[1:]
     subusersToUpdate = []
@@ -71,7 +72,7 @@ def update(realArgs):
         sys.exit("Subuser "+subuserName+" does not exist. Use --help for help.")
     if subusersToUpdate:
       with user.getRegistry().getLock():
-        subuserlib.update.subusers(user,subusers=subusersToUpdate,permissionsAccepter=permissionsAccepter,prompt=options.prompt)
+        subuserlib.update.subusers(user,subusers=subusersToUpdate,permissionsAccepter=permissionsAccepter,prompt=options.prompt,useCache=options.useCache)
     else:
       sys.exit("You did not specify any subusers to be updated. Use --help for help. Exiting...")
   elif "lock-subuser-to" == args[0]:

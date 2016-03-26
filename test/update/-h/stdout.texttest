@@ -22,6 +22,7 @@ Update subuser images.
 
 
 Options:
-  -h, --help  show this help message and exit
-  --accept    Accept permissions without asking.
-  --prompt    Prompt before installing new images.
+  -h, --help   show this help message and exit
+  --accept     Accept permissions without asking.
+  --prompt     Prompt before installing new images.
+  --use-cache  Use the layer cache when building images.

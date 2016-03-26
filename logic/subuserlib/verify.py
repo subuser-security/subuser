@@ -18,7 +18,7 @@ from subuserlib.classes.installationTask import InstallationTask
 import subuserlib.classes.exceptions as exceptions
 import subuserlib.classes.subuser
 
-def verify(user,permissionsAccepter=None,checkForUpdatesExternally=False,subusers=[],prompt=False):
+def verify(user,permissionsAccepter=None,checkForUpdatesExternally=False,subusers=[],prompt=False,useCache=False):
   """
    Ensure that:
      - Registry is consistent; warns the user about subusers that point to non-existant source images.
@@ -58,7 +58,7 @@ def verify(user,permissionsAccepter=None,checkForUpdatesExternally=False,subuser
       for subuser in outOfDateSubusers:
         user.getRegistry().log(subuser.getName())
       if (not prompt) or (prompt and (not input("Would you like to install those images now? [Y/n]") == "n")):
-        installationTask.updateOutOfDateSubusers()
+        installationTask.updateOutOfDateSubusers(useCache=useCache)
     for exception in permissionParsingExceptions:
       user.getRegistry().log(str(exception))
     subusersWhosImagesFailedToBuild = installationTask.getSubusersWhosImagesFailedToBuild()

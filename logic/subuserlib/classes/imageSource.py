@@ -120,7 +120,7 @@ class ImageSource(UserOwnedObject,Describable):
     subuserlib.print.printWithoutCrashing(self.getIdentifier())
     self.getPermissions().describe()
 
-  def build(self,parent):
+  def build(self,parent,useCache=False):
     imageFileType = self.getImageFileType()
     if imageFileType == "Dockerfile":
       dockerfileContents = self.getImageFileContents()
@@ -132,7 +132,7 @@ class ImageSource(UserOwnedObject,Describable):
           dockerfileContents = "FROM " + parent + "\n"
         else:
           dockerfileContents += line + "\n"
-    imageId = self.getUser().getDockerDaemon().build(relativeBuildContextPath=self.getImageDir(),repositoryFileStructure=self.getRepository().getFileStructure(),rm=True,dockerfile=dockerfileContents,useCache=False)
+    imageId = self.getUser().getDockerDaemon().build(relativeBuildContextPath=self.getImageDir(),repositoryFileStructure=self.getRepository().getFileStructure(),rm=True,dockerfile=dockerfileContents,useCache=useCache)
     subuserSetupDockerFile = ""
     subuserSetupDockerFile += "FROM "+imageId+"\n"
     subuserSetupDockerFile += "RUN mkdir -p /subuser ; echo "+str(uuid.uuid4())+" > /subuser/uuid\n" # This ensures that all images have unique Ids.  Even images that are otherwise the same.

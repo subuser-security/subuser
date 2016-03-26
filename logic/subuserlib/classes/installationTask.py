@@ -77,7 +77,7 @@ class InstallationTask(UserOwnedObject):
       return False
     return True
 
-  def updateOutOfDateSubusers(self):
+  def updateOutOfDateSubusers(self,useCache=False):
     """
     Install new images for those subusers which are out of date.
     """
@@ -88,12 +88,12 @@ class InstallationTask(UserOwnedObject):
           if imageSource in self.__upToDateImageSources:
             parent = imageSource.getLatestInstalledImage().getImageId()
           elif imageSource in self.__outOfDateImageSources:
-            parent = installImage(imageSource,parent=parent)
+            parent = installImage(imageSource,parent=parent,useCache=useCache)
             self.__outOfDateImageSources.remove(imageSource)
             self.__upToDateImageSources.add(imageSource)
           else:
             if not self.isUpToDate(imageSource):
-              parent = installImage(imageSource,parent=parent)
+              parent = installImage(imageSource,parent=parent,useCache=useCache)
             else:
               parent = imageSource.getLatestInstalledImage().getImageId()
             self.__upToDateImageSources.add(imageSource)
@@ -107,14 +107,14 @@ class InstallationTask(UserOwnedObject):
   def getSubusersWhosImagesFailedToBuild(self):
     return self.__subusersWhosImagesFailedToBuild
 
-def installImage(imageSource,parent):
+def installImage(imageSource,parent,useCache=False):
   """
   Install a image by building the given ImageSource.
   Register the newly installed image in the user's InstalledImages list.
   Return the Id of the newly installedImage.
   """
   imageSource.getUser().getRegistry().logChange("Installing " + imageSource.getName() + " ...")
-  imageId = imageSource.build(parent)
+  imageId = imageSource.build(parent,useCache=useCache)
   imageSource.getUser().getInstalledImages()[imageId] = subuserlib.classes.installedImage.InstalledImage(imageSource.getUser(),imageId,imageSource.getName(),imageSource.getRepository().getName(),imageSource.getHash())
   imageSource.getUser().getInstalledImages().save()
   return imageId

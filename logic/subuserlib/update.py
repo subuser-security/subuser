@@ -11,7 +11,7 @@ import subuserlib.verify
 import subuserlib.subprocessExtras as subprocessExtras
 
 #####################################################################################
-def all(user,permissionsAccepter,prompt=False):
+def all(user,permissionsAccepter,prompt=False,useCache=False):
   """
   This command updates(if needed) all of the installed subuser images.
   """
@@ -19,17 +19,17 @@ def all(user,permissionsAccepter,prompt=False):
   for _,repository in user.getRegistry().getRepositories().items():
     repository.updateSources()
   subusers = user.getRegistry().getSubusers().getSortedList()
-  subuserlib.verify.verify(user,checkForUpdatesExternally=True,subusers=subusers,permissionsAccepter=permissionsAccepter,prompt=prompt)
+  subuserlib.verify.verify(user,checkForUpdatesExternally=True,useCache=useCache,subusers=subusers,permissionsAccepter=permissionsAccepter,prompt=prompt)
   user.getRegistry().commit()
 
-def subusers(user,subusers,permissionsAccepter,prompt=False):
+def subusers(user,subusers,permissionsAccepter,prompt=False,useCache=False):
   """
   This command updates the specified subusers' images.
   """
   user.getRegistry().log("Updating...")
   for _,repository in user.getRegistry().getRepositories().items():
     repository.updateSources()
-  subuserlib.verify.verify(user,subusers=subusers,checkForUpdatesExternally=True,permissionsAccepter=permissionsAccepter,prompt=prompt)
+  subuserlib.verify.verify(user,subusers=subusers,useCache=useCache,checkForUpdatesExternally=True,permissionsAccepter=permissionsAccepter,prompt=prompt)
   user.getRegistry().commit()
 
 def lockSubuser(user,subuser,commit):
