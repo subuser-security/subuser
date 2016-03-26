@@ -15,6 +15,11 @@ import subprocess
 import subuserlib.commandLineArguments
 import subuserlib.profile
 
+try:
+  subuserExecutable = os.environ["SUBUSER_EXECUTABLE"]
+except KeyError:
+  subuserExecutable = "subuser"
+
 def parseCliArgs(realArgs):
   usage = "usage: subuser dev <args> DEV-IMAGE-NAME"
   description = """ Create and run a subuser related to a dev image.
@@ -29,7 +34,7 @@ def parseCliArgs(realArgs):
 def dev(realArgs):
   options,args = parseCliArgs(realArgs)
   if options.ls:
-    subprocess.call(["subuser","list","available","./"])
+    subprocess.call([subuserExecutable,"list","available","./"])
     sys.exit()
   devSubuserRegistry = ".subuser-dev"
   devSubusers = {}
@@ -40,7 +45,7 @@ def dev(realArgs):
         devSubusers = json.load(fd)
     for devSubuser in devSubusers.values():
       subusers.append(devSubuser)
-    subprocess.call(["subuser","subuser","remove"]+subusers)
+    subprocess.call([subuserExecutable,"subuser","remove"]+subusers)
     sys.exit()
   if len(args) != 1:
     sys.exit("Please pass a single dev image name. Use --help for help.")
@@ -57,14 +62,14 @@ def dev(realArgs):
       pass
   if devSubuser is None:
     devSubuser = devImage+"@"+os.path.split(os.path.dirname(os.getcwd()+os.sep))[1]+"-"+str(uuid.uuid4())
-    if subprocess.call(["subuser","subuser","add",devSubuser,devImage+"@./"]) == 0:
+    if subprocess.call([subuserExecutable,"subuser","add",devSubuser,devImage+"@./"]) == 0:
       devSubusers[devImage] = devSubuser
       with open(devSubuserRegistry,"w") as fd:
         json.dump(devSubusers,fd)
   if options.entrypoint is None:
-    subprocess.call(["subuser","run",devSubuser])
+    subprocess.call([subuserExecutable,"run",devSubuser])
   else:
-    subprocess.call(["subuser","run","--entrypoint="+options.entrypoint,devSubuser])
+    subprocess.call([subuserExecutable,"run","--entrypoint="+options.entrypoint,devSubuser])
 
 #################################################################################################
 

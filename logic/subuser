@@ -26,6 +26,7 @@ if not commandExecutablePath:
   sys.exit(1)
 
 try:
+  os.environ["SUBUSER_EXECUTABLE"] = sys.argv[0]
   sys.exit(subprocess.call([commandExecutablePath]+sys.argv[2:]))
 except KeyboardInterrupt:
   sys.exit(0)
