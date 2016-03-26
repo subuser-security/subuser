@@ -125,7 +125,7 @@ $ subuser repair
      # Liberal permissions
      ("x11", lambda p: ["-e","DISPLAY=unix"+self.getEnvironment()['DISPLAY'],"--volume=/tmp/.X11-unix:/tmp/.X11-unix:rw","--volume="+self.getXautorityFilePath()+":/subuser/.Xauthority:ro","-e","XAUTHORITY=/subuser/.Xauthority"] if p else []),
      ("system-dirs", lambda systemDirs : ["--volume="+source+":"+dest+":rw" for source,dest in systemDirs.items()]),
-     ("graphics-card", lambda p: ["--device=/dev/dri/"+device for device in os.listdir("/dev/dri")] if p else []),
+     ("graphics-card", lambda p: ["--device=/dev/dri/"+device for device in os.listdir("/dev/dri")] + ["--volume=/dev/dri/:/dev/dri/:ro"] if p else []),
      ("serial-devices", lambda sd: ["--device=/dev/"+device for device in self.getSerialDevices()] if sd else []),
      ("system-dbus", lambda dbus: ["--volume=/var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket:rw"] if dbus else []),
      ("as-root", lambda root: ["--user=0"] if root else ["--user="+str(self.getUser().getEndUser().uid)]),
