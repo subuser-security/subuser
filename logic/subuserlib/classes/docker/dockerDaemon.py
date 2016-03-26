@@ -39,10 +39,7 @@ def archiveBuildContext(archive,relativeBuildContextPath,repositoryFileStructure
     """
     Returns a FileObject from the given string. Works with both versions of python.
     """
-    try:
-      return StringIO.StringIO(contents)
-    except NameError:
-      return io.BytesIO(bytes(contents,"UTF-8"))
+    return io.BytesIO(contents)
 
   def addFileFromContents(path,contents,mode=420):
     fileObject = getFileObject(contents)
@@ -63,13 +60,13 @@ def archiveBuildContext(archive,relativeBuildContextPath,repositoryFileStructure
           if fnmatch.fnmatch(filePathRelativeToBuildContext,excludePattern):
             exclude = True
         if not exclude:
-          addFileFromContents(path=filePathRelativeToBuildContext,contents=repositoryFileStructure.read(filePathRelativeToRepository),mode=repositoryFileStructure.getMode(filePathRelativeToRepository))
+          addFileFromContents(path=filePathRelativeToBuildContext,contents=repositoryFileStructure.readBinary(filePathRelativeToRepository),mode=repositoryFileStructure.getMode(filePathRelativeToRepository))
       for folderPathRelativeToRepository in repositoryFileStructure.lsFolders(folder):
         addFolder(folderPathRelativeToRepository)
     addFolder(relativeBuildContextPath)
   # Add the provided Dockerfile if necessary
   if not dockerfile == None:
-    addFileFromContents(path="./Dockerfile",contents=dockerfile)
+    addFileFromContents(path="./Dockerfile",contents=dockerfile.encode("utf-8"))
   contexttarfile.close()
   archive.seek(0)
 
