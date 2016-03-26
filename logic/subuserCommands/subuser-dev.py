@@ -26,6 +26,7 @@ def parseCliArgs(realArgs):
   """
   parser=optparse.OptionParser(usage=usage,description=description,formatter=subuserlib.commandLineArguments.HelpFormatterThatDoesntReformatDescription())
   parser.add_option("--ls",dest="ls",action="store_true",default=False,help="List dev images.")
+  parser.add_option("--update",dest="update",action="store_true",default=False,help="Update dev images associated with this folder. Note: This always uses the layer cache. Use subuser update all to update fully without layer caching.")
   parser.add_option("--remove",dest="remove",action="store_true",default=False,help="Remove dev images associated with this folder.")
   parser.add_option("--entrypoint",dest="entrypoint",default=None,help="Use entrypoint instead of default executable.")
   return parser.parse_args(args=realArgs)
@@ -38,28 +39,31 @@ def dev(realArgs):
     sys.exit()
   devSubuserRegistry = ".subuser-dev"
   devSubusers = {}
+  subuserNames = []
+  if os.path.exists(devSubuserRegistry):
+    with open(devSubuserRegistry,"r") as fd:
+      devSubusers = json.load(fd)
+  for devSubuser in devSubusers.values():
+    subuserNames.append(devSubuser)
+
   if options.remove:
-    subusers = []
-    if os.path.exists(devSubuserRegistry):
-      with open(devSubuserRegistry,"r") as fd:
-        devSubusers = json.load(fd)
-    for devSubuser in devSubusers.values():
-      subusers.append(devSubuser)
-    subprocess.call([subuserExecutable,"subuser","remove"]+subusers)
+    subprocess.call([subuserExecutable,"subuser","remove"]+subuserNames)
     sys.exit()
+
+  if options.update:
+    subprocess.call([subuserExecutable,"update","--use-cache","subusers"]+subuserNames)
+    sys.exit()
+
   if len(args) != 1:
     sys.exit("Please pass a single dev image name. Use --help for help.")
   devSubuser = None
   devImage = args[0]
   if not devImage.endswith("-dev"):
     devImage = devImage + "-dev"
-  if os.path.exists(devSubuserRegistry):
-    with open(devSubuserRegistry,"r") as fd:
-      devSubusers = json.load(fd)
-    try:
-      devSubuser = devSubusers[devImage]
-    except KeyError:
-      pass
+  try:
+    devSubuser = devSubusers[devImage]
+  except KeyError:
+    pass
   if devSubuser is None:
     devSubuser = devImage+"@"+os.path.split(os.path.dirname(os.getcwd()+os.sep))[1]+"-"+str(uuid.uuid4())
     if subprocess.call([subuserExecutable,"subuser","add",devSubuser,devImage+"@./"]) == 0:
