@@ -13,7 +13,7 @@ def version():
 
 pathToThisSourceFile = os.path.abspath(inspect.getfile(inspect.currentframe()))
 
-commands = [os.path.join("logic","subuserCommands",command) for command in os.listdir(os.path.join(os.path.dirname(pathToThisSourceFile),"logic","subuserCommands")) if command.startswith("subuser-") and command.endswith(".py") and not command == "subuser-test.py"]
+commands = [os.path.join("logic","subuserCommands",command) for command in os.listdir(os.path.join(os.path.dirname(pathToThisSourceFile),"logic","subuserCommands")) if command.startswith("subuser-") and not command == "subuser-test" and not command.endswith("~")]
 scripts = ["logic/subuser"]+commands
 
 setuptools.setup(

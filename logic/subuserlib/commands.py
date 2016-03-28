@@ -15,7 +15,7 @@ def getBuiltIn():
   """
   try:
     commands = set(os.listdir(subuserlib.paths.getSubuserCommandsDir()))
-    return [command[8:-3] for command in commands if command.endswith(".py") and command.startswith("subuser-")] # Filter out non-.py files and remove the .py suffixes and the "subuser-" prefixes.
+    return [command[8:] for command in commands if command.startswith("subuser-") and not command.endswith("~")] # Filter out the files that don't start with subuser- and remove the "subuser-" prefixes.
   except OSError:
     return []
 
@@ -32,8 +32,6 @@ def getExternal():
   for externalCommandPath in externalCommandPaths:
     commandDir, executableName = os.path.split(externalCommandPath)
     commandName = executableName[subuserPrefixLength:]
-    if commandName.endswith(".py"):
-      commandName=commandName[:-3]
     externalCommands.append(commandName)
   return list(set(externalCommands)) # remove duplicate entries
 
@@ -44,7 +42,7 @@ def getCommands():
   return list(set(getBuiltIn() + getExternal()))
 
 def getPath(command):
-  builtInCommandPath = os.path.join(subuserlib.paths.getSubuserCommandsDir(),"subuser-" + command + ".py")
+  builtInCommandPath = os.path.join(subuserlib.paths.getSubuserCommandsDir(),"subuser-" + command)
   if os.path.exists(builtInCommandPath):
     return (builtInCommandPath)
   else:
@@ -52,4 +50,4 @@ def getPath(command):
     if externalCommandPath:
       return externalCommandPath
     else:
-      return subuserlib.executablePath.which("subuser-"+command+".py")
+      return subuserlib.executablePath.which("subuser-"+command)

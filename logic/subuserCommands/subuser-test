@@ -43,6 +43,7 @@ elif "doctest" in sys.argv:
   #locale.setlocale(locale.LC_ALL, '')
   import subuserlib.docker
   import doctest
+  import imp
   if not "--travis" in sys.argv:
     subuserDir = "/pwd"
   else:
@@ -56,14 +57,16 @@ elif "doctest" in sys.argv:
   import subuserlib.resolve
   import subuserlib.permissions
   # commands
-  list = __import__("subuser-list")
-  version = __import__("subuser-version")
-  describe = __import__("subuser-describe")
-  repository = __import__("subuser-repository")
-  subuser = __import__("subuser-subuser")
-  update = __import__("subuser-update")
-  print_dependency_info = __import__("subuser-print-dependency-info")
-  remove_old_images = __import__("subuser-remove-old-images")
+  def loadSource(command):
+    return imp.load_source("subuser-"+command,os.path.join(subuserlib.paths.getSubuserDir(),"logic","subuserCommands","subuser-"+command))
+  list = loadSource("list")
+  version = loadSource("version")
+  describe = loadSource("describe")
+  repository = loadSource("repository")
+  subuser = loadSource("subuser")
+  update = loadSource("update")
+  print_dependency_info = loadSource("print-dependency-info")
+  remove_old_images = loadSource("remove-old-images")
   modules = [
     # classes
     subuserlib.classes.user
