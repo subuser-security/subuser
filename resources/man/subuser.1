@@ -1,0 +1,109 @@
+.TH man 1 "28 March 2016" "0.5.6" "subuser man page"
+.SH NAME
+subuser \- install, administer, and run desktop applications with Docker.
+.SH SYNOPSIS
+.B subuser [SUBCOMMAND] [SUBCOMMAND ARGS]
+.SH DESCRIPTION
+subuser allows you to install and administer desktop applications contained using Docker. This is useful if you need to provide portability across Linux distributions or hightened security. The applications have limited access to the main system and user files. Access is granted solely through a whitelisting permissions file.
+.SH OPTIONS
+Pass the
+.B --help
+option to any subcommand in order to find its options.
+The following subcommands are available:
+.TP
+.BR subuser
+Add, remove, and configure subusers
+.TP
+.BR run
+Run subusers
+.TP
+.BR repository
+Add and configure repositories
+.TP
+.BR update
+Update subuser images
+.TP
+.BR remove-old-images
+Remove unused images to free up disk space
+.TP
+.BR registry
+Interact with the subuser registry
+.TP
+.BR list
+List subusers and images
+.TP
+.BR describe
+Describe subusers and images
+.TP
+.BR repair
+Repair your subuser installation. Usefull after migrating to a new system.
+.TP
+.BR pkg
+Create new subuser images
+.TP
+.BR dev
+Use subuser to create portable and reproducible dev environments
+.TP
+.BR version
+Print subuser's version information
+.SH EXAMPLES
+To create a subuser named web-browsing based on the iceweasel image
+.PP
+.nf
+.RS
+$ subuser subuser add web-browsing iceweasel@default
+.RE
+.fi
+.PP
+To run that subuser
+.PP
+.nf
+.RS
+$ subuser run web-browsing
+.RE
+.fi
+.PP
+To create a second subuser, also based on the iceweasel image, but this time reserved for internet banking
+.PP
+.nf
+.RS
+$ subuser subuser add internet-banking iceweasel@default
+.RE
+.fi
+.PP
+To run that subuser
+.PP
+.nf
+.RS
+$ subuser run internet-banking
+.RE
+.fi
+.PP
+To add a subuser to the PATH
+.PP
+.nf
+.RS
+$ subuser subuser add-to-path internet-banking
+.RE
+.fi
+.PP
+To update your subuser images
+.PP
+.nf
+.RS
+$ subuser update all
+.RE
+.fi
+.PP
+All updates are atomic, and you can continue to use your subusers while the update command is running.
+If you find that an older version of a subuser's image was better, you can always roll back the update for that subuser
+.PP
+.nf
+.RS
+$ subuser registry log
+$ subuser lock-subuser-to internet-banking <commit-hash-from-log>
+.RE
+.fi
+.PP
+.SH AUTHOR
+Timothy Hobbs (timothy.hobbs.cz)
