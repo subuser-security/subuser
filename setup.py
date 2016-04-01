@@ -14,7 +14,7 @@ def version():
 pathToThisSourceFile = os.path.abspath(inspect.getfile(inspect.currentframe()))
 
 commands = [os.path.join("logic","subuserCommands",command) for command in os.listdir(os.path.join(os.path.dirname(pathToThisSourceFile),"logic","subuserCommands")) if command.startswith("subuser-") and not command == "subuser-test" and not command.endswith("~")]
-scripts = ["logic/subuser"]+commands
+commands = ["logic/subuser","logic/subuserCommands/execute-json-from-fifo"]+commands
 
 setuptools.setup(
   name="subuser",
@@ -39,6 +39,6 @@ setuptools.setup(
                "subuserlib.classes.subuserSubmodules.run":"logic/subuserlib/classes/subuserSubmodules/run",
                "subuserlib.classes.permissionsAccepters":"logic/subuserlib/classes/permissionsAccepters"},
   package_data={'subuserlib': ['data/*']},
-  scripts=scripts,
+  scripts=commands,
   include_package_data=True,
   zip_safe=False)
