@@ -41,4 +41,13 @@ def getSubuserCommandsDir():
   """
   Return the path to the directory where the individual built-in subuser command executables are stored.
   """
-  return os.path.join(getSubuserDir(),"logic","subuserCommands")
+  commandsDir = os.path.join(getSubuserDir(),"logic","subuserCommands")
+  if os.path.exists(commandsDir):
+    return commandsDir
+  else:
+    import pkg_resources
+    commandsDir = pkg_resources.resource_filename("subuserlib",os.path.join("commands"))
+    if not os.path.exists(commandsDir):
+      exit("Commands dir does not exist: "+str(commandsDir))
+    else:
+      return commandsDir

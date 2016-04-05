@@ -13,8 +13,7 @@ def version():
 
 pathToThisSourceFile = os.path.abspath(inspect.getfile(inspect.currentframe()))
 
-commands = [os.path.join("logic","subuserCommands",command) for command in os.listdir(os.path.join(os.path.dirname(pathToThisSourceFile),"logic","subuserCommands")) if command.startswith("subuser-") and not command == "subuser-test" and not command.endswith("~")]
-scripts = ["logic/subuser"]+commands
+scripts = ["logic/subuser"]
 
 setuptools.setup(
   name="subuser",
@@ -31,8 +30,9 @@ setuptools.setup(
   author="Timothy Hobbs",
   author_email="timothy@hobbs.cz",
   license="LGPLv3",
-  packages=["subuserlib","subuserlib.classes","subuserlib.classes.docker","subuserlib.classes.subuserSubmodules","subuserlib.classes.subuserSubmodules.run","subuserlib.classes.permissionsAccepters"],
+  packages=["subuserlib","subuserlib.commands","subuserlib.classes","subuserlib.classes.docker","subuserlib.classes.subuserSubmodules","subuserlib.classes.subuserSubmodules.run","subuserlib.classes.permissionsAccepters"],
   package_dir={"subuserlib": "logic/subuserlib",
+               "subuserlib.commands":"logic/subuserCommands",
                "subuserlib.classes":"logic/subuserlib/classes",
                "subuserlib.classes.docker":"logic/subuserlib/classes/docker",
                "subuserlib.classes.subuserSubmodules":"logic/subuserlib/classes/subuserSubmodules",
