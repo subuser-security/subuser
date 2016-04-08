@@ -1,10 +1,6 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-try:
-  import pathConfig
-except ImportError:
-  pass
 #external imports
 import sys
 import optparse
@@ -30,7 +26,7 @@ EXAMPLE:
   return parser.parse_args(args=sysargs)
 
 @subuserlib.profile.do_cprofile
-def describe(sysargs):
+def runCommand(sysargs):
   """
   Describe subusers and images.
   """
@@ -50,6 +46,3 @@ def describe(sysargs):
   else:
     subuserlib.print.printWithoutCrashing("Args: '"+"' '".join(args)+"'")
     subuserlib.print.printWithoutCrashing("Option not supported.")
-
-if __name__ == "__main__":
-  describe(sys.argv[1:])

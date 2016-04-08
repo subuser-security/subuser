@@ -1,10 +1,5 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
-
-try:
-  import pathConfig
-except ImportError:
-  pass
 #external imports
 import sys
 import optparse
@@ -34,7 +29,6 @@ If the SUBUSER_EXTRA_DOCKER_ARGS environment variable is set. Those arguments wi
   parser.add_option("--dry", dest="dry",action="store_true",default=False,help="Dry run, only display what commands would be called by subuser, don't actually run anything.")
   return parser.parse_args(args=sysargs)
 
-
 class ArgParser():
   def __init__(self):
     self.preArgs = []
@@ -55,10 +49,10 @@ class ArgParser():
 #################################################################################################
 
 @subuserlib.profile.do_cprofile
-def run(args):
+def runCommand(args):
   preArgs = []
   argParser = ArgParser()
-  for arg in args[1:]:
+  for arg in args:
     argParser.readArg(arg)
 
   if not argParser.consumedSubuserName:
@@ -95,5 +89,3 @@ def run(args):
       sys.exit(str(e))
   else:
     sys.exit(argParser.subuserName + " not found.\nUse --help for help.")
-
-run(sys.argv)

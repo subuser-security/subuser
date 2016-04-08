@@ -1,9 +1,5 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
-try:
-  import pathConfig
-except ImportError:
-  pass
 #external imports
 import sys
 import os
@@ -45,7 +41,7 @@ def parseCliArgs(sysargs):
 #################################################################################################
 
 @subuserlib.profile.do_cprofile
-def list(sysargs):
+def runCommand(sysargs):
   """
   List various things: image sources, subusers, ect.
   """
@@ -134,6 +130,3 @@ def list(sysargs):
         subuserlib.print.printWithoutCrashing("")
   else:
     sys.exit(args[0] + " cannot be listed. Option unrecognized. Use --help for help.")
-
-if __name__ == "__main__":
-  list(sys.argv[1:])

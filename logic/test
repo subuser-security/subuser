@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-import pathConfig
 #external imports
 import sys
 import os
@@ -9,7 +8,6 @@ import io
 import subprocess
 #internal imports
 import subuserlib.docker
-import subuserlib.paths
 import subuserlib.paths
 
 def addSubuserIfNoneExists(name,source):
@@ -58,7 +56,7 @@ elif "doctest" in sys.argv:
   import subuserlib.permissions
   # commands
   def loadSource(command):
-    return imp.load_source("subuser-"+command,os.path.join(subuserlib.paths.getSubuserDir(),"logic","subuserCommands","subuser-"+command))
+    return imp.load_source(command,os.path.join(subuserlib.paths.getSubuserDir(),"logic","subuserlib","builtInCommands",command+".py"))
   list = loadSource("list")
   version = loadSource("version")
   describe = loadSource("describe")

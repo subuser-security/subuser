@@ -1,9 +1,6 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
-try:
-  import pathConfig
-except ImportError:
-  pass
+
 #external imports
 import sys
 import optparse
@@ -32,7 +29,7 @@ def parseCliArgs(realArgs):
   return parser.parse_args(args=realArgs)
 
 @subuserlib.profile.do_cprofile
-def dev(realArgs):
+def runCommand(realArgs):
   options,args = parseCliArgs(realArgs)
   if options.ls:
     subprocess.call([subuserExecutable,"list","available","./"])
@@ -74,8 +71,3 @@ def dev(realArgs):
     subprocess.call([subuserExecutable,"run",devSubuser])
   else:
     subprocess.call([subuserExecutable,"run","--entrypoint="+options.entrypoint,devSubuser])
-
-#################################################################################################
-
-if __name__ == "__main__":
-  dev(sys.argv[1:])

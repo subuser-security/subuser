@@ -1,10 +1,5 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
-
-try:
-  import pathConfig
-except ImportError:
-  pass
 #external imports
 import sys
 import optparse
@@ -29,7 +24,7 @@ This is usefull when migrating from one machine to another.  You can copy your ~
   return parser.parse_args(args=realArgs)
 
 @subuserlib.profile.do_cprofile
-def verify(realArgs):
+def runCommand(realArgs):
   options,arguments=parseCliArgs(realArgs)
   user = User()
   permissionsAccepter = AcceptPermissionsAtCLI(user,alwaysAccept = options.accept)
@@ -37,6 +32,3 @@ def verify(realArgs):
     subusers = user.getRegistry().getSubusers().getSortedList()
     subuserlib.verify.verify(user,subusers=subusers,permissionsAccepter=permissionsAccepter,prompt=options.prompt)
     user.getRegistry().commit()
-
-if __name__ == "__main__":
-  verify(sys.argv[1:])

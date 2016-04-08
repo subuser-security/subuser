@@ -1,11 +1,5 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
-
-# This command updates all or some of the installed subuser images.
-try:
-  import pathConfig
-except ImportError:
-  pass
 #external imports
 import sys
 import optparse
@@ -50,7 +44,7 @@ def parseCliArgs(realArgs):
 #################################################################################################
 
 @subuserlib.profile.do_cprofile
-def update(realArgs):
+def runCommand(realArgs):
   """
   Update your subuser installation.
   """
@@ -102,9 +96,3 @@ def update(realArgs):
     sys.exit(" ".join(args) + " is not a valid update subcommand. Please use subuser update -h for help.")
   else:
     sys.exit(" ".join(args) + " is not a valid update subcommand. Please use subuser update -h for help.")
-
-if __name__ == "__main__":
-  try:
-    update(sys.argv[1:])
-  except KeyboardInterrupt:
-    pass

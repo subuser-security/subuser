@@ -5,19 +5,20 @@ This module helps us figure out which subuser subcommands can be called.
 
 #external imports
 import os
+import subprocess
+import sys
+import pkgutil
 #internal imports
 import subuserlib.executablePath
 import subuserlib.paths
+import subuserlib.builtInCommands
 
 def getBuiltIn():
   """
   Get a list of the names of the built in subuser commands.
   """
-  try:
-    commands = set(os.listdir(subuserlib.paths.getSubuserCommandsDir()))
-    return [command[8:] for command in commands if command.startswith("subuser-") and not command.endswith("~")] # Filter out the files that don't start with subuser- and remove the "subuser-" prefixes.
-  except OSError:
-    return []
+  # Ugly hack courtesy of http://stackoverflow.com/questions/487971/is-there-a-standard-way-to-list-names-of-python-modules-in-a-package
+  return [name for _, name, _ in pkgutil.iter_modules([os.path.dirname(subuserlib.builtInCommands.__file__)])]
 
 def getExternal():
   """
@@ -32,6 +33,8 @@ def getExternal():
   for externalCommandPath in externalCommandPaths:
     commandDir, executableName = os.path.split(externalCommandPath)
     commandName = executableName[subuserPrefixLength:]
+    if commandName.endswith(".py"):
+      commandName=commandName[:-3]
     externalCommands.append(commandName)
   return list(set(externalCommands)) # remove duplicate entries
 
@@ -41,13 +44,15 @@ def getCommands():
   """
   return list(set(getBuiltIn() + getExternal()))
 
-def getPath(command):
-  builtInCommandPath = os.path.join(subuserlib.paths.getSubuserCommandsDir(),"subuser-" + command)
-  if os.path.exists(builtInCommandPath):
-    return (builtInCommandPath)
+def getCommand(command):
+  if command in getBuiltIn():
+    commandModule = __import__("subuserlib.builtInCommands."+command, fromlist=[''])
+    return commandModule.runCommand
   else:
     externalCommandPath = subuserlib.executablePath.which("subuser-"+command)
     if externalCommandPath:
-      return externalCommandPath
+      def runCommand(args):
+        sys.exit(subprocess.call([externalCommandPath]+args))
+      return runCommand
     else:
-      return subuserlib.executablePath.which("subuser-"+command)
+      return None

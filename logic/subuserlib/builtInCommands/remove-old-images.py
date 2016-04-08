@@ -1,10 +1,5 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
-
-try:
-  import pathConfig
-except ImportError:
-  pass
 #external imports
 import sys
 import optparse
@@ -25,7 +20,7 @@ def parseCliArgs(realArgs):
   return parser.parse_args(args=realArgs)
 
 @subuserlib.profile.do_cprofile
-def removeOldImages(realArgs):
+def runCommand(realArgs):
   """
   Remove images that are installed, but are not associated with any subusers.
   """
@@ -40,8 +35,3 @@ def removeOldImages(realArgs):
     else:
       repo = None
     subuserlib.removeOldImages.removeOldImages(user=user,dryrun=options.dryrun,yes=options.yes,sourceRepo=repo,imageSourceName=options.imageSourceName)
-
-#################################################################################################
-
-if __name__ == "__main__":
-  removeOldImages(sys.argv[1:])

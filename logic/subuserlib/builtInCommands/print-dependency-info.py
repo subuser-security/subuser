@@ -1,10 +1,5 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
-
-try:
-  import pathConfig
-except ImportError:
-  pass
 #external imports
 import sys
 import optparse
@@ -28,7 +23,7 @@ Example:
   return parser.parse_args(args=realArgs)
 
 @subuserlib.profile.do_cprofile
-def printDependencies(realArgs):
+def runCommand(realArgs):
   """
   Print the dependencies of the listed progam sources.
   """
@@ -46,8 +41,3 @@ def printDependencies(realArgs):
       displayLine = (" "*indent) + imageSourceInLineage.getIdentifier()
       subuserlib.print.printWithoutCrashing(displayLine)
       indent = indent + 1
-
-#################################################################################################
-
-if __name__ == "__main__":
-  printDependencies(sys.argv[1:])

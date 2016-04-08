@@ -1,10 +1,5 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
-
-try:
-  import pathConfig
-except ImportError:
-  pass
 #external imports
 import json
 import sys
@@ -24,10 +19,10 @@ def parseCliArgs(realArgs):
   return parser.parse_args(args=realArgs)
 
 @subuserlib.profile.do_cprofile
-def printVersion(realArgs):
+def runCommand(realArgs):
   """
-  >>> version = __import__("subuser-version") #import self
-  >>> version.printVersion([])
+  >>> import version #import self
+  >>> version.runCommand([])
   Subuser version: 0.5
   Docker info:
    Foo: bar
@@ -41,8 +36,3 @@ def printVersion(realArgs):
     print("Docker info:")
     for key,value in subuserlib.version.getDockerInfo(user).items():
       print(" "+key+": "+str(value))
-
-#################################################################################################
-
-if __name__ == "__main__":
-  printVersion(sys.argv[1:])

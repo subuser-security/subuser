@@ -1,10 +1,5 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
-
-try:
-  import pathConfig
-except ImportError:
-  pass
 #external imports
 import sys
 import optparse
@@ -39,7 +34,7 @@ def parseCliArgs(realArgs):
 #################################################################################################
 
 @subuserlib.profile.do_cprofile
-def registry(realArgs):
+def runCommand(realArgs):
   """
   Interact with the subuser registry.
   """
@@ -97,9 +92,3 @@ def registry(realArgs):
     sys.exit(" ".join(args) + " is not a valid registry subcommand. Please use subuser registry -h for help.")
   else:
     sys.exit(" ".join(args) + " is not a valid registry subcommand. Please use subuser registry -h for help.")
-
-if __name__ == "__main__":
-  try:
-    registry(sys.argv[1:])
-  except KeyboardInterrupt:
-    pass

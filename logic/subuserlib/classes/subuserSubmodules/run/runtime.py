@@ -149,9 +149,9 @@ $ subuser repair
     except (OSError,IOError):
       pass
     os.mkfifo(self.getExecutionSpool())
-    executionSpoolReader = os.path.join(subuserlib.paths.getSubuserCommandsDir(),"execute-json-from-fifo.py")
+    executionSpoolReader = os.path.join(getSubuserDir(),"logic","execute-json-from-fifo")
     if not os.path.exists(executionSpoolReader):
-      executionSpoolReader = subuserlib.executablePath.which("execute-json-from-fifo.py")
+      executionSpoolReader = subuserlib.executablePath.which("execute-json-from-fifo")
     self.__executionSpoolReader = subprocess.Popen(self.getUser().getEndUser().getSudoArgs()+[executionSpoolReader,self.getExecutionSpool()],cwd=self.getExecutionSpoolDir())
 
   def tearDownExecutionSpool(self):

@@ -1,10 +1,5 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
-
-try:
-  import pathConfig
-except ImportError:
-  pass
 #external imports
 import sys
 import optparse
@@ -36,7 +31,7 @@ def parseCliArgs(sysargs):
   return parser.parse_args(args=sysargs)
 
 @subuserlib.profile.do_cprofile
-def repository(sysargs):
+def runCommand(sysargs):
   """
   Manage named subuser repositories.
   """
@@ -61,8 +56,3 @@ def repository(sysargs):
       subuserlib.repository.remove(user,name)
   else:
      sys.exit("Action "+args[0]+" not supported. Please see:\n subuser repository --help")
-
-#################################################################################################
-
-if __name__ == "__main__":
-  repository(sys.argv[1:])

@@ -1,17 +1,16 @@
 Command not found: non-existant
 You can use one of the following commands:
+repository
+dev
+registry
 update
 list
-remove-old-images
-pkg
-repository
-registry
 subuser
-run
-print-dependency-info
-dev
 repair
-describe
-test
+remove-old-images
+print-dependency-info
+run
 version
+describe
+pkg
 for more info about each option use: subuser <option> -h

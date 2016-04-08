@@ -18,15 +18,12 @@ if len(sys.argv) < 2 or sys.argv[1] == "help" or sys.argv[1] == "--help" or sys.
   printHelp()
   exit()
 
-commandExecutablePath = subuserlib.commands.getPath(sys.argv[1])
+command = subuserlib.commands.getCommand(sys.argv[1])
 
-if not commandExecutablePath:
+if not command:
   print("Command not found: "+sys.argv[1])
   printHelp()
   sys.exit(1)
 
-try:
-  os.environ["SUBUSER_EXECUTABLE"] = sys.argv[0]
-  sys.exit(subprocess.call([commandExecutablePath]+sys.argv[2:]))
-except KeyboardInterrupt:
-  sys.exit(0)
+os.environ["SUBUSER_EXECUTABLE"] = sys.argv[0]
+command(sys.argv[2:])

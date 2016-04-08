@@ -1,9 +1,5 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
-try:
-  import pathConfig
-except ImportError:
-  pass
 #external imports
 import sys
 import optparse
@@ -49,9 +45,8 @@ if subuserlib.test.testing:
   defaultImageFileTemplate = """FROM-SUBUSER-IMAGE foo@default"""
   defaultPermissions["executable"] = "/usr/bin/nothing"
 
-
 @subuserlib.profile.do_cprofile
-def pkg(realArgs):
+def runCommand(realArgs):
   """
   Run packaging subcommands.
   """
@@ -198,8 +193,3 @@ def pkg(realArgs):
       user = User()
       subuserlib.subuser.remove(user,subusers)
       user.getRegistry().commit()
-
-#################################################################################################
-
-if __name__ == "__main__":
-  pkg(sys.argv[1:])

@@ -1,10 +1,5 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
-
-try:
-  import pathConfig
-except ImportError:
-  pass
 #external imports
 import sys
 import optparse
@@ -74,7 +69,7 @@ Edit a subuser's permissions.
   return parser.parse_args(args=sysargs)
 
 @subuserlib.profile.do_cprofile
-def subuser(sysargs):
+def runCommand(sysargs):
   """
   Manage subusers
   """
@@ -128,8 +123,3 @@ def subuser(sysargs):
         user.getRegistry().commit()
         sys.exit()
       sys.exit("Action "+args[0]+" does not exist. Try:\n subuser subuser --help")
-
-#################################################################################################
-
-if __name__ == "__main__":
-  subuser(sys.argv[1:])
