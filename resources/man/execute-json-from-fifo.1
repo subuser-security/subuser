@@ -1,0 +1,35 @@
+.TH man 1 "09 April 2016" "" "execute-json-from-fifo man page"
+.SH NAME
+execute-json-from-fifo \- Read a fifo stream of POSIX commands serialized as JSON and run them.
+.SH SYNOPSIS
+.B execute-json-from-fifo FIFO
+.SH DESCRIPTION
+This is a very simple script which executes commands passed as JSON to a given named pipe. This is useful when one needs to create a super-privileged container which is able to run commands on the host system. It can also be used when one needs to give a container the ability to launch commands as a non-privileged user on the host.
+
+To launch this script run:
+
+.PP
+.nf
+.RS
+$ execute-json-from-fifo PATH_TO_NAMED_PIPE
+.RE
+.fi
+.PP
+
+You can now send commands to the pipe. The protocol is as follows:
+
+.PP
+.nf
+.RS
+{"command":["echo", "some", "command"], "stdin":"path", "stdout":"path", "stderr":"path", "cwd":"path", "env":{"ENVVAR":"value"}}
+.RE
+.fi
+.PP
+
+Note: the protocol is newline delimited. So never include new-lines in the command objects.
+
+stdin, stdout, stderr, cwd and env are all optional.
+
+Passing ["exit"] to command stops the script.
+.SH AUTHOR
+Timothy Hobbs (timothy.hobbs.cz)

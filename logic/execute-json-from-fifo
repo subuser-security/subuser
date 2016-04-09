@@ -1,14 +1,21 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 # This file is copyright Timothy Hobbs
-# And is released under the GPLv3 license
+# And is released under the LGPLv3 license
 
-"""
+import json
+import subprocess
+import fileinput
+import sys
+import optparse
+
+usage = "usage: execute-json-from-fifo PATH_TO_NAMED_PIPE"
+description = """
 This is a very simple script which executes commands passed as JSON to a given named pipe.
 
 To launch this script run:
 
-$ ./execute-json-from-fifo.py PATH_TO_NAMED_PIPE
+$ execute-json-from-fifo PATH_TO_NAMED_PIPE
 
 The protocol is as follows:
 
@@ -24,36 +31,56 @@ The protocol is as follows:
 ``stdin``,``stdout``,``stderr``,``cwd`` and ``env`` are all optional.
 
 Passing ``["exit"]`` to command stops the script.
-
 """
 
-import json
-import subprocess
-import fileinput
-import sys
+
+parser=optparse.OptionParser(usage=usage,description=description)
+options,args = parser.parse_args()
 
 while True:
-  with open(sys.argv[1],"r") as fd:
+  with open(args[0],"r") as fd:
     for line in fd:
-      rpc = json.loads(line)
-      if rpc["command"] == ["exit"]:
-        sys.exit()
+      print(line)
+      try:
+        rpc = json.loads(line)
+      except ValueError as e:
+        print(e)
+        continue
       if "stdin" in rpc:
         stdin = open(rpc["stdin"],"r+")
+        del rpc["stdin"]
       else:
         stdin = open("/dev/null","r")
       if "stdout" in rpc:
         stdout = open(rpc["stdout"],"w")
+        del rpc["stdout"]
       else:
         stdout = open("/dev/null","w")
       if "stderr" in rpc:
         stderr = open(rpc["stderr"],"w")
+        del rpc["stderr"]
       else:
         stderr = open("/dev/null","w")
       cwd = None
       if "cwd" in rpc:
         cwd = rpc["cwd"]
+        del rpc["cwd"]
       env = None
       if "env" in rpc:
         env = rpc["env"]
-      subprocess.Popen(rpc["command"],stdin=stdin,stdout=stdout,stderr=stderr,cwd=cwd,env=env,close_fds=True)
+        del rpc["env"]
+      if "command" in rpc:
+        command = rpc["command"]
+        del rpc["command"]
+      else:
+        print("Warning, no command specified.")
+        continue
+      if rpc != {}:
+        print("Warning, unsupported options passed "+str(rpc))
+      if command == ["exit"]:
+        sys.exit()
+      else:
+        try:
+          subprocess.Popen(command,stdin=stdin,stdout=stdout,stderr=stderr,cwd=cwd,env=env,close_fds=True)
+        except FileNotFoundError:
+          print("Warning, command "+str(command)+" not found.")
