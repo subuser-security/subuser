@@ -46,10 +46,12 @@ def runCommand(realArgs):
     sys.exit()
 
   if options.update:
-    subprocess.call([subuserExecutable,"update","--use-cache","subusers"]+subuserNames)
-    sys.exit()
+    if not subprocess.call([subuserExecutable,"update","--use-cache","subusers"]+subuserNames) == 0:
+      sys.exit()
 
   if len(args) != 1:
+    if options.update:
+      sys.exit()
     sys.exit("Please pass a single dev image name. Use --help for help.")
   devSubuser = None
   devImage = args[0]
