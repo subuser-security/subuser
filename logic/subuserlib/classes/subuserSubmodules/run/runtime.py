@@ -128,7 +128,7 @@ $ subuser repair
      ("graphics-card", lambda p: ["--device=/dev/dri/"+device for device in os.listdir("/dev/dri")] + ["--volume=/dev/dri/:/dev/dri/:ro"] if p else []),
      ("serial-devices", lambda sd: ["--device=/dev/"+device for device in self.getSerialDevices()] if sd else []),
      ("system-dbus", lambda dbus: ["--volume=/var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket:rw"] if dbus else []),
-     ("as-root", lambda root: ["--user=0"] if root else ["--user="+str(self.getUser().getEndUser().uid)]),
+     ("as-root", lambda root: ["--user=0"] if root else ["-e","USER="+self.getUser().getEndUser().name,"--user="+str(self.getUser().getEndUser().uid)]),
      # Anarchistic permissions
      ("run-commands-on-host", lambda p : ["--volume",self.getExecutionSpoolDir()+":/subuser/execute:rw"] if p else []),
      ("privileged", lambda p: ["--privileged"] if p else [])])
