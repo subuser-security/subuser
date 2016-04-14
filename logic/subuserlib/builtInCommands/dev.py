@@ -11,11 +11,9 @@ import subprocess
 #internal imports
 import subuserlib.commandLineArguments
 import subuserlib.profile
+import subuserlib.paths
 
-try:
-  subuserExecutable = os.environ["SUBUSER_EXECUTABLE"]
-except KeyError:
-  subuserExecutable = "subuser"
+subuserExecutable = os.path.join(subuserlib.paths.getSubuserDir(),"logic","subuser")
 
 def parseCliArgs(realArgs):
   usage = "usage: subuser dev <args> DEV-IMAGE-NAME"

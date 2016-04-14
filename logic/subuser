@@ -25,5 +25,4 @@ if not command:
   printHelp()
   sys.exit(1)
 
-os.environ["SUBUSER_EXECUTABLE"] = sys.argv[0]
 command(sys.argv[2:])
