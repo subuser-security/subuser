@@ -36,18 +36,3 @@ def getSubuserDataFile(filename):
       exit("Data file does not exist:"+str(dataFile))
     else:
       return dataFile
-
-def getSubuserCommandsDir():
-  """
-  Return the path to the directory where the individual built-in subuser command executables are stored.
-  """
-  commandsDir = os.path.join(getSubuserDir(),"logic","subuserCommands")
-  if os.path.exists(commandsDir):
-    return commandsDir
-  else:
-    import pkg_resources
-    commandsDir = pkg_resources.resource_filename("subuserlib",os.path.join("packagedCommands"))
-    if not os.path.exists(commandsDir):
-      exit("Commands dir does not exist: "+str(commandsDir))
-    else:
-      return commandsDir
