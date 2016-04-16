@@ -172,10 +172,7 @@ class DockerDaemon(UserOwnedObject):
       }
     if tag:
       queryParameters["tag"] = tag
-    try:
-      queryParametersString = urllib.urlencode(queryParameters)
-    except AttributeError:
-      queryParametersString = urllib.parse.urlencode(queryParameters) # Python 3
+    queryParametersString = urllib.parse.urlencode(queryParameters)
     excludePatterns = []
     if relativeBuildContextPath and repositoryFileStructure:
       dockerignore = "./.dockerignore"
