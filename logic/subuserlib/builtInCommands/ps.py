@@ -27,7 +27,7 @@ def parseCliArgs(realArgs):
 def runCommand(realArgs):
   options,args = parseCliArgs(realArgs)
   user = User()
-  runningImages = [container["Image"] for container in user.getDockerDaemon().getContainers()]
+  runningImages = [container["Image"] for container in user.getDockerDaemon().getContainers(onlyRunning=True)]
   for _,subuser in user.getRegistry().getSubusers().items():
     try:
       if subuser.getRunReadyImage().getId() in runningImages:

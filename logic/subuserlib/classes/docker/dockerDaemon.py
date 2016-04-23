@@ -112,7 +112,7 @@ class DockerDaemon(UserOwnedObject):
       self.__connection = UHTTPConnection("/var/run/docker.sock")
     return self.__connection
 
-  def getContainers(self,onlyRunning=True):
+  def getContainers(self,onlyRunning=False):
     queryParameters =  {'all': not onlyRunning}
     queryParametersString = urllib.parse.urlencode(queryParameters)
     self.getConnection().request("GET","/v1.13/containers/json?"+queryParametersString)
