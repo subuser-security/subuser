@@ -158,7 +158,7 @@ def runCommand(realArgs):
         subuserName = subuserNamePrefix+imageSourceName
         subuserlib.subuser.addFromImageSourceNoVerify(user,subuserName,repo[imageSourceName])
         subusers.append(user.getRegistry().getSubusers()[subuserName])
-      subuserlib.verify.verify(user,subusers=subusers,permissionsAccepter=permissionsAccepter,prompt=options.prompt)
+      subuserlib.verify.verify(user,subusers=subusers,permissionsAccepter=permissionsAccepter,prompt=options.prompt,useCache=True)
       subusersToTryBuildingAgain = None
       while not subusersToTryBuildingAgain == []:
         subusersToTryBuildingAgain = []
@@ -172,7 +172,7 @@ def runCommand(realArgs):
               subuserlib.print.printWithoutCrashing("")
               subuserlib.print.printWithoutCrashing("Not editing and not trying again due to lack of terminal.")
         if subusersToTryBuildingAgain:
-          subuserlib.verify.verify(user,subusers=subusersToTryBuildingAgain,permissionsAccepter=permissionsAccepter,prompt=options.prompt)
+          subuserlib.verify.verify(user,subusers=subusersToTryBuildingAgain,permissionsAccepter=permissionsAccepter,prompt=options.prompt,useCache=True)
       user.getRegistry().commit()
     # Run the images
     for subuser in subusers:
