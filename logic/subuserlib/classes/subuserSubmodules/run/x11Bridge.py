@@ -212,7 +212,7 @@ class XpraX11Bridge(Service):
         permissionArgs.append(on)
       else:
         permissionArgs.append(off)
-    commonArgs = ["--no-daemon","--no-notifications","--mmap"]
+    commonArgs = ["--no-daemon", "--no-notifications", "--mmap", "--opengl=no"]
     # Launch xpra server
     serverArgs = ["start","--no-pulseaudio","--no-mdns","--encoding=rgb"]
     suppressOutput = not "SUBUSER_DEBUG_XPRA" in os.environ
