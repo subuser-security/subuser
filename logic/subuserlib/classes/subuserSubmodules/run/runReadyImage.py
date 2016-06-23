@@ -8,6 +8,7 @@ Contains code that prepairs a subuser's image to be run.
 import os
 #internal imports
 from subuserlib.classes.userOwnedObject import UserOwnedObject
+import subuserlib.classes.exceptions
 
 class RunReadyImage(UserOwnedObject):
   def __init__(self,user,subuser):
@@ -49,4 +50,8 @@ class RunReadyImage(UserOwnedObject):
     """
     Returns the Id of the Docker image to be run.
     """
-    return self.getUser().getDockerDaemon().build(None,quietClient=True,useCache=True,forceRm=True,rm=True,dockerfile=self.generateImagePreparationDockerfile())
+    try:
+      return self.getUser().getDockerDaemon().build(None,quietClient=True,useCache=True,forceRm=True,rm=True,dockerfile=self.generateImagePreparationDockerfile())
+    except subuserlib.classes.exceptions.ImageBuildException as e:
+      self.getUser().getRegistry().log("Error building run-ready image for subuser "+self.getSubuser().getName()+"\n"+str(e))
+      return None
