@@ -23,6 +23,12 @@ Installation: Common steps
 
    $ sudo usermod -a -G docker $USER
 
+Install from your distributions package manager
+-----------------------------------------------
+
+ * `Arch linux AUR <https://aur.archlinux.org/packages/subuser/>`_
+ * `Debian sid <https://packages.debian.org/unstable/main/subuser>`_
+
 Install with pip: Stable version
 --------------------------------
 
