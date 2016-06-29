@@ -46,7 +46,7 @@ class InstallationTask(UserOwnedObject):
                 self.__outOfDateImageSources.add(imageSource)
                 self.__outOfDateSubusers.add(subuser)
                 break
-          if subuser.getImageSource().getLatestInstalledImage() is None:
+          if subuser.getImageSource().getLatestInstalledImage() is None or subuser.getImageId() is None:
             if subuser.locked():
               self.getUser().getRegistry().log("Subuser "+subuser.getName()+" has no image. But is locked. Marking for installation anyways.")
             self.__outOfDateSubusers.add(subuser)
