@@ -42,3 +42,24 @@ Debugging the XPRA bridge
 -------------------------
 
 If you set the ``SUBUSER_DEBUG_XPRA`` environment variable then XPRA logs will be left in ``~/.subuser/volumes/xpra/<subuser-name>/xpra-home/``. XPRA will also spew out a bunch of garbage to the screen that you can read through.
+
+Prepairing a release
+--------------------
+
+1. Bump ``VERSION`` file.
+2. Tag release::
+
+    $ git tag -s major.minor.reallyminor
+
+3. Make packages and test them::
+
+    $ make packages
+    $ su
+    # pip3 uninstall subuser
+    # pip3 install ./dist/subuser-0.5.8-py3-none-any.whl
+
+4. Deploy everything::
+
+    $ make deploy
+    $ git push origin 0.5.8
+
