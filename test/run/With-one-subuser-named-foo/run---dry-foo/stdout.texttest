@@ -4,4 +4,4 @@ RUN useradd --uid=1000 timothy ;export exitstatus=$? ; if [ $exitstatus -eq 4 ] 
 RUN test -d /home/timothy || mkdir /home/timothy && chown timothy /home/timothy
 
 The command to launch the image is:
-docker 'run' '--rm' '-i' '-e' 'HOME=/home/timothy' '--workdir=/home/timothy' '--net=none' '--user=1000' '--hostname' '<random-hostname>' '--entrypoint' '/usr/bin/foo' '3'
+docker 'run' '--rm' '-i' '-e' 'HOME=/home/timothy' '--workdir=/home/timothy' '--net=none' '-e' 'USER=timothy' '--user=1000' '--hostname' '<random-hostname>' '--entrypoint' '/usr/bin/foo' '3'
