@@ -40,7 +40,7 @@ class RuntimeCache(dict,UserOwnedObject,FileBackedObject):
 
   def load(self):
     if not self.getSubuser().getImageId():
-      raise NoRuntimeCacheForSubusersWhichDontHaveExistantImagesException("No runnable image for subuser found. Use\n\n $ subuser repair\n\nTo repair your instalation.")
+      raise NoRuntimeCacheForSubusersWhichDontHaveExistantImagesException("No runnable image for subuser "+self.getSubuser().getName()+" found. Use\n\n $ subuser repair\n\nTo repair your instalation.")
     runtimeCacheFilePath = self.getRuntimeCacheFilePath()
     if os.path.exists(runtimeCacheFilePath):
       with open(runtimeCacheFilePath,mode="r") as runtimeCacheFileHandle:
