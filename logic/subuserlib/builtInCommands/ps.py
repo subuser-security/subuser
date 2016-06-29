@@ -13,8 +13,6 @@ from subuserlib.classes.user import User
 import subuserlib.commandLineArguments
 import subuserlib.profile
 
-subuserExecutable = os.path.join(subuserlib.paths.getSubuserDir(),"logic","subuser")
-
 def parseCliArgs(realArgs):
   usage = "usage: subuser ps"
   description = """ List running subusers.

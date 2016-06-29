@@ -11,9 +11,7 @@ import subprocess
 #internal imports
 import subuserlib.commandLineArguments
 import subuserlib.profile
-import subuserlib.paths
-
-subuserExecutable = os.path.join(subuserlib.paths.getSubuserDir(),"logic","subuser")
+import subuserlib.paths as paths
 
 def parseCliArgs(realArgs):
   usage = "usage: subuser dev <args> DEV-IMAGE-NAME"
@@ -30,7 +28,7 @@ def parseCliArgs(realArgs):
 def runCommand(realArgs):
   options,args = parseCliArgs(realArgs)
   if options.ls:
-    subprocess.call([subuserExecutable,"list","available","./"])
+    subprocess.call([paths.getSubuserExecutable(),"list","available","./"])
     sys.exit()
   devSubuserRegistry = ".subuser-dev"
   devSubusers = {}
@@ -42,11 +40,11 @@ def runCommand(realArgs):
     subuserNames.append(devSubuser)
 
   if options.remove:
-    subprocess.call([subuserExecutable,"subuser","remove"]+subuserNames)
+    subprocess.call([paths.getSubuserExecutable(),"subuser","remove"]+subuserNames)
     sys.exit()
 
   if options.update:
-    if not subprocess.call([subuserExecutable,"update","--use-cache","subusers"]+subuserNames) == 0:
+    if not subprocess.call([paths.getSubuserExecutable(),"update","--use-cache","subusers"]+subuserNames) == 0:
       sys.exit()
 
   if len(args) != 1:
@@ -63,11 +61,11 @@ def runCommand(realArgs):
     pass
   if devSubuser is None:
     devSubuser = devImage+"@"+os.path.split(os.path.dirname(os.getcwd()+os.sep))[1]+"-"+str(uuid.uuid4())
-    if subprocess.call([subuserExecutable,"subuser","add",devSubuser,devImage+"@./"]) == 0:
+    if subprocess.call([paths.getSubuserExecutable(),"subuser","add",devSubuser,devImage+"@./"]) == 0:
       devSubusers[devImage] = devSubuser
       with open(devSubuserRegistry,"w") as fd:
         json.dump(devSubusers,fd)
   if options.entrypoint is None:
-    subprocess.call([subuserExecutable,"run",devSubuser])
+    subprocess.call([paths.getSubuserExecutable(),"run",devSubuser])
   else:
-    subprocess.call([subuserExecutable,"run","--entrypoint="+options.entrypoint,devSubuser])
+    subprocess.call([paths.getSubuserExecutable(),"run","--entrypoint="+options.entrypoint,devSubuser])

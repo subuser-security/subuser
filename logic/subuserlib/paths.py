@@ -8,7 +8,7 @@ Module used for determining non-user-configurable paths.
 import os
 import inspect
 #internal imports
-#import ...
+import subuserlib.executablePath as executablePath
 
 home = os.path.expanduser("~")
 
@@ -24,6 +24,12 @@ def getSubuserDir():
   """
   pathToThisSourceFile = os.path.abspath(inspect.getfile(inspect.currentframe()))
   return upNDirsInPath(pathToThisSourceFile,3)
+
+def getSubuserExecutable():
+  executable = os.path.join(getSubuserDir(),"logic","subuser")
+  if not os.path.exists(executable):
+    executable = executablePath.which("subuser")
+  return executable
 
 def getSubuserDataFile(filename):
   dataFile = os.path.join(getSubuserDir(),"logic","subuserlib","data",filename)
