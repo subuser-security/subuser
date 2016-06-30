@@ -55,6 +55,8 @@ class Registry(userOwnedObject.UserOwnedObject):
   def ensureGitRepoInitialized(self):
     if not os.path.exists(os.path.join(self.getUser().getConfig()["registry-dir"],".git")):
       self.initialized = False
+      # Ensure git is setup before we start to make changes.
+      self.getGitRepository().getGitExecutable()
       os.makedirs(self.getUser().getConfig()["registry-dir"])
       self.getGitRepository().run(["init"])
       self.logChange("Initial commit.")
