@@ -42,6 +42,7 @@ html: command-docs pylint community.rst developers/contributing.rst developers/i
 
 release: html
 	rm _build/html/_static/images/subuser-vision.mp4
+	rm _build/html/_static/images/subuser-dev-freecad.mp4
 
 deploy:
 	./deploy.sh

@@ -98,6 +98,7 @@ Index
   tutorial-use
   commands/index
   packaging
+  use-cases
   subuser-standard/standard
   developers/index
   community
