@@ -29,6 +29,7 @@ Install from your distributions package manager
  * `Arch linux AUR <https://aur.archlinux.org/packages/subuser/>`_
  * `Debian sid <https://packages.debian.org/unstable/main/subuser>`_
  * `Soon to be in ubuntu too <https://launchpad.net/ubuntu/+source/subuser/0.5.7-2>`_
+ * `pipy <https://pypi.python.org/pypi/subuser>`_
 
 Install with pip: Stable version
 --------------------------------
