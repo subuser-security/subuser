@@ -58,3 +58,9 @@ Install from git: Development version
 #. Log out and then back in again.
 
 #. Done!
+
+Source
+------
+
+The subuser sourcecode is maintained on `github <https://github.com/subuser-security>`_. You can find release tarbals `here <http://subuser.org/rel/>`_.
+
