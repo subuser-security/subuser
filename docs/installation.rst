@@ -4,7 +4,7 @@ Installing subuser
 System Requirements
 --------------------
 
- * `Docker <http://www.docker.io/gettingstarted/#h_installation>`_ 1.3 or higher
+ * `Docker <https://docs.docker.com/engine/installation/linux/>`_ 1.3 or higher
 
  * Python >= 3
 
