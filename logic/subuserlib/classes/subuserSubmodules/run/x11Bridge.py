@@ -121,7 +121,7 @@ class XpraX11Bridge(Service):
 
   def getServerSubuserHostname(self):
     longHostName = "xpra-server"+hashlib.sha256(self.getSubuser().getName().encode("utf-8")).hexdigest()
-    return longHostName[:64]
+    return longHostName[:63]
 
   def getServerSubuserName(self):
     return "!service-subuser-"+self.getSubuser().getName()+"-xpra-server"
