@@ -92,6 +92,7 @@ Index
   features
   screenshots
   news
+  press
   security
   installation
   Download source <https://github.com/subuser-security/subuser>

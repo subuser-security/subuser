@@ -36,7 +36,10 @@ news/images/wayland.png: news/wayland.uxf news/images
 sphynx:
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) . $(BUILDDIR)/html
 
-html: command-docs pylint community.rst developers/contributing.rst developers/images/object-hierarchy.png news/images/x11-bridge.png  news/images/virtualbox.png news/images/wayland.png sphynx
+copy-images:
+	cp images/* _build/html/_images/
+
+html: command-docs pylint community.rst developers/contributing.rst developers/images/object-hierarchy.png news/images/x11-bridge.png  news/images/virtualbox.png news/images/wayland.png sphynx copy-images
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
 
