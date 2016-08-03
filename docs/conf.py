@@ -9,10 +9,7 @@
 import sys
 import os
 
-sys.path.append("/home/sphinx-user/logic")
-
-## FIXME: To allow to smoothly migrate ;)
-sys.path.append("/home/sphynx-user/logic")
+sys.path.append("/pwd/logic")
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
