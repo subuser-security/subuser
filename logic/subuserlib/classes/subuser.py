@@ -101,9 +101,9 @@ class Subuser(UserOwnedObject, Describable):
 
   def loadPermissions(self):
     registryFileStructure = self.getUser().getRegistry().getGitRepository().getFileStructureAtCommit(self.getUser().getRegistry().getGitReadHash())
-    if registryFileStructure.exists(os.path.join(self.getRelativePermissionsDir(),"permissions.json")):
+    try:
       initialPermissions = subuserlib.permissions.load(permissionsString=registryFileStructure.read(os.path.join(self.getRelativePermissionsDir(),"permissions.json")))
-    else:
+    except OSError:
       raise SubuserHasNoPermissionsException("The subuser <"+self.getName()+"""> has no permissions.
 
 Please run:
