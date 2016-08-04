@@ -15,6 +15,7 @@ def isExecutable(fpath):
   """
   return os.path.isfile(fpath) and os.access(fpath, os.X_OK)
 
+programs = {}
 # Origonally taken from: http://stackoverflow.com/questions/377017/test-if-executable-exists-in-python
 def which(program,excludeDir=None):
   """
@@ -23,16 +24,18 @@ def which(program,excludeDir=None):
   @rtype: str or None
   @return: Returns the full path of a given executable.  Or None, of the executable is not present on the given system.
   """
-  fpath, fname = os.path.split(program)
-  if not fpath == '':
-    if isExecutable(program):
-      return program
-  else:
-    def matchesImage(path):
-      fpath,fname = os.path.split(path)
-      return program == fname and not fpath == excludeDir
-    return queryPATH(matchesImage)
-  return None
+  global programs
+  try:
+    return programs[(program,excludeDir)]
+  except KeyError:
+    pass
+  fname = program
+  def matchesImage(path):
+    fpath,fname = os.path.split(path)
+    return program == fname and not fpath == excludeDir
+  program = queryPATH(matchesImage)
+  programs[(program,excludeDir)] = program
+  return program
 
 def queryPATH(test):
   """
