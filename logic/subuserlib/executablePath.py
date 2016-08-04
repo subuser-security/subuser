@@ -30,29 +30,20 @@ def which(program,excludeDir=None):
   else:
     def matchesImage(path):
       fpath,fname = os.path.split(path)
-      return program == fname
-    programMatches = queryPATH(matchesImage)
-    for match in programMatches:
-      if os.path.split(match)[0] == excludeDir:
-        continue
-      return match
+      return program == fname and not fpath == excludeDir
+    return queryPATH(matchesImage)
   return None
 
 def queryPATH(test):
   """
   Search the PATH for an executable.
-
-Given a function which takes an absoulte filepath and returns True when the filepath matches the query, return a list of full paths to matched files.
   """
-  matches = []
-  def appendIfMatches(exeFile):
-    if isExecutable(exeFile):
-      if test(exeFile):
-        matches.append(exeFile)
   for path in os.environ["PATH"].split(os.pathsep):
     path = path.strip('"')
     if os.path.exists(path):
       for fileInPath in os.listdir(path):
         exeFile = os.path.join(path, fileInPath)
-        appendIfMatches(exeFile)
-  return matches
+        if isExecutable(exeFile):
+          if test(exeFile):
+            return exeFile
+  return None

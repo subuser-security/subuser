@@ -13,10 +13,16 @@ import grp
 import subuserlib.subprocessExtras as subprocessExtras
 import subuserlib.executablePath
 
+executable = None
+verified = False
+
 def getExecutable():
   """
   Return the name of the docker executable or None if docker is not installed.
   """
+  global executable
+  if executable is not None:
+    return executable
   if subuserlib.executablePath.which("docker.io"): # Docker is called docker.io on debian.
     return "docker.io"
   if subuserlib.executablePath.which("docker"):
@@ -27,6 +33,10 @@ def getAndVerifyExecutable():
   """
   Return the name of the docker executable. Exits and displays a user friendly error message if docker is not setup correctly.
   """
+  global executable
+  global verified
+  if executable is not None and verified:
+    return executable
   executable = getExecutable()
   if not executable:
     sys.exit("""Error: Docker is not installed.
@@ -48,6 +58,7 @@ For installation instructions see <https://www.docker.io/gettingstarted/#h_insta
       sys.exit("""Error: You are not a member of the docker group.
 
 To learn how to become a member of the docker group please watch this video: <http://www.youtube.com/watch?v=ahgRx5U4V7E>""")
+  verified = True
   return executable
 
 def run(args,cwd=None):
