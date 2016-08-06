@@ -83,6 +83,7 @@ Moderate permissions
   - ``clipboard``: Is the subuser allowed to read and write to the clipboard?
   - ``system-tray``: Is this subuser allowed to display system-tray icons?
   - ``cursors``: Is this subuser allowed to change the way the mouse cursor is displayed?
+  - ``border-color``: What color should window borders have?
 
   All sub-permissions are boolean and default to false.
 
