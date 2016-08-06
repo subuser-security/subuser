@@ -6,6 +6,8 @@ Security features
 
 - Secure graphics: Using the :doc:`XPRA X11 bridge working <news/0.3>`, windows are displayed without giving programs unfettered access to X11.
 
+- QubesOS style window border coloring.
+
 - Editable permissions: If you don't like the permissions a program wants, you can change them! After all, its YOUR computer!
 
 .. image:: ./images/usually_looks_scarier_than_it_is.png

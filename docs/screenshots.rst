@@ -1,11 +1,11 @@
 Screenshots
 -----------
 
-Programs don't look any different when running under subuser. So there's not much to see.
+Programs don't look much different when running under subuser. So there's not much to see.
 
 .. image:: ./screenshots/liferea+firefox.png
 
-However, notice that my ``firefox`` subuser has different settings and different plugins installed than my ``google-calendar`` subuser.
+However, notice that my ``firefox`` subuser has different settings and different plugins installed than my ``google-calendar`` subuser. Also note that the ``firefox`` subuser has a pink border, where-as the ``google-calendar`` subuser has a green one. This allows you to easilly distinguish between windows from different subusers which reduces the chance of subusers sneakily fishing for your keystrokes.
 
 .. image:: ./screenshots/emacs+texttest.png
 
