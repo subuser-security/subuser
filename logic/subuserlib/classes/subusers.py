@@ -21,13 +21,13 @@ class Subusers(dict,UserOwnedObject,FileBackedObject):
   """
   def __init__(self,user):
     UserOwnedObject.__init__(self,user)
-    if os.path.exists(self.getUser().getConfig()["locked-subusers-path"]):
-      with open(self.getUser().getConfig()["locked-subusers-path"],"r") as fileHandle:
-        self._loadSerializedSubusersDict(json.load(fileHandle, object_pairs_hook=collections.OrderedDict),locked=True)
     registryFileStructure = self.getUser().getRegistry().getGitRepository().getFileStructureAtCommit(self.getUser().getRegistry().getGitReadHash())
     if self.getUser().getRegistry().initialized and "subusers.json" in registryFileStructure.lsFiles("./"):
       serializedUnlockedSubusersDict = json.loads(registryFileStructure.read("subusers.json"), object_pairs_hook=collections.OrderedDict)
       self._loadSerializedSubusersDict(serializedUnlockedSubusersDict,locked=False)
+    if os.path.exists(self.getUser().getConfig()["locked-subusers-path"]):
+      with open(self.getUser().getConfig()["locked-subusers-path"],"r") as fileHandle:
+        self._loadSerializedSubusersDict(json.load(fileHandle, object_pairs_hook=collections.OrderedDict),locked=True)
 
   def serializeToDict(self):
     serializedDict=collections.OrderedDict()
