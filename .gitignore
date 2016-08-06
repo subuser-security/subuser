@@ -1,4 +1,5 @@
 *.swp
+*.swo
 *.pyc
 .docs-build-environment
 *~
