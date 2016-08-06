@@ -33,7 +33,7 @@ class Subusers(dict,UserOwnedObject,FileBackedObject):
     serializedDict=collections.OrderedDict()
     serializedDict["locked"]=collections.OrderedDict()
     serializedDict["unlocked"]=collections.OrderedDict()
-    for subuserName,subuser in self.items():
+    for subuser in self.getSortedList():
       serializedSubuser = collections.OrderedDict()
       serializedSubuser["source-repo"] = subuser.getSourceRepoName()
       serializedSubuser["image-source"] = subuser.getImageSourceName()
@@ -42,9 +42,9 @@ class Subusers(dict,UserOwnedObject,FileBackedObject):
       serializedSubuser["docker-image"] = subuser.getImageId()
       serializedSubuser["service-subusers"] = subuser.getServiceSubuserNames()
       if subuser.locked():
-        serializedDict["locked"][subuserName] = serializedSubuser
+        serializedDict["locked"][subuser.getName()] = serializedSubuser
       else:
-        serializedDict["unlocked"][subuserName] = serializedSubuser
+        serializedDict["unlocked"][subuser.getName()] = serializedSubuser
     return serializedDict
 
   def save(self):
