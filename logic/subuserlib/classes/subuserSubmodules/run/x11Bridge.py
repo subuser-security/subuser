@@ -233,7 +233,13 @@ class XpraX11Bridge(Service):
     serviceStatus["xpra-server-service-cid"] = serverContainer.getId()
     self.waitForContainerToLaunch("xpra is ready", serverProcess, suppressOutput)
     # Launch xpra client
-    clientArgs = ["attach","--no-tray","--compress=0","--encoding=rgb","--border"]
+    try:
+      borderColor = self.getSubuser().getPermissions()["gui"]["border-color"]
+      if "-" in borderColor:
+        borderColor = "red"
+    except:
+      borderColor = "red"
+    clientArgs = ["attach","--no-tray","--compress=0","--encoding=rgb","--border",borderColor]
     clientArgs.extend(commonArgs)
     clientArgs.extend(permissionArgs)
     clientRuntime = self.getClientSubuser().getRuntime(os.environ)

@@ -49,7 +49,8 @@ defaults = {
 guiDefaults = {
  "clipboard": False,
  "system-tray": False,
- "cursors": False
+ "cursors": False,
+ "border-color": "red"
  }
 
 basicCommonPermissions = ["stateful-home","inherit-locale","inherit-timezone"]
@@ -105,7 +106,8 @@ descriptions = {
 guiDescriptions = {
   "clipboard": lambda p : ["Is able to access the host's clipboard."] if p else []
   ,"system-tray": lambda p : ["Is able to create system tray icons."] if p else []
-  ,"cursors": lambda p : ["Is able to change the mouse's cursor icon."] if p else []}
+  ,"cursors": lambda p : ["Is able to change the mouse's cursor icon."] if p else []
+  ,"border-color": lambda p : ["Window borders will be "+p] if p else ["Window borders will be red."]}
 
 def load(permissionsFilePath=None,permissionsString=None):
   """
