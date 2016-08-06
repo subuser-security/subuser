@@ -126,9 +126,9 @@ class Repositories(collections.Mapping,UserOwnedObject,FileBackedObject):
     return repositories
 
   def serializeRepositoriesToDict(self,repositories):
-    repositoryListDict = {}
-    for name,repository in repositories.items():
-      repositoryListDict[name] = {}
+    repositoryListDict = collections.OrderedDict()
+    for name,repository in sorted(repositories.items(),key=lambda t:t[0]):
+      repositoryListDict[name] = collections.OrderedDict()
       if repository.getGitOriginURI():
         repositoryListDict[name]["git-origin"] = repository.getGitOriginURI()
       else:
@@ -137,9 +137,9 @@ class Repositories(collections.Mapping,UserOwnedObject,FileBackedObject):
     return repositoryListDict
 
   def serializeRepositoryStatesToDict(self):
-    repositoryStates = {}
-    for repoName,repository in self.items():
-      repositoryStates[repoName] = {}
+    repositoryStates = collections.OrderedDict()
+    for repoName,repository in sorted(self.items(),key=lambda t:t[0]):
+      repositoryStates[repoName] = collections.OrderedDict()
       repositoryStates[repoName]["git-commit-hash"] = repository.getGitCommitHash()
     return repositoryStates
 
