@@ -36,13 +36,21 @@ def lockSubuser(user,subuser,commit):
   """
   Lock the subuser to the image and permissions that it had at a given registry commit.
   """
+  from subuserlib.classes.user import User
   from subuserlib.classes.registry import Registry
-  registryAtOldCommit = Registry(user,gitReadHash=commit)
-  if not registryAtOldCommit.getGitRepository().doesCommitExist(commit):
+  oldUser = User(name=user.name,homeDir=user.homeDir)
+  oldUser.setRegistry(Registry(oldUser,gitReadHash=commit,ignoreVersionLocks=True,initialized=True))
+  if not oldUser.getRegistry().getGitRepository().doesCommitExist(commit):
     sys.exit("Commit "+commit+" does not exist. Cannot lock to commit.")
-  subuser.getPermissions().save()
-  subuser.getPermissionsTemplate().save()
+  try:
+    oldSubuser = oldUser.getRegistry().getSubusers()[subuser.getName()]
+  except KeyError:
+    sys.exit("Subuser, "+subuser.getName()+" did not exist yet at commit "+commit+". Cannot lock to commit.")
+  subuser.setImageId(oldSubuser.getImageId())
+  oldSubuser.getPermissions().save()
+  oldSubuser.getPermissionsTemplate().save()
   user.getRegistry().logChange("Locking subuser "+subuser.getName()+" to commit: "+commit)
+  user.getRegistry().logChange("New image id is "+subuser.getImageId())
   subuser.setLocked(True)
   subuserlib.verify.verify(user)
   user.getRegistry().commit()

@@ -35,6 +35,7 @@ class User(object):
     self.__installedImages = None
     self.__dockerDaemon = None
     self.__runtimeCache = None
+    self.name = name
     if homeDir:
       self.homeDir = homeDir
     elif test.testing:
@@ -66,6 +67,9 @@ class User(object):
       self.__registry = registry.Registry(self)
       self.__registry.ensureGitRepoInitialized()
     return self.__registry
+
+  def setRegistry(self, registry):
+    self.__registry = registry
 
   def reloadRegistry(self):
     """

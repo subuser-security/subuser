@@ -25,7 +25,7 @@ class Subusers(dict,UserOwnedObject,FileBackedObject):
     if self.getUser().getRegistry().initialized and "subusers.json" in registryFileStructure.lsFiles("./"):
       serializedUnlockedSubusersDict = json.loads(registryFileStructure.read("subusers.json"), object_pairs_hook=collections.OrderedDict)
       self._loadSerializedSubusersDict(serializedUnlockedSubusersDict,locked=False)
-    if os.path.exists(self.getUser().getConfig()["locked-subusers-path"]):
+    if (not self.getUser().getRegistry().ignoreVersionLocks) and os.path.exists(self.getUser().getConfig()["locked-subusers-path"]):
       with open(self.getUser().getConfig()["locked-subusers-path"],"r") as fileHandle:
         self._loadSerializedSubusersDict(json.load(fileHandle, object_pairs_hook=collections.OrderedDict),locked=True)
 

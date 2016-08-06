@@ -14,9 +14,10 @@ from subuserlib import paths
 from subuserlib.classes.userOwnedObject import UserOwnedObject
 
 class EndUser(UserOwnedObject,object):
-  def __init__(self,user):
+  def __init__(self,user,name=None):
     UserOwnedObject.__init__(self,user)
     self.proxiedByOtherUser = False
+    self.name = name
     try:
       self.name = self.getUser().getConfig()["user"]
       self.proxiedByOtherUser = True

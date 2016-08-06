@@ -19,12 +19,13 @@ import subuserlib.lock
 import subuserlib.print
 
 class Registry(userOwnedObject.UserOwnedObject):
-  def __init__(self,user,gitReadHash="master"):
+  def __init__(self,user,gitReadHash="master", ignoreVersionLocks=False, initialized = False):
     self.__subusers = None
     self.__changeLog = u""
     self.__changed = False
     self.__logOutputVerbosity = 1
-    self.initialized = False
+    self.initialized = initialized
+    self.ignoreVersionLocks = ignoreVersionLocks
     if "SUBUSER_VERBOSITY" in os.environ:
       try:
         self.__logOutputVerbosity = int(os.environ["SUBUSER_VERBOSITY"])
