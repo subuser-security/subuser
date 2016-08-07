@@ -1,7 +1,8 @@
 Locking subuser dependent to commit: HEAD
+New image id is 6
 Verifying subuser configuration.
 Verifying registry consistency...
 Unregistering any non-existant installed images.
 Running garbage collector on temporary repositories...
-Clearing directory /home/timothy/.texttest/tmp/texttest.15Jan133835.1341/texttest/update/With-subuser-dependent/lock-subuser-to-depedent-HEAD/.subuser/volumes/execute
-Clearing directory /home/timothy/.texttest/tmp/texttest.15Jan133835.1341/texttest/update/With-subuser-dependent/lock-subuser-to-depedent-HEAD/.subuser/volumes/x11
+Clearing directory /home/timothy/.texttest/tmp/texttest.06Aug165606.10/texttest/update/With-subuser-dependent/lock-subuser-to-depedent-HEAD/.subuser/volumes/execute
+Clearing directory /home/timothy/.texttest/tmp/texttest.06Aug165606.10/texttest/update/With-subuser-dependent/lock-subuser-to-depedent-HEAD/.subuser/volumes/x11

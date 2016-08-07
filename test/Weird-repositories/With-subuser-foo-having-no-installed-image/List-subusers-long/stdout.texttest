@@ -3,6 +3,7 @@ The following subusers are registered.
 Subuser: foo
 ------------------
 Warning: This subuser has no image, nor does it have a valid image source to install an image from.
+Docker image Id: None
  Maintainer: fred
  Executable: /usr/bin/foo
 

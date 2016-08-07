@@ -37,10 +37,11 @@ def which(program,excludeDir=None):
   programs[(program,excludeDir)] = program
   return program
 
-def queryPATH(test):
+def queryPATH(test,list=False):
   """
   Search the PATH for an executable.
   """
+  paths = []
   for path in os.environ["PATH"].split(os.pathsep):
     path = path.strip('"')
     if os.path.exists(path):
@@ -48,5 +49,11 @@ def queryPATH(test):
         exeFile = os.path.join(path, fileInPath)
         if isExecutable(exeFile):
           if test(exeFile):
-            return exeFile
-  return None
+            if list:
+              paths.append(exeFile)
+            else:
+              return exeFile
+  if list:
+    return paths
+  else:
+    return None

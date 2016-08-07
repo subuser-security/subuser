@@ -274,7 +274,7 @@ To repair your subuser installation.\n""")
       print(self.getImageSource().getIdentifier())
     except subuserlib.classes.subuser.NoImageSourceException:
       print("Warning: This subuser has no image, nor does it have a valid image source to install an image from.")
-    print("Docker image Id: "+self.getImageId())
+    print("Docker image Id: "+str(self.getImageId()))
     self.getPermissions().describe()
     print("")
 

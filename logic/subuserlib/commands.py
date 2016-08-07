@@ -27,7 +27,7 @@ def getExternal():
   def isPathToCommand(path):
     directory, executableName = os.path.split(path)
     return executableName.startswith("subuser-")
-  externalCommandPaths = subuserlib.executablePath.queryPATH(isPathToCommand)
+  externalCommandPaths = subuserlib.executablePath.queryPATH(isPathToCommand,list=True)
   externalCommands = []
   subuserPrefixLength=len("subuser-")
   for externalCommandPath in externalCommandPaths:
