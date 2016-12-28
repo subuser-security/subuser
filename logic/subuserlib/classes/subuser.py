@@ -171,6 +171,9 @@ To repair your subuser installation.\n""")
     """
     self.__imageId = imageId
 
+  def isImageInstalled(self):
+    return self.getUser().getDockerDaemon().getImageProperties(self.getImageId()) is not None
+
   def getServiceSubuserNames(self):
     """
     Get this subuser's service subusers.
