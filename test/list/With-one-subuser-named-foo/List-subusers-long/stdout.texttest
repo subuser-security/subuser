@@ -1,9 +1,9 @@
 The following subusers are registered.
- Description:
 Subuser: foo
 ------------------
 foo@default
 Docker image Id: 2
+ Description:
  Maintainer:
  Executable: /usr/bin/foo
  Entry points: 'foo' 'bar'
