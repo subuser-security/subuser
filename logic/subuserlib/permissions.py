@@ -157,6 +157,11 @@ def load(permissionsFilePath=None,permissionsString=None):
     ...
   SyntaxError: Error, user dir permissions may not contain system wide absolute paths. The user dir: "/Foo" is forbidden.
 
+  >>> getNonDefaultPermissions(load(permissionsString='{\"x11\":true,\"gui\":{}}'))
+  Traceback (most recent call last):
+    ...
+  SyntaxError: X11 and GUI permissions are mutually exclusive. Cannot provide direct and indirect access to X11 at the same time.
+
   """
   if not permissionsString is None:
     try:
@@ -202,6 +207,8 @@ def load(permissionsFilePath=None,permissionsString=None):
     for permission,defaultValue in guiDefaults.items():
       if not permission in permissions["gui"]:
         permissions["gui"][permission] = defaultValue
+    if permissions["x11"]:
+      raise SyntaxError("X11 and GUI permissions are mutually exclusive. Cannot provide direct and indirect access to X11 at the same time.")
   return permissions
 
 def getNonDefaultPermissions(permissions):

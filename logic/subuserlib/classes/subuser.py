@@ -9,6 +9,7 @@ import os
 import stat
 import errno
 import json
+import sys
 #internal imports
 import subuserlib.permissions
 from subuserlib.classes.userOwnedObject import UserOwnedObject
@@ -111,6 +112,10 @@ Please run:
 $ subuser repair
 
 To repair your subuser installation.\n""")
+    except SyntaxError as e:
+      sys.exit("The subuser <"+self.getName()+""">'s permissions appears to be corrupt.
+
+Please file a bug report explaining how you got here.\n"""+ str(e))
     self.__permissions = Permissions(self.getUser(),initialPermissions,writePath=self.getPermissionsDotJsonWritePath())
 
   def getPermissions(self):
