@@ -17,6 +17,10 @@ Related projects
 
  Bedrock Linux is a project that I learned about long after I started working on subuser. Like subuser, it allows you to install software packaged for a variety of Linux distributions. Unlike subuser, which installs and runs programs in isolated environments running within a base system, Bedrock Linux mixes everything together at the same level without any segregation.
 
+ * `X11-Docker <https://github.com/mviereck/x11docker>`_
+
+ Run applications in docker with access to the X11 server also supports xpra and xephyr for secure window display, just like subuser. Looks very nice and UNIXy! Certainly more flexible/manual than subuser. Written in bash. Is more traditional in its approach to dependencies, for instance, using xpra actually requires xpra to be installed on your host system as well as within the container ;). On subuser this isn't needed!
+
  * `Gnome sandboxes <https://wiki.gnome.org/Projects/SandboxedApps>`_
 
  This is a project started after Subuser was already around for a while. While this seems in some abstract sense to be quite similar to subuser it seems to be very Gnome specific.
