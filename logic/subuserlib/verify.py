@@ -28,7 +28,7 @@ def verify(user,permissionsAccepter=None,checkForUpdatesExternally=False,subuser
   """
   user.getRegistry().log("Verifying subuser configuration.")
   user.getRegistry().log("Verifying registry consistency...")
-  for _,subuser in user.getRegistry().getSubusers().items():
+  for subuser in subusers:
     try:
       subuser.getImageSource()
     except subuserlib.classes.subuser.NoImageSourceException:
