@@ -109,7 +109,10 @@ class DockerDaemon(UserOwnedObject):
     """
     if not self.__connection:
       subuserlib.docker.getAndVerifyExecutable()
-      self.__connection = UHTTPConnection("/var/run/docker.sock")
+      try:
+        self.__connection = UHTTPConnection("/var/run/docker.sock")
+      except PermissionError as e:
+        sys.exit("Permission error (%s) connecting to the docker socket. This usually happens when you've added yourself as a member of the docker group but haven't logged out/in again before starting subuser."% str(e))
     return self.__connection
 
   def getContainers(self,onlyRunning=False):
