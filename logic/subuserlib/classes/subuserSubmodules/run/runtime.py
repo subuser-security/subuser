@@ -61,6 +61,12 @@ $ subuser repair
   def getEnvironment(self):
     return self.__environment
 
+  def getEnvvar(self,var):
+    try:
+      return self.getEnvironment()[var]
+    except KeyError:
+      sys.exit("The env var %s is not set. Are you sure you are running as a normal user?" % var)
+
   def getSerialDevices(self):
     return [device for device in os.listdir("/dev/") if device.startswith("ttyS") or device.startswith("ttyUSB") or device.startswith("ttyACM")]
 
@@ -121,7 +127,7 @@ $ subuser repair
      ("access-working-directory", lambda p: ["--volume="+os.getcwd()+":/pwd:rw","--workdir=/pwd"] if p else ["--workdir="+self.getSubuser().getDockersideHome()]),
      ("allow-network-access", lambda p: ["--net=bridge"] if p else ["--net=none"]),
      # Liberal permissions
-     ("x11", lambda p: ["-e","DISPLAY=unix"+self.getEnvironment()['DISPLAY'],"--volume=/tmp/.X11-unix:/tmp/.X11-unix:rw","--volume="+self.getXautorityFilePath()+":/subuser/.Xauthority:ro","-e","XAUTHORITY=/subuser/.Xauthority"] if p else []),
+     ("x11", lambda p: ["-e","DISPLAY=unix"+self.getEnvvar('DISPLAY'),"--volume=/tmp/.X11-unix:/tmp/.X11-unix:rw","--volume="+self.getXautorityFilePath()+":/subuser/.Xauthority:ro","-e","XAUTHORITY=/subuser/.Xauthority"] if p else []),
      ("system-dirs", lambda systemDirs : ["--volume="+source+":"+dest+":rw" for source,dest in systemDirs.items()]),
      ("graphics-card", lambda p: ["--device=/dev/dri/"+device for device in os.listdir("/dev/dri")] + ["--volume=/dev/dri/:/dev/dri/:ro"] if p else []),
      ("serial-devices", lambda sd: ["--device=/dev/"+device for device in self.getSerialDevices()] if sd else []),
@@ -226,7 +232,7 @@ $ subuser repair
       os.remove(self.getXautorityFilePath())
     except OSError:
       pass
-    self.getUser().getEndUser().call(["xauth","extract",".Xauthority",self.getEnvironment()["DISPLAY"]],cwd=self.getXautorityDirPath())
+    self.getUser().getEndUser().call(["xauth","extract",".Xauthority",self.getEnvvar("DISPLAY")],cwd=self.getXautorityDirPath())
     with open(self.getXautorityFilePath(),"rb") as xauthFile:
       # The extracted Xauthority file has the following format(bytewise):
       # 1 0 0 [len(hostname)] [hostname-in-ascii] 0 1 [display-number-in-ascii] 0 22 ["MIT-MAGIC-COOKIE-1"-in-ascii] 0 20 [Magic number]
