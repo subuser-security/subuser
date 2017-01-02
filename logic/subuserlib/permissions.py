@@ -11,9 +11,9 @@ import sys
 import os
 #internal imports
 # import ...
-allImagesMustHavePermissions = "All subuser images must have a permissions.json file as defined by the permissions.json standard: <https://github.com/subuser-security/subuser/blob/master/docs/permissions-dot-json-file-format.md>"
+allImagesMustHavePermissions = "All subuser images must have a permissions.json file as defined by the permissions.json standard: <http://subuser.org/subuser-standard/permissions-dot-json-file-format.html>"
 
-# Defaults from subuser/docs/permissions-dot-json-file-format.md
+# Defaults from http://subuser.org/subuser-standard/permissions-dot-json-file-format.html
 # This is a comprehensive list of all permissions
 defaults = {
  # Conservative permissions
