@@ -11,6 +11,7 @@ import uuid
 from subuserlib.classes.userOwnedObject import UserOwnedObject
 from subuserlib.classes.describable import Describable
 import subuserlib.permissions
+import subuserlib.docker
 import subuserlib.classes.docker.dockerDaemon as dockerDaemon
 import subuserlib.classes.exceptions as exceptions
 import subuserlib.print
@@ -34,6 +35,10 @@ class ImageSource(UserOwnedObject,Describable):
     Return a standard human readable identifier for an ImageSource.
     """
     return self.getName() + "@" + self.getRepository().getDisplayName()
+
+  def getDockerImageTag(self):
+    longTag = "subuser-" + self.getUser().getEndUser().name + "-" + self.getIdentifier()
+    return subuserlib.docker.buildImageTag(longTag,self.getHash())
 
   def getRepository(self):
     """
@@ -136,7 +141,7 @@ class ImageSource(UserOwnedObject,Describable):
     subuserSetupDockerFile = ""
     subuserSetupDockerFile += "FROM "+imageId+"\n"
     subuserSetupDockerFile += "RUN mkdir -p /subuser ; echo "+str(uuid.uuid4())+" > /subuser/uuid\n" # This ensures that all images have unique Ids.  Even images that are otherwise the same.
-    return self.getUser().getDockerDaemon().build(dockerfile=subuserSetupDockerFile,useCache=False)
+    return self.getUser().getDockerDaemon().build(dockerfile=subuserSetupDockerFile,tag=self.getDockerImageTag(),useCache=False)
 
   def getImageFile(self):
     if self.__explicitConfig:

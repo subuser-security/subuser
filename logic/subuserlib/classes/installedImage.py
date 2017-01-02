@@ -54,7 +54,9 @@ class InstalledImage(UserOwnedObject,Describable):
           permissionsSpecificCacheInfo = json.load(permissionsSpecificCacheInfoFileHandle)
           try:
             try:
-              self.getUser().getDockerDaemon().removeImage(permissionsSpecificCacheInfo['run-ready-image-id'])
+              imageId = permissionsSpecificCacheInfo['run-ready-image-id']
+              self.getUser().getRegistry().log("Removing runtime cache image %s"%imageId)
+              self.getUser().getDockerDaemon().removeImage(imageId)
             except dockerDaemon.ImageDoesNotExistsException:
               pass
             os.remove(permissionsSpecificCacheInfoFilePath)
@@ -68,6 +70,7 @@ class InstalledImage(UserOwnedObject,Describable):
     Remove the image from the Docker daemon's image store.
     """
     try:
+      self.getUser().getRegistry().log("Removing image %s"%self.getImageId())
       self.getUser().getDockerDaemon().removeImage(self.getImageId())
     except (dockerDaemon.ImageDoesNotExistsException,dockerDaemon.ContainerDependsOnImageException,dockerDaemon.ServerErrorException) as e:
       self.getUser().getRegistry().log("Error removing image: "+self.getImageId()+"\n"+str(e))

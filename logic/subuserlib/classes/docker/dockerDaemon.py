@@ -174,7 +174,7 @@ class DockerDaemon(UserOwnedObject):
       'forcerm': forceRm
       }
     if tag:
-      queryParameters["tag"] = tag
+      queryParameters["t"] = tag
     queryParametersString = urllib.parse.urlencode(queryParameters)
     excludePatterns = []
     if relativeBuildContextPath and repositoryFileStructure:
@@ -183,7 +183,7 @@ class DockerDaemon(UserOwnedObject):
         exclude = list(filter(bool, repositoryFileStructure.read(dockerignore).split('\n')))
     with tempfile.NamedTemporaryFile() as tmpArchive:
       archiveBuildContext(tmpArchive,relativeBuildContextPath=relativeBuildContextPath,repositoryFileStructure=repositoryFileStructure,excludePatterns=excludePatterns,dockerfile=dockerfile)
-      self.getConnection().request("POST","/v1.13/build?"+queryParametersString,body=tmpArchive)
+      self.getConnection().request("POST","/v1.18/build?"+queryParametersString,body=tmpArchive)
     try:
       response = self.getConnection().getresponse()
     except httplib.ResponseNotReady as rnr:

@@ -61,3 +61,12 @@ def runBackground(args,cwd=None,suppressOutput=True,collectStdout=False,collectS
   Run docker with the given command line arguments. Return Docker's pid.
   """
   return subprocessExtras.callBackground([getAndVerifyExecutable()]+args,cwd,suppressOutput=suppressOutput,collectStdout=collectStdout,collectStderr=collectStderr)
+
+def buildImageTag(tag,hash):
+  tag ='{:-<95.95}{:-<32.32}'.format(tag,hash)
+  def isvalid(c):
+    if c in "-_.":
+      return True
+    return c.isalpha() or c.isdigit()
+  return ''.join([c if isvalid(c) else "-" for c in tag])
+

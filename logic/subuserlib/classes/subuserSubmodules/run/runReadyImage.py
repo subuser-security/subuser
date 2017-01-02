@@ -9,6 +9,7 @@ import os
 #internal imports
 from subuserlib.classes.userOwnedObject import UserOwnedObject
 import subuserlib.classes.exceptions
+import subuserlib.docker
 
 class RunReadyImage(UserOwnedObject):
   def __init__(self,user,subuser):
@@ -51,7 +52,8 @@ class RunReadyImage(UserOwnedObject):
     Returns the Id of the Docker image to be run.
     """
     try:
-      return self.getUser().getDockerDaemon().build(None,quietClient=True,useCache=True,forceRm=True,rm=True,dockerfile=self.generateImagePreparationDockerfile())
+      tag = subuserlib.docker.buildImageTag("subuser-"+self.getUser().getEndUser().name+"-"+self.getSubuser().getName(),self.getSubuser().getPermissions().getHash())
+      return self.getUser().getDockerDaemon().build(None,quietClient=True,useCache=True,tag=tag,forceRm=True,rm=True,dockerfile=self.generateImagePreparationDockerfile())
     except subuserlib.classes.exceptions.ImageBuildException as e:
       self.getUser().getRegistry().log("Error building run-ready image for subuser "+self.getSubuser().getName()+"\n"+str(e))
       return None
