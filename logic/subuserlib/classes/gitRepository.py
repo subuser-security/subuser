@@ -10,7 +10,6 @@ import tempfile
 import sys
 import errno
 #internal imports
-import subuserlib.subprocessExtras as subprocessExtras
 from subuserlib.classes.userOwnedObject import UserOwnedObject
 from subuserlib.classes.fileStructure import FileStructure
 import subuserlib.executablePath
@@ -31,11 +30,11 @@ class GitRepository(UserOwnedObject):
 
   def getGitExecutable(self):
     if self.__gitExecutable is None:
-      self.__gitExecutable = subuserlib.executablePath.which("git",excludeDir=self.getUser().getConfig()["bin-dir"])
+      self.__gitExecutable = [subuserlib.executablePath.which("git",excludeDir=self.getUser().getConfig()["bin-dir"])]
       if self.__gitExecutable is None:
         sys.exit("Git is not installed. Subuser requires git to run.")
       def getConfig(key):
-        (returncode,stdout,stderr) = subprocessExtras.callCollectOutput([self.__gitExecutable,"config","--get",key])
+        (returncode,stdout,stderr) = self.getUser().getEndUser().callCollectOutput(self.__gitExecutable + ["config","--get",key])
         if returncode == 0:
           return stdout
         else:
@@ -52,15 +51,15 @@ $ git config --global user.email johndoe@example.com
     """
     Clone an external repository in order to create this repository.
     """
-    return subprocessExtras.call([self.getGitExecutable(), "clone", origin, self.getPath()])
+    return self.getUser().getEndUser().call(self.getGitExecutable()+["clone", origin, self.getPath()])
 
   def run(self,args):
     """
     Run git with the given command line arguments.
     """
     try:
-      gitArgs = [self.getGitExecutable()]+args
-      (returncode,stdout,stderr) = subprocessExtras.callCollectOutput(gitArgs,cwd=self.getPath())
+      gitArgs = self.getGitExecutable()+args
+      (returncode,stdout,stderr) = self.getUser().getEndUser().callCollectOutput(gitArgs,cwd=self.getPath())
       self.getUser().getRegistry().log(self.getPath()+": "+" ".join(gitArgs),verbosityLevel=3)
       self.getUser().getRegistry().log(stdout,verbosityLevel=3)
       self.getUser().getRegistry().log(stderr,verbosityLevel=3)
@@ -74,15 +73,15 @@ $ git config --global user.email johndoe@example.com
         raise e
 
   def runShowOutput(self,args):
-    subprocessExtras.call([self.getGitExecutable()]+args,cwd=self.getPath())
+    self.getUser().getEndUser().call(self.getGitExecutable()+args,cwd=self.getPath())
 
   def runCollectOutput(self,args,eatStderr=False):
     """
     Run git with the given command line arguments and return a tuple with (returncode,output).
     """
     try:
-      gitArgs = [self.getGitExecutable()]+args
-      (returncode,stdout,stderr) = subprocessExtras.callCollectOutput(gitArgs,cwd=self.getPath())
+      gitArgs = self.getGitExecutable()+args
+      (returncode,stdout,stderr) = self.getUser().getEndUser().callCollectOutput(gitArgs,cwd=self.getPath())
       self.getUser().getRegistry().log(self.getPath()+": "+" ".join(gitArgs),verbosityLevel=3)
       self.getUser().getRegistry().log(stderr,verbosityLevel=3)
       if stderr and not eatStderr:

@@ -8,13 +8,12 @@ High level operations used for interacting with the subuser registry.
 #import ...
 #internal imports
 import subuserlib.verify
-import subuserlib.subprocessExtras as subprocessExtras
 
 def showLog(user):
   user.getRegistry().getGitRepository().runShowOutput(["log"])
 
 def checkoutNoCommit(user,commit):
-  subprocessExtras.call(["rm","-rf","*"],cwd=user.getConfig()["registry-dir"])
+  user.getEndUser().call(["rm","-rf","*"],cwd=user.getConfig()["registry-dir"])
   user.getRegistry().getGitRepository().run(["checkout",commit,"."])
   user.reloadRegistry()
 

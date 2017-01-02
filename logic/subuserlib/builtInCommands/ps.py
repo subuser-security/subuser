@@ -7,7 +7,6 @@ import optparse
 import json
 import os
 import uuid
-import subprocess
 #internal imports
 from subuserlib.classes.user import User
 import subuserlib.commandLineArguments

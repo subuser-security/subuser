@@ -12,16 +12,16 @@ System Requirements
 
  * X11 and the xauth utility (You almost certainly have this)
 
+ * sudo (if you don't want to become a member of the docker group)
+
 Installation: Common steps
 --------------------------
 
-#. Add yourself to the docker group.
-
-.. warning:: Being a member of the ``docker`` group is equivalent to having root access.
+#. Add yourself to the ``sudo`` group (Note: if you are a member of the ``docker`` group this is not needed.).
 
 ::
 
-   $ sudo usermod -a -G docker $USER
+   $ sudo usermod -a -G sudo $USER
 
 Install from your distributions package manager
 -----------------------------------------------

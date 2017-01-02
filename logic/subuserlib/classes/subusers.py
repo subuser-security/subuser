@@ -52,9 +52,9 @@ class Subusers(dict,UserOwnedObject,FileBackedObject):
     Save the list of subusers to disk.
     """
     serializedDict = self.serializeToDict()
-    with open(os.path.join(self.getUser().getConfig()["registry-dir"],"subusers.json"), 'w') as file_f:
+    with self.getUser().getEndUser().get_file(os.path.join(self.getUser().getConfig()["registry-dir"],"subusers.json"), 'w') as file_f:
       json.dump(serializedDict["unlocked"], file_f, indent=1, separators=(',', ': '))
-    with open(os.path.join(self.getUser().getConfig()["locked-subusers-path"]), 'w') as file_f:
+    with self.getUser().getEndUser().get_file(os.path.join(self.getUser().getConfig()["locked-subusers-path"]), 'w') as file_f:
       json.dump(serializedDict["locked"], file_f, indent=1, separators=(',', ': '))
 
   def _loadSerializedSubusersDict(self,serializedSubusersDict,locked):

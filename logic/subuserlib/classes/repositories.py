@@ -149,10 +149,10 @@ class Repositories(collections.Mapping,UserOwnedObject,FileBackedObject):
 
     Note: This is done automatically for you when you ``commit()`` the registry.
     """
-    with open(self.userRepositoryListPath, 'w') as file_f:
+    with self.getUser().getEndUser().get_file(self.userRepositoryListPath, 'w') as file_f:
       json.dump(self.serializeRepositoriesToDict(self.userRepositories), file_f, indent=1, separators=(',', ': '))
     repositoryStatesDotJsonPath = os.path.join(self.getUser().getConfig()["registry-dir"],"repository-states.json")
-    with open(repositoryStatesDotJsonPath,mode="w") as repositoryStatesDotJsonFile:
+    with self.getUser().getEndUser().get_file(repositoryStatesDotJsonPath,mode="w") as repositoryStatesDotJsonFile:
       json.dump(self.serializeRepositoryStatesToDict(),repositoryStatesDotJsonFile, indent=1, separators=(',', ': '))
 
   def getNewUniqueTempRepoId(self):

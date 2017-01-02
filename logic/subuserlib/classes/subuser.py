@@ -140,7 +140,7 @@ Please file a bug report explaining how you got here.\n"""+ str(e))
 
   def editPermissionsCLI(self):
     while True:
-      subuserlib.subprocessExtras.runEditor(self.getPermissions().getWritePath())
+      self.getUser().getEndUser().runEditor(self.getPermissions().getWritePath())
       try:
         initialPermissions = subuserlib.permissions.load(permissionsFilePath=self.getPermissionsDotJsonWritePath())
         break
@@ -292,7 +292,7 @@ Please file a bug report explaining how you got here.\n"""+ str(e))
     """
     redirect = script
     executablePath=os.path.join(self.getUser().getConfig()["bin-dir"], name)
-    with open(executablePath, 'w') as file_f:
+    with self.getUser().getEndUser().get_file(executablePath, 'w') as file_f:
       file_f.write(redirect)
       st = os.stat(executablePath)
       os.chmod(executablePath, stat.S_IMODE(st.st_mode) | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)

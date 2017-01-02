@@ -53,18 +53,18 @@ System Requirements
 
  * X11 and the xauth utility (You almost certainly have this)
 
+ * sudo (if you don't want to become a member of the docker group)
+
 Install with pip3: Stable version
 --------------------------------
 
-1. Add yourself to the `docker group <http://docs.docker.io/en/v0.7.3/use/basics/>`_.
-
-.. note:: Being a member of the ``docker`` group is equivalent to having root access.
+1. Add yourself to the sudo group (or the docker group).
 
 ::
 
    $ sudo nano /etc/group
 
-Find ``docker`` and add your username to the end of the line.
+Find ``sudo`` and add your username to the end of the line.
 
 2. Install subuser from pip3.
 
@@ -79,9 +79,7 @@ Find ``docker`` and add your username to the end of the line.
 Install from git: Development version
 -------------------------------------
 
-1. Add yourself to the `docker group <http://docs.docker.io/en/v0.7.3/use/basics/>`_.
-
-.. note:: Being a member of the ``docker`` group is equivalent to having root access.
+1. Add yourself to the `sudo` group (this is not necesary if you are already a member of the docker group).
 
 2. Download the subuser repository
 

@@ -31,7 +31,7 @@ class RuntimeCache(dict,UserOwnedObject,FileBackedObject):
       os.makedirs(self.getPathToCurrentImagesRuntimeCacheDir())
     except OSError:
       pass
-    with open(self.getRuntimeCacheFilePath(),mode='w') as runtimeCacheFileHandle:
+    with self.getUser().getEndUser().get_file(self.getRuntimeCacheFilePath(),mode='w') as runtimeCacheFileHandle:
       json.dump(self,runtimeCacheFileHandle,indent=1,separators=(',',': '))
 
   def reload(self):

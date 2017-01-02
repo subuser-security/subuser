@@ -8,7 +8,6 @@ High level operations used for updating, rolling back, locking ect.
 import sys
 #internal imports
 import subuserlib.verify
-import subuserlib.subprocessExtras as subprocessExtras
 
 #####################################################################################
 def all(user,permissionsAccepter,prompt=False,useCache=False):

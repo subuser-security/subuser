@@ -67,7 +67,7 @@ class Service(UserOwnedObject):
 
   def getLock(self):
     try:
-      os.makedirs(self.getLockfileDir())
+      self.getUser().getEndUser().makedirs(self.getLockfileDir())
     except OSError as exception:
       if exception.errno != errno.EEXIST:
         raise
@@ -76,7 +76,7 @@ class Service(UserOwnedObject):
         lockFd = open(self.getLockfilePath(),mode="r+")
         break
       except IOError:
-        open(self.getLockfilePath(),"a").close()
+        self.getUser().getEndUser().create_file(self.getLockfilePath())
     fcntl.flock(lockFd,fcntl.LOCK_EX)
     return lockFd
 

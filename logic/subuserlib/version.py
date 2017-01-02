@@ -8,7 +8,6 @@ This module provides version info and other usefull debugging stuff.
 import os
 import collections
 #internal imports
-import subuserlib.subprocessExtras as subprocessExtras
 import subuserlib.paths
 from subuserlib.classes.gitRepository import GitRepository
 from subuserlib.classes.docker.dockerDaemon import DockerDaemon

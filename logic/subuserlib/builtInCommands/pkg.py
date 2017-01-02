@@ -64,11 +64,10 @@ def runCommand(realArgs):
       repoConfig = {}
       if options.imageSourcesDir:
         repoConfig["image-sources-dir"] = options.imageSourcesDir
-      with open("./.subuser.json","w") as subuserDotJson:
+      with user.getEndUser().get_file("./.subuser.json","w") as subuserDotJson:
         json.dump(repoConfig,subuserDotJson)
         if options.imageSourcesDir:
           user.getEndUser().makedirs(options.imageSourcesDir)
-      user.getEndUser().chown("./.subuser.json")
       subuserlib.print.printWithoutCrashing("Subuser repository initialized successfully!")
       subuserlib.print.printWithoutCrashing("You can add new image sources with:")
       subuserlib.print.printWithoutCrashing("$ subuser pkg add image-source-name")
@@ -114,30 +113,28 @@ def runCommand(realArgs):
       if not "explicit-image-sources" in repoConfig:
         repoConfig["explicit-image-sources"] = {}
       repoConfig["explicit-image-sources"][imageSourceToAdd] = {"image-file":imageFile,"build-context":buildContext,"permissions-file":permissionsFile}
-      with open("./.subuser.json","w") as subuserDotJson:
+      with user.getEndUser().get_file("./.subuser.json","w") as subuserDotJson:
         json.dump(repoConfig,subuserDotJson,indent=1,separators=(",",": "))
     permissions = defaultPermissions
-    (returncode,maintainerName,stderr) = subuserlib.subprocessExtras.callCollectOutput(["git","config","user.name"])
+    (returncode,maintainerName,stderr) = user.getEndUser().callCollectOutput(["git","config","user.name"])
     subuserlib.print.printWithoutCrashing(stderr)
-    (returncode,maintainerEmail,stderr) = subuserlib.subprocessExtras.callCollectOutput(["git","config","user.email"])
+    (returncode,maintainerEmail,stderr) = user.getEndUser().callCollectOutput(["git","config","user.email"])
     subuserlib.print.printWithoutCrashing(stderr)
     permissions["maintainer"] = maintainerName.rstrip("\n")+" <"+maintainerEmail.rstrip("\n")+">"
     if not os.path.exists(permissionsFile):
-      with open(permissionsFile,"w") as pf:
+      with user.getEndUser().get_file(permissionsFile,"w") as pf:
         json.dump(permissions,pf,indent=1,separators=(",",": "))
     while True:
-      subuserlib.subprocessExtras.runEditor(permissionsFile)
+      user.getEndUser().runEditor(permissionsFile)
       try:
         Permissions(user,initialPermissions=subuserlib.permissions.load(permissionsFilePath=permissionsFile),writePath=permissionsFile).save()
         break
       except SyntaxError as e:
         input(str(e)+"\nPress ENTER to edit the file again.")
-    user.getEndUser().chown(permissionsFile)
     if not os.path.exists(imageFile):
-      with open(imageFile,"w") as imgf:
+      with user.getEndUser().get_file(imageFile,"w") as imgf:
         imgf.write(defaultImageFileTemplate)
-      user.getEndUser().chown(imageFile)
-    subuserlib.subprocessExtras.runEditor(imageFile)
+    user.getEndUser().runEditor(imageFile)
     try:
       if input("Would you like to test your new image? [Y/n]") == "n":
         sys.exit(0)
@@ -167,7 +164,7 @@ def runCommand(realArgs):
             try:
               if not input(subuser.getName()+" failed to build. Edit its image file and try again? [Y/n]") == "n":
                 subusersToTryBuildingAgain.append(subuser)
-                subuserlib.subprocessExtras.runEditor(subuser.getImageSource().getImageFile())
+                user.getEndUser().runEditor(subuser.getImageSource().getImageFile())
             except EOFError:
               subuserlib.print.printWithoutCrashing("")
               subuserlib.print.printWithoutCrashing("Not editing and not trying again due to lack of terminal.")

@@ -5,8 +5,11 @@
 import sys
 import os
 import subprocess
+import getpass
+import grp
 #external imports
 import subuserlib.commands
+import subuserlib.test
 
 def printHelp():
   print("You can use one of the following commands:")
@@ -25,4 +28,25 @@ if not command:
   printHelp()
   sys.exit(1)
 
+if not subuserlib.test.testing:
+  username = getpass.getuser()
+  if not os.getuid() == 0:
+    try:
+      dockergroupmembers = grp.getgrnam("docker").gr_mem
+    except KeyError:
+      try:
+        dockergroupmembers = grp.getgrnam("dockerroot").gr_mem
+      except KeyError:
+        dockergroupmembers = []
+    if not username in dockergroupmembers:
+      try:
+        sudogroupmembers = grp.getgrnam("sudo").gr_mem
+      except KeyError:
+        sudogroupmembers = []
+      if not username in sudogroupmembers:
+        sys.exit("""Error: You are not a member of the docker group nor the sudoers group.
+  
+  To learn how to become a member of the docker group please watch this video: <http://www.youtube.com/watch?v=ahgRx5U4V7E>""")
+      else:
+        sys.exit(subprocess.call(["sudo","-E",sys.argv[0]]+sys.argv[1:]))
 command(sys.argv[2:])

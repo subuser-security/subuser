@@ -12,6 +12,9 @@ import subprocess
 import subuserlib.commandLineArguments
 import subuserlib.profile
 import subuserlib.paths as paths
+from subuserlib.classes.user import User
+
+user = User()
 
 def parseCliArgs(realArgs):
   usage = "usage: subuser dev <args> DEV-IMAGE-NAME"
@@ -63,7 +66,7 @@ def runCommand(realArgs):
     devSubuser = devImage+"@"+os.path.split(os.path.dirname(os.getcwd()+os.sep))[1]+"-"+str(uuid.uuid4())
     if subprocess.call([paths.getSubuserExecutable(),"subuser","add",devSubuser,devImage+"@./"]) == 0:
       devSubusers[devImage] = devSubuser
-      with open(devSubuserRegistry,"w") as fd:
+      with user.getEndUser().get_file(devSubuserRegistry,"w") as fd:
         json.dump(devSubusers,fd)
   if options.entrypoint is None:
     subprocess.call([paths.getSubuserExecutable(),"run",devSubuser])

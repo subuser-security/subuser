@@ -5,7 +5,6 @@ File locking helper functions. Originally taken from http://stackoverflow.com/qu
 """
 
 #external imports
-import cProfile
 import os
 #internal imports
 #import ...
@@ -27,16 +26,10 @@ def wrapTimeout(seconds):
     signal.alarm(0)
     signal.signal(signal.SIGALRM, original_handler)
 
-def getLock(path,timeout=None,mode="w"):
+def getLock(fd,timeout=None):
   if not timeout is None:
     with wrapTimeout(timeout):
-      return getLock(path)
+      return getLock(fd)
   else:
-    try:
-      os.makedirs(os.path.dirname(path))
-    except OSError as exception:
-      if exception.errno != errno.EEXIST:
-        raise
-    f = open(path, mode=mode)
-    fcntl.flock(f, fcntl.LOCK_EX)
-    return f
+    fcntl.flock(fd, fcntl.LOCK_EX)
+    return fd

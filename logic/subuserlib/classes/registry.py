@@ -15,8 +15,8 @@ from subuserlib.classes import repositories
 from subuserlib.classes import subusers
 from subuserlib.classes import userOwnedObject
 from subuserlib.classes.gitRepository import GitRepository
-import subuserlib.lock
 import subuserlib.print
+import subuserlib.lock
 
 class Registry(userOwnedObject.UserOwnedObject):
   def __init__(self,user,gitReadHash="master", ignoreVersionLocks=False, initialized = False):
@@ -138,7 +138,7 @@ class Registry(userOwnedObject.UserOwnedObject):
       if exception.errno != errno.EEXIST:
         raise
     try:
-      lock = subuserlib.lock.getLock(os.path.join(self.getUser().getConfig()["lock-dir"],"registry.lock"),timeout=1)
+      lock = subuserlib.lock.getLock(self.getUser().getEndUser().get_file(os.path.join(self.getUser().getConfig()["lock-dir"],"registry.lock"),'w'),timeout=1)
       with lock:
         yield
     except IOError as e:

@@ -65,7 +65,7 @@ class InstalledImages(dict,UserOwnedObject,FileBackedObject):
     """
     # Write that dictionary to disk.
     installedImagesPath = self.getUser().getConfig()["installed-images-list"]
-    with open(installedImagesPath, 'w') as file_f:
+    with self.getUser().getEndUser().get_file(installedImagesPath, 'w') as file_f:
       json.dump(self.serializeToDict(), file_f, indent=1, separators=(',', ': '))
 
   def unregisterNonExistantImages(self):

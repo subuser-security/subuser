@@ -121,7 +121,7 @@ def trimUnneededTempRepos(user):
 def rebuildBinDir(user):
   if os.path.exists(user.getConfig()["bin-dir"]):
     shutil.rmtree(user.getConfig()["bin-dir"])
-  os.mkdir(user.getConfig()["bin-dir"])
+  user.getEndUser().mkdir(user.getConfig()["bin-dir"])
   for _,subuser in user.getRegistry().getSubusers().items():
     if subuser.isExecutableShortcutInstalled():
       subuser.installExecutableShortcut()

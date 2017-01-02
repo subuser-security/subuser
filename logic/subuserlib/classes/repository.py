@@ -9,7 +9,6 @@ import os
 import shutil
 import json
 #internal imports
-import subuserlib.subprocessExtras
 from subuserlib.classes.userOwnedObject import UserOwnedObject
 from subuserlib.classes.imageSource import ImageSource
 from subuserlib.classes.describable import Describable

@@ -233,18 +233,6 @@ def getJSONString(permissions):
   permissionsToSave = getNonDefaultPermissions(permissions)
   return json.dumps(permissionsToSave,indent=1, separators=(',', ': '))
 
-def save(permissions,permissionsFilePath):
-  """
-  Save the permissions to the given file.  We only save permissions that are not set to their default values.
-  """
-  try:
-    directory,_ = os.path.split(permissionsFilePath)
-    os.makedirs(directory)
-  except OSError:
-    pass
-  with open(permissionsFilePath, 'w') as file_f:
-    file_f.write(getJSONString(permissions))
-
 def compare(oldDefaults,newDefaults,userApproved):
   """
   Analize permission sets for changes.

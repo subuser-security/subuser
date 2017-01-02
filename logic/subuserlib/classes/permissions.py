@@ -40,7 +40,8 @@ class Permissions(collections.OrderedDict,UserOwnedObject,FileBackedObject):
       self[permission] = value
 
   def save(self):
-    subuserlib.permissions.save(self,self.__writePath)
+    with self.getUser().getEndUser().get_file(self.__writePath,'w') as fd:
+      fd.write(subuserlib.permissions.getJSONString(self))
 
   def describe(self):
     def describePermissions(permissions):

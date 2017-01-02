@@ -57,8 +57,9 @@ def runCommand(realArgs):
     liveLogDir = os.path.join(user.homeDir,".subuser/registry-live-log")
     liveLogPath = os.path.join(liveLogDir,str(os.getpid()))
     if not os.path.exists(liveLogDir):
-      os.makedirs(liveLogDir)
+      user.getEndUser().makedirs(liveLogDir)
     os.mkfifo(liveLogPath)
+    user.getEndUser().chown(liveLogPath)
     # Why use os.open? http://stackoverflow.com/questions/5782279/why-does-a-read-only-open-of-a-named-pipe-block
     liveLog = os.open(liveLogPath,os.O_RDONLY|os.O_NONBLOCK)
     q = False

@@ -11,10 +11,8 @@ import os
 import time
 import binascii
 import struct
-import subprocess
 import shutil
 #internal imports
-import subuserlib.subprocessExtras
 import subuserlib.test
 from subuserlib.classes.userOwnedObject import UserOwnedObject
 
@@ -152,7 +150,7 @@ $ subuser repair
     executionSpoolReader = os.path.join(getSubuserDir(),"logic","execute-json-from-fifo")
     if not os.path.exists(executionSpoolReader):
       executionSpoolReader = subuserlib.executablePath.which("execute-json-from-fifo")
-    self.__executionSpoolReader = subprocess.Popen(self.getUser().getEndUser().getSudoArgs()+[executionSpoolReader,self.getExecutionSpool()],cwd=self.getExecutionSpoolDir())
+    self.__executionSpoolReader = self.getUser().getEndUser().Popen([executionSpoolReader,self.getExecutionSpool()],cwd=self.getExecutionSpoolDir())
 
   def tearDownExecutionSpool(self):
     self.__executionSpoolReader.terminate()
@@ -228,7 +226,7 @@ $ subuser repair
       os.remove(self.getXautorityFilePath())
     except OSError:
       pass
-    subuserlib.subprocessExtras.call(self.getUser().getEndUser().getSudoArgs()+["xauth","extract",".Xauthority",self.getEnvironment()["DISPLAY"]],cwd=self.getXautorityDirPath())
+    self.getUser().getEndUser().call(["xauth","extract",".Xauthority",self.getEnvironment()["DISPLAY"]],cwd=self.getXautorityDirPath())
     with open(self.getXautorityFilePath(),"rb") as xauthFile:
       # The extracted Xauthority file has the following format(bytewise):
       # 1 0 0 [len(hostname)] [hostname-in-ascii] 0 1 [display-number-in-ascii] 0 22 ["MIT-MAGIC-COOKIE-1"-in-ascii] 0 20 [Magic number]

@@ -10,7 +10,6 @@ from collections import OrderedDict
 from subuserlib.classes.permissionsAccepters.permissionsAccepter import PermissionsAccepter
 from subuserlib.classes.userOwnedObject import UserOwnedObject
 import subuserlib.permissions
-import subuserlib.subprocessExtras
 import subuserlib.print
 
 class AcceptPermissionsAtCLI(PermissionsAccepter,UserOwnedObject):
