@@ -36,8 +36,9 @@ class Registry(userOwnedObject.UserOwnedObject):
     self.__gitRepository = None
     self.__gitReadHash = gitReadHash
     userOwnedObject.UserOwnedObject.__init__(self,user)
-    self.logFilePath = os.path.join(self.getUser(),self.getUser().getConfig()["registry-dir"],"commit_log")
-    self.__gitRepository = GitRepository(self.getUser(),self.getUser().getConfig()["registry-dir"])
+    self.registryDir = self.getUser().getConfig()["registry-dir"]
+    self.logFilePath = os.path.join(self.registryDir,"commit_log")
+    self.__gitRepository = GitRepository(self.getUser(),self.registryDir)
 
   def getGitRepository(self):
     return self.__gitRepository
@@ -154,3 +155,14 @@ class Registry(userOwnedObject.UserOwnedObject):
       if e.errno != errno.EINTR:
         raise e
       sys.exit("Another subuser process is currently running and has a lock on the registry. Please try again later.")
+
+  def cleanOutOldPermissions(self):
+    for _,_,_,permissionsPath in self.getGitRepository().getFileStructureAtCommit(self.getGitReadHash()).lsTree("permissions"):
+      _,subuserName = os.path.split(permissionsPath)
+      if subuserName not in self.getSubusers():
+        self.logChange("Removing left over permissions for no-longer extant subuser %s"%subuserName)
+        try:
+          self.getGitRepository().run(["rm","-r",permissionsPath])
+        except subuserlib.classes.gitRepository.GitException as e:
+          self.log(" %s"%str(e))
+ 

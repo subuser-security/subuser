@@ -39,6 +39,7 @@ def verify(user,permissionsAccepter=None,checkForUpdatesExternally=False,subuser
         pass
   user.getRegistry().log("Unregistering any non-existant installed images.")
   user.getInstalledImages().unregisterNonExistantImages()
+  user.getRegistry().cleanOutOldPermissions()
   if subusers:
     user.getRegistry().setChanged(True)
     user.getRegistry().log("Approving permissions...",verbosityLevel=3)
