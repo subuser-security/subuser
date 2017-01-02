@@ -90,7 +90,7 @@ def runCommand(sysargs):
     with user.getRegistry().getLock():
       subuserlib.subuser.add(user,subuserName,imageSourceId,permissionsAccepter=permissionsAccepter,prompt=options.prompt,forceInternal=options.forceInternal)
   else:
-    subuserNames = args[1:]
+    subuserNames = list(set(args[1:]))
     with user.getRegistry().getLock():
       subusers = []
       if not options.prefix is None:
