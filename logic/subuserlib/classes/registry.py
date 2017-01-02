@@ -159,7 +159,8 @@ class Registry(userOwnedObject.UserOwnedObject):
   def cleanOutOldPermissions(self):
     for _,_,_,permissionsPath in self.getGitRepository().getFileStructureAtCommit(self.getGitReadHash()).lsTree("permissions"):
       _,subuserName = os.path.split(permissionsPath)
-      if subuserName not in self.getSubusers():
+      exists = os.path.exists(os.path.join(self.registryDir,permissionsPath))
+      if exists and subuserName not in self.getSubusers():
         self.logChange("Removing left over permissions for no-longer extant subuser %s"%subuserName)
         try:
           self.getGitRepository().run(["rm","-r",permissionsPath])
