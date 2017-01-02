@@ -80,6 +80,7 @@ def runCommand(sysargs):
     print("Wrong number of arguments!")
     parseCliArgs(["--help"])
   user = User()
+  user.getRegistry().commit_message = " ".join(["subuser","subuser"]+sysargs)
   permissionsAccepter = AcceptPermissionsAtCLI(user,alwaysAccept = options.accept)
   if action == "add":
     if not len(args) == 3:

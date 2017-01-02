@@ -1,3 +1,19 @@
+diff --git a/commit_log b/commit_log
+index 3076641..906ee13 100644
+--- a/commit_log
++++ b/commit_log
+@@ -24,3 +24,11 @@ Installed new image <2> for subuser foo
+ Running garbage collector on temporary repositories...
+ Clearing directory /home/timothy/.texttest/tmp/texttest.02Jan024537.28866/texttest/subuser/With-one-subuser-named-foo/With-foo-added-then-removed/git-diff/.subuser/volumes/execute
+ Clearing directory /home/timothy/.texttest/tmp/texttest.02Jan024537.28866/texttest/subuser/With-one-subuser-named-foo/With-foo-added-then-removed/git-diff/.subuser/volumes/x11
++Removing subuser foo
++ If you wish to remove the subusers image, issue the command $ subuser remove-old-images
++Verifying subuser configuration.
++Verifying registry consistency...
++Unregistering any non-existant installed images.
++Running garbage collector on temporary repositories...
++Clearing directory /home/timothy/.texttest/tmp/texttest.02Jan024537.28866/texttest/subuser/With-one-subuser-named-foo/With-foo-added-then-removed/git-diff/.subuser/volumes/execute
++Clearing directory /home/timothy/.texttest/tmp/texttest.02Jan024537.28866/texttest/subuser/With-one-subuser-named-foo/With-foo-added-then-removed/git-diff/.subuser/volumes/x11
 diff --git a/permissions/foo/permissions-template.json b/permissions/foo/permissions-template.json
 deleted file mode 100644
 index 8d1fe9b..0000000

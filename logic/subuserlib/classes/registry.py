@@ -22,6 +22,7 @@ class Registry(userOwnedObject.UserOwnedObject):
   def __init__(self,user,gitReadHash="master", ignoreVersionLocks=False, initialized = False):
     self.__subusers = None
     self.__changeLog = u""
+    self.commit_message = None
     self.__changed = False
     self.__logOutputVerbosity = 1
     self.initialized = initialized
@@ -35,6 +36,7 @@ class Registry(userOwnedObject.UserOwnedObject):
     self.__gitRepository = None
     self.__gitReadHash = gitReadHash
     userOwnedObject.UserOwnedObject.__init__(self,user)
+    self.logFilePath = os.path.join(self.getUser(),self.getUser().getConfig()["registry-dir"],"commit_log")
     self.__gitRepository = GitRepository(self.getUser(),self.getUser().getConfig()["registry-dir"])
 
   def getGitRepository(self):
@@ -61,7 +63,7 @@ class Registry(userOwnedObject.UserOwnedObject):
       os.makedirs(self.getUser().getConfig()["registry-dir"])
       self.getGitRepository().run(["init"])
       self.logChange("Initial commit.")
-      self.commit()
+      self.commit("Initial commit.")
     self.initialized = True
 
   def setLogOutputVerbosity(self,level):
@@ -98,15 +100,22 @@ class Registry(userOwnedObject.UserOwnedObject):
     """
     self.__changeLog = message + u"\n" + self.__changeLog
 
-  def commit(self):
+  def commit(self,message=None):
     """
     Git commit the changes to the registry files, installed-miages.json and subusers.json.
     """
     if self.__changed:
       self.getRepositories().save()
       self.getSubusers().save()
+      with self.getUser().getEndUser().get_file(self.logFilePath) as fd:
+        fd.write(self.__changeLog)
       self.getGitRepository().run(["add","."])
-      self.getGitRepository().commit(self.__changeLog)
+      if message is None:
+        if self.commit_message is not None:
+          message = self.commit_message
+        else:
+          message = self.__changeLog
+      self.getGitRepository().commit(message)
       # Log to live log
       announcement = {}
       announcement["commit"] = self.getGitRepository().getHashOfRef("master")

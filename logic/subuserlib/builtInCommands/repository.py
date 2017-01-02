@@ -37,6 +37,7 @@ def runCommand(sysargs):
   """
   options,args = parseCliArgs(sysargs)
   user = User()
+  user.getRegistry().commit_message = " ".join(["subuser","repository"]+sysargs)
   try:
     action = args[0]
   except IndexError:

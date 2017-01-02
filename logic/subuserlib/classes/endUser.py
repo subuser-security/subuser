@@ -114,7 +114,8 @@ class EndUser(UserOwnedObject,object):
     """
     Run the command and return a tuple with: (returncode,the output to stdout as a string,stderr as a string).
     """
-    process = subprocess.Popen(self.getSudoArgs()+args,stdout=subprocess.PIPE,stderr=subprocess.PIPE,cwd=cwd)
+    args = self.getSudoArgs() + args
+    process = subprocess.Popen(args,stdout=subprocess.PIPE,stderr=subprocess.PIPE,cwd=cwd)
     (stdout,stderr) = process.communicate()
     return (process.returncode,stdout.decode("utf-8"),stderr.decode("utf-8"))
 

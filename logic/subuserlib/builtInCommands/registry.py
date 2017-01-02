@@ -40,6 +40,7 @@ def runCommand(realArgs):
   """
   options,args = parseCliArgs(realArgs)
   user = User()
+  user.getRegistry().commit_message = " ".join(["subuser","repository"]+realArgs)
   if len(args) < 1:
     sys.exit("No arguments given. Please use subuser registry -h for help.")
   elif ["log"] == args:

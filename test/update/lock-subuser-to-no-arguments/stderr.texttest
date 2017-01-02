@@ -1,3 +1,4 @@
+Cloning into '/home/timothy/.texttest/tmp/texttest.02Jan030617.13214/texttest/update/lock-subuser-to-no-arguments/.subuser/repositories/default'...
 Wrong number of arguments.  Expected a subuser name and a commit.  Try running
 subuser update --help
  for more info.

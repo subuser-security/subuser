@@ -98,6 +98,9 @@ def approvePermissions(user,subusers,permissionsAccepter):
     except SyntaxError as e:
       subusersWhosPermissionsFailedToParse.append(subuser)
       exceptions.append(e)
+    except subuserlib.classes.subuser.NoImageSourceException:
+      subusersWhosPermissionsFailedToParse.append(subuser)
+      user.getRegistry().log("Warning: The image source for subuser %s is no longer available."%subuser.getName())
   return (subusersWhosPermissionsFailedToParse,exceptions)
 
 def ensureServiceSubusersAreSetup(user,subusers):

@@ -50,6 +50,7 @@ def runCommand(realArgs):
   """
   options,args = parseCliArgs(realArgs)
   user = User()
+  user.getRegistry().commit_message = " ".join(["subuser","update"]+realArgs)
   permissionsAccepter = AcceptPermissionsAtCLI(user,alwaysAccept = options.accept)
   if len(args) < 1:
     sys.exit("No arguments given. Please use subuser update -h for help.")

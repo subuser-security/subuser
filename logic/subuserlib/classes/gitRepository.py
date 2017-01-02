@@ -116,11 +116,7 @@ $ git config --global user.email johndoe@example.com
     """
     Run git commit with the given commit message.
     """
-    tempFile = tempfile.NamedTemporaryFile("w",encoding="utf-8")
-    with tempFile as tempFile:
-      tempFile.write(message.encode("utf8","replace").decode("utf8"))
-      tempFile.flush()
-      return self.run(["commit","--file",tempFile.name])
+    return self.run(["commit","--message",message])
 
   def checkout(self,commit,files=[]):
     """

@@ -170,7 +170,7 @@ def runCommand(realArgs):
               subuserlib.print.printWithoutCrashing("Not editing and not trying again due to lack of terminal.")
         if subusersToTryBuildingAgain:
           subuserlib.verify.verify(user,subusers=subusersToTryBuildingAgain,permissionsAccepter=permissionsAccepter,prompt=options.prompt,useCache=True)
-      user.getRegistry().commit()
+      user.getRegistry().commit("subuser pkg %s\n%s"%(subcommand,"\n".join(imageSourceNames)))
     # Run the images
     for subuser in subusers:
       if subuser.getPermissions()["executable"] and subuser.getImageId():
@@ -189,4 +189,4 @@ def runCommand(realArgs):
       # Remove the subusers
       user = User()
       subuserlib.subuser.remove(user,subusers)
-      user.getRegistry().commit()
+      user.getRegistry().commit("subuser pkg: Remove temp subusers after test.")
