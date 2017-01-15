@@ -46,7 +46,7 @@ Quick packaging tutorial
   $ git remote add origin <url>
   $ git push origin master
 
-5. If you publish your new git repository to a website such as `Gitorious <https://gitorious.org>`_, `Bitbucket <https://bitbucket.org>`_, or `Github <https://github.com>`_, others will be able to install your images with a command similar to the one bellow.
+5. If you publish your new git repository to a website such as `Gitlab <https://gitlab.com>`_, `Bitbucket <https://bitbucket.org>`_, or `Github <https://github.com>`_, others will be able to install your images with a command similar to the one bellow.
 
 ::
 
