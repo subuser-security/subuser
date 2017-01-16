@@ -1,3 +1,4 @@
 FROM-SUBUSER-IMAGE libdebian@default
 RUN apt-get update && apt-get install -y python3-pip umlet pylint
 RUN pip3 install --upgrade sphinx requests
+ENV SUBUSER_TESTING TRUE
