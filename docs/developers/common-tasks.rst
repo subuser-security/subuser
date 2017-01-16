@@ -24,11 +24,12 @@ Building the docs
 
 In order to build the docs, you must have the subuser-standard within the docs directory.  In order to get the subser-standard issue::
 
+    cd ~/<subuser-git-repo>/docs
     git clone https://github.com/subuser-security/subuser-standard.git
 
 To build the docs, cd to this repositories root, run ``subuser dev docs`` and run ``make html`` in the docs directory::
 
-    cd ..
+    cd ~/<subuser-git-repo>/
     subuser dev docs
     cd docs
     make html
