@@ -1,13 +1,17 @@
 The following images are uneeded and would be deleted.
 DOCKER-ID : SUBUSER-ID
-Removing unneeded image 2 : dependency1@file:////home/timothy/.texttest/tmp/texttest.15Jan133835.1341/texttest/remove-old-images/With-subuser-dependent-added-then-removed/no-aguments/test-repos/remote-test-repo
-Removing unneeded image 4 : intermediary@file:////home/timothy/.texttest/tmp/texttest.15Jan133835.1341/texttest/remove-old-images/With-subuser-dependent-added-then-removed/no-aguments/test-repos/remote-test-repo
-Removing unneeded image 6 : dependent@file:////home/timothy/.texttest/tmp/texttest.15Jan133835.1341/texttest/remove-old-images/With-subuser-dependent-added-then-removed/no-aguments/test-repos/remote-test-repo
+Removing unneeded image 6 : dependent@file:////home/timothy/.texttest/tmp/texttest.23Jan153215.8/texttest/remove-old-images/With-subuser-dependent-added-then-removed/no-aguments/test-repos/remote-test-repo
+Removing unneeded image 2 : dependency1@file:////home/timothy/.texttest/tmp/texttest.23Jan153215.8/texttest/remove-old-images/With-subuser-dependent-added-then-removed/no-aguments/test-repos/remote-test-repo
+Removing unneeded image 4 : intermediary@file:////home/timothy/.texttest/tmp/texttest.23Jan153215.8/texttest/remove-old-images/With-subuser-dependent-added-then-removed/no-aguments/test-repos/remote-test-repo
 Would you like to remove these images now? [Y/n]:
+Removing runtime cache image 7
+Removing image 6
+Removing image 2
+Removing image 4
 Verifying subuser configuration.
 Verifying registry consistency...
 Unregistering any non-existant installed images.
 Running garbage collector on temporary repositories...
-Removing uneeded temporary repository: file:////home/timothy/.texttest/tmp/texttest.15Jan133835.1341/texttest/remove-old-images/With-subuser-dependent-added-then-removed/no-aguments/test-repos/remote-test-repo
-Clearing directory /home/timothy/.texttest/tmp/texttest.15Jan133835.1341/texttest/remove-old-images/With-subuser-dependent-added-then-removed/no-aguments/.subuser/volumes/execute
-Clearing directory /home/timothy/.texttest/tmp/texttest.15Jan133835.1341/texttest/remove-old-images/With-subuser-dependent-added-then-removed/no-aguments/.subuser/volumes/x11
+Removing uneeded temporary repository: file:////home/timothy/.texttest/tmp/texttest.23Jan153215.8/texttest/remove-old-images/With-subuser-dependent-added-then-removed/no-aguments/test-repos/remote-test-repo
+Clearing directory /home/timothy/.texttest/tmp/texttest.23Jan153215.8/texttest/remove-old-images/With-subuser-dependent-added-then-removed/no-aguments/.subuser/volumes/execute
+Clearing directory /home/timothy/.texttest/tmp/texttest.23Jan153215.8/texttest/remove-old-images/With-subuser-dependent-added-then-removed/no-aguments/.subuser/volumes/x11
