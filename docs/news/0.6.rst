@@ -1,0 +1,59 @@
+Subuser 0.6 - More of what users want and less of me telling them what they want.
+=================================================================================
+
+You no longer have to be a member of the ``docker`` group to use subuser
+------------------------------------------------------------------------
+
+For a long time I have had an issue open on github `Being a member of the docker group is the same as giving a user full root access to the system <https://github.com/subuser-security/subuser/issues/131>`_. I was very open about this issue warning people about it at install time. I was always irked by people who were turned away by it. I felt that they should be happy about the fact that I was so open, upfront, and honest about subuser's flaws. Over time, I've reacted to this complaint in three different ways.
+
+1) User blaming: I would tell users that they don't need user/root separation because they should trust themselves. My logic was that if untrusted code is running as the normal user then all of the user's personal information is compromised anyways.
+
+2) Blaming Docker: I would tell people that this was really Docker's fault because they are the ones that made being a member of the ``docker`` group equivalent to having root access. Blaming Docker didn't solve the problem.
+
+I was stupid and arrogant and y'all were right to hate me for it. The fact is that subuser is still an early and somewhat experimental container distribution platform and asking users to fundamentally change the way their computers work, just to use subuser, is absurd.
+
+I've realized this, I apologize for being an arrogant senseless git, and have changed subuser to now subuser support running using sudo, so you don't have to become a member of the ``docker`` group to run subuser. To run a subuser named ``vim`` you still just type ``subuser run vim``, but now, you might be prompted for your password before the container is launched.
+
+Shorter clearer log messages
+----------------------------
+
+As a debian user, I occasionally get bitten by a package upgrade or install that doesn't work. All of a sudden, my system will start misbehaving and I won't know why. I always google apt-get logs and am always disappointed with `the results <http://askubuntu.com/questions/425809/where-are-the-logs-for-apt-get>`_. So with subuser, I decided to do better. Again due to my own arrogance, I didn't really think about what was wrong with the apt logs. I decided to throw subuser's registry files into git, pin a giant and opaque log message on to my commits, and call it a day. This lead to unusable logs. Subuser 0.6 improves this at least a bit. Now when you run ``subuser registry log`` you will see a list of the subuser commands that you have run that have left changes to the registry.
+
+.. code-block:: bash
+
+    $ subuser registry log
+    [sudo] password for timothy:
+    commit 85c266552f16aac4827ef8a7d75e49c2b34a2ce2
+    Author: Timothy Hobbs <timothyhobbs@seznam.cz>
+    Date:   Mon Jan 2 19:08:41 2017 +0100
+    
+        subuser repair
+    
+    commit 44122592a120f8919c00ac12ebe8bf9a67934d13
+    Author: Timothy Hobbs <timothyhobbs@seznam.cz>
+    Date:   Mon Jan 2 17:40:51 2017 +0100
+    
+        subuser subuser remove xterm xterm
+    
+    commit bd467a443e11a8c77661cc84b4aea18ac82ad0a1
+    Author: Timothy Hobbs <timothyhobbs@seznam.cz>
+    Date:   Mon Jan 2 17:31:25 2017 +0100
+    
+        subuser subuser add vim vim
+    
+    commit 427462b4b0135afba3001df406bb1727ed532922
+    Author: Timothy Hobbs <timothyhobbs@seznam.cz>
+    Date:   Mon Jan 2 17:30:11 2017 +0100
+    
+        subuser subuser remove vim
+    
+You can also cd to ``~/.subuser/registry`` and use standard git commands such as ``git diff`` to get a more detailed view of what happened.
+
+To fix whatever problem is erking you, just reach for the handy ``subuser update lock-subuser-to <subuser-name> <commit>`` `docs <http://subuser.org/commands/update.html>`_ and ``subuser registry rollback <commit>`` `docs <http://subuser.org/commands/registry.html>`_.
+
+Thanks
+------
+
+- `Rui Pinheiro (ruipgpinheiro) <https://github.com/ruipgpinheiro>`_ did much of the work getting ``sudo`` support working.
+- `Victor Goff (kotp) <https://github.com/kotp>`_ fixed errors on the website.
+
