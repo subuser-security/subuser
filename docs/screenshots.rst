@@ -13,4 +13,4 @@ Subuser itself is developed in emacs running in subuser. The test suit also runs
 
 .. image:: ./screenshots/libreoffice.png
 
-Libreoffice also works in subuser as do most programs. Note the emptiness of the home-dir.
+Libreoffice also works in subuser as do most programs. Note that only files and folders in the $PWD from wich libreoffice was launched are accessible.
