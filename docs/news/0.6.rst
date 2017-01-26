@@ -14,6 +14,12 @@ I was stupid and arrogant and y'all were right to hate me for it. The fact is th
 
 I've realized this, I apologize for being an arrogant senseless git, and have changed subuser to now subuser support running using sudo, so you don't have to become a member of the ``docker`` group to run subuser. To run a subuser named ``vim`` you still just type ``subuser run vim``, but now, you might be prompted for your password before the container is launched.
 
+Here is an example showing how I launch subuser dev when working on `textgraph <http://timothy.hobbs.cz/tg/tg.html>`_ on my laptop. On my laptop my main user is not a member of the ``docker`` group but it is a sudoer.
+
+.. image:: ../screenshots/subuser-dev-tg.png
+
+(Right click and press "View image" to enlarge.)
+
 Shorter clearer log messages
 ----------------------------
 
