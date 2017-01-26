@@ -1,6 +1,8 @@
 Subuser 0.6 - More of what users want and less of me telling them what they want.
 =================================================================================
 
+Subuser is a program that helps you run GUI applications in Docker. The project has been around since February 2014 and has gone from being an experimental and ambitious project to being a fairly stable workhorse which fulfills my containment and portability needs well enough that I often forget that its running. Today I'm happy to announce the 0.6 release.
+
 You no longer have to be a member of the ``docker`` group to use subuser
 ------------------------------------------------------------------------
 
