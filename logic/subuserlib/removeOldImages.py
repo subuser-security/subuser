@@ -14,9 +14,13 @@ def getInstalledImagesThatAreInUse(user):
   """
   installedImagesThatAreInUse = {} # {imageId : installedImage}
   for _,subuser in user.getRegistry().getSubusers().items():
-    if subuser.getImageId() in subuser.getUser().getInstalledImages():
-      for inUseInstalledImage in subuser.getUser().getInstalledImages()[subuser.getImageId()].getImageLineage():
-        installedImagesThatAreInUse[inUseInstalledImage.getImageId()] = inUseInstalledImage
+    if subuser.getImageId():
+      try:
+        installedImage = subuser.getUser().getInstalledImages()[subuser.getImageId()]
+        for inUseInstalledImage in installedImage.getImageLineage():
+          installedImagesThatAreInUse[inUseInstalledImage.getImageId()] = inUseInstalledImage
+      except KeyError:
+        user.getRegistry().log("Warning: No image for %s installed."%subuser.getName())
   return installedImagesThatAreInUse
 
 def removeOldImages(user,dryrun=False,yes=False,sourceRepo=None,imageSourceName=None):
