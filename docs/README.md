@@ -2,9 +2,9 @@ In order to build the docs, you must have the subuser-standard within the docs d
 
     git clone https://github.com/subuser-security/subuser-standard.git
 
-To build the docs, cd to this repositories root, run `subuser dev docs` and run `make html` in the docs directory:
+To build the docs, cd to this repositories root, run `subuser dev docs-dev` and run `make html` in the docs directory:
 
     cd ..
-    subuser dev docs
+    subuser dev docs-dev
     cd docs
     make html

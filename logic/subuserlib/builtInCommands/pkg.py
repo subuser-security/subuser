@@ -24,10 +24,7 @@ def parseCliArgs(realArgs):
   add - Add an image source to the repository.
   Usage: $ subuser pkg add image-source-name
 
-  test - Test image sources by building and running them.
-  Usage: $ subuser pkg test image-source-name
-  Note: after running test, you may want to run ``$ subuser remove-old-images --repo=./``
-
+  To test images use subuser dev --update <image-name>
   """
   parser=optparse.OptionParser(usage=usage,description=description,formatter=subuserlib.commandLineArguments.HelpFormatterThatDoesntReformatDescription())
   parser.add_option("--accept",dest="accept",action="store_true",default=False,help="When testing images, accept permissions without asking.")
@@ -53,7 +50,7 @@ def runCommand(realArgs):
   options,args = parseCliArgs(realArgs)
   try:
     subcommand = args[0]
-    subcommands = ["init","add","test"]
+    subcommands = ["init","add"]
     if not subcommand in subcommands:
       sys.exit(subcommand + " not a recognized subcommand of pkg. Use --help for help.")
   except IndexError:
@@ -135,58 +132,4 @@ def runCommand(realArgs):
       with user.getEndUser().get_file(imageFile,"w") as imgf:
         imgf.write(defaultImageFileTemplate)
     user.getEndUser().runEditor(imageFile)
-    try:
-      if input("Would you like to test your new image? [Y/n]") == "n":
-        sys.exit(0)
-    except EOFError:
-      subuserlib.print.printWithoutCrashing("")
-      if not subuserlib.test.testing:
-        sys.exit(0)
-  if subcommand == "test" or subcommand == "add":
-    user = User()
-    repo = subuserlib.resolve.getRepositoryFromPath(user,os.environ["PWD"])
-    permissionsAccepter = AcceptPermissionsAtCLI(user,alwaysAccept = options.accept)
-    imageSourceNames=args[1:]
-    with user.getRegistry().getLock() as lockFileHandler:
-      subusers = []
-      subuserNamePrefix = "!test-image-subuser-"
-      # Build the images
-      for imageSourceName in imageSourceNames:
-        subuserName = subuserNamePrefix+imageSourceName
-        subuserlib.subuser.addFromImageSourceNoVerify(user,subuserName,repo[imageSourceName])
-        subusers.append(user.getRegistry().getSubusers()[subuserName])
-      subuserlib.verify.verify(user,subusers=subusers,permissionsAccepter=permissionsAccepter,prompt=options.prompt,useCache=True)
-      subusersToTryBuildingAgain = None
-      while not subusersToTryBuildingAgain == []:
-        subusersToTryBuildingAgain = []
-        for subuser in subusers:
-          if subuser.getImageId() is None:
-            try:
-              if not input(subuser.getName()+" failed to build. Edit its image file and try again? [Y/n]") == "n":
-                subusersToTryBuildingAgain.append(subuser)
-                user.getEndUser().runEditor(subuser.getImageSource().getImageFile())
-            except EOFError:
-              subuserlib.print.printWithoutCrashing("")
-              subuserlib.print.printWithoutCrashing("Not editing and not trying again due to lack of terminal.")
-        if subusersToTryBuildingAgain:
-          subuserlib.verify.verify(user,subusers=subusersToTryBuildingAgain,permissionsAccepter=permissionsAccepter,prompt=options.prompt,useCache=True)
-      user.getRegistry().commit("subuser pkg %s\n%s"%(subcommand,"\n".join(imageSourceNames)))
-    # Run the images
-    for subuser in subusers:
-      if subuser.getPermissions()["executable"] and subuser.getImageId():
-        try:
-          arguments = input("Running "+subuser.getName()+" enter arguments and press enter to continue:")
-        except EOFError:
-          subuserlib.print.printWithoutCrashing("")
-          arguments = ""
-        arguments = arguments.split(" ")
-        if arguments == [""]:
-          arguments = []
-        runtime = subuser.getRuntime(os.environ)
-        if runtime:
-          runtime.run(arguments)
-    with user.getRegistry().getLock() as lockFileHandler:
-      # Remove the subusers
-      user = User()
-      subuserlib.subuser.remove(user,subusers)
-      user.getRegistry().commit("subuser pkg: Remove temp subusers after test.")
+    subuserlib.print.printWithoutCrashing("Your application has now been packaged. Run subuser dev %s to test your work. Use subuser dev --update %s to iterate."%(imageSourceToAdd,imageSourceToAdd))
