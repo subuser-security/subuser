@@ -17,7 +17,7 @@ Running the test suit
 
 In the root source directory run::
 
-    subuser dev texttest
+    subuser dev texttest-dev
 
 Building the docs
 -----------------
@@ -30,7 +30,7 @@ In order to build the docs, you must have the subuser-standard within the docs d
 To build the docs, cd to this repositories root, run ``subuser dev docs`` and run ``make html`` in the docs directory::
 
     cd ~/<subuser-git-repo>/
-    subuser dev docs
+    subuser dev docs-dev
     cd docs
     make html
 
