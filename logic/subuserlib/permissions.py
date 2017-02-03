@@ -25,6 +25,7 @@ defaults = {
  ,"inherit-locale": False
  ,"inherit-timezone": False
  ,"entrypoints":{}
+ ,"memory": None
  # Moderate permissions
  ,"gui": None
  ,"user-dirs": []
@@ -61,7 +62,7 @@ levels = [
    "permissions" : ["description", "maintainer", "executable","entrypoints"]},
   {"name" : "conservative",
    "description" : "Conservative permissions(These are safe):",
-   "permissions" : ["stateful-home", "inherit-locale", "inherit-timezone"]},
+   "permissions" : ["stateful-home", "inherit-locale", "inherit-timezone", "memory"]},
   {"name" : "moderate",
    "description" : "Moderate permissions(These are probably safe):",
    "permissions" : ["gui", "user-dirs", "sound-card", "webcam", "access-working-directory", "allow-network-access"]},
@@ -82,6 +83,7 @@ descriptions = {
   ,"stateful-home": lambda p : ["To have its own home directory where it can save files and settings."] if p else []
   ,"inherit-locale": lambda p : ["To find out which language you speak and what region you live in."] if p else []
   ,"inherit-timezone": lambda p : ["To find out your current timezone."] if p else []
+  ,"memory": lambda p: ["The maximum amount of memory the container can use."] if p else []
   # Moderate
   ,"gui": lambda guiOptions : (["To be able to display windows."] + sum([guiDescriptions[permission](value) for permission,value in guiOptions.items()],[])) if guiOptions else []
   ,"user-dirs": lambda userDirs : ["To access to the following user directories: '~/"+"' '~/".join(userDirs)+"'"] if userDirs else []
