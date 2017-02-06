@@ -118,6 +118,8 @@ $ subuser repair
      ("stateful-home", lambda p : ["--volume="+self.getSubuser().getHomeDirOnHost()+":"+self.getSubuser().getDockersideHome()+":rw","-e","HOME="+self.getSubuser().getDockersideHome()] if p else ["-e","HOME="+self.getSubuser().getDockersideHome()]),
      ("inherit-locale", lambda p : self.passOnEnvVar("LANG")+self.passOnEnvVar("LANGUAGE") if p else []),
      ("inherit-timezone", lambda p : self.passOnEnvVar("TZ")+["--volume=/etc/localtime:/etc/localtime:ro"] if p else []),
+     ("memory-limit", lambda p: ["--memory="+str(p)] if p else []),
+     ("max-cpus", lambda p: ["--cpus="+str(p)] if p else []),
      # Moderate permissions
      ("gui", lambda p : ["-e","DISPLAY=unix:100","--volume",self.getSubuser().getX11Bridge().getServerSideX11Path()+":/tmp/.X11-unix:rw"] if p else []),
      ("user-dirs", lambda userDirs : ["--volume="+os.path.join(self.getSubuser().getUser().getEndUser().homeDir,userDir)+":"+os.path.join("/subuser/userdirs/",userDir)+":rw" for userDir in userDirs]),
