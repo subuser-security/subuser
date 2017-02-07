@@ -236,7 +236,7 @@ Please file a bug report explaining how you got here.\n"""+ str(e))
           destinationPath = os.path.join("/subuser/userdirs",userDir)
           if not os.path.islink(symlinkPath):
             if os.path.exists(symlinkPath):
-              os.makedirs(os.path.join(self.getHomeDirOnHost(),"subuser-user-dirs-backups"))
+              self.getUser().getEndUser().makedirs(os.path.join(self.getHomeDirOnHost(),"subuser-user-dirs-backups"))
               os.rename(symlinkPath,os.path.join(self.getHomeDirOnHost(),"subuser-user-dirs-backups",userDir))
             try:
               os.symlink(destinationPath,symlinkPath)

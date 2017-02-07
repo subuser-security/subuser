@@ -28,7 +28,7 @@ class RuntimeCache(dict,UserOwnedObject,FileBackedObject):
 
   def save(self):
     try:
-      os.makedirs(self.getPathToCurrentImagesRuntimeCacheDir())
+      self.getUser().getEndUser().makedirs(self.getPathToCurrentImagesRuntimeCacheDir())
     except OSError:
       pass
     with self.getUser().getEndUser().get_file(self.getRuntimeCacheFilePath(),mode='w') as runtimeCacheFileHandle:
