@@ -25,7 +25,13 @@ elif "xpra-bridge" in sys.argv:
   temp_dir = tempfile.mkdtemp(prefix="subuser-test-xpra-bridge")
   env = copy.copy(os.environ)
   env["HOME"] = os.path.join(temp_dir,"test-home")
+  os.makedirs(env["HOME"])
   xtermSubuserName = "xterm"
+  #configure git
+  command = ["git","config","--global","user.name","John Doe"]
+  subprocess.call(command,env=env)
+  command = ["git","config","--global","user.email","johndoe@example.com"]
+  subprocess.call(command,env=env)
   #add xterm subuser
   command = [os.path.join(subuserlib.paths.getSubuserDir(),"logic","subuser"),"subuser","add",xtermSubuserName,"xterm@default","--force-internal"]
   subprocess.call(command,env=env)
