@@ -7,10 +7,7 @@ Usage: subuser pkg [init|add|test] IMAGE-SOURCE-NAMES <args>
   add - Add an image source to the repository.
   Usage: $ subuser pkg add image-source-name
 
-  test - Test image sources by building and running them.
-  Usage: $ subuser pkg test image-source-name
-  Note: after running test, you may want to run ``$ subuser remove-old-images --repo=./``
-
+  To test images use subuser dev --update <image-name>
   
 Options:
   -h, --help            show this help message and exit
