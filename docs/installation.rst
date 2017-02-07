@@ -54,7 +54,7 @@ Install from git: Development version
 
 #. Add ``subuser/logic`` and ``~/.subuser/bin`` to your path by adding the line ``PATH=$HOME/subuser/logic:$HOME/.subuser/bin:$PATH`` to the end of your ``.bashrc`` file.
 
-#. **Optional:** Subuser can run in place. If you want to install the development version system wide you can do so with.
+#. **Optional:** Subuser can run in place. If you want to install the development version system wide you can do so with::
 
     sudo python3 setup.py install
 
