@@ -56,8 +56,6 @@ def runCommand(realArgs):
     sys.exit("Please pass a single dev image name. Use --help for help.")
   devSubuser = None
   devImage = args[0]
-  if not devImage.endswith("-dev"):
-    devImage = devImage + "-dev"
   try:
     devSubuser = devSubusers[devImage]
   except KeyError:

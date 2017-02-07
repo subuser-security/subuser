@@ -17,7 +17,11 @@ Running the test suit
 
 In the root source directory run::
 
-    subuser dev texttest
+    subuser dev texttest-dev
+
+To run the xpra-bridge test suit run::
+
+    ./logic/test xpra-bridge
 
 Building the docs
 -----------------
@@ -30,7 +34,7 @@ In order to build the docs, you must have the subuser-standard within the docs d
 To build the docs, cd to this repositories root, run ``subuser dev docs`` and run ``make html`` in the docs directory::
 
     cd ~/<subuser-git-repo>/
-    subuser dev docs
+    subuser dev docs-dev
     cd docs
     make html
 
@@ -46,20 +50,20 @@ If you set the ``SUBUSER_DEBUG_XPRA`` environment variable then XPRA logs will b
 
 Prepairing a release
 --------------------
-
-1. Bump ``VERSION`` file.
-2. Tag release::
+1. Run all test suits including the xpra-bridge test suit.
+2. Bump ``VERSION`` file.
+3. Tag release::
 
     $ git tag -s major.minor.reallyminor
 
-3. Make packages and test them::
+4. Make packages and test them::
 
     $ make packages
     $ su
     # pip3 uninstall subuser
     # pip3 install ./dist/subuser-0.5.8-py3-none-any.whl
 
-4. Deploy everything::
+5. Deploy everything::
 
     $ make deploy
     $ git push origin 0.5.8

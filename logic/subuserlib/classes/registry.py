@@ -61,7 +61,7 @@ class Registry(userOwnedObject.UserOwnedObject):
       self.initialized = False
       # Ensure git is setup before we start to make changes.
       self.getGitRepository().getGitExecutable()
-      os.makedirs(self.getUser().getConfig()["registry-dir"])
+      self.getUser().getEndUser().makedirs(self.getUser().getConfig()["registry-dir"])
       self.getGitRepository().run(["init"])
       self.logChange("Initial commit.")
       self.commit("Initial commit.")
@@ -143,7 +143,7 @@ class Registry(userOwnedObject.UserOwnedObject):
     To be used with with.
     """
     try:
-      os.makedirs(self.getUser().getConfig()["lock-dir"])
+      self.getUser().getEndUser().makedirs(self.getUser().getConfig()["lock-dir"])
     except OSError as exception:
       if exception.errno != errno.EEXIST:
         raise
