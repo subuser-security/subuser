@@ -1,5 +1,5 @@
 Initial commit.
-Cloning repository default from file:///home/timothy/.texttest/tmp/texttest.11Feb163213.30978/texttest/subuser/add-subuser-§€č/test-repos/default-test-repo
+Cloning repository default from file:///home/timothy/.texttest/tmp/texttest.08Feb220443.8712/texttest/subuser/add-subuser-§€č/test-repos/default-test-repo
 Adding subuser §€č with image foo
 Verifying subuser configuration.
 Verifying registry consistency...
@@ -27,5 +27,6 @@ Building...
 Successfully built 2
 Installed new image <2> for subuser §€č
 Running garbage collector on temporary repositories...
-Clearing directory /home/timothy/.texttest/tmp/texttest.11Feb163213.30978/texttest/subuser/add-subuser-§€č/.subuser/volumes/execute
-Clearing directory /home/timothy/.texttest/tmp/texttest.11Feb163213.30978/texttest/subuser/add-subuser-§€č/.subuser/volumes/x11
+Clearing directory /home/timothy/.texttest/tmp/texttest.08Feb220443.8712/texttest/subuser/add-subuser-§€č/.subuser/volumes/execute
+Clearing directory /home/timothy/.texttest/tmp/texttest.08Feb220443.8712/texttest/subuser/add-subuser-§€č/.subuser/volumes/x11
+Verify complete.

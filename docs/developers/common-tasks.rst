@@ -48,6 +48,11 @@ Debugging the XPRA bridge
 
 If you set the ``SUBUSER_DEBUG_XPRA`` environment variable then XPRA logs will be left in ``~/.subuser/volumes/xpra/<subuser-name>/xpra-home/``. XPRA will also spew out a bunch of garbage to the screen that you can read through.
 
+Running with a higher verbosity level
+-------------------------------------
+
+Set the ``SUBUSER_VERBOSITY`` environment variable to 3 to see more messages. The default is 2. 1 is very terse.
+
 Prepairing a release
 --------------------
 1. Run all test suits including the xpra-bridge test suit.

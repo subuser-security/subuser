@@ -4,5 +4,6 @@ Verifying registry consistency...
 WARNING: foo is no longer present in it's source repository. Support for this progam may have been dropped.
 Unregistering any non-existant installed images.
 Running garbage collector on temporary repositories...
-Clearing directory /home/timothy/.texttest/tmp/texttest.09Feb224218.15406/texttest/Weird-repositories/With-subuser-foo-having-no-installed-image/edit-permissions-foo/.subuser/volumes/execute
-Clearing directory /home/timothy/.texttest/tmp/texttest.09Feb224218.15406/texttest/Weird-repositories/With-subuser-foo-having-no-installed-image/edit-permissions-foo/.subuser/volumes/x11
+Clearing directory /home/timothy/.texttest/tmp/texttest.08Feb220443.8712/texttest/Weird-repositories/With-subuser-foo-having-no-installed-image/edit-permissions-foo/.subuser/volumes/execute
+Clearing directory /home/timothy/.texttest/tmp/texttest.08Feb220443.8712/texttest/Weird-repositories/With-subuser-foo-having-no-installed-image/edit-permissions-foo/.subuser/volumes/x11
+Verify complete.

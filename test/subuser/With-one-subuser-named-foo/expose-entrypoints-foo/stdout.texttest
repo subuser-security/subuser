@@ -12,5 +12,6 @@ r - Reject permissions.
 Please select an option:Checking if images need to be updated or installed...
 Checking if subuser foo is up to date.
 Running garbage collector on temporary repositories...
-Clearing directory /home/timothy/.texttest/tmp/texttest.1_from_11Feb141127.15112/texttest/subuser/With-one-subuser-named-foo/expose-entrypoints-foo/.subuser/volumes/execute
-Clearing directory /home/timothy/.texttest/tmp/texttest.1_from_11Feb141127.15112/texttest/subuser/With-one-subuser-named-foo/expose-entrypoints-foo/.subuser/volumes/x11
+Clearing directory /home/timothy/.texttest/tmp/texttest.08Feb220443.8712/texttest/subuser/With-one-subuser-named-foo/expose-entrypoints-foo/.subuser/volumes/execute
+Clearing directory /home/timothy/.texttest/tmp/texttest.08Feb220443.8712/texttest/subuser/With-one-subuser-named-foo/expose-entrypoints-foo/.subuser/volumes/x11
+Verify complete.

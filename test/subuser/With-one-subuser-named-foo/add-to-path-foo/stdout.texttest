@@ -3,5 +3,6 @@ Verifying subuser configuration.
 Verifying registry consistency...
 Unregistering any non-existant installed images.
 Running garbage collector on temporary repositories...
-Clearing directory /home/timothy/.texttest/tmp/texttest.15Jan135442.16208/texttest/subuser/With-one-subuser-named-foo/add-to-path-foo/.subuser/volumes/execute
-Clearing directory /home/timothy/.texttest/tmp/texttest.15Jan135442.16208/texttest/subuser/With-one-subuser-named-foo/add-to-path-foo/.subuser/volumes/x11
+Clearing directory /home/timothy/.texttest/tmp/texttest.08Feb220443.8712/texttest/subuser/With-one-subuser-named-foo/add-to-path-foo/.subuser/volumes/execute
+Clearing directory /home/timothy/.texttest/tmp/texttest.08Feb220443.8712/texttest/subuser/With-one-subuser-named-foo/add-to-path-foo/.subuser/volumes/x11
+Verify complete.

@@ -3,5 +3,6 @@ Verifying subuser configuration.
 Verifying registry consistency...
 Unregistering any non-existant installed images.
 Running garbage collector on temporary repositories...
-Clearing directory /home/timothy/.texttest/tmp/texttest.15Jan133835.1341/texttest/registry/With-one-subuser-named-foo/rollback/.subuser/volumes/execute
-Clearing directory /home/timothy/.texttest/tmp/texttest.15Jan133835.1341/texttest/registry/With-one-subuser-named-foo/rollback/.subuser/volumes/x11
+Clearing directory /home/timothy/.texttest/tmp/texttest.08Feb220443.8712/texttest/registry/With-one-subuser-named-foo/rollback/.subuser/volumes/execute
+Clearing directory /home/timothy/.texttest/tmp/texttest.08Feb220443.8712/texttest/registry/With-one-subuser-named-foo/rollback/.subuser/volumes/x11
+Verify complete.

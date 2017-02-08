@@ -24,12 +24,13 @@ class Registry(userOwnedObject.UserOwnedObject):
     self.__changeLog = u""
     self.commit_message = None
     self.__changed = False
-    self.__logOutputVerbosity = 1
+    self.logOutputVerbosity = 2
     self.initialized = initialized
+    self.lastVerbosityLevel = None
     self.ignoreVersionLocks = ignoreVersionLocks
     if "SUBUSER_VERBOSITY" in os.environ:
       try:
-        self.__logOutputVerbosity = int(os.environ["SUBUSER_VERBOSITY"])
+        self.logOutputVerbosity = int(os.environ["SUBUSER_VERBOSITY"])
       except ValueError:
         subuserlib.print.printWithoutCrashing("Invalid verbosity setting! Verbosity may be set to any integer.")
     self.__repositories = None
@@ -63,12 +64,6 @@ class Registry(userOwnedObject.UserOwnedObject):
       self.commit("Initial commit.")
     self.initialized = True
 
-  def setLogOutputVerbosity(self,level):
-    self.__logOutputVerbosity = level
-
-  def getLogOutputVerbosity(self):
-    return self.__logOutputVerbosity
-
   def log(self,message,verbosityLevel=1):
     """
     If the current verbosity level is equal to or greater than verbosityLevel, print the message to the screen.
@@ -76,10 +71,15 @@ class Registry(userOwnedObject.UserOwnedObject):
     Do not mark the registry as changed.
     """
     message = message.rstrip()
-    if (verbosityLevel-1) <= self.getLogOutputVerbosity():
+    if (verbosityLevel-1) <= self.logOutputVerbosity:
       self.__changeLog = self.__changeLog + message + u"\n"
-    if verbosityLevel <= self.getLogOutputVerbosity():
+    if self.lastVerbosityLevel == 2 and self.logOutputVerbosity == 2 and sys.stdout.isatty():
+      CURSOR_UP_ONE = '\x1b[1A'
+      ERASE_LINE = '\x1b[2K'
+      print(CURSOR_UP_ONE + ERASE_LINE + CURSOR_UP_ONE)
+    if verbosityLevel <= self.logOutputVerbosity:
       subuserlib.print.printWithoutCrashing(message)
+    self.lastVerbosityLevel = verbosityLevel
 
   def logChange(self,message,verbosityLevel=1):
     """
@@ -157,7 +157,7 @@ class Registry(userOwnedObject.UserOwnedObject):
       _,subuserName = os.path.split(permissionsPath)
       exists = os.path.exists(os.path.join(self.registryDir,permissionsPath))
       if exists and subuserName not in self.subusers:
-        self.logChange("Removing left over permissions for no-longer extant subuser %s"%subuserName)
+        self.logChange("Removing left over permissions for no-longer extant subuser %s"%subuserName,2)
         try:
           self.gitRepository.run(["rm","-r",permissionsPath])
         except subuserlib.classes.gitRepository.GitException as e:

@@ -63,7 +63,7 @@ def runCommand(args):
 
   user = User()
   if not "SUBUSER_VERBOSITY" in os.environ:
-    user.registry.setLogOutputVerbosity(0)
+    user.registry.logOutputVerbosity = 0
   if argParser.subuserName in user.registry.subusers:
     try:
       extraDockerFlags = os.environ["SUBUSER_EXTRA_DOCKER_ARGS"].split(" ")

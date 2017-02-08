@@ -27,7 +27,7 @@ def verify(user,permissionsAccepter=None,checkForUpdatesExternally=False,subuser
      - No-longer-needed installed images are removed.
   """
   user.registry.log("Verifying subuser configuration.")
-  user.registry.log("Verifying registry consistency...")
+  user.registry.log("Verifying registry consistency...",2)
   for subuser in subusers:
     try:
       subuser.imageSource
@@ -37,7 +37,7 @@ def verify(user,permissionsAccepter=None,checkForUpdatesExternally=False,subuser
         subusers.remove(subuser)
       except ValueError:
         pass
-  user.registry.log("Unregistering any non-existant installed images.")
+  user.registry.log("Unregistering any non-existant installed images.",2)
   user.installedImages.unregisterNonExistantImages()
   user.registry.cleanOutOldPermissions()
   if subusers:
@@ -79,6 +79,7 @@ def verify(user,permissionsAccepter=None,checkForUpdatesExternally=False,subuser
   cleanupRuntimeDirs(user)
   cleanUpRuntimeCache(user)
   cleanUpAfterImproperlyTerminatedServices(user)
+  user.registry.log("Verify complete.")
 
 def approvePermissions(user,subusers,permissionsAccepter):
   subusersWhosPermissionsFailedToParse = []
@@ -112,7 +113,7 @@ def ensureServiceSubusersAreSetup(user,subusers):
   return newServiceSubusers
 
 def trimUnneededTempRepos(user):
-  user.registry.log("Running garbage collector on temporary repositories...")
+  user.registry.log("Running garbage collector on temporary repositories...",2)
   reposToRemove = []
   for repoId,repo in user.registry.repositories.userRepositories.items():
     if repo.temporary and not repo.isInUse():
@@ -149,7 +150,7 @@ def cleanupRuntimeDirs(user):
     """
     Clear out a directory containing subdirectories named with the PIDs of processes by removing any directories corresponding to non-running processes.
     """
-    user.registry.log("Clearing directory "+ pidDir)
+    user.registry.log("Clearing directory "+ pidDir,2)
     try:
       for pid in os.listdir(pidDir):
         try:
@@ -194,7 +195,7 @@ def cleanUpAfterImproperlyTerminatedServices(user):
   except OSError:
     subusersWithServiceDirs = []
   for subuserWithServiceDirs in subusersWithServiceDirs:
-    user.registry.log("Removing left over service files for subuser "+ subuserWithServiceDirs)
+    user.registry.log("Removing left over service files for subuser "+ subuserWithServiceDirs,2)
     if not subuserWithServiceDirs in user.registry.subusers:
       try:
         shutil.rmtree(os.path.join(xpraVolumeDir,subuserWithServiceDirs))
