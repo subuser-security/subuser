@@ -50,7 +50,7 @@ def verify(user,permissionsAccepter=None,checkForUpdatesExternally=False,subuser
       try:
         failedSubuser.permissions
       except subuserlib.classes.subuser.SubuserHasNoPermissionsException:
-        del user.getRegistry().getSubusers()[failedSubuser.name]
+        del user.getRegistry().subusers[failedSubuser.name]
     subusers += ensureServiceSubusersAreSetup(user,subusers)
     installationTask = InstallationTask(user,subusersToBeUpdatedOrInstalled=subusers,checkForUpdatesExternally=checkForUpdatesExternally)
     outOfDateSubusers = installationTask.getOutOfDateSubusers()
@@ -126,7 +126,7 @@ def rebuildBinDir(user):
   if os.path.exists(user.getConfig()["bin-dir"]):
     shutil.rmtree(user.getConfig()["bin-dir"])
   user.getEndUser().mkdir(user.getConfig()["bin-dir"])
-  for _,subuser in user.getRegistry().getSubusers().items():
+  for _,subuser in user.getRegistry().subusers.items():
     if subuser.isExecutableShortcutInstalled():
       subuser.installExecutableShortcut()
     if subuser.areEntryPointsExposed():
@@ -195,7 +195,7 @@ def cleanUpAfterImproperlyTerminatedServices(user):
     subusersWithServiceDirs = []
   for subuserWithServiceDirs in subusersWithServiceDirs:
     user.getRegistry().log("Removing left over service files for subuser "+ subuserWithServiceDirs)
-    if not subuserWithServiceDirs in user.getRegistry().getSubusers():
+    if not subuserWithServiceDirs in user.getRegistry().subusers:
       try:
         shutil.rmtree(os.path.join(xpraVolumeDir,subuserWithServiceDirs))
       except OSError as e:
@@ -205,4 +205,4 @@ def cleanUpAfterImproperlyTerminatedServices(user):
       except OSError as e:
         print(e)
     else:
-      user.getRegistry().getSubusers()[subuserWithServiceDirs].getX11Bridge().cleanUpIfNotRunning()
+      user.getRegistry().subusers[subuserWithServiceDirs].getX11Bridge().cleanUpIfNotRunning()

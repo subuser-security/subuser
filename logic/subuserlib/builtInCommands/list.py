@@ -90,11 +90,11 @@ def runCommand(sysargs):
     sys.exit()
   elif args[0] == 'subusers':
     if options.json:
-      subuserlib.print.printWithoutCrashing(json.dumps(user.getRegistry().getSubusers().serializeToDict(),indent=1,separators=(",",": ")))
+      subuserlib.print.printWithoutCrashing(json.dumps(user.getRegistry().subusers.serializeToDict(),indent=1,separators=(",",": ")))
       sys.exit()
     if options.long:
       subuserlib.print.printWithoutCrashing("The following subusers are registered.")
-    for name,subuser in user.getRegistry().getSubusers().items():
+    for name,subuser in user.getRegistry().subusers.items():
       if options.internal or not name.startswith("!"):
         if not options.long:
           subuserlib.print.printWithoutCrashing(name)

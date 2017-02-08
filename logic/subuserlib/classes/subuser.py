@@ -99,7 +99,7 @@ class Subuser(UserOwnedObject, Describable):
     return os.path.join(self.getPermissionsDir(),"permissions.json")
 
   def loadPermissions(self):
-    registryFileStructure = self.getUser().getRegistry().getGitRepository().getFileStructureAtCommit(self.getUser().getRegistry().getGitReadHash())
+    registryFileStructure = self.getUser().getRegistry().gitRepository.getFileStructureAtCommit(self.getUser().getRegistry().gitReadHash)
     try:
       initialPermissions = subuserlib.permissions.load(permissionsString=registryFileStructure.read(os.path.join(self.getRelativePermissionsDir(),"permissions.json")))
     except OSError:
@@ -125,7 +125,7 @@ Please file a bug report explaining how you got here.\n"""+ str(e))
   def getPermissionsTemplate(self):
     if self.__permissionsTemplate is None:
       permissionsDotJsonWritePath = os.path.join(self.getPermissionsDir(),"permissions-template.json")
-      registryFileStructure = self.getUser().getRegistry().getGitRepository().getFileStructureAtCommit(self.getUser().getRegistry().getGitReadHash())
+      registryFileStructure = self.getUser().getRegistry().gitRepository.getFileStructureAtCommit(self.getUser().getRegistry().gitReadHash)
       if os.path.join(self.getRelativePermissionsDir(),"permissions-template.json") in registryFileStructure.lsFiles(self.getRelativePermissionsDir()):
         initialPermissions = subuserlib.permissions.load(permissionsString=registryFileStructure.read(os.path.join(self.getRelativePermissionsDir(),"permissions-template.json")))
         save = False
@@ -154,11 +154,11 @@ Please file a bug report explaining how you got here.\n"""+ str(e))
     Remove the user set and template permission files.
     """
     try:
-      self.getUser().getRegistry().getGitRepository().run(["rm",os.path.join(self.getRelativePermissionsDir(),"permissions.json"),os.path.join(self.getRelativePermissionsDir(),"permissions-template.json")])
+      self.getUser().getRegistry().gitRepository.run(["rm",os.path.join(self.getRelativePermissionsDir(),"permissions.json"),os.path.join(self.getRelativePermissionsDir(),"permissions-template.json")])
     except subuserlib.classes.gitRepository.GitException:
       pass
     try:
-      self.getUser().getRegistry().getGitRepository().run(["rm",os.path.join(self.getRelativePermissionsDir(),"permissions.json"),os.path.join(self.getRelativePermissionsDir(),"permissions-template.json")])
+      self.getUser().getRegistry().gitRepository.run(["rm",os.path.join(self.getRelativePermissionsDir(),"permissions.json"),os.path.join(self.getRelativePermissionsDir(),"permissions-template.json")])
     except subuserlib.classes.gitRepository.GitException:
       pass
 

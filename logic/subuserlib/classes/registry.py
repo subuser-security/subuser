@@ -33,20 +33,15 @@ class Registry(userOwnedObject.UserOwnedObject):
       except ValueError:
         subuserlib.print.printWithoutCrashing("Invalid verbosity setting! Verbosity may be set to any integer.")
     self.__repositories = None
-    self.__gitRepository = None
-    self.__gitReadHash = gitReadHash
+    self.gitRepository = None
+    self.gitReadHash = gitReadHash
     userOwnedObject.UserOwnedObject.__init__(self,user)
     self.registryDir = self.getUser().getConfig()["registry-dir"]
     self.logFilePath = os.path.join(self.registryDir,"commit_log")
-    self.__gitRepository = GitRepository(self.getUser(),self.registryDir)
+    self.gitRepository = GitRepository(self.getUser(),self.registryDir)
 
-  def getGitRepository(self):
-    return self.__gitRepository
-
-  def getGitReadHash(self):
-    return self.__gitReadHash
-
-  def getSubusers(self):
+  @property
+  def subusers(self):
     if self.__subusers is None:
       self.__subusers = subusers.Subusers(self.getUser())
     return self.__subusers
@@ -60,9 +55,9 @@ class Registry(userOwnedObject.UserOwnedObject):
     if not os.path.exists(os.path.join(self.getUser().getConfig()["registry-dir"],".git")):
       self.initialized = False
       # Ensure git is setup before we start to make changes.
-      self.getGitRepository().getGitExecutable()
+      self.gitRepository.getGitExecutable()
       self.getUser().getEndUser().makedirs(self.getUser().getConfig()["registry-dir"])
-      self.getGitRepository().run(["init"])
+      self.gitRepository.run(["init"])
       self.logChange("Initial commit.")
       self.commit("Initial commit.")
     self.initialized = True
@@ -107,19 +102,19 @@ class Registry(userOwnedObject.UserOwnedObject):
     """
     if self.__changed:
       self.getRepositories().save()
-      self.getSubusers().save()
+      self.subusers.save()
       with self.getUser().getEndUser().get_file(self.logFilePath) as fd:
         fd.write(self.__changeLog)
-      self.getGitRepository().run(["add","."])
+      self.gitRepository.run(["add","."])
       if message is None:
         if self.commit_message is not None:
           message = self.commit_message
         else:
           message = self.__changeLog
-      self.getGitRepository().commit(message)
+      self.gitRepository.commit(message)
       # Log to live log
       announcement = {}
-      announcement["commit"] = self.getGitRepository().getHashOfRef("master")
+      announcement["commit"] = self.gitRepository.getHashOfRef("master")
       self.logToLiveLog(announcement)
       self.__changed = False
       self.__changeLog = u""
@@ -157,13 +152,13 @@ class Registry(userOwnedObject.UserOwnedObject):
       sys.exit("Another subuser process is currently running and has a lock on the registry. Please try again later.")
 
   def cleanOutOldPermissions(self):
-    for _,_,_,permissionsPath in self.getGitRepository().getFileStructureAtCommit(self.getGitReadHash()).lsTree("permissions"):
+    for _,_,_,permissionsPath in self.gitRepository.getFileStructureAtCommit(self.gitReadHash).lsTree("permissions"):
       _,subuserName = os.path.split(permissionsPath)
       exists = os.path.exists(os.path.join(self.registryDir,permissionsPath))
-      if exists and subuserName not in self.getSubusers():
+      if exists and subuserName not in self.subusers:
         self.logChange("Removing left over permissions for no-longer extant subuser %s"%subuserName)
         try:
-          self.getGitRepository().run(["rm","-r",permissionsPath])
+          self.gitRepository.run(["rm","-r",permissionsPath])
         except subuserlib.classes.gitRepository.GitException as e:
           self.log(" %s"%str(e))
  

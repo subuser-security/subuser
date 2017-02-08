@@ -30,6 +30,6 @@ def runCommand(realArgs):
   user.getRegistry().commit_message = " ".join(["subuser","repair"]+realArgs)
   permissionsAccepter = AcceptPermissionsAtCLI(user,alwaysAccept = options.accept)
   with user.getRegistry().getLock() as LockFileHandle:
-    subusers = user.getRegistry().getSubusers().getSortedList()
+    subusers = user.getRegistry().subusers.getSortedList()
     subuserlib.verify.verify(user,subusers=subusers,permissionsAccepter=permissionsAccepter,prompt=options.prompt)
     user.getRegistry().commit()

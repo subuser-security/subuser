@@ -17,7 +17,7 @@ def all(user,permissionsAccepter,prompt=False,useCache=False):
   user.getRegistry().log("Updating...")
   for _,repository in user.getRegistry().getRepositories().items():
     repository.updateSources()
-  subusers = user.getRegistry().getSubusers().getSortedList()
+  subusers = user.getRegistry().subusers.getSortedList()
   subuserlib.verify.verify(user,checkForUpdatesExternally=True,useCache=useCache,subusers=subusers,permissionsAccepter=permissionsAccepter,prompt=prompt)
   user.getRegistry().commit()
 
@@ -39,10 +39,10 @@ def lockSubuser(user,subuser,commit):
   from subuserlib.classes.registry import Registry
   oldUser = User(name=user.name,homeDir=user.homeDir)
   oldUser.setRegistry(Registry(oldUser,gitReadHash=commit,ignoreVersionLocks=True,initialized=True))
-  if not oldUser.getRegistry().getGitRepository().doesCommitExist(commit):
+  if not oldUser.getRegistry().gitRepository.doesCommitExist(commit):
     sys.exit("Commit "+commit+" does not exist. Cannot lock to commit.")
   try:
-    oldSubuser = oldUser.getRegistry().getSubusers()[subuser.name]
+    oldSubuser = oldUser.getRegistry().subusers[subuser.name]
   except KeyError:
     sys.exit("Subuser, "+subuser.name+" did not exist yet at commit "+commit+". Cannot lock to commit.")
   subuser.imageId = oldSubuser.imageId

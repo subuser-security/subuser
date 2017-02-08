@@ -94,12 +94,12 @@ def runCommand(sysargs):
     with user.getRegistry().getLock():
       subusers = []
       if not options.prefix is None:
-        allSubuserNames = user.getRegistry().getSubusers().keys()
+        allSubuserNames = user.getRegistry().subusers.keys()
         subuserNames.extend([subuserName for subuserName in allSubuserNames if subuserName.startswith(options.prefix)])
 
       for subuserName in subuserNames:
         try:
-          subusers.append(user.getRegistry().getSubusers()[subuserName])
+          subusers.append(user.getRegistry().subusers[subuserName])
         except KeyError:
           sys.exit("Subuser "+subuserName+" does not exist. Use --help for help.")
       if subusers == []:

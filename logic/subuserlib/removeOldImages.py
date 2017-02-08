@@ -13,7 +13,7 @@ def getInstalledImagesThatAreInUse(user):
   Returns {imageId(string) : InstalledImage}
   """
   installedImagesThatAreInUse = {} # {imageId : installedImage}
-  for _,subuser in user.getRegistry().getSubusers().items():
+  for _,subuser in user.getRegistry().subusers.items():
     if subuser.imageId:
       try:
         installedImage = subuser.getUser().getInstalledImages()[subuser.imageId]

@@ -74,7 +74,7 @@ class Repositories(collections.Mapping,UserOwnedObject,FileBackedObject):
         repositories[repoName] = Repository(self.getUser(),name=repoName,gitOriginURI=gitOriginURI,gitCommitHash=gitCommitHash,temporary=temporary,sourceDir=sourceDir)
       return repositories
     self.systemRepositories = loadRepositoryDict(subuserlib.loadMultiFallbackJsonConfigFile.getConfig(self.systemRepositoryListPaths))
-    registryFileStructure = self.getUser().getRegistry().getGitRepository().getFileStructureAtCommit(self.getUser().getRegistry().getGitReadHash())
+    registryFileStructure = self.getUser().getRegistry().gitRepository.getFileStructureAtCommit(self.getUser().getRegistry().gitReadHash)
     if self.getUser().getRegistry().initialized and "repositories.json" in registryFileStructure.lsFiles("./"):
       self.userRepositories = loadRepositoryDict(json.loads(registryFileStructure.read("repositories.json")))
     else:
@@ -87,7 +87,7 @@ class Repositories(collections.Mapping,UserOwnedObject,FileBackedObject):
     """
     if not self.getUser().getRegistry().initialized:
       return {}
-    gitFileStructure = self.getUser().getRegistry().getGitRepository().getFileStructureAtCommit(self.getUser().getRegistry().getGitReadHash())
+    gitFileStructure = self.getUser().getRegistry().gitRepository.getFileStructureAtCommit(self.getUser().getRegistry().gitReadHash)
     if "repository-states.json" in gitFileStructure.lsFiles("./"):
       return json.loads(gitFileStructure.read("repository-states.json"))
     else:

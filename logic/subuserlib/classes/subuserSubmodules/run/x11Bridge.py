@@ -47,8 +47,8 @@ class XpraX11Bridge(Service):
     return self.__subuser
 
   def isSetup(self):
-    clientSubuserInstalled = self.getClientSubuserName() in self.getUser().getRegistry().getSubusers()
-    serverSubuserInstalled = self.getServerSubuserName() in self.getUser().getRegistry().getSubusers()
+    clientSubuserInstalled = self.getClientSubuserName() in self.getUser().getRegistry().subusers
+    serverSubuserInstalled = self.getServerSubuserName() in self.getUser().getRegistry().subusers
     return clientSubuserInstalled and serverSubuserInstalled
 
   def getSubuserSpecificServerPermissions(self):
@@ -99,7 +99,7 @@ class XpraX11Bridge(Service):
       newSubuserNames = [self.getServerSubuserName(),self.getClientSubuserName()]
     newSubusers = []
     for newSubuserName in newSubuserNames:
-      newSubusers.append(self.getUser().getRegistry().getSubusers()[newSubuserName])
+      newSubusers.append(self.getUser().getRegistry().subusers[newSubuserName])
     return newSubusers
 
   def getXpraVolumePath(self):
@@ -125,7 +125,7 @@ class XpraX11Bridge(Service):
     return "!service-subuser-"+self.getSubuser().name+"-xpra-server"
 
   def getServerSubuser(self):
-    return self.getUser().getRegistry().getSubusers()[self.getServerSubuserName()]
+    return self.getUser().getRegistry().subusers[self.getServerSubuserName()]
 
   def _getPermissionsAccepter(self):
     from subuserlib.classes.permissionsAccepters.acceptPermissionsAtCLI import AcceptPermissionsAtCLI
@@ -140,7 +140,7 @@ class XpraX11Bridge(Service):
     return "!service-subuser-"+self.getSubuser().name+"-xpra-client"
 
   def getClientSubuser(self):
-    return self.getUser().getRegistry().getSubusers()[self.getClientSubuserName()]
+    return self.getUser().getRegistry().subusers[self.getClientSubuserName()]
 
   def addClientSubuser(self):
     subuserlib.subuser.addFromImageSourceNoVerify(self.getUser(),self.getClientSubuserName(),self.getUser().getRegistry().getRepositories()["default"]["subuser-internal-xpra-client"])

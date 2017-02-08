@@ -62,7 +62,7 @@ def runCommand(realArgs):
     subusersToUpdate = []
     for subuserName in subuserNamesToUpdate:
       try:
-        subusersToUpdate.append(user.getRegistry().getSubusers()[subuserName])
+        subusersToUpdate.append(user.getRegistry().subusers[subuserName])
       except KeyError:
         sys.exit("Subuser "+subuserName+" does not exist. Use --help for help.")
     if subusersToUpdate:
@@ -78,7 +78,7 @@ def runCommand(realArgs):
       sys.exit("Wrong number of arguments.  Expected a subuser name and a commit.  Try running\nsubuser update --help\n for more info.")
     with user.getRegistry().getLock():
       try:
-        subuser = user.getRegistry().getSubusers()[subuserName]
+        subuser = user.getRegistry().subusers[subuserName]
       except KeyError:
         sys.exit("Subuser "+subuserName+" does not exist and therefore cannot be locked. Use --help for help.")
       subuserlib.update.lockSubuser(user,subuser=subuser,commit=commit)
@@ -88,7 +88,7 @@ def runCommand(realArgs):
     except IndexError:
       sys.exit("Wrong number of arguments.  Expected a subuser's name. Try running\nsubuser update --help\nfor more information.")
     try:
-      subuser = user.getRegistry().getSubusers()[subuserName]
+      subuser = user.getRegistry().subusers[subuserName]
     except KeyError:
       sys.exit("Subuser "+subuserName+" does not exist. Cannot lock. Use --help for help.")
     with user.getRegistry().getLock():

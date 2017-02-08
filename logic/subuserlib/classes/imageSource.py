@@ -42,7 +42,7 @@ class ImageSource(UserOwnedObject,Describable):
      Get a list of subusers that were built from this ImageSource.
     """
     subusers = []
-    for subuser in self.getUser().getRegistry().getSubusers():
+    for subuser in self.getUser().getRegistry().subusers:
       if subuser.getImageSource()==self:
         subusers.append(subuser)
     return subusers

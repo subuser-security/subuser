@@ -28,7 +28,7 @@ class Repository(dict,UserOwnedObject,Describable):
     self.__sourceDir = sourceDir
     self.__fileStructure = None
     UserOwnedObject.__init__(self,user)
-    self.__gitRepository = GitRepository(user,self.getRepoPath())
+    self.gitRepository = GitRepository(user,self.getRepoPath())
     if not self.isPresent():
       self.updateSources(initialUpdate=True)
     self.__repoConfig = self.loadRepoConfig()
@@ -47,9 +47,6 @@ class Repository(dict,UserOwnedObject,Describable):
   def getGitOriginURI(self):
     return self.__gitOriginURI
 
-  def getGitRepository(self):
-    return self.__gitRepository
-
   def getFileStructure(self):
     if self.__fileStructure is None:
       if self.isLocal():
@@ -57,7 +54,7 @@ class Repository(dict,UserOwnedObject,Describable):
       else:
         if self.getGitCommitHash() is None:
           self.updateGitCommitHash()
-        self.__fileStructure = self.getGitRepository().getFileStructureAtCommit(self.getGitCommitHash())
+        self.__fileStructure = self.gitRepository.getFileStructureAtCommit(self.getGitCommitHash())
     return self.__fileStructure
 
   def getDisplayName(self):
@@ -152,7 +149,7 @@ class Repository(dict,UserOwnedObject,Describable):
     for _,installedImage in self.getUser().getInstalledImages().items():
       if self.name == installedImage.sourceRepoId:
           return True
-      for _,subuser in self.getUser().getRegistry().getSubusers().items():
+      for _,subuser in self.getUser().getRegistry().subusers.items():
         try:
           if self.name == subuser.getImageSource().repo.name:
             return True
@@ -187,13 +184,13 @@ class Repository(dict,UserOwnedObject,Describable):
     if not self.isPresent():
       new = True
       self.getUser().getRegistry().log("Cloning repository "+self.name+" from "+self.getGitOriginURI())
-      if self.getGitRepository().clone(self.getGitOriginURI()) != 0:
+      if self.gitRepository.clone(self.getGitOriginURI()) != 0:
         self.getUser().getRegistry().log("Clone failed.")
         return
     else:
       new = False
     try:
-      self.getGitRepository().run(["fetch","--all"])
+      self.gitRepository.run(["fetch","--all"])
     except Exception: # For some reason, git outputs normal messages to stderr.
       pass
     if self.updateGitCommitHash():
@@ -235,10 +232,10 @@ class Repository(dict,UserOwnedObject,Describable):
     if self.isLocal():
       return True
     # Default
-    newCommitHash = self.getGitRepository().getHashOfRef("refs/remotes/origin/master")
+    newCommitHash = self.gitRepository.getHashOfRef("refs/remotes/origin/master")
     # First we check for version constraints on the repository.
-    if self.getGitRepository().getFileStructureAtCommit("master").exists("./.subuser.json"):
-      configFileContents = self.getGitRepository().getFileStructureAtCommit("master").read("./.subuser.json")
+    if self.gitRepository.getFileStructureAtCommit("master").exists("./.subuser.json"):
+      configFileContents = self.gitRepository.getFileStructureAtCommit("master").read("./.subuser.json")
       configAtMaster = json.loads(configFileContents)
       if "subuser-version-constraints" in configAtMaster:
         versionConstraints = configAtMaster["subuser-version-constraints"]
@@ -255,7 +252,7 @@ class Repository(dict,UserOwnedObject,Describable):
             raise SyntaxError("Error in .subuser.json file. Invalid subuser-version-constraints.  \""+op+"\" is not a valid operator.\n\n"+ str(versionConstraints))
           if matched:
             try:
-              newCommitHash = self.getGitRepository().getHashOfRef("refs/remotes/origin/"+commit)
+              newCommitHash = self.gitRepository.getHashOfRef("refs/remotes/origin/"+commit)
             except OSError as e:
               if len(commit) == 40:
                 newCommitHash = commit

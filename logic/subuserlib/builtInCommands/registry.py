@@ -51,7 +51,7 @@ def runCommand(realArgs):
     except KeyError:
       sys.exit("Wrong number of arguments.  Expected a commit.  Try running \nsubuser regsitry --help\nfor more info.")
     with user.getRegistry().getLock():
-      if not user.getRegistry().getGitRepository().doesCommitExist(commit):
+      if not user.getRegistry().gitRepository.doesCommitExist(commit):
         sys.exit("The commit "+commit+" does not exist. Use --help for help.")
       subuserlib.registry.rollback(user,commit=commit)
   elif ["live-log"] == args:

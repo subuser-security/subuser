@@ -25,7 +25,7 @@ def runCommand(realArgs):
   options,args = parseCliArgs(realArgs)
   user = User()
   runningImages = [container["Image"] for container in user.getDockerDaemon().getContainers(onlyRunning=True)]
-  for _,subuser in user.getRegistry().getSubusers().items():
+  for _,subuser in user.getRegistry().subusers.items():
     try:
       if subuser.getRunReadyImage().getId() in runningImages:
         if not options.internal:

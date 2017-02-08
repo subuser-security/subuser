@@ -64,13 +64,13 @@ def runCommand(args):
   user = User()
   if not "SUBUSER_VERBOSITY" in os.environ:
     user.getRegistry().setLogOutputVerbosity(0)
-  if argParser.subuserName in user.getRegistry().getSubusers():
+  if argParser.subuserName in user.getRegistry().subusers:
     try:
       extraDockerFlags = os.environ["SUBUSER_EXTRA_DOCKER_ARGS"].split(" ")
     except KeyError:
       extraDockerFlags = []
     try:
-      subuser = user.getRegistry().getSubusers()[argParser.subuserName]
+      subuser = user.getRegistry().subusers[argParser.subuserName]
       runtime = subuser.getRuntime(os.environ,extraDockerFlags=extraDockerFlags,entrypoint=options.entrypoint)
       if runtime:
         if not options.dry:

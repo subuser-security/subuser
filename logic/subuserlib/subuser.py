@@ -18,7 +18,7 @@ import subuserlib.classes.exceptions as exceptions
 def add(user,subuserName,imageSourceIdentifier,permissionsAccepter,prompt=False,forceInternal=False):
   if subuserName.startswith("!") and not forceInternal:
     sys.exit("A subusers may not have names beginning with ! as these names are reserved for internal use.")
-  if subuserName in user.getRegistry().getSubusers():
+  if subuserName in user.getRegistry().subusers:
     sys.exit("A subuser named "+subuserName+" already exists.")
   user.getRegistry().logChange("Adding subuser "+subuserName+" with image "+imageSourceIdentifier)
   try:
@@ -29,13 +29,13 @@ def add(user,subuserName,imageSourceIdentifier,permissionsAccepter,prompt=False,
 
 def addFromImageSource(user,subuserName,imageSource,permissionsAccepter,prompt=False):
   addFromImageSourceNoVerify(user,subuserName,imageSource)
-  subuser = user.getRegistry().getSubusers()[subuserName]
+  subuser = user.getRegistry().subusers[subuserName]
   subuserlib.verify.verify(user,subusers=[subuser],permissionsAccepter=permissionsAccepter,prompt=prompt)
   user.getRegistry().commit()
 
 def addFromImageSourceNoVerify(user,subuserName,imageSource):
   subuser = subuserlib.classes.subuser.Subuser(user,subuserName,None,False,False,[],imageSource=imageSource)
-  user.getRegistry().getSubusers()[subuserName] = subuser
+  user.getRegistry().subusers[subuserName] = subuser
 
 def remove(user,subusers):
   didSomething = False
@@ -50,9 +50,9 @@ def remove(user,subusers):
     user.getRegistry().logChange(" If you wish to remove the subusers image, issue the command $ subuser remove-old-images")
     for serviceSubuserName in subuser.getServiceSubuserNames():
       try:
-        serviceSubuser = user.getRegistry().getSubusers()[serviceSubuserName]
+        serviceSubuser = user.getRegistry().subusers[serviceSubuserName]
         serviceSubuser.removePermissions()
-        del user.getRegistry().getSubusers()[serviceSubuserName]
+        del user.getRegistry().subusers[serviceSubuserName]
       except KeyError:
         pass
     # Remove service locks
@@ -62,7 +62,7 @@ def remove(user,subusers):
       pass
     # Remove permission files
     subuser.removePermissions()
-    del user.getRegistry().getSubusers()[subuser.name]
+    del user.getRegistry().subusers[subuser.name]
     didSomething = True
   if didSomething:
     subuserlib.verify.verify(user)
