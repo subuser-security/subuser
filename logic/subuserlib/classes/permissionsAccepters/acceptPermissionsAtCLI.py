@@ -14,14 +14,8 @@ import subuserlib.print
 
 class AcceptPermissionsAtCLI(PermissionsAccepter,UserOwnedObject):
   def __init__(self,user,alwaysAccept = False):
-    self.__alwaysAccept = alwaysAccept
+    self.alwaysAccept = alwaysAccept
     UserOwnedObject.__init__(self,user)
-
-  def getAllwaysAccept(self):
-    """
-    Should the accepter accept the permissions/changes without actually prompting the users?
-    """
-    return self.__alwaysAccept
 
   def accept(self,subuser,newDefaults,oldDefaults,userApproved):
     if userApproved is None:
@@ -65,7 +59,7 @@ class AcceptPermissionsAtCLI(PermissionsAccepter,UserOwnedObject):
       del options["e"]
     for option,description in options.items():
       subuserlib.print.printWithoutCrashing(option+" - "+description)
-    if self.getAllwaysAccept():
+    if self.alwaysAccept:
       subuserlib.print.printWithoutCrashing("A")
       choice = "A"
     else:
