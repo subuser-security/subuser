@@ -75,6 +75,14 @@ Conservative permissions
 
   **Default**: ``false``
 
+ * ``memory-limit``: Limit subuser's available memory to this value. This is a string of format "100m" or "2g", where "m" is megabytes and "g" is gigabytes.
+
+  **Default**: No limit.
+
+ * ``max-cpus``: Limit number of CPUs subuser can use. This is a float.
+
+  **Default**: No limit.
+
 Moderate permissions
 --------------------
 
