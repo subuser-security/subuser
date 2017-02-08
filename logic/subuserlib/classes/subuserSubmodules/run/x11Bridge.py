@@ -41,9 +41,7 @@ class XpraX11Bridge(Service):
   def __init__(self,user,subuser):
     self.__subuser = subuser
     Service.__init__(self,user,subuser)
-
-  def getName(self):
-    return "xpra"
+    self.name = "xpra"
 
   def getSubuser(self):
     return self.__subuser
@@ -70,20 +68,20 @@ class XpraX11Bridge(Service):
     return permissions
 
   def setupServerPermissions(self):
-    permissions = self.getServerSubuser().getPermissions()
+    permissions = self.getServerSubuser().permissions
     for key,value in self.getSubuserSpecificServerPermissions().items():
       permissions[key] = value
     permissions.save()
 
   def setupClientPermissions(self):
-    permissions = self.getClientSubuser().getPermissions()
+    permissions = self.getClientSubuser().permissions
     for key,value in self.getSubuserSpecificClientPermissions().items():
       permissions[key] = value
     permissions.save()
 
   def arePermissionsUpToDate(self):
-    areClientPermissionsUpToDate = isSubDict(self.getSubuserSpecificClientPermissions(),self.getClientSubuser().getPermissions())
-    areServerPermissionsUpToDate = isSubDict(self.getSubuserSpecificServerPermissions(),self.getServerSubuser().getPermissions())
+    areClientPermissionsUpToDate = isSubDict(self.getSubuserSpecificClientPermissions(),self.getClientSubuser().permissions)
+    areServerPermissionsUpToDate = isSubDict(self.getSubuserSpecificServerPermissions(),self.getServerSubuser().permissions)
     return areClientPermissionsUpToDate and areServerPermissionsUpToDate
 
   def setup(self):
@@ -105,7 +103,7 @@ class XpraX11Bridge(Service):
     return newSubusers
 
   def getXpraVolumePath(self):
-    return os.path.join(self.getUser().getConfig()["volumes-dir"],"xpra",self.getSubuser().getName())
+    return os.path.join(self.getUser().getConfig()["volumes-dir"],"xpra",self.getSubuser().name)
 
   def getServerSideX11Path(self):
     return os.path.join(self.getXpraVolumePath(),"tmp",".X11-unix")
@@ -120,11 +118,11 @@ class XpraX11Bridge(Service):
     return os.path.join(self.getXpraHomeDir(),".xpra",self.getServerSubuserHostname()+"-100")
 
   def getServerSubuserHostname(self):
-    longHostName = "xpra-server"+hashlib.sha256(self.getSubuser().getName().encode("utf-8")).hexdigest()
+    longHostName = "xpra-server"+hashlib.sha256(self.getSubuser().name.encode("utf-8")).hexdigest()
     return longHostName[:63]
 
   def getServerSubuserName(self):
-    return "!service-subuser-"+self.getSubuser().getName()+"-xpra-server"
+    return "!service-subuser-"+self.getSubuser().name+"-xpra-server"
 
   def getServerSubuser(self):
     return self.getUser().getRegistry().getSubusers()[self.getServerSubuserName()]
@@ -136,10 +134,10 @@ class XpraX11Bridge(Service):
   def addServerSubuser(self):
     subuserlib.subuser.addFromImageSourceNoVerify(self.getUser(),self.getServerSubuserName(),self.getUser().getRegistry().getRepositories()["default"]["subuser-internal-xpra-server"])
     self.getSubuser().addServiceSubuser(self.getServerSubuserName())
-    self.getServerSubuser().createPermissions(self.getServerSubuser().getImageSource().getPermissions())
+    self.getServerSubuser().createPermissions(self.getServerSubuser().getImageSource().permissions)
 
   def getClientSubuserName(self):
-    return "!service-subuser-"+self.getSubuser().getName()+"-xpra-client"
+    return "!service-subuser-"+self.getSubuser().name+"-xpra-client"
 
   def getClientSubuser(self):
     return self.getUser().getRegistry().getSubusers()[self.getClientSubuserName()]
@@ -147,7 +145,7 @@ class XpraX11Bridge(Service):
   def addClientSubuser(self):
     subuserlib.subuser.addFromImageSourceNoVerify(self.getUser(),self.getClientSubuserName(),self.getUser().getRegistry().getRepositories()["default"]["subuser-internal-xpra-client"])
     self.getSubuser().addServiceSubuser(self.getClientSubuserName())
-    self.getClientSubuser().createPermissions(self.getClientSubuser().getImageSource().getPermissions())
+    self.getClientSubuser().createPermissions(self.getClientSubuser().getImageSource().permissions)
 
   def cleanUp(self):
     """
@@ -155,7 +153,7 @@ class XpraX11Bridge(Service):
     """
     self.getUser().getRegistry().log("Cleaning up old bridge volume files.",verbosityLevel=4)
     try:
-      shutil.rmtree(os.path.join(self.getUser().getConfig()["volumes-dir"],"xpra",self.getSubuser().getName()))
+      shutil.rmtree(os.path.join(self.getUser().getConfig()["volumes-dir"],"xpra",self.getSubuser().name))
     except OSError as e:
       # We need to clean this up.
       # Unfortunately, the X11 socket may still exist and will be owned by root.
@@ -164,7 +162,7 @@ class XpraX11Bridge(Service):
       if not e.errno == errno.ENOENT:
         self.getUser().getRegistry().log("An error occured while setting up xpra X11 socket.",verbosityLevel=3)
         self.getUser().getRegistry().log(str(e),verbosityLevel=3)
-        self.getUser().getDockerDaemon().execute(["run","--rm","--volume",os.path.join(self.getUser().getConfig()["volumes-dir"],"xpra")+":/xpra-volume","--entrypoint","/bin/rm",self.getServerSubuser().getImageId(),"-rf",os.path.join("/xpra-volume/",self.getSubuser().getName())])
+        self.getUser().getDockerDaemon().execute(["run","--rm","--volume",os.path.join(self.getUser().getConfig()["volumes-dir"],"xpra")+":/xpra-volume","--entrypoint","/bin/rm",self.getServerSubuser().getImageId(),"-rf",os.path.join("/xpra-volume/",self.getSubuser().name)])
 
   def createAndSetupSpecialVolumes(self,errorCount=0):
     def clearAndTryAgain():
@@ -208,7 +206,7 @@ class XpraX11Bridge(Service):
      "clipboard": ("--clipboard","--no-clipboard")}
     permissionArgs = []
     for guiPermission,(on,off) in permissionDict.items():
-      if self.getSubuser().getPermissions()["gui"][guiPermission]:
+      if self.getSubuser().permissions["gui"][guiPermission]:
         permissionArgs.append(on)
       else:
         permissionArgs.append(off)
@@ -234,7 +232,7 @@ class XpraX11Bridge(Service):
     self.waitForContainerToLaunch("xpra is ready", serverProcess, suppressOutput)
     # Launch xpra client
     try:
-      borderColor = self.getSubuser().getPermissions()["gui"]["border-color"]
+      borderColor = self.getSubuser().permissions["gui"]["border-color"]
       if "-" in borderColor:
         borderColor = "red"
     except:

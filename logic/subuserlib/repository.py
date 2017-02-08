@@ -16,7 +16,7 @@ def add(user,name,url):
     if repository.isTemporary():
       sys.exit("A temporary repository with this url already exists.  Cannot add.  The ability to uprade temporary repositories to named repositories is a wanted feature.  Feal free to send a quality, well thought out, pull request.")
     else:
-      sys.exit("The repository named:" +repository.getName()+" already has this URL.  Cannot add.")
+      sys.exit("The repository named:" +repository.name+" already has this URL.  Cannot add.")
   else:
     if url.startswith("/"):
       repository = Repository(user,name=name,sourceDir=url)

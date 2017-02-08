@@ -40,7 +40,7 @@ def addFromImageSourceNoVerify(user,subuserName,imageSource):
 def remove(user,subusers):
   didSomething = False
   for subuser in subusers:
-    user.getRegistry().logChange("Removing subuser "+str(subuser.getName()))
+    user.getRegistry().logChange("Removing subuser "+str(subuser.name))
     try:
       subuserHome = subuser.getHomeDirOnHost()
       if subuserHome and os.path.exists(subuserHome):
@@ -57,12 +57,12 @@ def remove(user,subusers):
         pass
     # Remove service locks
     try:
-      shutil.rmtree(os.path.join(user.getConfig()["lock-dir"],"services",subuser.getName()))
+      shutil.rmtree(os.path.join(user.getConfig()["lock-dir"],"services",subuser.name))
     except OSError:
       pass
     # Remove permission files
     subuser.removePermissions()
-    del user.getRegistry().getSubusers()[subuser.getName()]
+    del user.getRegistry().getSubusers()[subuser.name]
     didSomething = True
   if didSomething:
     subuserlib.verify.verify(user)
@@ -71,9 +71,9 @@ def remove(user,subusers):
 def setExecutableShortcutInstalled(user,subusers,installed):
   for subuser in subusers:
     if installed:
-      user.getRegistry().logChange("Adding launcher for subuser "+subuser.getName()+" to $PATH.")
+      user.getRegistry().logChange("Adding launcher for subuser "+subuser.name+" to $PATH.")
     else:
-      user.getRegistry().logChange("Removing launcher for subuser "+subuser.getName()+" from $PATH.")
+      user.getRegistry().logChange("Removing launcher for subuser "+subuser.name+" from $PATH.")
     subuser.setExecutableShortcutInstalled(installed)
   subuserlib.verify.verify(user)
   user.getRegistry().commit()
@@ -81,9 +81,9 @@ def setExecutableShortcutInstalled(user,subusers,installed):
 def setEntrypointsExposed(user,subusers,exposed,permissionsAccepter):
   for subuser in subusers:
     if exposed:
-      user.getRegistry().logChange("Exposing entrypoints for subuser "+subuser.getName()+" in the $PATH.")
+      user.getRegistry().logChange("Exposing entrypoints for subuser "+subuser.name+" in the $PATH.")
     else:
-      user.getRegistry().logChange("Removing entrypoints for subuser "+subuser.getName()+" from $PATH.")
+      user.getRegistry().logChange("Removing entrypoints for subuser "+subuser.name+" from $PATH.")
     subuser.setEntrypointsExposed(exposed)
   subuserlib.verify.verify(user,subusers=subusers,permissionsAccepter=permissionsAccepter)
   user.getRegistry().commit()

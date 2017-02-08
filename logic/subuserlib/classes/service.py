@@ -48,15 +48,11 @@ class Service(UserOwnedObject):
     """
     pass
 
-  @abc.abstractmethod
-  def getName(self):
-    pass
-
   def getLockfileDir(self):
-    return os.path.join(self.getUser().getConfig()["lock-dir"],"services",self.__subuser.getName())
+    return os.path.join(self.getUser().getConfig()["lock-dir"],"services",self.__subuser.name)
 
   def getLockfilePath(self):
-    return os.path.join(self.getLockfileDir(),self.getName()+".json")
+    return os.path.join(self.getLockfileDir(),self.name+".json")
 
   def removeLockFile(self):
     os.remove(self.getLockfilePath())

@@ -98,7 +98,7 @@ class Repositories(collections.Mapping,UserOwnedObject,FileBackedObject):
       self.getUser().getRegistry().logChange("Adding new repository "+repository.getDisplayName())
     else:
       self.getUser().getRegistry().logChange("Adding new temporary repository "+repository.getDisplayName())
-    self.userRepositories[repository.getName()] = repository
+    self.userRepositories[repository.name] = repository
 
   def removeRepository(self,name):
     try:

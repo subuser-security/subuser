@@ -22,11 +22,8 @@ if subuserlib.test.testing:
 class GitRepository(UserOwnedObject):
   def __init__(self,user,path):
     UserOwnedObject.__init__(self,user)
-    self.__path = path
+    self.path = path
     self.__gitExecutable = None
-
-  def getPath(self):
-    return self.__path
 
   def getGitExecutable(self):
     if self.__gitExecutable is None:
@@ -51,7 +48,7 @@ $ git config --global user.email johndoe@example.com
     """
     Clone an external repository in order to create this repository.
     """
-    return self.getUser().getEndUser().call(self.getGitExecutable()+["clone", origin, self.getPath()])
+    return self.getUser().getEndUser().call(self.getGitExecutable()+["clone", origin, self.path])
 
   def run(self,args):
     """
@@ -59,8 +56,8 @@ $ git config --global user.email johndoe@example.com
     """
     try:
       gitArgs = self.getGitExecutable()+args
-      (returncode,stdout,stderr) = self.getUser().getEndUser().callCollectOutput(gitArgs,cwd=self.getPath())
-      self.getUser().getRegistry().log(self.getPath()+": "+" ".join(gitArgs),verbosityLevel=3)
+      (returncode,stdout,stderr) = self.getUser().getEndUser().callCollectOutput(gitArgs,cwd=self.path)
+      self.getUser().getRegistry().log(self.path+": "+" ".join(gitArgs),verbosityLevel=3)
       self.getUser().getRegistry().log(stdout,verbosityLevel=3)
       self.getUser().getRegistry().log(stderr,verbosityLevel=3)
       if stderr:
@@ -73,7 +70,7 @@ $ git config --global user.email johndoe@example.com
         raise e
 
   def runShowOutput(self,args):
-    self.getUser().getEndUser().call(self.getGitExecutable()+args,cwd=self.getPath())
+    self.getUser().getEndUser().call(self.getGitExecutable()+args,cwd=self.path)
 
   def runCollectOutput(self,args,eatStderr=False):
     """
@@ -81,8 +78,8 @@ $ git config --global user.email johndoe@example.com
     """
     try:
       gitArgs = self.getGitExecutable()+args
-      (returncode,stdout,stderr) = self.getUser().getEndUser().callCollectOutput(gitArgs,cwd=self.getPath())
-      self.getUser().getRegistry().log(self.getPath()+": "+" ".join(gitArgs),verbosityLevel=3)
+      (returncode,stdout,stderr) = self.getUser().getEndUser().callCollectOutput(gitArgs,cwd=self.path)
+      self.getUser().getRegistry().log(self.path+": "+" ".join(gitArgs),verbosityLevel=3)
       self.getUser().getRegistry().log(stderr,verbosityLevel=3)
       if stderr and not eatStderr:
         raise GitException(stderr)
@@ -128,7 +125,7 @@ $ git config --global user.email johndoe@example.com
     command = ["show-ref","-s",ref]
     (returncode,output) = self.runCollectOutput(command)
     if returncode != 0:
-      raise OSError("Running git in "+self.getPath()+" with args "+str(command)+" failed.")
+      raise OSError("Running git in "+self.path+" with args "+str(command)+" failed.")
     return output.strip()
 
 class GitFileStructure(FileStructure):
@@ -146,15 +143,9 @@ class GitFileStructure(FileStructure):
     >>> subuserlib.subprocessExtras.call(["git","commit","-m","Initial commit"],cwd=subuserlib.classes.gitRepository.hashtestDir)
     0
     """
-    self.__gitRepository = gitRepository
-    self.__commit = commit
+    self.gitRepository = gitRepository
+    self.commit = commit
     self.__lsTreeCache = {}
-
-  def getCommit(self):
-    return self.__commit
-
-  def getRepository(self):
-    return self.__gitRepository
 
   def lsTree(self, subfolder, extraArgs=[]):
     """
@@ -167,13 +158,13 @@ class GitFileStructure(FileStructure):
       subfolder += "/"
     if subfolder == "/":
       subfolder = "./"
-    args = extraArgs+[self.getCommit(),subfolder]
+    args = extraArgs+[self.commit,subfolder]
     argsTuple = tuple(args)
     try:
       return self.__lsTreeCache[argsTuple]
     except KeyError:
       pass
-    (returncode,output) = self.getRepository().runCollectOutput(["ls-tree"]+args)
+    (returncode,output) = self.gitRepository.runCollectOutput(["ls-tree"]+args)
     if returncode != 0:
       return [] # This commenting out is intentional. It is simpler to just return [] here than to check if the repository is properly initialized everywhere else.
     lines = output.splitlines()
@@ -255,9 +246,9 @@ class GitFileStructure(FileStructure):
     blahblah
     <BLANKLINE>
     """
-    (errorcode,content) = self.getRepository().runCollectOutput(["show",self.getCommit()+":"+path],eatStderr=True)
+    (errorcode,content) = self.gitRepository.runCollectOutput(["show",self.commit+":"+path],eatStderr=True)
     if errorcode != 0:
-      raise OSError("Git show exited with error "+str(errorcode)+". File does not exist.\nPath: "+path+"\nCommit: "+self.getCommit()+"\n")
+      raise OSError("Git show exited with error "+str(errorcode)+". File does not exist.\nPath: "+path+"\nCommit: "+self.commit+"\n")
     return content
 
   def readBinary(self,path):

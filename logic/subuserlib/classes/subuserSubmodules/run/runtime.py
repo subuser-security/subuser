@@ -36,7 +36,7 @@ class Runtime(UserOwnedObject):
     else:
       self.__extraFlags = extraDockerFlags
     if not entrypoint:
-      self.entrypoint = self.getSubuser().getPermissions()["executable"]
+      self.entrypoint = self.getSubuser().permissions["executable"]
     else:
       self.entrypoint = entrypoint
     self.__background = False
@@ -71,7 +71,7 @@ $ subuser repair
     return [device for device in os.listdir("/dev/") if device.startswith("ttyS") or device.startswith("ttyUSB") or device.startswith("ttyACM")]
 
   def getCidFile(self):
-    return "/tmp/subuser-"+self.getSubuser().getName()
+    return "/tmp/subuser-"+self.getSubuser().name
 
   def getBasicFlags(self):
     common = ["--rm"]
@@ -185,7 +185,7 @@ $ subuser repair
     flags = self.getBasicFlags()
     flags.extend(self.__extraFlags)
     permissionFlagDict = self.getPermissionFlagDict()
-    permissions = self.getSubuser().getPermissions()
+    permissions = self.getSubuser().permissions
     for permission, flagGenerator in permissionFlagDict.items():
       flags.extend(flagGenerator(permissions[permission]))
     flags.extend(self.getHostnameFlag())
@@ -218,7 +218,7 @@ $ subuser repair
     self.__backgroundCollectStderr = collectStderr
 
   def getXautorityDirPath(self):
-    return os.path.join(self.getUser().getConfig()["volumes-dir"],"x11",str(os.getpid()),self.getSubuser().getName())
+    return os.path.join(self.getUser().getConfig()["volumes-dir"],"x11",str(os.getpid()),self.getSubuser().name)
 
   def getXautorityFilePath(self):
     return os.path.join(self.getXautorityDirPath(),".Xauthority")
@@ -260,18 +260,18 @@ $ subuser repair
     def reallyRun():
       if not self.entrypoint:
         sys.exit("Cannot run subuser, no executable configured in permissions.json file.")
-      if self.getSubuser().getPermissions()["stateful-home"]:
+      if self.getSubuser().permissions["stateful-home"]:
         self.getUser().getRegistry().log("Setting up subuser home dir.",verbosityLevel=4)
         self.getSubuser().setupHomeDir()
-      if self.getSubuser().getPermissions()["stateful-home"] and self.getSubuser().getPermissions()["user-dirs"]:
+      if self.getSubuser().permissions["stateful-home"] and self.getSubuser().permissions["user-dirs"]:
         self.getUser().getRegistry().log("Creating user dir symlinks in subuser home dir.",verbosityLevel=4)
         userDirsDir = os.path.join(self.getSubuser().getHomeDirOnHost(),"Userdirs")
         if os.path.islink(userDirsDir):
           sys.exit("Please remove the old Userdirs directory, it is no longer needed. The path is:"+userDirsDir)
-      if self.getSubuser().getPermissions()["x11"]:
+      if self.getSubuser().permissions["x11"]:
         self.getUser().getRegistry().log("Generating xauth file.",verbosityLevel=4)
         self.setupXauth()
-      if self.getSubuser().getPermissions()["run-commands-on-host"]:
+      if self.getSubuser().permissions["run-commands-on-host"]:
         self.getUser().getRegistry().log("Launching execution spool daemon.",verbosityLevel=4)
         self.setupExecutionSpool()
       if self.getBackground():
@@ -281,7 +281,7 @@ $ subuser repair
           pass
       #Note, subusers with gui permission cannot be run in the background.
       # Make sure that everything is setup and ready to go.
-      if not self.getSubuser().getPermissions()["gui"] is None:
+      if not self.getSubuser().permissions["gui"] is None:
         self.getUser().getRegistry().log("Requesting connection to X11 bridge.",verbosityLevel=4)
         self.getSubuser().getX11Bridge().addClient()
       self.getUser().getRegistry().log("Building run command.",verbosityLevel=4)
@@ -290,10 +290,10 @@ $ subuser repair
       self.getUser().getRegistry().log("Running subuser with Docker.",verbosityLevel=4)
       self.getUser().getRegistry().log(self.getPrettyCommand(args),verbosityLevel=4)
       returnValue = self.getUser().getDockerDaemon().execute(command,background=self.getBackground(),backgroundSuppressOutput=self.getBackgroundSuppressOutput(),backgroundCollectStdout=collectStdout,backgroundCollectStderr=collectStderr)
-      if self.getSubuser().getPermissions()["run-commands-on-host"]:
+      if self.getSubuser().permissions["run-commands-on-host"]:
         self.getUser().getRegistry().log("Stopping execution spool.",verbosityLevel=4)
         self.tearDownExecutionSpool()
-      if not self.getSubuser().getPermissions()["gui"] is None:
+      if not self.getSubuser().permissions["gui"] is None:
         self.getUser().getRegistry().log("Disconnecting from X11 bridge.",verbosityLevel=4)
         self.getSubuser().getX11Bridge().removeClient()
       if self.getBackground():

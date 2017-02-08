@@ -38,12 +38,12 @@ class RunReadyImage(UserOwnedObject):
     dockerfileContents  = "FROM "+self.getSubuser().getImageId()+"\n"
     dockerfileContents += "RUN useradd --uid="+str(self.getUser().getEndUser().uid)+" "+self.getUser().getEndUser().name+" ;export exitstatus=$? ; if [ $exitstatus -eq 4 ] ; then echo uid exists ; elif [ $exitstatus -eq 9 ]; then echo username exists. ; else exit $exitstatus ; fi\n"
     dockerfileContents += "RUN test -d "+self.getUser().getEndUser().homeDir+" || mkdir "+self.getUser().getEndUser().homeDir+" && chown "+self.getUser().getEndUser().name+" "+self.getUser().getEndUser().homeDir+"\n"
-    if self.getSubuser().getPermissions()["serial-devices"]:
+    if self.getSubuser().permissions["serial-devices"]:
       dockerfileContents += "RUN groupadd dialout; export exitstatus=$? ; if [ $exitstatus -eq 4 ] ; then echo gid exists ; elif [ $exitstatus -eq 9 ]; then echo groupname exists. ; else exit $exitstatus ; fi\n"
       dockerfileContents += "RUN groupadd uucp; export exitstatus=$? ; if [ $exitstatus -eq 4 ] ; then echo gid exists ; elif [ $exitstatus -eq 9 ]; then echo groupname exists. ; else exit $exitstatus ; fi\n"
       dockerfileContents += "RUN usermod -a -G dialout "+self.getUser().getEndUser().name+"\n"
       dockerfileContents += "RUN usermod -a -G uucp "+self.getUser().getEndUser().name+"\n"
-    if self.getSubuser().getPermissions()["sudo"]:
+    if self.getSubuser().permissions["sudo"]:
       dockerfileContents += "RUN (umask 337; echo \""+self.getUser().getEndUser().name+" ALL=(ALL) NOPASSWD: ALL\" > /etc/sudoers.d/allowsudo )\n"
     return dockerfileContents
 
@@ -52,8 +52,8 @@ class RunReadyImage(UserOwnedObject):
     Returns the Id of the Docker image to be run.
     """
     try:
-      tag = subuserlib.docker.buildImageTag("subuser-"+self.getUser().getEndUser().name+"-"+self.getSubuser().getName(),self.getSubuser().getPermissions().getHash())
+      tag = subuserlib.docker.buildImageTag("subuser-"+self.getUser().getEndUser().name+"-"+self.getSubuser().name,self.getSubuser().permissions.getHash())
       return self.getUser().getDockerDaemon().build(None,quietClient=True,useCache=True,tag=tag,forceRm=True,rm=True,dockerfile=self.generateImagePreparationDockerfile())
     except subuserlib.classes.exceptions.ImageBuildException as e:
-      self.getUser().getRegistry().log("Error building run-ready image for subuser "+self.getSubuser().getName()+"\n"+str(e))
+      self.getUser().getRegistry().log("Error building run-ready image for subuser "+self.getSubuser().name+"\n"+str(e))
       return None

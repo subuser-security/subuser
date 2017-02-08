@@ -32,7 +32,7 @@ class InstallationTask(UserOwnedObject):
       for subuser in self.__subusersToBeUpdated:
         try:
           if (not subuser.locked()) and (not (subuser.getImageSource().getLatestInstalledImage() is None)):
-            self.getUser().getRegistry().log("Checking if subuser "+subuser.getName()+" is up to date.")
+            self.getUser().getRegistry().log("Checking if subuser "+subuser.name+" is up to date.")
             for imageSource in getTargetLineage(subuser.getImageSource()):
               if imageSource in self.__upToDateImageSources:
                 continue
@@ -48,7 +48,7 @@ class InstallationTask(UserOwnedObject):
                 break
           if subuser.getImageSource().getLatestInstalledImage() is None or subuser.getImageId() is None or not subuser.isImageInstalled():
             if subuser.locked():
-              self.getUser().getRegistry().log("Subuser "+subuser.getName()+" has no image. But is locked. Marking for installation anyways.")
+              self.getUser().getRegistry().log("Subuser "+subuser.name+" has no image. But is locked. Marking for installation anyways.")
             self.__outOfDateSubusers.add(subuser)
         except exceptions.ImageBuildException as e:
           self.getUser().getRegistry().log(str(e))
@@ -99,7 +99,7 @@ class InstallationTask(UserOwnedObject):
             self.__upToDateImageSources.add(imageSource)
         if not subuser.getImageId() == parent:
           subuser.setImageId(parent)
-          subuser.getUser().getRegistry().logChange("Installed new image <"+subuser.getImageId()+"> for subuser "+subuser.getName())
+          subuser.getUser().getRegistry().logChange("Installed new image <"+subuser.getImageId()+"> for subuser "+subuser.name)
       except exceptions.ImageBuildException as e:
         self.getUser().getRegistry().log(str(e))
         self.__subusersWhosImagesFailedToBuild.add(subuser)
@@ -113,9 +113,9 @@ def installImage(imageSource,parent,useCache=False):
   Register the newly installed image in the user's InstalledImages list.
   Return the Id of the newly installedImage.
   """
-  imageSource.getUser().getRegistry().logChange("Installing " + imageSource.getName() + " ...")
+  imageSource.getUser().getRegistry().logChange("Installing " + imageSource.name + " ...")
   imageId = imageSource.build(parent,useCache=useCache)
-  imageSource.getUser().getInstalledImages()[imageId] = subuserlib.classes.installedImage.InstalledImage(imageSource.getUser(),imageId,imageSource.getName(),imageSource.getRepository().getName(),imageSource.getHash())
+  imageSource.getUser().getInstalledImages()[imageId] = subuserlib.classes.installedImage.InstalledImage(imageSource.getUser(),imageId,imageSource.name,imageSource.repo.name,imageSource.getHash())
   imageSource.getUser().getInstalledImages().save()
   return imageId
 

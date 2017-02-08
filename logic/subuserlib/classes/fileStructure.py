@@ -124,16 +124,13 @@ class BasicFileStructure(FileStructure):
   A FileStructure backed by real files.
   """
   def __init__(self,path):
-    self.__path = path
-
-  def getPath(self):
-    return self.__path
+    self.path = path
 
   def getPathInStructure(self,path):
     """
     Given a relative path within the file structure, return an absolute path.
     """
-    return os.path.join(self.getPath(),path)
+    return os.path.join(self.path,path)
 
   def ls(self, subfolder):
     """

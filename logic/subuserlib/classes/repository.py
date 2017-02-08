@@ -21,7 +21,7 @@ class Repository(dict,UserOwnedObject,Describable):
     """
     Repositories can either be managed by git, or simply be normal directories on the user's computer. If ``sourceDir`` is not set to None, then ``gitOriginURI`` is ignored and the repository is assumed to be a simple directory.
     """
-    self.__name = name
+    self.name = name
     self.__gitOriginURI = gitOriginURI
     self.__lastGitCommitHash = gitCommitHash
     self.__temporary = temporary
@@ -34,9 +34,6 @@ class Repository(dict,UserOwnedObject,Describable):
     self.__repoConfig = self.loadRepoConfig()
     if self.isPresent():
       self.loadImageSources()
-
-  def getName(self):
-    return self.__name
 
   def getURI(self):
     if self.isLocal():
@@ -73,7 +70,7 @@ class Repository(dict,UserOwnedObject,Describable):
       else:
         return self.getGitOriginURI()
     else:
-      return self.getName()
+      return self.name
 
   def describe(self):
     print("Repository: "+self.getDisplayName())
@@ -93,14 +90,14 @@ class Repository(dict,UserOwnedObject,Describable):
     """
     Return a list of image sources sorted by name.
     """
-    return list(sorted(self.values(),key=lambda imageSource:imageSource.getName()))
+    return list(sorted(self.values(),key=lambda imageSource:imageSource.name))
 
   def getRepoPath(self):
     """ Get the path of the repo's sources on disk. """
     if self.isLocal():
       return self.getSourceDir()
     else:
-      return os.path.join(self.getUser().getConfig()["repositories-dir"],self.getName())
+      return os.path.join(self.getUser().getConfig()["repositories-dir"],self.name)
 
   def loadRepoConfig(self):
     """
@@ -153,11 +150,11 @@ class Repository(dict,UserOwnedObject,Describable):
     Are there any installed images or subusers from this repository?
     """
     for _,installedImage in self.getUser().getInstalledImages().items():
-      if self.getName() == installedImage.getSourceRepoId():
+      if self.name == installedImage.getSourceRepoId():
           return True
       for _,subuser in self.getUser().getRegistry().getSubusers().items():
         try:
-          if self.getName() == subuser.getImageSource().getRepository().getName():
+          if self.name == subuser.getImageSource().repo.name:
             return True
         except subuserlib.classes.subuser.NoImageSourceException:
           pass
@@ -189,7 +186,7 @@ class Repository(dict,UserOwnedObject,Describable):
       return
     if not self.isPresent():
       new = True
-      self.getUser().getRegistry().log("Cloning repository "+self.getName()+" from "+self.getGitOriginURI())
+      self.getUser().getRegistry().log("Cloning repository "+self.name+" from "+self.getGitOriginURI())
       if self.getGitRepository().clone(self.getGitOriginURI()) != 0:
         self.getUser().getRegistry().log("Clone failed.")
         return

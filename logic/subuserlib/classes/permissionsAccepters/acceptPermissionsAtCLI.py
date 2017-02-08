@@ -25,7 +25,7 @@ class AcceptPermissionsAtCLI(PermissionsAccepter,UserOwnedObject):
 
   def accept(self,subuser,newDefaults,oldDefaults,userApproved):
     if userApproved is None:
-      subuserlib.print.printWithoutCrashing(subuser.getName()+u": would like to have the following permissions:")
+      subuserlib.print.printWithoutCrashing(subuser.name+u": would like to have the following permissions:")
       newDefaults.describe()
       createNewPermissions = True
     else:
@@ -34,24 +34,24 @@ class AcceptPermissionsAtCLI(PermissionsAccepter,UserOwnedObject):
       if additionsAndChanges == {} and removedPermissions == [] and not subuser.wereEntryPointsExposedThisRun():
         return
       if not additionsAndChanges == {}:
-        subuserlib.print.printWithoutCrashing(subuser.getName()+" would like to add/change the following permissions:")
+        subuserlib.print.printWithoutCrashing(subuser.name+" would like to add/change the following permissions:")
         for permission,value in additionsAndChanges.items():
           for line in subuserlib.permissions.descriptions[permission](value):
             subuserlib.print.printWithoutCrashing("   - "+line)
       if not removedPermissions == []:
         subuserlib.print.printWithoutCrashing("")
-        subuserlib.print.printWithoutCrashing(subuser.getName()+" no longer needs the following permissions:")
+        subuserlib.print.printWithoutCrashing(subuser.name+" no longer needs the following permissions:")
         for removedPermission in removedPermissions:
           for line in subuserlib.permissions.descriptions[removedPermission](oldDefaults[removedPermission]):
             subuserlib.print.printWithoutCrashing("   - "+line)
       if "entrypoints" in additionsAndChanges and subuser.areEntryPointsExposed():
-        subuserlib.print.printWithoutCrashing(subuser.getName()+" would like to expose the following entrypoints to the system PATH:")
+        subuserlib.print.printWithoutCrashing(subuser.name+" would like to expose the following entrypoints to the system PATH:")
         for entrypoint in additionsAndChanges["entrypoints"].keys():
           subuserlib.print.printWithoutCrashing(entrypoint)
       if subuser.wereEntryPointsExposedThisRun():
-        if subuser.getPermissions()["entrypoints"]:
-          subuserlib.print.printWithoutCrashing(subuser.getName()+" would like to expose the following entrypoints to the system PATH:")
-          for entrypoint in subuser.getPermissions()["entrypoints"].keys():
+        if subuser.permissions["entrypoints"]:
+          subuserlib.print.printWithoutCrashing(subuser.name+" would like to expose the following entrypoints to the system PATH:")
+          for entrypoint in subuser.permissions["entrypoints"].keys():
             subuserlib.print.printWithoutCrashing(entrypoint)
         else:
           subuserlib.print.printWithoutCrashing("Entrypoints marked to be exposed, but nothing to expose.")
@@ -79,11 +79,11 @@ class AcceptPermissionsAtCLI(PermissionsAccepter,UserOwnedObject):
       if createNewPermissions:
         subuser.createPermissions(newDefaults)
       else:
-        subuser.getPermissions().applyChanges(removedPermissions,additionsAndChanges)
-      subuser.getPermissions().save()
+        subuser.permissions.applyChanges(removedPermissions,additionsAndChanges)
+      subuser.permissions.save()
     if (choice == "E") or (choice == "e"):
       subuser.editPermissionsCLI()
     if choice == "r":
       if createNewPermissions:
         subuser.createPermissions(subuserlib.permissions.load(permissionsString="{}"))
-        subuser.getPermissions().save()
+        subuser.permissions.save()

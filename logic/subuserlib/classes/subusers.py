@@ -42,9 +42,9 @@ class Subusers(dict,UserOwnedObject,FileBackedObject):
       serializedSubuser["docker-image"] = subuser.getImageId()
       serializedSubuser["service-subusers"] = subuser.getServiceSubuserNames()
       if subuser.locked():
-        serializedDict["locked"][subuser.getName()] = serializedSubuser
+        serializedDict["locked"][subuser.name] = serializedSubuser
       else:
-        serializedDict["unlocked"][subuser.getName()] = serializedSubuser
+        serializedDict["unlocked"][subuser.name] = serializedSubuser
     return serializedDict
 
   def save(self):
@@ -79,4 +79,4 @@ class Subusers(dict,UserOwnedObject,FileBackedObject):
     """
     Return a list of subusers sorted by name.
     """
-    return list(sorted(self.values(),key=lambda subuser:subuser.getName()))
+    return list(sorted(self.values(),key=lambda subuser:subuser.name))

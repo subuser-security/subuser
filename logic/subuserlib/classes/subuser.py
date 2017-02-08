@@ -22,7 +22,7 @@ from subuserlib.classes.subuserSubmodules.run.runtimeCache import RuntimeCache
 
 class Subuser(UserOwnedObject, Describable):
   def __init__(self,user,name,imageId,executableShortcutInstalled,locked,serviceSubusers,imageSource=None,imageSourceName=None,repoName=None,entrypointsExposed=False):
-    self.__name = name
+    self.name = name
     self.__imageSource = imageSource
     self.__repoName = repoName
     self.__imageSourceName = imageSourceName
@@ -40,9 +40,6 @@ class Subuser(UserOwnedObject, Describable):
     self.__permissionsTemplate = None
     UserOwnedObject.__init__(self,user)
 
-  def getName(self):
-    return self.__name
-
   def getImageSource(self):
     """
     Note, it is posssible that the subuser's image source no longer exists, in which case this function raises a NoImageSourceException.
@@ -58,13 +55,13 @@ class Subuser(UserOwnedObject, Describable):
     if self.__imageSource is None:
       return self.__imageSourceName
     else:
-      return self.getImageSource().getName()
+      return self.getImageSource().name
 
   def getSourceRepoName(self):
     if self.__imageSource is None:
       return self.__repoName
     else:
-      return self.getImageSource().getRepository().getName()
+      return self.getImageSource().repo.name
 
   def isExecutableShortcutInstalled(self):
     return self.__executableShortcutInstalled
@@ -84,13 +81,13 @@ class Subuser(UserOwnedObject, Describable):
     return self.__entryPointsExposedThisRun
 
   def getPermissionsDir(self):
-    return os.path.join(self.getUser().getConfig()["registry-dir"],"permissions",self.getName())
+    return os.path.join(self.getUser().getConfig()["registry-dir"],"permissions",self.name)
 
   def getRelativePermissionsDir(self):
     """
     Get the permissions directory as relative to the registry's git repository.
     """
-    return os.path.join("permissions",self.getName())
+    return os.path.join("permissions",self.name)
 
   def createPermissions(self,permissionsDict):
     permissionsDotJsonWritePath = os.path.join(self.getPermissionsDir(),"permissions.json")
@@ -105,7 +102,7 @@ class Subuser(UserOwnedObject, Describable):
     try:
       initialPermissions = subuserlib.permissions.load(permissionsString=registryFileStructure.read(os.path.join(self.getRelativePermissionsDir(),"permissions.json")))
     except OSError:
-      raise SubuserHasNoPermissionsException("The subuser <"+self.getName()+"""> has no permissions.
+      raise SubuserHasNoPermissionsException("The subuser <"+self.name+"""> has no permissions.
 
 Please run:
 
@@ -113,12 +110,13 @@ $ subuser repair
 
 To repair your subuser installation.\n""")
     except SyntaxError as e:
-      sys.exit("The subuser <"+self.getName()+""">'s permissions appears to be corrupt.
+      sys.exit("The subuser <"+self.name+""">'s permissions appears to be corrupt.
 
 Please file a bug report explaining how you got here.\n"""+ str(e))
     self.__permissions = Permissions(self.getUser(),initialPermissions,writePath=self.getPermissionsDotJsonWritePath())
 
-  def getPermissions(self):
+  @property
+  def permissions(self):
     if self.__permissions is None:
       self.loadPermissions()
     return self.__permissions
@@ -131,7 +129,7 @@ Please file a bug report explaining how you got here.\n"""+ str(e))
         initialPermissions = subuserlib.permissions.load(permissionsString=registryFileStructure.read(os.path.join(self.getRelativePermissionsDir(),"permissions-template.json")))
         save = False
       else:
-        initialPermissions = self.getImageSource().getPermissions()
+        initialPermissions = self.getImageSource().permissions
         save = True
       self.__permissionsTemplate = Permissions(self.getUser(),initialPermissions,writePath=permissionsDotJsonWritePath)
       if save:
@@ -140,7 +138,7 @@ Please file a bug report explaining how you got here.\n"""+ str(e))
 
   def editPermissionsCLI(self):
     while True:
-      self.getUser().getEndUser().runEditor(self.getPermissions().getWritePath())
+      self.getUser().getEndUser().runEditor(self.permissions.getWritePath())
       try:
         initialPermissions = subuserlib.permissions.load(permissionsFilePath=self.getPermissionsDotJsonWritePath())
         break
@@ -148,7 +146,7 @@ Please file a bug report explaining how you got here.\n"""+ str(e))
         print(e)
         input("Press ENTER to edit the permission file again.")
     self.__permissions = Permissions(self.getUser(),initialPermissions,writePath=self.getPermissionsDotJsonWritePath())
-    self.getPermissions().save()
+    self.permissions.save()
 
   def removePermissions(self):
     """
@@ -221,14 +219,14 @@ Please file a bug report explaining how you got here.\n"""+ str(e))
     """
     Sets up the subuser's home dir, along with creating symlinks to shared user dirs.
     """
-    if self.getPermissions()["stateful-home"]:
+    if self.permissions["stateful-home"]:
       try:
         self.getUser().getEndUser().makedirs(self.getHomeDirOnHost())
       except OSError as e:
         if e.errno() == errno.EEXIST:
           pass
-      if self.getPermissions()["user-dirs"]:
-        for userDir in self.getPermissions()["user-dirs"]:
+      if self.permissions["user-dirs"]:
+        for userDir in self.permissions["user-dirs"]:
           symlinkPath = os.path.join(self.getHomeDirOnHost(),userDir)
           # http://stackoverflow.com/questions/15718006/check-if-directory-is-symlink
           if symlinkPath.endswith("/"):
@@ -264,26 +262,26 @@ Please file a bug report explaining how you got here.\n"""+ str(e))
     """
     Returns the path to the subuser's home dir. Unless the subuser is configured to have a stateless home, in which case returns None.
     """
-    if self.getPermissions()["stateful-home"]:
-      return os.path.join(self.getUser().getConfig()["subuser-home-dirs-dir"],self.getName())
+    if self.permissions["stateful-home"]:
+      return os.path.join(self.getUser().getConfig()["subuser-home-dirs-dir"],self.name)
     else:
       return None
 
   def getDockersideHome(self):
-    if self.getPermissions()["as-root"]:
+    if self.permissions["as-root"]:
       return "/root/"
     else:
       return self.getUser().getEndUser().homeDir
 
   def describe(self):
-    print("Subuser: "+self.getName())
+    print("Subuser: "+self.name)
     print("------------------")
     try:
       print(self.getImageSource().getIdentifier())
     except subuserlib.classes.subuser.NoImageSourceException:
       print("Warning: This subuser has no image, nor does it have a valid image source to install an image from.")
     print("Docker image Id: "+str(self.getImageId()))
-    self.getPermissions().describe()
+    self.permissions.describe()
     print("")
 
   def installLaunchScript(self,name,script):
@@ -298,16 +296,16 @@ Please file a bug report explaining how you got here.\n"""+ str(e))
       os.chmod(executablePath, stat.S_IMODE(st.st_mode) | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
 
   def installExecutableShortcut(self):
-    self.installLaunchScript(self.getName(),"#!/bin/bash\nsubuser run "+self.getName()+" $@")
+    self.installLaunchScript(self.name,"#!/bin/bash\nsubuser run "+self.name+" $@")
 
   def exposeEntrypoints(self):
     """
     Create launcher executables for the subuser's entrypoints.
     """
-    for name,path in self.getPermissions()["entrypoints"].items():
+    for name,path in self.permissions["entrypoints"].items():
       launchScript = """#!/usr/bin/python3
 import subprocess,sys
-run = """+json.dumps({"subuser-name":self.getName(),"entrypoint":path})
+run = """+json.dumps({"subuser-name":self.name,"entrypoint":path})
       launchScript +="""
 sys.exit(subprocess.call(["subuser","run","--entrypoint="+run["entrypoint"],run["subuser-name"]]))
 """

@@ -19,26 +19,26 @@ def resolveImageSource(user,imageSourcePath,contextRepository=None,allowLocalRep
 
   Usually, the syntax is image-name@repository-name.
 
-  >>> print(resolveImageSource(user,"foo@default").getName()) # doctest: +ELLIPSIS
+  >>> print(resolveImageSource(user,"foo@default").name) # doctest: +ELLIPSIS
   Initial commit.
   Cloning repository default from ...
   foo
 
   If there is no @, then we assume that the repository is the contextRepository.  The default contextRepository is the "default" repository.
 
-  >>> print(resolveImageSource(user,"foo").getName())
+  >>> print(resolveImageSource(user,"foo").name)
   foo
 
   If the repository identifier is a URI and a repository with the same URI already exists, then the URI is resolved to the name of the existing repository. Otherwise, a temporary repository is created.
 
-  >>> print(resolveImageSource(user,"bar@file://"+os.getcwd()+"/test-repos/remote-test-repo").getName()) # doctest: +ELLIPSIS
+  >>> print(resolveImageSource(user,"bar@file://"+os.getcwd()+"/test-repos/remote-test-repo").name) # doctest: +ELLIPSIS
   Cloning repository 0 from file://...
   Adding new temporary repository file://...
   bar
 
   If the repository identifier is a path to a folder on the local machine and a repository pointing to this folder already exists, then the identifier is resolved to the name of the existing repository. Otherwise, a temporary repository is created.
 
-  >>> print(resolveImageSource(user,"bar@"+os.getcwd()+"/test-repos/remote-test-repo").getName()) # doctest: +ELLIPSIS
+  >>> print(resolveImageSource(user,"bar@"+os.getcwd()+"/test-repos/remote-test-repo").name) # doctest: +ELLIPSIS
   Adding new temporary repository ...
   bar
 

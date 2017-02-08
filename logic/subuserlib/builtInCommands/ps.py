@@ -29,8 +29,8 @@ def runCommand(realArgs):
     try:
       if subuser.getRunReadyImage().getId() in runningImages:
         if not options.internal:
-          if subuser.getName().startswith("!"):
+          if subuser.name.startswith("!"):
             continue
-        print(subuser.getName())
+        print(subuser.name)
     except (KeyError,subuserlib.classes.subuserSubmodules.run.runtimeCache.NoRuntimeCacheForSubusersWhichDontHaveExistantImagesException):
       pass

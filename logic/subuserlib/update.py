@@ -42,13 +42,13 @@ def lockSubuser(user,subuser,commit):
   if not oldUser.getRegistry().getGitRepository().doesCommitExist(commit):
     sys.exit("Commit "+commit+" does not exist. Cannot lock to commit.")
   try:
-    oldSubuser = oldUser.getRegistry().getSubusers()[subuser.getName()]
+    oldSubuser = oldUser.getRegistry().getSubusers()[subuser.name]
   except KeyError:
-    sys.exit("Subuser, "+subuser.getName()+" did not exist yet at commit "+commit+". Cannot lock to commit.")
+    sys.exit("Subuser, "+subuser.name+" did not exist yet at commit "+commit+". Cannot lock to commit.")
   subuser.setImageId(oldSubuser.getImageId())
-  oldSubuser.getPermissions().save()
+  oldSubuser.permissions.save()
   oldSubuser.getPermissionsTemplate().save()
-  user.getRegistry().logChange("Locking subuser "+subuser.getName()+" to commit: "+commit)
+  user.getRegistry().logChange("Locking subuser "+subuser.name+" to commit: "+commit)
   user.getRegistry().logChange("New image id is "+subuser.getImageId())
   subuser.setLocked(True)
   subuserlib.verify.verify(user)
@@ -59,9 +59,9 @@ def unlockSubuser(user,subuser,permissionsAccepter,prompt):
   Unlock the subuser, leaving it to have an up to date image.  Delete user set permissions if unlockPermissions is True.
   """
   if subuser.locked():
-    user.getRegistry().logChange("Unlocking subuser "+subuser.getName())
+    user.getRegistry().logChange("Unlocking subuser "+subuser.name)
     subuser.setLocked(False)
     subuserlib.verify.verify(user,subusers=[subuser],checkForUpdatesExternally=True,permissionsAccepter=permissionsAccepter,prompt=prompt)
     user.getRegistry().commit()
   else:
-    user.getRegistry().log("Subuser "+subuser.getName() + " is not locked. Doing nothing.")
+    user.getRegistry().log("Subuser "+subuser.name + " is not locked. Doing nothing.")

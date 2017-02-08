@@ -20,7 +20,7 @@ def getInstalledImagesThatAreInUse(user):
         for inUseInstalledImage in installedImage.getImageLineage():
           installedImagesThatAreInUse[inUseInstalledImage.getImageId()] = inUseInstalledImage
       except KeyError:
-        user.getRegistry().log("Warning: No image for %s installed."%subuser.getName())
+        user.getRegistry().log("Warning: No image for %s installed."%subuser.name)
   return installedImagesThatAreInUse
 
 def removeOldImages(user,dryrun=False,yes=False,sourceRepo=None,imageSourceName=None):
