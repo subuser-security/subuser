@@ -49,7 +49,7 @@ class Service(UserOwnedObject):
     pass
 
   def getLockfileDir(self):
-    return os.path.join(self.getUser().getConfig()["lock-dir"],"services",self.__subuser.name)
+    return os.path.join(self.user.getConfig()["lock-dir"],"services",self.__subuser.name)
 
   def getLockfilePath(self):
     return os.path.join(self.getLockfileDir(),self.name+".json")
@@ -63,7 +63,7 @@ class Service(UserOwnedObject):
 
   def getLock(self):
     try:
-      self.getUser().getEndUser().makedirs(self.getLockfileDir())
+      self.user.getEndUser().makedirs(self.getLockfileDir())
     except OSError as exception:
       if exception.errno != errno.EEXIST:
         raise
@@ -72,7 +72,7 @@ class Service(UserOwnedObject):
         lockFd = open(self.getLockfilePath(),mode="r+")
         break
       except IOError:
-        self.getUser().getEndUser().create_file(self.getLockfilePath())
+        self.user.getEndUser().create_file(self.getLockfilePath())
     fcntl.flock(lockFd,fcntl.LOCK_EX)
     return lockFd
 

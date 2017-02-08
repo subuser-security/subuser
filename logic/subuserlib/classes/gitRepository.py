@@ -27,11 +27,11 @@ class GitRepository(UserOwnedObject):
 
   def getGitExecutable(self):
     if self.__gitExecutable is None:
-      self.__gitExecutable = [subuserlib.executablePath.which("git",excludeDir=self.getUser().getConfig()["bin-dir"])]
+      self.__gitExecutable = [subuserlib.executablePath.which("git",excludeDir=self.user.getConfig()["bin-dir"])]
       if self.__gitExecutable is None:
         sys.exit("Git is not installed. Subuser requires git to run.")
       def getConfig(key):
-        (returncode,stdout,stderr) = self.getUser().getEndUser().callCollectOutput(self.__gitExecutable + ["config","--get",key])
+        (returncode,stdout,stderr) = self.user.getEndUser().callCollectOutput(self.__gitExecutable + ["config","--get",key])
         if returncode == 0:
           return stdout
         else:
@@ -48,7 +48,7 @@ $ git config --global user.email johndoe@example.com
     """
     Clone an external repository in order to create this repository.
     """
-    return self.getUser().getEndUser().call(self.getGitExecutable()+["clone", origin, self.path])
+    return self.user.getEndUser().call(self.getGitExecutable()+["clone", origin, self.path])
 
   def run(self,args):
     """
@@ -56,10 +56,10 @@ $ git config --global user.email johndoe@example.com
     """
     try:
       gitArgs = self.getGitExecutable()+args
-      (returncode,stdout,stderr) = self.getUser().getEndUser().callCollectOutput(gitArgs,cwd=self.path)
-      self.getUser().getRegistry().log(self.path+": "+" ".join(gitArgs),verbosityLevel=3)
-      self.getUser().getRegistry().log(stdout,verbosityLevel=3)
-      self.getUser().getRegistry().log(stderr,verbosityLevel=3)
+      (returncode,stdout,stderr) = self.user.getEndUser().callCollectOutput(gitArgs,cwd=self.path)
+      self.user.getRegistry().log(self.path+": "+" ".join(gitArgs),verbosityLevel=3)
+      self.user.getRegistry().log(stdout,verbosityLevel=3)
+      self.user.getRegistry().log(stderr,verbosityLevel=3)
       if stderr:
         raise GitException(stderr)
       return returncode
@@ -70,7 +70,7 @@ $ git config --global user.email johndoe@example.com
         raise e
 
   def runShowOutput(self,args):
-    self.getUser().getEndUser().call(self.getGitExecutable()+args,cwd=self.path)
+    self.user.getEndUser().call(self.getGitExecutable()+args,cwd=self.path)
 
   def runCollectOutput(self,args,eatStderr=False):
     """
@@ -78,9 +78,9 @@ $ git config --global user.email johndoe@example.com
     """
     try:
       gitArgs = self.getGitExecutable()+args
-      (returncode,stdout,stderr) = self.getUser().getEndUser().callCollectOutput(gitArgs,cwd=self.path)
-      self.getUser().getRegistry().log(self.path+": "+" ".join(gitArgs),verbosityLevel=3)
-      self.getUser().getRegistry().log(stderr,verbosityLevel=3)
+      (returncode,stdout,stderr) = self.user.getEndUser().callCollectOutput(gitArgs,cwd=self.path)
+      self.user.getRegistry().log(self.path+": "+" ".join(gitArgs),verbosityLevel=3)
+      self.user.getRegistry().log(stderr,verbosityLevel=3)
       if stderr and not eatStderr:
         raise GitException(stderr)
       return (returncode,stdout)

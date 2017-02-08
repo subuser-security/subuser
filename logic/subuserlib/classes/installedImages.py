@@ -25,7 +25,7 @@ class InstalledImages(dict,UserOwnedObject,FileBackedObject):
     """
     self.clear()
 
-    installedImagesPath = self.getUser().getConfig()["installed-images-list"]
+    installedImagesPath = self.user.getConfig()["installed-images-list"]
     if os.path.exists(installedImagesPath):
       with open(installedImagesPath, 'r') as file_f:
         try:
@@ -41,7 +41,7 @@ class InstalledImages(dict,UserOwnedObject,FileBackedObject):
       except KeyError:
         imageSourceHash = ""
       image = InstalledImage(
-        user=self.getUser(),
+        user=self.user,
         imageId=imageId,
         imageSourceName=imageAttributes["image-source"],
         sourceRepoId=imageAttributes["source-repo"],
@@ -64,8 +64,8 @@ class InstalledImages(dict,UserOwnedObject,FileBackedObject):
     Save attributes of the installed images to disk.
     """
     # Write that dictionary to disk.
-    installedImagesPath = self.getUser().getConfig()["installed-images-list"]
-    with self.getUser().getEndUser().get_file(installedImagesPath, 'w') as file_f:
+    installedImagesPath = self.user.getConfig()["installed-images-list"]
+    with self.user.getEndUser().get_file(installedImagesPath, 'w') as file_f:
       json.dump(self.serializeToDict(), file_f, indent=1, separators=(',', ': '))
 
   def unregisterNonExistantImages(self):

@@ -120,7 +120,7 @@ $ subuser repair
      ("inherit-timezone", lambda p : self.passOnEnvVar("TZ")+["--volume=/etc/localtime:/etc/localtime:ro"] if p else []),
      # Moderate permissions
      ("gui", lambda p : ["-e","DISPLAY=unix:100","--volume",self.getSubuser().x11Bridge.getServerSideX11Path()+":/tmp/.X11-unix:rw"] if p else []),
-     ("user-dirs", lambda userDirs : ["--volume="+os.path.join(self.getSubuser().getUser().getEndUser().homeDir,userDir)+":"+os.path.join("/subuser/userdirs/",userDir)+":rw" for userDir in userDirs]),
+     ("user-dirs", lambda userDirs : ["--volume="+os.path.join(self.getSubuser().user.getEndUser().homeDir,userDir)+":"+os.path.join("/subuser/userdirs/",userDir)+":rw" for userDir in userDirs]),
      ("inherit-envvars", lambda envVars: [arg for var in envVars for arg in self.passOnEnvVar (var)]),
      ("sound-card", lambda p: self.getSoundArgs() if p else []),
      ("webcam", lambda p: ["--device=/dev/"+device for device in os.listdir("/dev/") if device.startswith("video")] if p else []),
@@ -132,13 +132,13 @@ $ subuser repair
      ("graphics-card", lambda p: ["--device=/dev/dri/"+device for device in os.listdir("/dev/dri")] + ["--volume=/dev/dri/:/dev/dri/:ro"] if p else []),
      ("serial-devices", lambda sd: ["--device=/dev/"+device for device in self.getSerialDevices()] if sd else []),
      ("system-dbus", lambda dbus: ["--volume=/var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket:rw"] if dbus else []),
-     ("as-root", lambda root: ["--user=0"] if root else ["-e","USER="+self.getUser().getEndUser().name,"--user="+str(self.getUser().getEndUser().uid)]),
+     ("as-root", lambda root: ["--user=0"] if root else ["-e","USER="+self.user.getEndUser().name,"--user="+str(self.user.getEndUser().uid)]),
      # Anarchistic permissions
      ("run-commands-on-host", lambda p : ["--volume",self.getExecutionSpoolDir()+":/subuser/execute:rw"] if p else []),
      ("privileged", lambda p: ["--privileged"] if p else [])])
 
   def getExecutionSpoolDir(self):
-    return os.path.join(self.getUser().getConfig()["volumes-dir"],"execute",str(os.getpid()))
+    return os.path.join(self.user.getConfig()["volumes-dir"],"execute",str(os.getpid()))
 
   def getExecutionSpool(self):
     return os.path.join(self.getExecutionSpoolDir(),"spool")
@@ -149,14 +149,14 @@ $ subuser repair
     except (OSError,IOError):
       pass
     try:
-      self.getUser().getEndUser().makedirs(os.path.join(self.getExecutionSpoolDir()))
+      self.user.getEndUser().makedirs(os.path.join(self.getExecutionSpoolDir()))
     except (OSError,IOError):
       pass
     os.mkfifo(self.getExecutionSpool())
     executionSpoolReader = os.path.join(getSubuserDir(),"logic","execute-json-from-fifo")
     if not os.path.exists(executionSpoolReader):
       executionSpoolReader = subuserlib.executablePath.which("execute-json-from-fifo")
-    self.__executionSpoolReader = self.getUser().getEndUser().Popen([executionSpoolReader,self.getExecutionSpool()],cwd=self.getExecutionSpoolDir())
+    self.__executionSpoolReader = self.user.getEndUser().Popen([executionSpoolReader,self.getExecutionSpool()],cwd=self.getExecutionSpoolDir())
 
   def tearDownExecutionSpool(self):
     self.__executionSpoolReader.terminate()
@@ -218,21 +218,21 @@ $ subuser repair
     self.__backgroundCollectStderr = collectStderr
 
   def getXautorityDirPath(self):
-    return os.path.join(self.getUser().getConfig()["volumes-dir"],"x11",str(os.getpid()),self.getSubuser().name)
+    return os.path.join(self.user.getConfig()["volumes-dir"],"x11",str(os.getpid()),self.getSubuser().name)
 
   def getXautorityFilePath(self):
     return os.path.join(self.getXautorityDirPath(),".Xauthority")
 
   def setupXauth(self):
     try:
-      self.getUser().getEndUser().makedirs(self.getXautorityDirPath())
+      self.user.getEndUser().makedirs(self.getXautorityDirPath())
     except OSError: #Already exists
       pass
     try:
       os.remove(self.getXautorityFilePath())
     except OSError:
       pass
-    self.getUser().getEndUser().call(["xauth","extract",".Xauthority",self.getEnvvar("DISPLAY")],cwd=self.getXautorityDirPath())
+    self.user.getEndUser().call(["xauth","extract",".Xauthority",self.getEnvvar("DISPLAY")],cwd=self.getXautorityDirPath())
     with open(self.getXautorityFilePath(),"rb") as xauthFile:
       # The extracted Xauthority file has the following format(bytewise):
       # 1 0 0 [len(hostname)] [hostname-in-ascii] 0 1 [display-number-in-ascii] 0 22 ["MIT-MAGIC-COOKIE-1"-in-ascii] 0 20 [Magic number]
@@ -261,18 +261,18 @@ $ subuser repair
       if not self.entrypoint:
         sys.exit("Cannot run subuser, no executable configured in permissions.json file.")
       if self.getSubuser().permissions["stateful-home"]:
-        self.getUser().getRegistry().log("Setting up subuser home dir.",verbosityLevel=4)
+        self.user.getRegistry().log("Setting up subuser home dir.",verbosityLevel=4)
         self.getSubuser().setupHomeDir()
       if self.getSubuser().permissions["stateful-home"] and self.getSubuser().permissions["user-dirs"]:
-        self.getUser().getRegistry().log("Creating user dir symlinks in subuser home dir.",verbosityLevel=4)
+        self.user.getRegistry().log("Creating user dir symlinks in subuser home dir.",verbosityLevel=4)
         userDirsDir = os.path.join(self.getSubuser().homeDirOnHost,"Userdirs")
         if os.path.islink(userDirsDir):
           sys.exit("Please remove the old Userdirs directory, it is no longer needed. The path is:"+userDirsDir)
       if self.getSubuser().permissions["x11"]:
-        self.getUser().getRegistry().log("Generating xauth file.",verbosityLevel=4)
+        self.user.getRegistry().log("Generating xauth file.",verbosityLevel=4)
         self.setupXauth()
       if self.getSubuser().permissions["run-commands-on-host"]:
-        self.getUser().getRegistry().log("Launching execution spool daemon.",verbosityLevel=4)
+        self.user.getRegistry().log("Launching execution spool daemon.",verbosityLevel=4)
         self.setupExecutionSpool()
       if self.getBackground():
         try:
@@ -282,28 +282,28 @@ $ subuser repair
       #Note, subusers with gui permission cannot be run in the background.
       # Make sure that everything is setup and ready to go.
       if not self.getSubuser().permissions["gui"] is None:
-        self.getUser().getRegistry().log("Requesting connection to X11 bridge.",verbosityLevel=4)
+        self.user.getRegistry().log("Requesting connection to X11 bridge.",verbosityLevel=4)
         self.getSubuser().x11Bridge.addClient()
-      self.getUser().getRegistry().log("Building run command.",verbosityLevel=4)
+      self.user.getRegistry().log("Building run command.",verbosityLevel=4)
       command = self.getCommand(args)
       (collectStdout,collectStderr) = self.getBackgroundCollectOutput()
-      self.getUser().getRegistry().log("Running subuser with Docker.",verbosityLevel=4)
-      self.getUser().getRegistry().log(self.getPrettyCommand(args),verbosityLevel=4)
-      returnValue = self.getUser().getDockerDaemon().execute(command,background=self.getBackground(),backgroundSuppressOutput=self.getBackgroundSuppressOutput(),backgroundCollectStdout=collectStdout,backgroundCollectStderr=collectStderr)
+      self.user.getRegistry().log("Running subuser with Docker.",verbosityLevel=4)
+      self.user.getRegistry().log(self.getPrettyCommand(args),verbosityLevel=4)
+      returnValue = self.user.getDockerDaemon().execute(command,background=self.getBackground(),backgroundSuppressOutput=self.getBackgroundSuppressOutput(),backgroundCollectStdout=collectStdout,backgroundCollectStderr=collectStderr)
       if self.getSubuser().permissions["run-commands-on-host"]:
-        self.getUser().getRegistry().log("Stopping execution spool.",verbosityLevel=4)
+        self.user.getRegistry().log("Stopping execution spool.",verbosityLevel=4)
         self.tearDownExecutionSpool()
       if not self.getSubuser().permissions["gui"] is None:
-        self.getUser().getRegistry().log("Disconnecting from X11 bridge.",verbosityLevel=4)
+        self.user.getRegistry().log("Disconnecting from X11 bridge.",verbosityLevel=4)
         self.getSubuser().x11Bridge.removeClient()
       if self.getBackground():
-        self.getUser().getRegistry().log("Waiting for CID file to be generated.",verbosityLevel=4)
+        self.user.getRegistry().log("Waiting for CID file to be generated.",verbosityLevel=4)
         while not os.path.exists(self.getCidFile()) or os.path.getsize(self.getCidFile()) == 0:
           time.sleep(0.05)
         with open(self.getCidFile(),"r") as cidFile:
-          self.getUser().getRegistry().log("Reading CID file.",verbosityLevel=4)
+          self.user.getRegistry().log("Reading CID file.",verbosityLevel=4)
           containerId = cidFile.read()
-          container = self.getUser().getDockerDaemon().getContainer(containerId)
+          container = self.user.getDockerDaemon().getContainer(containerId)
           if container is None:
             sys.exit("Container failed to start:"+containerId)
           os.remove(self.getCidFile())

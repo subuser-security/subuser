@@ -27,12 +27,12 @@ class InstallationTask(UserOwnedObject):
     Returns a list of subusers which are out of date or have no InstalledImage associated with them.
     """
     if self.__outOfDateSubusers is None:
-      self.getUser().getRegistry().log("Checking if images need to be updated or installed...")
+      self.user.getRegistry().log("Checking if images need to be updated or installed...")
       self.__outOfDateSubusers = set()
       for subuser in self.__subusersToBeUpdated:
         try:
           if (not subuser.locked) and (not (subuser.imageSource.getLatestInstalledImage() is None)):
-            self.getUser().getRegistry().log("Checking if subuser "+subuser.name+" is up to date.")
+            self.user.getRegistry().log("Checking if subuser "+subuser.name+" is up to date.")
             for imageSource in getTargetLineage(subuser.imageSource):
               if imageSource in self.__upToDateImageSources:
                 continue
@@ -48,10 +48,10 @@ class InstallationTask(UserOwnedObject):
                 break
           if subuser.imageSource.getLatestInstalledImage() is None or subuser.imageId is None or not subuser.isImageInstalled():
             if subuser.locked:
-              self.getUser().getRegistry().log("Subuser "+subuser.name+" has no image. But is locked. Marking for installation anyways.")
+              self.user.getRegistry().log("Subuser "+subuser.name+" has no image. But is locked. Marking for installation anyways.")
             self.__outOfDateSubusers.add(subuser)
         except exceptions.ImageBuildException as e:
-          self.getUser().getRegistry().log(str(e))
+          self.user.getRegistry().log(str(e))
           self.__subusersWhosImagesFailedToBuild.add(subuser)
     return self.__outOfDateSubusers
 
@@ -99,9 +99,9 @@ class InstallationTask(UserOwnedObject):
             self.__upToDateImageSources.add(imageSource)
         if not subuser.imageId == parent:
           subuser.imageId = parent
-          subuser.getUser().getRegistry().logChange("Installed new image <"+subuser.imageId+"> for subuser "+subuser.name)
+          subuser.user.getRegistry().logChange("Installed new image <"+subuser.imageId+"> for subuser "+subuser.name)
       except exceptions.ImageBuildException as e:
-        self.getUser().getRegistry().log(str(e))
+        self.user.getRegistry().log(str(e))
         self.__subusersWhosImagesFailedToBuild.add(subuser)
 
   def getSubusersWhosImagesFailedToBuild(self):
@@ -113,10 +113,10 @@ def installImage(imageSource,parent,useCache=False):
   Register the newly installed image in the user's InstalledImages list.
   Return the Id of the newly installedImage.
   """
-  imageSource.getUser().getRegistry().logChange("Installing " + imageSource.name + " ...")
+  imageSource.user.getRegistry().logChange("Installing " + imageSource.name + " ...")
   imageId = imageSource.build(parent,useCache=useCache)
-  imageSource.getUser().getInstalledImages()[imageId] = subuserlib.classes.installedImage.InstalledImage(imageSource.getUser(),imageId,imageSource.name,imageSource.repo.name,imageSource.getHash())
-  imageSource.getUser().getInstalledImages().save()
+  imageSource.user.getInstalledImages()[imageId] = subuserlib.classes.installedImage.InstalledImage(imageSource.user,imageId,imageSource.name,imageSource.repo.name,imageSource.getHash())
+  imageSource.user.getInstalledImages().save()
   return imageId
 
 def getTargetLineage(imageSource):

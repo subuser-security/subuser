@@ -47,7 +47,7 @@ class Subuser(UserOwnedObject, Describable):
     """
     if self.__imageSource is None:
       try:
-        self.__imageSource = self.getUser().getRegistry().repositories[self.__repoName][self.__imageSourceName]
+        self.__imageSource = self.user.getRegistry().repositories[self.__repoName][self.__imageSourceName]
       except KeyError:
         raise NoImageSourceException()
     return self.__imageSource
@@ -81,7 +81,7 @@ class Subuser(UserOwnedObject, Describable):
 
   @property
   def permissionsDir(self):
-    return os.path.join(self.getUser().getConfig()["registry-dir"],"permissions",self.name)
+    return os.path.join(self.user.getConfig()["registry-dir"],"permissions",self.name)
 
   @property
   def relativePermissionsDir(self):
@@ -92,7 +92,7 @@ class Subuser(UserOwnedObject, Describable):
 
   def createPermissions(self,permissionsDict):
     permissionsDotJsonWritePath = os.path.join(self.permissionsDir,"permissions.json")
-    self.__permissions = Permissions(self.getUser(),initialPermissions=permissionsDict,writePath=permissionsDotJsonWritePath)
+    self.__permissions = Permissions(self.user,initialPermissions=permissionsDict,writePath=permissionsDotJsonWritePath)
     return self.__permissions
 
   @property
@@ -100,7 +100,7 @@ class Subuser(UserOwnedObject, Describable):
     return os.path.join(self.permissionsDir,"permissions.json")
 
   def loadPermissions(self):
-    registryFileStructure = self.getUser().getRegistry().gitRepository.getFileStructureAtCommit(self.getUser().getRegistry().gitReadHash)
+    registryFileStructure = self.user.getRegistry().gitRepository.getFileStructureAtCommit(self.user.getRegistry().gitReadHash)
     try:
       initialPermissions = subuserlib.permissions.load(permissionsString=registryFileStructure.read(os.path.join(self.relativePermissionsDir,"permissions.json")))
     except OSError:
@@ -115,7 +115,7 @@ To repair your subuser installation.\n""")
       sys.exit("The subuser <"+self.name+""">'s permissions appears to be corrupt.
 
 Please file a bug report explaining how you got here.\n"""+ str(e))
-    self.__permissions = Permissions(self.getUser(),initialPermissions,writePath=self.permissionsDotJsonWritePath)
+    self.__permissions = Permissions(self.user,initialPermissions,writePath=self.permissionsDotJsonWritePath)
 
   @property
   def permissions(self):
@@ -126,28 +126,28 @@ Please file a bug report explaining how you got here.\n"""+ str(e))
   def getPermissionsTemplate(self):
     if self.__permissionsTemplate is None:
       permissionsDotJsonWritePath = os.path.join(self.permissionsDir,"permissions-template.json")
-      registryFileStructure = self.getUser().getRegistry().gitRepository.getFileStructureAtCommit(self.getUser().getRegistry().gitReadHash)
+      registryFileStructure = self.user.getRegistry().gitRepository.getFileStructureAtCommit(self.user.getRegistry().gitReadHash)
       if os.path.join(self.relativePermissionsDir,"permissions-template.json") in registryFileStructure.lsFiles(self.relativePermissionsDir):
         initialPermissions = subuserlib.permissions.load(permissionsString=registryFileStructure.read(os.path.join(self.relativePermissionsDir,"permissions-template.json")))
         save = False
       else:
         initialPermissions = self.imageSource.permissions
         save = True
-      self.__permissionsTemplate = Permissions(self.getUser(),initialPermissions,writePath=permissionsDotJsonWritePath)
+      self.__permissionsTemplate = Permissions(self.user,initialPermissions,writePath=permissionsDotJsonWritePath)
       if save:
         self.__permissionsTemplate.save()
     return self.__permissionsTemplate
 
   def editPermissionsCLI(self):
     while True:
-      self.getUser().getEndUser().runEditor(self.permissions.writePath)
+      self.user.getEndUser().runEditor(self.permissions.writePath)
       try:
         initialPermissions = subuserlib.permissions.load(permissionsFilePath=self.permissionsDotJsonWritePath)
         break
       except SyntaxError as e:
         print(e)
         input("Press ENTER to edit the permission file again.")
-    self.__permissions = Permissions(self.getUser(),initialPermissions,writePath=self.permissionsDotJsonWritePath)
+    self.__permissions = Permissions(self.user,initialPermissions,writePath=self.permissionsDotJsonWritePath)
     self.permissions.save()
 
   def removePermissions(self):
@@ -155,20 +155,20 @@ Please file a bug report explaining how you got here.\n"""+ str(e))
     Remove the user set and template permission files.
     """
     try:
-      self.getUser().getRegistry().gitRepository.run(["rm",os.path.join(self.relativePermissionsDir,"permissions.json"),os.path.join(self.relativePermissionsDir,"permissions-template.json")])
+      self.user.getRegistry().gitRepository.run(["rm",os.path.join(self.relativePermissionsDir,"permissions.json"),os.path.join(self.relativePermissionsDir,"permissions-template.json")])
     except subuserlib.classes.gitRepository.GitException:
       pass
     try:
-      self.getUser().getRegistry().gitRepository.run(["rm",os.path.join(self.relativePermissionsDir,"permissions.json"),os.path.join(self.relativePermissionsDir,"permissions-template.json")])
+      self.user.getRegistry().gitRepository.run(["rm",os.path.join(self.relativePermissionsDir,"permissions.json"),os.path.join(self.relativePermissionsDir,"permissions-template.json")])
     except subuserlib.classes.gitRepository.GitException:
       pass
 
   def isImageInstalled(self):
-    return self.getUser().getDockerDaemon().getImageProperties(self.imageId) is not None
+    return self.user.getDockerDaemon().getImageProperties(self.imageId) is not None
 
   def getRunReadyImage(self):
     if not self.__runReadyImage:
-      self.__runReadyImage = RunReadyImage(self.getUser(),self)
+      self.__runReadyImage = RunReadyImage(self.user,self)
     return self.__runReadyImage
 
   @property
@@ -177,7 +177,7 @@ Please file a bug report explaining how you got here.\n"""+ str(e))
     Return the X11 bridge object for this subuser.
     """
     if not self.__x11Bridge:
-      self.__x11Bridge = X11Bridge(self.getUser(),self)
+      self.__x11Bridge = X11Bridge(self.user,self)
     return self.__x11Bridge
 
   #TODO clean this up so that we aren't forwarding arguments in needless fluff.
@@ -186,12 +186,12 @@ Please file a bug report explaining how you got here.\n"""+ str(e))
     Returns the subuser's Runtime object for it's current permissions, creating it if necessary.
     """
     if not self.__runtime:
-      self.__runtime = Runtime(self.getUser(),subuser=self,environment=environment,extraDockerFlags=extraDockerFlags,entrypoint=entrypoint)
+      self.__runtime = Runtime(self.user,subuser=self,environment=environment,extraDockerFlags=extraDockerFlags,entrypoint=entrypoint)
     return self.__runtime
 
   def getRuntimeCache(self):
     if not self.__runtimeCache:
-      self.__runtimeCache = RuntimeCache(self.getUser(),self)
+      self.__runtimeCache = RuntimeCache(self.user,self)
     else:
       self.__runtimeCache.reload()
     return self.__runtimeCache
@@ -202,7 +202,7 @@ Please file a bug report explaining how you got here.\n"""+ str(e))
     """
     if self.permissions["stateful-home"]:
       try:
-        self.getUser().getEndUser().makedirs(self.homeDirOnHost)
+        self.user.getEndUser().makedirs(self.homeDirOnHost)
       except OSError as e:
         if e.errno() == errno.EEXIST:
           pass
@@ -215,7 +215,7 @@ Please file a bug report explaining how you got here.\n"""+ str(e))
           destinationPath = os.path.join("/subuser/userdirs",userDir)
           if not os.path.islink(symlinkPath):
             if os.path.exists(symlinkPath):
-              self.getUser().getEndUser().makedirs(os.path.join(self.homeDirOnHost,"subuser-user-dirs-backups"))
+              self.user.getEndUser().makedirs(os.path.join(self.homeDirOnHost,"subuser-user-dirs-backups"))
               os.rename(symlinkPath,os.path.join(self.homeDirOnHost,"subuser-user-dirs-backups",userDir))
             try:
               os.symlink(destinationPath,symlinkPath)
@@ -231,7 +231,7 @@ Please file a bug report explaining how you got here.\n"""+ str(e))
     Returns the path to the subuser's home dir. Unless the subuser is configured to have a stateless home, in which case returns None.
     """
     if self.permissions["stateful-home"]:
-      return os.path.join(self.getUser().getConfig()["subuser-home-dirs-dir"],self.name)
+      return os.path.join(self.user.getConfig()["subuser-home-dirs-dir"],self.name)
     else:
       return None
 
@@ -240,7 +240,7 @@ Please file a bug report explaining how you got here.\n"""+ str(e))
     if self.permissions["as-root"]:
       return "/root/"
     else:
-      return self.getUser().getEndUser().homeDir
+      return self.user.getEndUser().homeDir
 
   def describe(self):
     print("Subuser: "+self.name)
@@ -258,8 +258,8 @@ Please file a bug report explaining how you got here.\n"""+ str(e))
     Install a trivial executable script into the PATH which launches the subser image.
     """
     redirect = script
-    executablePath=os.path.join(self.getUser().getConfig()["bin-dir"], name)
-    with self.getUser().getEndUser().get_file(executablePath, 'w') as file_f:
+    executablePath=os.path.join(self.user.getConfig()["bin-dir"], name)
+    with self.user.getEndUser().get_file(executablePath, 'w') as file_f:
       file_f.write(redirect)
       st = os.stat(executablePath)
       os.chmod(executablePath, stat.S_IMODE(st.st_mode) | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)

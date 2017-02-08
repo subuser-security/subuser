@@ -11,10 +11,4 @@ All objects in subuser are owned by the C{subuserlib.classes.user.User} object.
 
 class UserOwnedObject(object):
   def __init__(self,user):
-    self.__user = user
-
-  def getUser(self):
-    """
-    Get the User that owns this object.
-    """
-    return self.__user
+    self.user = user

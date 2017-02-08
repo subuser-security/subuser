@@ -92,7 +92,7 @@ class Repository(dict,UserOwnedObject,Describable):
     if self.isLocal:
       return self.sourceDir
     else:
-      return os.path.join(self.getUser().getConfig()["repositories-dir"],self.name)
+      return os.path.join(self.user.getConfig()["repositories-dir"],self.name)
 
   def loadRepoConfig(self):
     """
@@ -140,10 +140,10 @@ class Repository(dict,UserOwnedObject,Describable):
     """
     Are there any installed images or subusers from this repository?
     """
-    for _,installedImage in self.getUser().getInstalledImages().items():
+    for _,installedImage in self.user.getInstalledImages().items():
       if self.name == installedImage.sourceRepoId:
           return True
-      for _,subuser in self.getUser().getRegistry().subusers.items():
+      for _,subuser in self.user.getRegistry().subusers.items():
         try:
           if self.name == subuser.imageSource.repo.name:
             return True
@@ -178,9 +178,9 @@ class Repository(dict,UserOwnedObject,Describable):
       return
     if not self.isPresent():
       new = True
-      self.getUser().getRegistry().log("Cloning repository "+self.name+" from "+self.gitOriginURI)
+      self.user.getRegistry().log("Cloning repository "+self.name+" from "+self.gitOriginURI)
       if self.gitRepository.clone(self.gitOriginURI) != 0:
-        self.getUser().getRegistry().log("Clone failed.")
+        self.user.getRegistry().log("Clone failed.")
         return
     else:
       new = False
@@ -190,7 +190,7 @@ class Repository(dict,UserOwnedObject,Describable):
       pass
     if self.updateGitCommitHash():
       if not new:
-        self.getUser().getRegistry().logChange("Updated repository "+self.displayName)
+        self.user.getRegistry().logChange("Updated repository "+self.displayName)
       if not initialUpdate:
         self.loadImageSources()
 
@@ -210,13 +210,13 @@ class Repository(dict,UserOwnedObject,Describable):
     imageNames = self.fileStructure.lsFolders(self.relativeImageSourcesDir)
     imageNames = [os.path.basename(path) for path in imageNames]
     for imageName in imageNames:
-      imageSource = ImageSource(self.getUser(),self,imageName)
+      imageSource = ImageSource(self.user,self,imageName)
       if self.fileStructure.exists(imageSource.getRelativePermissionsFilePath()):
         self[imageName] = imageSource
     if self.repoConfig is not None and "explicit-image-sources" in self.repoConfig:
       for imageName,config in self.repoConfig["explicit-image-sources"].items():
         assert config is not None
-        self[imageName] = ImageSource(self.getUser(),self,imageName,explicitConfig = config)
+        self[imageName] = ImageSource(self.user,self,imageName,explicitConfig = config)
 
   def updateGitCommitHash(self):
     """
@@ -234,7 +234,7 @@ class Repository(dict,UserOwnedObject,Describable):
       configAtMaster = json.loads(configFileContents)
       if "subuser-version-constraints" in configAtMaster:
         versionConstraints = configAtMaster["subuser-version-constraints"]
-        subuserVersion = subuserlib.version.getSubuserVersion(self.getUser())
+        subuserVersion = subuserlib.version.getSubuserVersion(self.user)
         for constraint in versionConstraints:
           if not len(constraint) == 3:
             raise SyntaxError("Error in .subuser.json file. Invalid subuser-version-constraints."+ str(versionConstraints))

@@ -21,7 +21,7 @@ class EndUser(UserOwnedObject,object):
     self.sudo = False
     self.name = name
     try:
-      self.name = self.getUser().getConfig()["user"]
+      self.name = self.user.getConfig()["user"]
       self.proxiedByOtherUser = True
     except KeyError:
       try:

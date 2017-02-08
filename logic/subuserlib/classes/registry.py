@@ -36,28 +36,28 @@ class Registry(userOwnedObject.UserOwnedObject):
     self.gitRepository = None
     self.gitReadHash = gitReadHash
     userOwnedObject.UserOwnedObject.__init__(self,user)
-    self.registryDir = self.getUser().getConfig()["registry-dir"]
+    self.registryDir = self.user.getConfig()["registry-dir"]
     self.logFilePath = os.path.join(self.registryDir,"commit_log")
-    self.gitRepository = GitRepository(self.getUser(),self.registryDir)
+    self.gitRepository = GitRepository(self.user,self.registryDir)
 
   @property
   def subusers(self):
     if self.__subusers is None:
-      self.__subusers = subusers.Subusers(self.getUser())
+      self.__subusers = subusers.Subusers(self.user)
     return self.__subusers
 
   @property
   def repositories(self):
     if not self.__repositories:
-      self.__repositories = repositories.Repositories(self.getUser())
+      self.__repositories = repositories.Repositories(self.user)
     return self.__repositories
 
   def ensureGitRepoInitialized(self):
-    if not os.path.exists(os.path.join(self.getUser().getConfig()["registry-dir"],".git")):
+    if not os.path.exists(os.path.join(self.user.getConfig()["registry-dir"],".git")):
       self.initialized = False
       # Ensure git is setup before we start to make changes.
       self.gitRepository.getGitExecutable()
-      self.getUser().getEndUser().makedirs(self.getUser().getConfig()["registry-dir"])
+      self.user.getEndUser().makedirs(self.user.getConfig()["registry-dir"])
       self.gitRepository.run(["init"])
       self.logChange("Initial commit.")
       self.commit("Initial commit.")
@@ -104,7 +104,7 @@ class Registry(userOwnedObject.UserOwnedObject):
     if self.__changed:
       self.repositories.save()
       self.subusers.save()
-      with self.getUser().getEndUser().get_file(self.logFilePath) as fd:
+      with self.user.getEndUser().get_file(self.logFilePath) as fd:
         fd.write(self.__changeLog)
       self.gitRepository.run(["add","."])
       if message is None:
@@ -122,7 +122,7 @@ class Registry(userOwnedObject.UserOwnedObject):
 
   def logToLiveLog(self,announcement):
     announcementJson = json.dumps(announcement)
-    liveLogDir=os.path.join(self.getUser().homeDir,".subuser/registry-live-log")
+    liveLogDir=os.path.join(self.user.homeDir,".subuser/registry-live-log")
     if os.path.isdir(liveLogDir):
       for liveLogPid in os.listdir(liveLogDir):
         liveLogPath = os.path.join(liveLogDir,liveLogPid)
@@ -139,12 +139,12 @@ class Registry(userOwnedObject.UserOwnedObject):
     To be used with with.
     """
     try:
-      self.getUser().getEndUser().makedirs(self.getUser().getConfig()["lock-dir"])
+      self.user.getEndUser().makedirs(self.user.getConfig()["lock-dir"])
     except OSError as exception:
       if exception.errno != errno.EEXIST:
         raise
     try:
-      lock = subuserlib.lock.getLock(self.getUser().getEndUser().get_file(os.path.join(self.getUser().getConfig()["lock-dir"],"registry.lock"),'w'),timeout=1)
+      lock = subuserlib.lock.getLock(self.user.getEndUser().get_file(os.path.join(self.user.getConfig()["lock-dir"],"registry.lock"),'w'),timeout=1)
       with lock:
         yield
     except IOError as e:

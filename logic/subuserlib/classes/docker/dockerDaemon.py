@@ -126,7 +126,7 @@ class DockerDaemon(UserOwnedObject):
       return []
 
   def getContainer(self,containerId):
-    return Container(self.getUser(),containerId)
+    return Container(self.user,containerId)
 
   def getImageProperties(self,imageTagOrId):
     """
@@ -192,14 +192,14 @@ class DockerDaemon(UserOwnedObject):
       if quietClient:
         response.read()
       else:
-        readAndPrintStreamingBuildStatus(self.getUser(), response)
+        readAndPrintStreamingBuildStatus(self.user, response)
       raise exceptions.ImageBuildException("Building image failed.\n"
                      +"status: "+str(response.status)+"\n"
                      +"Reason: "+response.reason+"\n")
     if quietClient:
       output = response.read().decode("utf-8")
     else:
-      output = readAndPrintStreamingBuildStatus(self.getUser(),response)
+      output = readAndPrintStreamingBuildStatus(self.user,response)
     # Now we move to regex code stolen from the official python Docker bindings. This is REALLY UGLY!
     outputLines = output.split("\n")
     search = r'Successfully built ([0-9a-f]+)' #This is REALLY ugly!

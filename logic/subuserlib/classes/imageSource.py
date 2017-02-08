@@ -34,7 +34,7 @@ class ImageSource(UserOwnedObject,Describable):
     return self.name + "@" + self.repo.displayName
 
   def getDockerImageTag(self):
-    longTag = "subuser-" + self.getUser().getEndUser().name + "-" + self.getIdentifier()
+    longTag = "subuser-" + self.user.getEndUser().name + "-" + self.getIdentifier()
     return subuserlib.docker.buildImageTag(longTag,self.getHash())
 
   def getSubusers(self):
@@ -42,7 +42,7 @@ class ImageSource(UserOwnedObject,Describable):
      Get a list of subusers that were built from this ImageSource.
     """
     subusers = []
-    for subuser in self.getUser().getRegistry().subusers:
+    for subuser in self.user.getRegistry().subusers:
       if subuser.imageSource==self:
         subusers.append(subuser)
     return subusers
@@ -84,7 +84,7 @@ class ImageSource(UserOwnedObject,Describable):
     Return the installed images which are based on this image.
     """
     installedImagesBasedOnThisImageSource = []
-    for _,installedImage in self.getUser().getInstalledImages().items():
+    for _,installedImage in self.user.getInstalledImages().items():
       if installedImage.imageSourceName == self.name and installedImage.sourceRepoId == self.repo.name:
         installedImagesBasedOnThisImageSource.append(installedImage)
     return installedImagesBasedOnThisImageSource
@@ -105,7 +105,7 @@ class ImageSource(UserOwnedObject,Describable):
     if not self.__permissions:
       permissionsString = self.repo.fileStructure.read(self.getRelativePermissionsFilePath())
       initialPermissions = subuserlib.permissions.load(permissionsString=permissionsString)
-      self.__permissions = subuserlib.classes.permissions.Permissions(self.getUser(),initialPermissions,writePath=self.getPermissionsFilePath())
+      self.__permissions = subuserlib.classes.permissions.Permissions(self.user,initialPermissions,writePath=self.getPermissionsFilePath())
     return self.__permissions
 
   def describe(self):
@@ -129,11 +129,11 @@ class ImageSource(UserOwnedObject,Describable):
           dockerfileContents = "FROM " + parent + "\n"
         else:
           dockerfileContents += line + "\n"
-    imageId = self.getUser().getDockerDaemon().build(relativeBuildContextPath=self.getImageDir(),repositoryFileStructure=self.repo.fileStructure,rm=True,dockerfile=dockerfileContents,useCache=useCache)
+    imageId = self.user.getDockerDaemon().build(relativeBuildContextPath=self.getImageDir(),repositoryFileStructure=self.repo.fileStructure,rm=True,dockerfile=dockerfileContents,useCache=useCache)
     subuserSetupDockerFile = ""
     subuserSetupDockerFile += "FROM "+imageId+"\n"
     subuserSetupDockerFile += "RUN mkdir -p /subuser ; echo "+str(uuid.uuid4())+" > /subuser/uuid\n" # This ensures that all images have unique Ids.  Even images that are otherwise the same.
-    return self.getUser().getDockerDaemon().build(dockerfile=subuserSetupDockerFile,tag=self.getDockerImageTag(),useCache=False)
+    return self.user.getDockerDaemon().build(dockerfile=subuserSetupDockerFile,tag=self.getDockerImageTag(),useCache=False)
 
   def getImageFile(self):
     if self.__explicitConfig:
@@ -165,7 +165,7 @@ class ImageSource(UserOwnedObject,Describable):
         try:
           import subuserlib.resolve
           imageURI = line.split(" ")[1]
-          return subuserlib.resolve.resolveImageSource(self.getUser(),imageURI,contextRepository=self.repo,allowLocalRepositories=False) #TODO, ImageSource names with spaces or other funny characters...
+          return subuserlib.resolve.resolveImageSource(self.user,imageURI,contextRepository=self.repo,allowLocalRepositories=False) #TODO, ImageSource names with spaces or other funny characters...
         except IndexError:
           raise exceptions.ImageBuildException("Syntax error in SubuserImagefile one line "+str(lineNumber)+":\n"+line)
         except KeyError:

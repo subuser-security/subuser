@@ -16,7 +16,7 @@ def getInstalledImagesThatAreInUse(user):
   for _,subuser in user.getRegistry().subusers.items():
     if subuser.imageId:
       try:
-        installedImage = subuser.getUser().getInstalledImages()[subuser.imageId]
+        installedImage = subuser.user.getInstalledImages()[subuser.imageId]
         for inUseInstalledImage in installedImage.getImageLineage():
           installedImagesThatAreInUse[inUseInstalledImage.imageId] = inUseInstalledImage
       except KeyError:

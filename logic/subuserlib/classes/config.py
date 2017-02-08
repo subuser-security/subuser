@@ -19,7 +19,7 @@ class Config(userOwnedObject.UserOwnedObject, dict):
 
   def _getSubuserConfigPaths(self):
     """ Returns a list of paths to config.json files in order that they should be looked in. """
-    configFileInHomeDir = os.path.join(self.getUser().homeDir,".subuser","config.json")
+    configFileInHomeDir = os.path.join(self.user.homeDir,".subuser","config.json")
     configFileInEtc = "/etc/subuser/config.json"
     configFileInSubuserDir = paths.getSubuserDataFile("config.json")
     return [configFileInHomeDir,configFileInEtc,configFileInSubuserDir]
@@ -38,7 +38,7 @@ class Config(userOwnedObject.UserOwnedObject, dict):
       ,"runtime-cache"
       ,"lock-dir"
       ,"volumes-dir"]
-    loadMultiFallbackJsonConfigFile.expandPathsInDict(self.getUser().homeDir,pathsToExpand,config)
+    loadMultiFallbackJsonConfigFile.expandPathsInDict(self.user.homeDir,pathsToExpand,config)
 
   def _loadConfig(self):
     """
