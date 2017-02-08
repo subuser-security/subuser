@@ -28,7 +28,7 @@ def removeOldImages(user,dryrun=False,yes=False,sourceRepo=None,imageSourceName=
   imagesToBeRemoved = []
   for installedImageId,installedImage in user.installedImages.items():
     if (   (not installedImageId in installedImagesThatAreInUse)
-       and (not sourceRepo or installedImage.sourceRepoId == sourceRepo.getId())
+       and (not sourceRepo or installedImage.sourceRepoId == sourceRepo.id)
        and (not imageSourceName or installedImage.imageSourceName == imageSourceName)):
       imagesToBeRemoved.append(installedImage)
   if not imagesToBeRemoved:

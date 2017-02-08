@@ -28,7 +28,7 @@ class Container(UserOwnedObject):
       return json.loads(response.read().decode("utf-8"))
 
   def stop(self):
-    self.user.dockerDaemon.getConnection().request("POST","/v1.13/containers/"+self.getId()+"/stop")
+    self.user.dockerDaemon.getConnection().request("POST","/v1.13/containers/"+self.id+"/stop")
     response = self.user.dockerDaemon.getConnection().getresponse()
     response.read()
 
@@ -40,7 +40,7 @@ class Container(UserOwnedObject):
       queryParametersString = urllib.urlencode(queryParameters)
     except AttributeError:
       queryParametersString = urllib.parse.urlencode(queryParameters) # Python 3
-    self.user.dockerDaemon.getConnection().request("DELETE","/v1.13/containers/"+self.getId()+"?"+queryParametersString)
+    self.user.dockerDaemon.getConnection().request("DELETE","/v1.13/containers/"+self.id+"?"+queryParametersString)
     response = self.user.dockerDaemon.getConnection().getresponse()
     response.read()
 

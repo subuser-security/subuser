@@ -103,7 +103,7 @@ class XpraX11Bridge(Service):
     return newSubusers
 
   def getXpraVolumePath(self):
-    return os.path.join(self.user.config["volumes-dir"],"xpra",self.getSubuser().name)
+    return os.path.join(self.user.config["volumes-dir"],"xpra",self.subuser.name)
 
   def getServerSideX11Path(self):
     return os.path.join(self.getXpraVolumePath(),"tmp",".X11-unix")
@@ -118,11 +118,11 @@ class XpraX11Bridge(Service):
     return os.path.join(self.getXpraHomeDir(),".xpra",self.getServerSubuserHostname()+"-100")
 
   def getServerSubuserHostname(self):
-    longHostName = "xpra-server"+hashlib.sha256(self.getSubuser().name.encode("utf-8")).hexdigest()
+    longHostName = "xpra-server"+hashlib.sha256(self.subuser.name.encode("utf-8")).hexdigest()
     return longHostName[:63]
 
   def getServerSubuserName(self):
-    return "!service-subuser-"+self.getSubuser().name+"-xpra-server"
+    return "!service-subuser-"+self.subuser.name+"-xpra-server"
 
   def getServerSubuser(self):
     return self.user.registry.subusers[self.getServerSubuserName()]
@@ -133,18 +133,18 @@ class XpraX11Bridge(Service):
 
   def addServerSubuser(self):
     subuserlib.subuser.addFromImageSourceNoVerify(self.user,self.getServerSubuserName(),self.user.registry.repositories["default"]["subuser-internal-xpra-server"])
-    self.getSubuser().serviceSubuserNames.append(self.getServerSubuserName())
+    self.subuser.serviceSubuserNames.append(self.getServerSubuserName())
     self.getServerSubuser().createPermissions(self.getServerSubuser().imageSource.permissions)
 
   def getClientSubuserName(self):
-    return "!service-subuser-"+self.getSubuser().name+"-xpra-client"
+    return "!service-subuser-"+self.subuser.name+"-xpra-client"
 
   def getClientSubuser(self):
     return self.user.registry.subusers[self.getClientSubuserName()]
 
   def addClientSubuser(self):
     subuserlib.subuser.addFromImageSourceNoVerify(self.user,self.getClientSubuserName(),self.user.registry.repositories["default"]["subuser-internal-xpra-client"])
-    self.getSubuser().serviceSubuserNames.append(self.getClientSubuserName())
+    self.subuser.serviceSubuserNames.append(self.getClientSubuserName())
     self.getClientSubuser().createPermissions(self.getClientSubuser().imageSource.permissions)
 
   def cleanUp(self):
@@ -153,7 +153,7 @@ class XpraX11Bridge(Service):
     """
     self.user.registry.log("Cleaning up old bridge volume files.",verbosityLevel=4)
     try:
-      shutil.rmtree(os.path.join(self.user.config["volumes-dir"],"xpra",self.getSubuser().name))
+      shutil.rmtree(os.path.join(self.user.config["volumes-dir"],"xpra",self.subuser.name))
     except OSError as e:
       # We need to clean this up.
       # Unfortunately, the X11 socket may still exist and will be owned by root.
@@ -162,7 +162,7 @@ class XpraX11Bridge(Service):
       if not e.errno == errno.ENOENT:
         self.user.registry.log("An error occured while setting up xpra X11 socket.",verbosityLevel=3)
         self.user.registry.log(str(e),verbosityLevel=3)
-        self.user.dockerDaemon.execute(["run","--rm","--volume",os.path.join(self.user.config["volumes-dir"],"xpra")+":/xpra-volume","--entrypoint","/bin/rm",self.getServerSubuser().imageId,"-rf",os.path.join("/xpra-volume/",self.getSubuser().name)])
+        self.user.dockerDaemon.execute(["run","--rm","--volume",os.path.join(self.user.config["volumes-dir"],"xpra")+":/xpra-volume","--entrypoint","/bin/rm",self.getServerSubuser().imageId,"-rf",os.path.join("/xpra-volume/",self.subuser.name)])
 
   def createAndSetupSpecialVolumes(self,errorCount=0):
     def clearAndTryAgain():
@@ -206,7 +206,7 @@ class XpraX11Bridge(Service):
      "clipboard": ("--clipboard","--no-clipboard")}
     permissionArgs = []
     for guiPermission,(on,off) in permissionDict.items():
-      if self.getSubuser().permissions["gui"][guiPermission]:
+      if self.subuser.permissions["gui"][guiPermission]:
         permissionArgs.append(on)
       else:
         permissionArgs.append(off)
@@ -228,11 +228,11 @@ class XpraX11Bridge(Service):
     self.user.registry.log("Entering run subrutine.",verbosityLevel=4)
     (serverContainer, serverProcess) = serverRuntime.run(args=serverArgs)
     self.user.registry.log("Getting server CID",verbosityLevel=4)
-    serviceStatus["xpra-server-service-cid"] = serverContainer.getId()
+    serviceStatus["xpra-server-service-cid"] = serverContainer.id
     self.waitForContainerToLaunch("xpra is ready", serverProcess, suppressOutput)
     # Launch xpra client
     try:
-      borderColor = self.getSubuser().permissions["gui"]["border-color"]
+      borderColor = self.subuser.permissions["gui"]["border-color"]
       if "-" in borderColor:
         borderColor = "red"
     except:
@@ -247,7 +247,7 @@ class XpraX11Bridge(Service):
     clientRuntime.setBackground(True)
     clientRuntime.setBackgroundSuppressOutput(suppressOutput)
     (clientContainer, clientProcess) = clientRuntime.run(args=clientArgs)
-    serviceStatus["xpra-client-service-cid"] = clientContainer.getId()
+    serviceStatus["xpra-client-service-cid"] = clientContainer.id
     return serviceStatus
 
   def waitForContainerToLaunch(self, readyString, process, suppressOutput):

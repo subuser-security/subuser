@@ -25,7 +25,7 @@ def getRecursiveDirectoryContents(directory):
 
 class Runtime(UserOwnedObject):
   def __init__(self,user,subuser,environment,extraDockerFlags=None,entrypoint = None):
-    self.__subuser = subuser
+    self.subuser = subuser
     self.__environment = environment
     self.__backgroundSuppressOutput = True
     self.__backgroundCollectStdout = False
@@ -36,7 +36,7 @@ class Runtime(UserOwnedObject):
     else:
       self.__extraFlags = extraDockerFlags
     if not entrypoint:
-      self.entrypoint = self.getSubuser().permissions["executable"]
+      self.entrypoint = self.subuser.permissions["executable"]
     else:
       self.entrypoint = entrypoint
     self.__background = False
@@ -46,12 +46,9 @@ class Runtime(UserOwnedObject):
       self.__hostname = "<random-hostname>"
     UserOwnedObject.__init__(self,user)
 
-  def getSubuser(self):
-    return self.__subuser
-
   def getRunReadyImageId(self):
     try:
-      return self.getSubuser().getRunReadyImage().getId()
+      return self.subuser.getRunReadyImage().id
     except KeyError:
       sys.exit("""No run ready image is prepaired for this subuser. Please run:
 
@@ -71,7 +68,7 @@ $ subuser repair
     return [device for device in os.listdir("/dev/") if device.startswith("ttyS") or device.startswith("ttyUSB") or device.startswith("ttyACM")]
 
   def getCidFile(self):
-    return "/tmp/subuser-"+self.getSubuser().name
+    return "/tmp/subuser-"+self.subuser.name
 
   def getBasicFlags(self):
     common = ["--rm"]
@@ -115,16 +112,16 @@ $ subuser repair
     """
     return collections.OrderedDict([
      # Conservative permissions
-     ("stateful-home", lambda p : ["--volume="+self.getSubuser().homeDirOnHost+":"+self.getSubuser().dockersideHome+":rw","-e","HOME="+self.getSubuser().dockersideHome] if p else ["-e","HOME="+self.getSubuser().dockersideHome]),
+     ("stateful-home", lambda p : ["--volume="+self.subuser.homeDirOnHost+":"+self.subuser.dockersideHome+":rw","-e","HOME="+self.subuser.dockersideHome] if p else ["-e","HOME="+self.subuser.dockersideHome]),
      ("inherit-locale", lambda p : self.passOnEnvVar("LANG")+self.passOnEnvVar("LANGUAGE") if p else []),
      ("inherit-timezone", lambda p : self.passOnEnvVar("TZ")+["--volume=/etc/localtime:/etc/localtime:ro"] if p else []),
      # Moderate permissions
-     ("gui", lambda p : ["-e","DISPLAY=unix:100","--volume",self.getSubuser().x11Bridge.getServerSideX11Path()+":/tmp/.X11-unix:rw"] if p else []),
-     ("user-dirs", lambda userDirs : ["--volume="+os.path.join(self.getSubuser().user.endUser.homeDir,userDir)+":"+os.path.join("/subuser/userdirs/",userDir)+":rw" for userDir in userDirs]),
+     ("gui", lambda p : ["-e","DISPLAY=unix:100","--volume",self.subuser.x11Bridge.getServerSideX11Path()+":/tmp/.X11-unix:rw"] if p else []),
+     ("user-dirs", lambda userDirs : ["--volume="+os.path.join(self.subuser.user.endUser.homeDir,userDir)+":"+os.path.join("/subuser/userdirs/",userDir)+":rw" for userDir in userDirs]),
      ("inherit-envvars", lambda envVars: [arg for var in envVars for arg in self.passOnEnvVar (var)]),
      ("sound-card", lambda p: self.getSoundArgs() if p else []),
      ("webcam", lambda p: ["--device=/dev/"+device for device in os.listdir("/dev/") if device.startswith("video")] if p else []),
-     ("access-working-directory", lambda p: ["--volume="+os.getcwd()+":/pwd:rw","--workdir=/pwd"] if p else ["--workdir="+self.getSubuser().dockersideHome]),
+     ("access-working-directory", lambda p: ["--volume="+os.getcwd()+":/pwd:rw","--workdir=/pwd"] if p else ["--workdir="+self.subuser.dockersideHome]),
      ("allow-network-access", lambda p: ["--net=bridge"] if p else ["--net=none"]),
      # Liberal permissions
      ("x11", lambda p: ["-e","DISPLAY=unix"+self.getEnvvar('DISPLAY'),"--volume=/tmp/.X11-unix:/tmp/.X11-unix:rw","--volume="+self.getXautorityFilePath()+":/subuser/.Xauthority:ro","-e","XAUTHORITY=/subuser/.Xauthority"] if p else []),
@@ -185,7 +182,7 @@ $ subuser repair
     flags = self.getBasicFlags()
     flags.extend(self.__extraFlags)
     permissionFlagDict = self.getPermissionFlagDict()
-    permissions = self.getSubuser().permissions
+    permissions = self.subuser.permissions
     for permission, flagGenerator in permissionFlagDict.items():
       flags.extend(flagGenerator(permissions[permission]))
     flags.extend(self.getHostnameFlag())
@@ -218,7 +215,7 @@ $ subuser repair
     self.__backgroundCollectStderr = collectStderr
 
   def getXautorityDirPath(self):
-    return os.path.join(self.user.config["volumes-dir"],"x11",str(os.getpid()),self.getSubuser().name)
+    return os.path.join(self.user.config["volumes-dir"],"x11",str(os.getpid()),self.subuser.name)
 
   def getXautorityFilePath(self):
     return os.path.join(self.getXautorityDirPath(),".Xauthority")
@@ -260,18 +257,18 @@ $ subuser repair
     def reallyRun():
       if not self.entrypoint:
         sys.exit("Cannot run subuser, no executable configured in permissions.json file.")
-      if self.getSubuser().permissions["stateful-home"]:
+      if self.subuser.permissions["stateful-home"]:
         self.user.registry.log("Setting up subuser home dir.",verbosityLevel=4)
-        self.getSubuser().setupHomeDir()
-      if self.getSubuser().permissions["stateful-home"] and self.getSubuser().permissions["user-dirs"]:
+        self.subuser.setupHomeDir()
+      if self.subuser.permissions["stateful-home"] and self.subuser.permissions["user-dirs"]:
         self.user.registry.log("Creating user dir symlinks in subuser home dir.",verbosityLevel=4)
-        userDirsDir = os.path.join(self.getSubuser().homeDirOnHost,"Userdirs")
+        userDirsDir = os.path.join(self.subuser.homeDirOnHost,"Userdirs")
         if os.path.islink(userDirsDir):
           sys.exit("Please remove the old Userdirs directory, it is no longer needed. The path is:"+userDirsDir)
-      if self.getSubuser().permissions["x11"]:
+      if self.subuser.permissions["x11"]:
         self.user.registry.log("Generating xauth file.",verbosityLevel=4)
         self.setupXauth()
-      if self.getSubuser().permissions["run-commands-on-host"]:
+      if self.subuser.permissions["run-commands-on-host"]:
         self.user.registry.log("Launching execution spool daemon.",verbosityLevel=4)
         self.setupExecutionSpool()
       if self.getBackground():
@@ -281,21 +278,21 @@ $ subuser repair
           pass
       #Note, subusers with gui permission cannot be run in the background.
       # Make sure that everything is setup and ready to go.
-      if not self.getSubuser().permissions["gui"] is None:
+      if not self.subuser.permissions["gui"] is None:
         self.user.registry.log("Requesting connection to X11 bridge.",verbosityLevel=4)
-        self.getSubuser().x11Bridge.addClient()
+        self.subuser.x11Bridge.addClient()
       self.user.registry.log("Building run command.",verbosityLevel=4)
       command = self.getCommand(args)
       (collectStdout,collectStderr) = self.getBackgroundCollectOutput()
       self.user.registry.log("Running subuser with Docker.",verbosityLevel=4)
       self.user.registry.log(self.getPrettyCommand(args),verbosityLevel=4)
       returnValue = self.user.dockerDaemon.execute(command,background=self.getBackground(),backgroundSuppressOutput=self.getBackgroundSuppressOutput(),backgroundCollectStdout=collectStdout,backgroundCollectStderr=collectStderr)
-      if self.getSubuser().permissions["run-commands-on-host"]:
+      if self.subuser.permissions["run-commands-on-host"]:
         self.user.registry.log("Stopping execution spool.",verbosityLevel=4)
         self.tearDownExecutionSpool()
-      if not self.getSubuser().permissions["gui"] is None:
+      if not self.subuser.permissions["gui"] is None:
         self.user.registry.log("Disconnecting from X11 bridge.",verbosityLevel=4)
-        self.getSubuser().x11Bridge.removeClient()
+        self.subuser.x11Bridge.removeClient()
       if self.getBackground():
         self.user.registry.log("Waiting for CID file to be generated.",verbosityLevel=4)
         while not os.path.exists(self.getCidFile()) or os.path.getsize(self.getCidFile()) == 0:

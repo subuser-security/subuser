@@ -27,7 +27,7 @@ def runCommand(realArgs):
   runningImages = [container["Image"] for container in user.dockerDaemon.getContainers(onlyRunning=True)]
   for _,subuser in user.registry.subusers.items():
     try:
-      if subuser.getRunReadyImage().getId() in runningImages:
+      if subuser.getRunReadyImage().id in runningImages:
         if not options.internal:
           if subuser.name.startswith("!"):
             continue

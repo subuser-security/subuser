@@ -13,25 +13,24 @@ from subuserlib.classes.fileBackedObject import FileBackedObject
 
 class RuntimeCache(dict,UserOwnedObject,FileBackedObject):
   def __init__(self,user,subuser):
-    self.__subuser = subuser
+    self.subuser = subuser
     UserOwnedObject.__init__(self,user)
     self.load()
 
-  def getPathToCurrentImagesRuntimeCacheDir(self):
-    return os.path.join(self.user.config["runtime-cache"],self.getSubuser().imageId)
+  @property
+  def pathToCurrentImagesRuntimeCacheDir(self):
+    return os.path.join(self.user.config["runtime-cache"],self.subuser.imageId)
 
-  def getRuntimeCacheFilePath(self):
-    return os.path.join(self.getPathToCurrentImagesRuntimeCacheDir(),self.getSubuser().permissions.getHash()+".json")
-
-  def getSubuser(self):
-    return self.__subuser
+  @property
+  def runtimeCacheFilePath(self):
+    return os.path.join(self.pathToCurrentImagesRuntimeCacheDir,self.subuser.permissions.getHash()+".json")
 
   def save(self):
     try:
-      self.user.endUser.makedirs(self.getPathToCurrentImagesRuntimeCacheDir())
+      self.user.endUser.makedirs(self.pathToCurrentImagesRuntimeCacheDir)
     except OSError:
       pass
-    with self.user.endUser.get_file(self.getRuntimeCacheFilePath(),mode='w') as runtimeCacheFileHandle:
+    with self.user.endUser.get_file(self.runtimeCacheFilePath,mode='w') as runtimeCacheFileHandle:
       json.dump(self,runtimeCacheFileHandle,indent=1,separators=(',',': '))
 
   def reload(self):
@@ -39,9 +38,9 @@ class RuntimeCache(dict,UserOwnedObject,FileBackedObject):
     self.load()
 
   def load(self):
-    if not self.getSubuser().imageId:
-      raise NoRuntimeCacheForSubusersWhichDontHaveExistantImagesException("No runnable image for subuser "+self.getSubuser().name+" found. Use\n\n $ subuser repair\n\nTo repair your instalation.")
-    runtimeCacheFilePath = self.getRuntimeCacheFilePath()
+    if not self.subuser.imageId:
+      raise NoRuntimeCacheForSubusersWhichDontHaveExistantImagesException("No runnable image for subuser "+self.subuser.name+" found. Use\n\n $ subuser repair\n\nTo repair your instalation.")
+    runtimeCacheFilePath = self.runtimeCacheFilePath
     if os.path.exists(runtimeCacheFilePath):
       with open(runtimeCacheFilePath,mode="r") as runtimeCacheFileHandle:
         runtimeCacheInfo = json.load(runtimeCacheFileHandle)
