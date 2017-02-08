@@ -1,0 +1,9 @@
+#!/bin/bash
+git grep $1
+read -r -p "Coninue? [y/N] " response
+if [[ "$response" =~ ^([yY][eE][sS]|[yY])+$ ]]
+then
+    git grep -l $1 | xargs sed -i "s/$1/$2/g"
+else
+    echo "Bye."
+fi
