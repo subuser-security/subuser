@@ -84,7 +84,7 @@ def approvePermissions(user,subusers,permissionsAccepter):
   subusersWhosPermissionsFailedToParse = []
   exceptions = []
   for subuser in subusers:
-    if subuser.locked():
+    if subuser.locked:
       continue
     try:
       userApproved = subuser.permissions
@@ -108,7 +108,7 @@ def ensureServiceSubusersAreSetup(user,subusers):
   newServiceSubusers = []
   for subuser in subusers:
     if not subuser.permissions["gui"] is None:
-      newServiceSubusers += subuser.getX11Bridge().setup()
+      newServiceSubusers += subuser.x11Bridge.setup()
   return newServiceSubusers
 
 def trimUnneededTempRepos(user):
@@ -205,4 +205,4 @@ def cleanUpAfterImproperlyTerminatedServices(user):
       except OSError as e:
         print(e)
     else:
-      user.getRegistry().subusers[subuserWithServiceDirs].getX11Bridge().cleanUpIfNotRunning()
+      user.getRegistry().subusers[subuserWithServiceDirs].x11Bridge.cleanUpIfNotRunning()

@@ -115,16 +115,16 @@ $ subuser repair
     """
     return collections.OrderedDict([
      # Conservative permissions
-     ("stateful-home", lambda p : ["--volume="+self.getSubuser().getHomeDirOnHost()+":"+self.getSubuser().getDockersideHome()+":rw","-e","HOME="+self.getSubuser().getDockersideHome()] if p else ["-e","HOME="+self.getSubuser().getDockersideHome()]),
+     ("stateful-home", lambda p : ["--volume="+self.getSubuser().homeDirOnHost+":"+self.getSubuser().dockersideHome+":rw","-e","HOME="+self.getSubuser().dockersideHome] if p else ["-e","HOME="+self.getSubuser().dockersideHome]),
      ("inherit-locale", lambda p : self.passOnEnvVar("LANG")+self.passOnEnvVar("LANGUAGE") if p else []),
      ("inherit-timezone", lambda p : self.passOnEnvVar("TZ")+["--volume=/etc/localtime:/etc/localtime:ro"] if p else []),
      # Moderate permissions
-     ("gui", lambda p : ["-e","DISPLAY=unix:100","--volume",self.getSubuser().getX11Bridge().getServerSideX11Path()+":/tmp/.X11-unix:rw"] if p else []),
+     ("gui", lambda p : ["-e","DISPLAY=unix:100","--volume",self.getSubuser().x11Bridge.getServerSideX11Path()+":/tmp/.X11-unix:rw"] if p else []),
      ("user-dirs", lambda userDirs : ["--volume="+os.path.join(self.getSubuser().getUser().getEndUser().homeDir,userDir)+":"+os.path.join("/subuser/userdirs/",userDir)+":rw" for userDir in userDirs]),
      ("inherit-envvars", lambda envVars: [arg for var in envVars for arg in self.passOnEnvVar (var)]),
      ("sound-card", lambda p: self.getSoundArgs() if p else []),
      ("webcam", lambda p: ["--device=/dev/"+device for device in os.listdir("/dev/") if device.startswith("video")] if p else []),
-     ("access-working-directory", lambda p: ["--volume="+os.getcwd()+":/pwd:rw","--workdir=/pwd"] if p else ["--workdir="+self.getSubuser().getDockersideHome()]),
+     ("access-working-directory", lambda p: ["--volume="+os.getcwd()+":/pwd:rw","--workdir=/pwd"] if p else ["--workdir="+self.getSubuser().dockersideHome]),
      ("allow-network-access", lambda p: ["--net=bridge"] if p else ["--net=none"]),
      # Liberal permissions
      ("x11", lambda p: ["-e","DISPLAY=unix"+self.getEnvvar('DISPLAY'),"--volume=/tmp/.X11-unix:/tmp/.X11-unix:rw","--volume="+self.getXautorityFilePath()+":/subuser/.Xauthority:ro","-e","XAUTHORITY=/subuser/.Xauthority"] if p else []),
@@ -265,7 +265,7 @@ $ subuser repair
         self.getSubuser().setupHomeDir()
       if self.getSubuser().permissions["stateful-home"] and self.getSubuser().permissions["user-dirs"]:
         self.getUser().getRegistry().log("Creating user dir symlinks in subuser home dir.",verbosityLevel=4)
-        userDirsDir = os.path.join(self.getSubuser().getHomeDirOnHost(),"Userdirs")
+        userDirsDir = os.path.join(self.getSubuser().homeDirOnHost,"Userdirs")
         if os.path.islink(userDirsDir):
           sys.exit("Please remove the old Userdirs directory, it is no longer needed. The path is:"+userDirsDir)
       if self.getSubuser().permissions["x11"]:
@@ -283,7 +283,7 @@ $ subuser repair
       # Make sure that everything is setup and ready to go.
       if not self.getSubuser().permissions["gui"] is None:
         self.getUser().getRegistry().log("Requesting connection to X11 bridge.",verbosityLevel=4)
-        self.getSubuser().getX11Bridge().addClient()
+        self.getSubuser().x11Bridge.addClient()
       self.getUser().getRegistry().log("Building run command.",verbosityLevel=4)
       command = self.getCommand(args)
       (collectStdout,collectStderr) = self.getBackgroundCollectOutput()
@@ -295,7 +295,7 @@ $ subuser repair
         self.tearDownExecutionSpool()
       if not self.getSubuser().permissions["gui"] is None:
         self.getUser().getRegistry().log("Disconnecting from X11 bridge.",verbosityLevel=4)
-        self.getSubuser().getX11Bridge().removeClient()
+        self.getSubuser().x11Bridge.removeClient()
       if self.getBackground():
         self.getUser().getRegistry().log("Waiting for CID file to be generated.",verbosityLevel=4)
         while not os.path.exists(self.getCidFile()) or os.path.getsize(self.getCidFile()) == 0:

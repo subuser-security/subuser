@@ -40,8 +40,8 @@ class Subusers(dict,UserOwnedObject,FileBackedObject):
       serializedSubuser["executable-shortcut-installed"] = subuser.executableShortcutInstalled
       serializedSubuser["entrypoints-exposed"] = subuser.entryPointsExposed
       serializedSubuser["docker-image"] = subuser.imageId
-      serializedSubuser["service-subusers"] = subuser.getServiceSubuserNames()
-      if subuser.locked():
+      serializedSubuser["service-subusers"] = subuser.serviceSubuserNames
+      if subuser.locked:
         serializedDict["locked"][subuser.name] = serializedSubuser
       else:
         serializedDict["unlocked"][subuser.name] = serializedSubuser
@@ -70,10 +70,10 @@ class Subusers(dict,UserOwnedObject,FileBackedObject):
       repoName = subuserAttributes["source-repo"]
       imageSourceName = subuserAttributes["image-source"]
       imageId = retrieveAttribute("docker-image",None)
-      serviceSubusers = retrieveAttribute("service-subusers",[])
+      serviceSubuserNames = retrieveAttribute("service-subusers",[])
       executableShortcutInstalled = retrieveAttribute("executable-shortcut-installed",False)
       entrypointsExposed = retrieveAttribute("entrypoints-exposed",False)
-      self[subuserName] = Subuser(self.getUser(),subuserName,imageSourceName=imageSourceName,repoName=repoName,imageId=imageId,executableShortcutInstalled=executableShortcutInstalled,locked=locked,serviceSubusers=serviceSubusers,entrypointsExposed=entrypointsExposed)
+      self[subuserName] = Subuser(self.getUser(),subuserName,imageSourceName=imageSourceName,repoName=repoName,imageId=imageId,executableShortcutInstalled=executableShortcutInstalled,locked=locked,serviceSubuserNames=serviceSubuserNames,entrypointsExposed=entrypointsExposed)
 
   def getSortedList(self):
     """

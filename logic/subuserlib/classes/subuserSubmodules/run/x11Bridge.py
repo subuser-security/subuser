@@ -64,7 +64,7 @@ class XpraX11Bridge(Service):
     Get the dictionary of permissions that are specific to this particular subuser and therefore are not packaged in the xpra client image source.
     """
     permissions = {}
-    permissions["system-dirs"] = {self.getXpraSocket():os.path.join(self.getClientSubuser().getDockersideHome(),".xpra","server-100"),self.getXpraTmpDir():os.path.join(self.getClientSubuser().getDockersideHome(),"tmp")}
+    permissions["system-dirs"] = {self.getXpraSocket():os.path.join(self.getClientSubuser().dockersideHome,".xpra","server-100"),self.getXpraTmpDir():os.path.join(self.getClientSubuser().dockersideHome,"tmp")}
     return permissions
 
   def setupServerPermissions(self):
@@ -133,7 +133,7 @@ class XpraX11Bridge(Service):
 
   def addServerSubuser(self):
     subuserlib.subuser.addFromImageSourceNoVerify(self.getUser(),self.getServerSubuserName(),self.getUser().getRegistry().repositories["default"]["subuser-internal-xpra-server"])
-    self.getSubuser().addServiceSubuser(self.getServerSubuserName())
+    self.getSubuser().serviceSubuserNames.append(self.getServerSubuserName())
     self.getServerSubuser().createPermissions(self.getServerSubuser().imageSource.permissions)
 
   def getClientSubuserName(self):
@@ -144,7 +144,7 @@ class XpraX11Bridge(Service):
 
   def addClientSubuser(self):
     subuserlib.subuser.addFromImageSourceNoVerify(self.getUser(),self.getClientSubuserName(),self.getUser().getRegistry().repositories["default"]["subuser-internal-xpra-client"])
-    self.getSubuser().addServiceSubuser(self.getClientSubuserName())
+    self.getSubuser().serviceSubuserNames.append(self.getClientSubuserName())
     self.getClientSubuser().createPermissions(self.getClientSubuser().imageSource.permissions)
 
   def cleanUp(self):

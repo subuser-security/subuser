@@ -50,7 +50,7 @@ def lockSubuser(user,subuser,commit):
   oldSubuser.getPermissionsTemplate().save()
   user.getRegistry().logChange("Locking subuser "+subuser.name+" to commit: "+commit)
   user.getRegistry().logChange("New image id is "+subuser.imageId)
-  subuser.setLocked(True)
+  subuser.locked = True
   subuserlib.verify.verify(user)
   user.getRegistry().commit()
 
@@ -58,9 +58,9 @@ def unlockSubuser(user,subuser,permissionsAccepter,prompt):
   """
   Unlock the subuser, leaving it to have an up to date image.  Delete user set permissions if unlockPermissions is True.
   """
-  if subuser.locked():
+  if subuser.locked:
     user.getRegistry().logChange("Unlocking subuser "+subuser.name)
-    subuser.setLocked(False)
+    subuser.locked = False
     subuserlib.verify.verify(user,subusers=[subuser],checkForUpdatesExternally=True,permissionsAccepter=permissionsAccepter,prompt=prompt)
     user.getRegistry().commit()
   else:

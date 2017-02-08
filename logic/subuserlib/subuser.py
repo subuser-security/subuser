@@ -42,13 +42,13 @@ def remove(user,subusers):
   for subuser in subusers:
     user.getRegistry().logChange("Removing subuser "+str(subuser.name))
     try:
-      subuserHome = subuser.getHomeDirOnHost()
+      subuserHome = subuser.homeDirOnHost
       if subuserHome and os.path.exists(subuserHome):
         user.getRegistry().logChange(" If you wish to remove the subusers home directory, issule the command $ rm -r "+subuserHome)
     except:
       pass
     user.getRegistry().logChange(" If you wish to remove the subusers image, issue the command $ subuser remove-old-images")
-    for serviceSubuserName in subuser.getServiceSubuserNames():
+    for serviceSubuserName in subuser.serviceSubuserNames:
       try:
         serviceSubuser = user.getRegistry().subusers[serviceSubuserName]
         serviceSubuser.removePermissions()
