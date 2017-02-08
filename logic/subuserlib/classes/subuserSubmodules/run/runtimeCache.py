@@ -18,7 +18,7 @@ class RuntimeCache(dict,UserOwnedObject,FileBackedObject):
     self.load()
 
   def getPathToCurrentImagesRuntimeCacheDir(self):
-    return os.path.join(self.user.getConfig()["runtime-cache"],self.getSubuser().imageId)
+    return os.path.join(self.user.config["runtime-cache"],self.getSubuser().imageId)
 
   def getRuntimeCacheFilePath(self):
     return os.path.join(self.getPathToCurrentImagesRuntimeCacheDir(),self.getSubuser().permissions.getHash()+".json")
@@ -28,10 +28,10 @@ class RuntimeCache(dict,UserOwnedObject,FileBackedObject):
 
   def save(self):
     try:
-      self.user.getEndUser().makedirs(self.getPathToCurrentImagesRuntimeCacheDir())
+      self.user.endUser.makedirs(self.getPathToCurrentImagesRuntimeCacheDir())
     except OSError:
       pass
-    with self.user.getEndUser().get_file(self.getRuntimeCacheFilePath(),mode='w') as runtimeCacheFileHandle:
+    with self.user.endUser.get_file(self.getRuntimeCacheFilePath(),mode='w') as runtimeCacheFileHandle:
       json.dump(self,runtimeCacheFileHandle,indent=1,separators=(',',': '))
 
   def reload(self):

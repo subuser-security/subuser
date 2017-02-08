@@ -27,9 +27,9 @@ This is usefull when migrating from one machine to another.  You can copy your ~
 def runCommand(realArgs):
   options,arguments=parseCliArgs(realArgs)
   user = User()
-  user.getRegistry().commit_message = " ".join(["subuser","repair"]+realArgs)
+  user.registry.commit_message = " ".join(["subuser","repair"]+realArgs)
   permissionsAccepter = AcceptPermissionsAtCLI(user,alwaysAccept = options.accept)
-  with user.getRegistry().getLock() as LockFileHandle:
-    subusers = user.getRegistry().subusers.getSortedList()
+  with user.registry.getLock() as LockFileHandle:
+    subusers = user.registry.subusers.getSortedList()
     subuserlib.verify.verify(user,subusers=subusers,permissionsAccepter=permissionsAccepter,prompt=options.prompt)
-    user.getRegistry().commit()
+    user.registry.commit()

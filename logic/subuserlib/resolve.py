@@ -53,7 +53,7 @@ def resolveImageSource(user,imageSourcePath,contextRepository=None,allowLocalRep
   KeyError
   """
   if not contextRepository:
-    contextRepository = user.getRegistry().repositories["default"]
+    contextRepository = user.registry.repositories["default"]
   splitImageIdentifier = imageSourcePath.split("@",1)
   imageName = splitImageIdentifier[0]
   # For identifiers of the format:
@@ -92,7 +92,7 @@ def resolveRepository(user,repoIdentifier,allowLocalRepositories=True):
   # "bar"
   elif not ":" in repoIdentifier and not "/" in repoIdentifier:
     if allowLocalRepositories or repoIdentifier == "default":
-      return user.getRegistry().repositories[repoIdentifier]
+      return user.registry.repositories[repoIdentifier]
     else:
       raise ResolutionError("Error when resolving repository identifier "+repoIdentifier+". Refering to repositories by name is forbidden in this context.")
   else:
@@ -104,7 +104,7 @@ def lookupRepositoryByURI(user,uri):
   """
   if uri == "./":
     uri = os.environ["PWD"]
-  for _,repository in user.getRegistry().repositories.items():
+  for _,repository in user.registry.repositories.items():
     if uri == repository.uri:
       return repository
   return None
@@ -113,7 +113,7 @@ def lookupRepositoryByPath(user,path):
   """
   If a repository with this path exists, return that repository.  Otherwise, return None.
   """
-  for _,repository in user.getRegistry().repositories.items():
+  for _,repository in user.registry.repositories.items():
     if repository.isLocal and path == repository.repoPath:
       return repository
   return None
@@ -133,9 +133,9 @@ def getRepositoryFromURI(user,uri):
   if repository:
     return repository
   # If it doesn't, create a new repo and return it.
-  newTempRepo = Repository(user=user,name=user.getRegistry().repositories.getNewUniqueTempRepoId(),gitOriginURI=uri,gitCommitHash="master",temporary=True)
+  newTempRepo = Repository(user=user,name=user.registry.repositories.getNewUniqueTempRepoId(),gitOriginURI=uri,gitCommitHash="master",temporary=True)
   if newTempRepo.isPresent():
-    user.getRegistry().repositories.addRepository(newTempRepo)
+    user.registry.repositories.addRepository(newTempRepo)
     return newTempRepo
   else:
     raise ResolutionError("Repo at "+uri+" does not exist.")
@@ -146,9 +146,9 @@ def getRepositoryFromPath(user,path):
     return repository
   else:
     # If it doesn't, create a new repo and return it.
-    newTempRepo = Repository(user=user,name=user.getRegistry().repositories.getNewUniqueTempRepoId(),temporary=True,sourceDir=path)
+    newTempRepo = Repository(user=user,name=user.registry.repositories.getNewUniqueTempRepoId(),temporary=True,sourceDir=path)
     if newTempRepo.isPresent():
-      user.getRegistry().repositories.addRepository(newTempRepo)
+      user.registry.repositories.addRepository(newTempRepo)
       return newTempRepo
     else:
       raise ResolutionError("Repo at "+path+" does not exist.")

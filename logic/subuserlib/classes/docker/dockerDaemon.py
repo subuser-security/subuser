@@ -83,9 +83,9 @@ def readAndPrintStreamingBuildStatus(user,response):
       if lineDict == {}:
         pass
       elif "stream" in lineDict:
-        user.getRegistry().log(lineDict["stream"])
+        user.registry.log(lineDict["stream"])
       elif "status" in lineDict:
-        user.getRegistry().log(lineDict["status"])
+        user.registry.log(lineDict["status"])
       elif "errorDetail" in lineDict:
         raise exceptions.ImageBuildException("Build error:"+lineDict["errorDetail"]["message"]+"\n"+response.read().decode())
       else:

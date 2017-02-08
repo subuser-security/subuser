@@ -80,26 +80,26 @@ def runCommand(sysargs):
     print("Wrong number of arguments!")
     parseCliArgs(["--help"])
   user = User()
-  user.getRegistry().commit_message = " ".join(["subuser","subuser"]+sysargs)
+  user.registry.commit_message = " ".join(["subuser","subuser"]+sysargs)
   permissionsAccepter = AcceptPermissionsAtCLI(user,alwaysAccept = options.accept)
   if action == "add":
     if not len(args) == 3:
       sys.exit("Wrong number of arguments to add.  See `subuser subuser -h`.")
     subuserName = args[1]
     imageSourceId = args[2]
-    with user.getRegistry().getLock():
+    with user.registry.getLock():
       subuserlib.subuser.add(user,subuserName,imageSourceId,permissionsAccepter=permissionsAccepter,prompt=options.prompt,forceInternal=options.forceInternal)
   else:
     subuserNames = list(set(args[1:]))
-    with user.getRegistry().getLock():
+    with user.registry.getLock():
       subusers = []
       if not options.prefix is None:
-        allSubuserNames = user.getRegistry().subusers.keys()
+        allSubuserNames = user.registry.subusers.keys()
         subuserNames.extend([subuserName for subuserName in allSubuserNames if subuserName.startswith(options.prefix)])
 
       for subuserName in subuserNames:
         try:
-          subusers.append(user.getRegistry().subusers[subuserName])
+          subusers.append(user.registry.subusers[subuserName])
         except KeyError:
           sys.exit("Subuser "+subuserName+" does not exist. Use --help for help.")
       if subusers == []:
@@ -117,10 +117,10 @@ def runCommand(sysargs):
           command(user,subusers,install)
           sys.exit()
       if action == "edit-permissions":
-        user.getRegistry().logChange("Edit the permissions of:"+ " ".join(subuserNames))
+        user.registry.logChange("Edit the permissions of:"+ " ".join(subuserNames))
         for subuser in subusers:
           subuser.editPermissionsCLI()
         subuserlib.verify.verify(user,subusers=subusers,permissionsAccepter=permissionsAccepter,prompt=options.prompt)
-        user.getRegistry().commit()
+        user.registry.commit()
         sys.exit()
       sys.exit("Action "+args[0]+" does not exist. Try:\n subuser subuser --help")

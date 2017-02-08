@@ -21,12 +21,12 @@ class Subusers(dict,UserOwnedObject,FileBackedObject):
   """
   def __init__(self,user):
     UserOwnedObject.__init__(self,user)
-    registryFileStructure = self.user.getRegistry().gitRepository.getFileStructureAtCommit(self.user.getRegistry().gitReadHash)
-    if self.user.getRegistry().initialized and "subusers.json" in registryFileStructure.lsFiles("./"):
+    registryFileStructure = self.user.registry.gitRepository.getFileStructureAtCommit(self.user.registry.gitReadHash)
+    if self.user.registry.initialized and "subusers.json" in registryFileStructure.lsFiles("./"):
       serializedUnlockedSubusersDict = json.loads(registryFileStructure.read("subusers.json"), object_pairs_hook=collections.OrderedDict)
       self._loadSerializedSubusersDict(serializedUnlockedSubusersDict,locked=False)
-    if (not self.user.getRegistry().ignoreVersionLocks) and os.path.exists(self.user.getConfig()["locked-subusers-path"]):
-      with open(self.user.getConfig()["locked-subusers-path"],"r") as fileHandle:
+    if (not self.user.registry.ignoreVersionLocks) and os.path.exists(self.user.config["locked-subusers-path"]):
+      with open(self.user.config["locked-subusers-path"],"r") as fileHandle:
         self._loadSerializedSubusersDict(json.load(fileHandle, object_pairs_hook=collections.OrderedDict),locked=True)
 
   def serializeToDict(self):
@@ -52,9 +52,9 @@ class Subusers(dict,UserOwnedObject,FileBackedObject):
     Save the list of subusers to disk.
     """
     serializedDict = self.serializeToDict()
-    with self.user.getEndUser().get_file(os.path.join(self.user.getConfig()["registry-dir"],"subusers.json"), 'w') as file_f:
+    with self.user.endUser.get_file(os.path.join(self.user.config["registry-dir"],"subusers.json"), 'w') as file_f:
       json.dump(serializedDict["unlocked"], file_f, indent=1, separators=(',', ': '))
-    with self.user.getEndUser().get_file(os.path.join(self.user.getConfig()["locked-subusers-path"]), 'w') as file_f:
+    with self.user.endUser.get_file(os.path.join(self.user.config["locked-subusers-path"]), 'w') as file_f:
       json.dump(serializedDict["locked"], file_f, indent=1, separators=(',', ': '))
 
   def _loadSerializedSubusersDict(self,serializedSubusersDict,locked):

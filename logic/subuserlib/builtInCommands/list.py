@@ -53,14 +53,14 @@ def runCommand(sysargs):
     if len(args) > 1:
       reposToList = args[1:]
     else:
-      reposToList = user.getRegistry().repositories.keys()
+      reposToList = user.registry.repositories.keys()
     availableDict = {}
     for repoIdentifier in reposToList:
       try:
         repoIdentifier = repoIdentifier.decode("utf-8")
       except AttributeError:
         pass
-      if repoIdentifier in user.getRegistry().repositories:
+      if repoIdentifier in user.registry.repositories:
         temp = False
       else:
         temp = True
@@ -90,11 +90,11 @@ def runCommand(sysargs):
     sys.exit()
   elif args[0] == 'subusers':
     if options.json:
-      subuserlib.print.printWithoutCrashing(json.dumps(user.getRegistry().subusers.serializeToDict(),indent=1,separators=(",",": ")))
+      subuserlib.print.printWithoutCrashing(json.dumps(user.registry.subusers.serializeToDict(),indent=1,separators=(",",": ")))
       sys.exit()
     if options.long:
       subuserlib.print.printWithoutCrashing("The following subusers are registered.")
-    for name,subuser in user.getRegistry().subusers.items():
+    for name,subuser in user.registry.subusers.items():
       if options.internal or not name.startswith("!"):
         if not options.long:
           subuserlib.print.printWithoutCrashing(name)
@@ -102,11 +102,11 @@ def runCommand(sysargs):
           subuser.describe()
   elif args[0] == 'installed-images':
     if options.json:
-      subuserlib.print.printWithoutCrashing(json.dumps(user.getInstalledImages().serializeToDict(),indent=1,separators=(",",": ")))
+      subuserlib.print.printWithoutCrashing(json.dumps(user.installedImages.serializeToDict(),indent=1,separators=(",",": ")))
       sys.exit()
     if options.long:
       subuserlib.print.printWithoutCrashing("The following images are installed.")
-    for id,installedImage in user.getInstalledImages().items():
+    for id,installedImage in user.installedImages.items():
       if not options.long:
         try:
           identifier = installedImage.imageSource.getIdentifier()
@@ -120,9 +120,9 @@ def runCommand(sysargs):
         installedImage.describe()
   elif args[0] == 'repositories':
     if options.json:
-      subuserlib.print.printWithoutCrashing(json.dumps(user.getRegistry().repositories.serializeToDict(),indent=1,separators=(",",": ")))
+      subuserlib.print.printWithoutCrashing(json.dumps(user.registry.repositories.serializeToDict(),indent=1,separators=(",",": ")))
       sys.exit()
-    for name,repo in user.getRegistry().repositories.items():
+    for name,repo in user.registry.repositories.items():
       if not options.long:
         subuserlib.print.printWithoutCrashing(repo.displayName)
       else:

@@ -92,7 +92,7 @@ class Repository(dict,UserOwnedObject,Describable):
     if self.isLocal:
       return self.sourceDir
     else:
-      return os.path.join(self.user.getConfig()["repositories-dir"],self.name)
+      return os.path.join(self.user.config["repositories-dir"],self.name)
 
   def loadRepoConfig(self):
     """
@@ -140,10 +140,10 @@ class Repository(dict,UserOwnedObject,Describable):
     """
     Are there any installed images or subusers from this repository?
     """
-    for _,installedImage in self.user.getInstalledImages().items():
+    for _,installedImage in self.user.installedImages.items():
       if self.name == installedImage.sourceRepoId:
           return True
-      for _,subuser in self.user.getRegistry().subusers.items():
+      for _,subuser in self.user.registry.subusers.items():
         try:
           if self.name == subuser.imageSource.repo.name:
             return True
@@ -178,9 +178,9 @@ class Repository(dict,UserOwnedObject,Describable):
       return
     if not self.isPresent():
       new = True
-      self.user.getRegistry().log("Cloning repository "+self.name+" from "+self.gitOriginURI)
+      self.user.registry.log("Cloning repository "+self.name+" from "+self.gitOriginURI)
       if self.gitRepository.clone(self.gitOriginURI) != 0:
-        self.user.getRegistry().log("Clone failed.")
+        self.user.registry.log("Clone failed.")
         return
     else:
       new = False
@@ -190,7 +190,7 @@ class Repository(dict,UserOwnedObject,Describable):
       pass
     if self.updateGitCommitHash():
       if not new:
-        self.user.getRegistry().logChange("Updated repository "+self.displayName)
+        self.user.registry.logChange("Updated repository "+self.displayName)
       if not initialUpdate:
         self.loadImageSources()
 

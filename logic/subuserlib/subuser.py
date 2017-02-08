@@ -18,9 +18,9 @@ import subuserlib.classes.exceptions as exceptions
 def add(user,subuserName,imageSourceIdentifier,permissionsAccepter,prompt=False,forceInternal=False):
   if subuserName.startswith("!") and not forceInternal:
     sys.exit("A subusers may not have names beginning with ! as these names are reserved for internal use.")
-  if subuserName in user.getRegistry().subusers:
+  if subuserName in user.registry.subusers:
     sys.exit("A subuser named "+subuserName+" already exists.")
-  user.getRegistry().logChange("Adding subuser "+subuserName+" with image "+imageSourceIdentifier)
+  user.registry.logChange("Adding subuser "+subuserName+" with image "+imageSourceIdentifier)
   try:
     imageSource = subuserlib.resolve.resolveImageSource(user,imageSourceIdentifier)
   except (KeyError,subuserlib.resolve.ResolutionError) as keyError:
@@ -29,61 +29,61 @@ def add(user,subuserName,imageSourceIdentifier,permissionsAccepter,prompt=False,
 
 def addFromImageSource(user,subuserName,imageSource,permissionsAccepter,prompt=False):
   addFromImageSourceNoVerify(user,subuserName,imageSource)
-  subuser = user.getRegistry().subusers[subuserName]
+  subuser = user.registry.subusers[subuserName]
   subuserlib.verify.verify(user,subusers=[subuser],permissionsAccepter=permissionsAccepter,prompt=prompt)
-  user.getRegistry().commit()
+  user.registry.commit()
 
 def addFromImageSourceNoVerify(user,subuserName,imageSource):
   subuser = subuserlib.classes.subuser.Subuser(user,subuserName,None,False,False,[],imageSource=imageSource)
-  user.getRegistry().subusers[subuserName] = subuser
+  user.registry.subusers[subuserName] = subuser
 
 def remove(user,subusers):
   didSomething = False
   for subuser in subusers:
-    user.getRegistry().logChange("Removing subuser "+str(subuser.name))
+    user.registry.logChange("Removing subuser "+str(subuser.name))
     try:
       subuserHome = subuser.homeDirOnHost
       if subuserHome and os.path.exists(subuserHome):
-        user.getRegistry().logChange(" If you wish to remove the subusers home directory, issule the command $ rm -r "+subuserHome)
+        user.registry.logChange(" If you wish to remove the subusers home directory, issule the command $ rm -r "+subuserHome)
     except:
       pass
-    user.getRegistry().logChange(" If you wish to remove the subusers image, issue the command $ subuser remove-old-images")
+    user.registry.logChange(" If you wish to remove the subusers image, issue the command $ subuser remove-old-images")
     for serviceSubuserName in subuser.serviceSubuserNames:
       try:
-        serviceSubuser = user.getRegistry().subusers[serviceSubuserName]
+        serviceSubuser = user.registry.subusers[serviceSubuserName]
         serviceSubuser.removePermissions()
-        del user.getRegistry().subusers[serviceSubuserName]
+        del user.registry.subusers[serviceSubuserName]
       except KeyError:
         pass
     # Remove service locks
     try:
-      shutil.rmtree(os.path.join(user.getConfig()["lock-dir"],"services",subuser.name))
+      shutil.rmtree(os.path.join(user.config["lock-dir"],"services",subuser.name))
     except OSError:
       pass
     # Remove permission files
     subuser.removePermissions()
-    del user.getRegistry().subusers[subuser.name]
+    del user.registry.subusers[subuser.name]
     didSomething = True
   if didSomething:
     subuserlib.verify.verify(user)
-    user.getRegistry().commit()
+    user.registry.commit()
 
 def setExecutableShortcutInstalled(user,subusers,installed):
   for subuser in subusers:
     if installed:
-      user.getRegistry().logChange("Adding launcher for subuser "+subuser.name+" to $PATH.")
+      user.registry.logChange("Adding launcher for subuser "+subuser.name+" to $PATH.")
     else:
-      user.getRegistry().logChange("Removing launcher for subuser "+subuser.name+" from $PATH.")
+      user.registry.logChange("Removing launcher for subuser "+subuser.name+" from $PATH.")
     subuser.executableShortcutInstalled = installed
   subuserlib.verify.verify(user)
-  user.getRegistry().commit()
+  user.registry.commit()
 
 def setEntrypointsExposed(user,subusers,exposed,permissionsAccepter):
   for subuser in subusers:
     if exposed:
-      user.getRegistry().logChange("Exposing entrypoints for subuser "+subuser.name+" in the $PATH.")
+      user.registry.logChange("Exposing entrypoints for subuser "+subuser.name+" in the $PATH.")
     else:
-      user.getRegistry().logChange("Removing entrypoints for subuser "+subuser.name+" from $PATH.")
+      user.registry.logChange("Removing entrypoints for subuser "+subuser.name+" from $PATH.")
     subuser.entrypointsExposed = exposed
   subuserlib.verify.verify(user,subusers=subusers,permissionsAccepter=permissionsAccepter)
-  user.getRegistry().commit()
+  user.registry.commit()

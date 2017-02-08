@@ -10,15 +10,15 @@ High level operations used for interacting with the subuser registry.
 import subuserlib.verify
 
 def showLog(user):
-  user.getRegistry().gitRepository.runShowOutput(["log"])
+  user.registry.gitRepository.runShowOutput(["log"])
 
 def checkoutNoCommit(user,commit):
-  user.getEndUser().call(["rm","-rf","*"],cwd=user.getConfig()["registry-dir"])
-  user.getRegistry().gitRepository.run(["checkout",commit,"."])
+  user.endUser.call(["rm","-rf","*"],cwd=user.config["registry-dir"])
+  user.registry.gitRepository.run(["checkout",commit,"."])
   user.reloadRegistry()
 
 def rollback(user,commit):
   checkoutNoCommit(user,commit)
-  user.getRegistry().logChange("Rolling back to commit: "+commit)
+  user.registry.logChange("Rolling back to commit: "+commit)
   subuserlib.verify.verify(user)
-  user.getRegistry().commit()
+  user.registry.commit()

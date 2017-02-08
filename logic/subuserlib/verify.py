@@ -26,54 +26,54 @@ def verify(user,permissionsAccepter=None,checkForUpdatesExternally=False,subuser
      - No-longer-needed temporary repositories are removed. All temporary repositories have at least one subuser who's image is built from one of the repository's image sources.
      - No-longer-needed installed images are removed.
   """
-  user.getRegistry().log("Verifying subuser configuration.")
-  user.getRegistry().log("Verifying registry consistency...")
+  user.registry.log("Verifying subuser configuration.")
+  user.registry.log("Verifying registry consistency...")
   for subuser in subusers:
     try:
       subuser.imageSource
     except subuserlib.classes.subuser.NoImageSourceException:
-      user.getRegistry().log("WARNING: "+subuser.name+" is no longer present in it's source repository. Support for this progam may have been dropped.")
+      user.registry.log("WARNING: "+subuser.name+" is no longer present in it's source repository. Support for this progam may have been dropped.")
       try:
         subusers.remove(subuser)
       except ValueError:
         pass
-  user.getRegistry().log("Unregistering any non-existant installed images.")
-  user.getInstalledImages().unregisterNonExistantImages()
-  user.getRegistry().cleanOutOldPermissions()
+  user.registry.log("Unregistering any non-existant installed images.")
+  user.installedImages.unregisterNonExistantImages()
+  user.registry.cleanOutOldPermissions()
   if subusers:
-    user.getRegistry().setChanged(True)
-    user.getRegistry().log("Approving permissions...",verbosityLevel=3)
+    user.registry.setChanged(True)
+    user.registry.log("Approving permissions...",verbosityLevel=3)
     (failedSubusers,permissionParsingExceptions) = approvePermissions(user,subusers,permissionsAccepter)
-    user.getRegistry().log("Permissions approved...",verbosityLevel=3)
+    user.registry.log("Permissions approved...",verbosityLevel=3)
     subusers = [x for x in subusers if x not in failedSubusers]
     for failedSubuser in failedSubusers:
       try:
         failedSubuser.permissions
       except subuserlib.classes.subuser.SubuserHasNoPermissionsException:
-        del user.getRegistry().subusers[failedSubuser.name]
+        del user.registry.subusers[failedSubuser.name]
     subusers += ensureServiceSubusersAreSetup(user,subusers)
     installationTask = InstallationTask(user,subusersToBeUpdatedOrInstalled=subusers,checkForUpdatesExternally=checkForUpdatesExternally)
     outOfDateSubusers = installationTask.getOutOfDateSubusers()
     if outOfDateSubusers:
-      user.getRegistry().log("New images for the following subusers need to be installed:")
+      user.registry.log("New images for the following subusers need to be installed:")
       for subuser in outOfDateSubusers:
-        user.getRegistry().log(subuser.name)
+        user.registry.log(subuser.name)
       if (not prompt) or (prompt and (not input("Would you like to install those images now? [Y/n]") == "n")):
         installationTask.updateOutOfDateSubusers(useCache=useCache)
     for exception in permissionParsingExceptions:
-      user.getRegistry().log(str(exception))
+      user.registry.log(str(exception))
     subusersWhosImagesFailedToBuild = installationTask.getSubusersWhosImagesFailedToBuild()
     if subusersWhosImagesFailedToBuild:
-      user.getRegistry().log("Images for the following subusers failed to build:")
+      user.registry.log("Images for the following subusers failed to build:")
     for subuser in subusersWhosImagesFailedToBuild:
-      user.getRegistry().log(subuser.name)
+      user.registry.log(subuser.name)
     for subuser in subusers:
       try:
         subuser.getRunReadyImage().setup()
         subuser.setupHomeDir()
       except subuserlib.classes.subuserSubmodules.run.runtimeCache.NoRuntimeCacheForSubusersWhichDontHaveExistantImagesException:
         pass
-  user.getInstalledImages().save()
+  user.installedImages.save()
   trimUnneededTempRepos(user)
   rebuildBinDir(user)
   cleanupRuntimeDirs(user)
@@ -101,7 +101,7 @@ def approvePermissions(user,subusers,permissionsAccepter):
       exceptions.append(e)
     except subuserlib.classes.subuser.NoImageSourceException:
       subusersWhosPermissionsFailedToParse.append(subuser)
-      user.getRegistry().log("Warning: The image source for subuser %s is no longer available."%subuser.name)
+      user.registry.log("Warning: The image source for subuser %s is no longer available."%subuser.name)
   return (subusersWhosPermissionsFailedToParse,exceptions)
 
 def ensureServiceSubusersAreSetup(user,subusers):
@@ -112,21 +112,21 @@ def ensureServiceSubusersAreSetup(user,subusers):
   return newServiceSubusers
 
 def trimUnneededTempRepos(user):
-  user.getRegistry().log("Running garbage collector on temporary repositories...")
+  user.registry.log("Running garbage collector on temporary repositories...")
   reposToRemove = []
-  for repoId,repo in user.getRegistry().repositories.userRepositories.items():
+  for repoId,repo in user.registry.repositories.userRepositories.items():
     if repo.temporary and not repo.isInUse():
-      user.getRegistry().logChange("Removing uneeded temporary repository: "+repo.displayName)
+      user.registry.logChange("Removing uneeded temporary repository: "+repo.displayName)
       repo.removeGitRepo()
       reposToRemove.append(repoId)
   for repoId in reposToRemove:
-    del user.getRegistry().repositories.userRepositories[repoId]
+    del user.registry.repositories.userRepositories[repoId]
 
 def rebuildBinDir(user):
-  if os.path.exists(user.getConfig()["bin-dir"]):
-    shutil.rmtree(user.getConfig()["bin-dir"])
-  user.getEndUser().mkdir(user.getConfig()["bin-dir"])
-  for _,subuser in user.getRegistry().subusers.items():
+  if os.path.exists(user.config["bin-dir"]):
+    shutil.rmtree(user.config["bin-dir"])
+  user.endUser.mkdir(user.config["bin-dir"])
+  for _,subuser in user.registry.subusers.items():
     if subuser.executableShortcutInstalled:
       subuser.installExecutableShortcut()
     if subuser.entryPointsExposed:
@@ -149,33 +149,33 @@ def cleanupRuntimeDirs(user):
     """
     Clear out a directory containing subdirectories named with the PIDs of processes by removing any directories corresponding to non-running processes.
     """
-    user.getRegistry().log("Clearing directory "+ pidDir)
+    user.registry.log("Clearing directory "+ pidDir)
     try:
       for pid in os.listdir(pidDir):
         try:
           numericPid = int(pid)
           if not is_process_running(numericPid):
             shutil.rmtree(os.path.join(pidDir,pid))
-            user.getRegistry().log("Removing "+ os.path.join(pidDir,pid)+" process is no longer running.",verbosityLevel=3)
+            user.registry.log("Removing "+ os.path.join(pidDir,pid)+" process is no longer running.",verbosityLevel=3)
           else:
-            user.getRegistry().log("Not removing "+ os.path.join(pidDir,pid)+" process is still running.",verbosityLevel=3)
+            user.registry.log("Not removing "+ os.path.join(pidDir,pid)+" process is still running.",verbosityLevel=3)
         except ValueError:
           pass
     except OSError:
       pass
   # Clean up ~/.subuser/volumes/execute
-  clearPIDSubdirs(os.path.join(user.getConfig()["volumes-dir"],"execute"))
+  clearPIDSubdirs(os.path.join(user.config["volumes-dir"],"execute"))
   # Clean up ~/.subuser/volumes/x11
-  clearPIDSubdirs(os.path.join(user.getConfig()["volumes-dir"],"x11"))
+  clearPIDSubdirs(os.path.join(user.config["volumes-dir"],"x11"))
 
 def cleanUpRuntimeCache(user):
   """
   Remove runtime cache directories for no longer existant images.
   """
-  runtimeCacheDir = user.getConfig()["runtime-cache"]
+  runtimeCacheDir = user.config["runtime-cache"]
   try:
     for imageId in os.listdir(runtimeCacheDir):
-      if not imageId in user.getInstalledImages():
+      if not imageId in user.installedImages:
         shutil.rmtree(os.path.join(runtimeCacheDir,imageId))
   except FileNotFoundError:
     pass
@@ -186,16 +186,16 @@ def cleanUpAfterImproperlyTerminatedServices(user):
   """
   # Go through xpra volumes.
   try:
-    xpraVolumeDir = os.path.join(user.getConfig()["volumes-dir"],"xpra")
+    xpraVolumeDir = os.path.join(user.config["volumes-dir"],"xpra")
     serviceVolumes = os.listdir(xpraVolumeDir)
-    serviceLocksDir = os.path.join(user.getConfig()["lock-dir"],"services")
+    serviceLocksDir = os.path.join(user.config["lock-dir"],"services")
     serviceLockDirs = os.listdir(serviceLocksDir)
     subusersWithServiceDirs = set(serviceLockDirs) | set(serviceVolumes)
   except OSError:
     subusersWithServiceDirs = []
   for subuserWithServiceDirs in subusersWithServiceDirs:
-    user.getRegistry().log("Removing left over service files for subuser "+ subuserWithServiceDirs)
-    if not subuserWithServiceDirs in user.getRegistry().subusers:
+    user.registry.log("Removing left over service files for subuser "+ subuserWithServiceDirs)
+    if not subuserWithServiceDirs in user.registry.subusers:
       try:
         shutil.rmtree(os.path.join(xpraVolumeDir,subuserWithServiceDirs))
       except OSError as e:
@@ -205,4 +205,4 @@ def cleanUpAfterImproperlyTerminatedServices(user):
       except OSError as e:
         print(e)
     else:
-      user.getRegistry().subusers[subuserWithServiceDirs].x11Bridge.cleanUpIfNotRunning()
+      user.registry.subusers[subuserWithServiceDirs].x11Bridge.cleanUpIfNotRunning()

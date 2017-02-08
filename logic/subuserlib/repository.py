@@ -23,11 +23,11 @@ def add(user,name,url):
     else:
       repository = Repository(user,name=name,gitOriginURI=url,gitCommitHash="master")
     if repository.isPresent():
-      user.getRegistry().repositories.addRepository(repository)
-      user.getRegistry().commit()
+      user.registry.repositories.addRepository(repository)
+      user.registry.commit()
     else:
       sys.exit("Cannot load repository, path or URL not found.")
 
 def remove(user,name):
-  user.getRegistry().repositories.removeRepository(name)
-  user.getRegistry().commit()
+  user.registry.repositories.removeRepository(name)
+  user.registry.commit()

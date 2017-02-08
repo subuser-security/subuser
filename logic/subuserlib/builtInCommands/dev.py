@@ -64,7 +64,7 @@ def runCommand(realArgs):
     devSubuser = devImage+"@"+os.path.split(os.path.dirname(os.getcwd()+os.sep))[1]+"-"+str(uuid.uuid4())
     if subprocess.call([paths.getSubuserExecutable(),"subuser","add",devSubuser,devImage+"@./"]) == 0:
       devSubusers[devImage] = devSubuser
-      with user.getEndUser().get_file(devSubuserRegistry,"w") as fd:
+      with user.endUser.get_file(devSubuserRegistry,"w") as fd:
         json.dump(devSubusers,fd)
   if options.entrypoint is None:
     subprocess.call([paths.getSubuserExecutable(),"run",devSubuser])

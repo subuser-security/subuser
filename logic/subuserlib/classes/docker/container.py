@@ -19,8 +19,8 @@ class Container(UserOwnedObject):
      Returns a dictionary of container properties.
      If the container no longer exists, return None.
     """
-    self.user.getDockerDaemon().getConnection().request("GET","/v1.13/containers/"+self.__containerId+"/json")
-    response = self.user.getDockerDaemon().getConnection().getresponse()
+    self.user.dockerDaemon.getConnection().request("GET","/v1.13/containers/"+self.__containerId+"/json")
+    response = self.user.dockerDaemon.getConnection().getresponse()
     if not response.status == 200:
       response.read() # Read the response and discard it to prevent the server from getting locked up: http://stackoverflow.com/questions/3231543/python-httplib-responsenotready
       return None
@@ -28,8 +28,8 @@ class Container(UserOwnedObject):
       return json.loads(response.read().decode("utf-8"))
 
   def stop(self):
-    self.user.getDockerDaemon().getConnection().request("POST","/v1.13/containers/"+self.getId()+"/stop")
-    response = self.user.getDockerDaemon().getConnection().getresponse()
+    self.user.dockerDaemon.getConnection().request("POST","/v1.13/containers/"+self.getId()+"/stop")
+    response = self.user.dockerDaemon.getConnection().getresponse()
     response.read()
 
   def remove(self,force=False):
@@ -40,8 +40,8 @@ class Container(UserOwnedObject):
       queryParametersString = urllib.urlencode(queryParameters)
     except AttributeError:
       queryParametersString = urllib.parse.urlencode(queryParameters) # Python 3
-    self.user.getDockerDaemon().getConnection().request("DELETE","/v1.13/containers/"+self.getId()+"?"+queryParametersString)
-    response = self.user.getDockerDaemon().getConnection().getresponse()
+    self.user.dockerDaemon.getConnection().request("DELETE","/v1.13/containers/"+self.getId()+"?"+queryParametersString)
+    response = self.user.dockerDaemon.getConnection().getresponse()
     response.read()
 
   def getId(self):

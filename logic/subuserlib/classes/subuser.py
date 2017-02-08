@@ -47,7 +47,7 @@ class Subuser(UserOwnedObject, Describable):
     """
     if self.__imageSource is None:
       try:
-        self.__imageSource = self.user.getRegistry().repositories[self.__repoName][self.__imageSourceName]
+        self.__imageSource = self.user.registry.repositories[self.__repoName][self.__imageSourceName]
       except KeyError:
         raise NoImageSourceException()
     return self.__imageSource
@@ -81,7 +81,7 @@ class Subuser(UserOwnedObject, Describable):
 
   @property
   def permissionsDir(self):
-    return os.path.join(self.user.getConfig()["registry-dir"],"permissions",self.name)
+    return os.path.join(self.user.config["registry-dir"],"permissions",self.name)
 
   @property
   def relativePermissionsDir(self):
@@ -100,7 +100,7 @@ class Subuser(UserOwnedObject, Describable):
     return os.path.join(self.permissionsDir,"permissions.json")
 
   def loadPermissions(self):
-    registryFileStructure = self.user.getRegistry().gitRepository.getFileStructureAtCommit(self.user.getRegistry().gitReadHash)
+    registryFileStructure = self.user.registry.gitRepository.getFileStructureAtCommit(self.user.registry.gitReadHash)
     try:
       initialPermissions = subuserlib.permissions.load(permissionsString=registryFileStructure.read(os.path.join(self.relativePermissionsDir,"permissions.json")))
     except OSError:
@@ -126,7 +126,7 @@ Please file a bug report explaining how you got here.\n"""+ str(e))
   def getPermissionsTemplate(self):
     if self.__permissionsTemplate is None:
       permissionsDotJsonWritePath = os.path.join(self.permissionsDir,"permissions-template.json")
-      registryFileStructure = self.user.getRegistry().gitRepository.getFileStructureAtCommit(self.user.getRegistry().gitReadHash)
+      registryFileStructure = self.user.registry.gitRepository.getFileStructureAtCommit(self.user.registry.gitReadHash)
       if os.path.join(self.relativePermissionsDir,"permissions-template.json") in registryFileStructure.lsFiles(self.relativePermissionsDir):
         initialPermissions = subuserlib.permissions.load(permissionsString=registryFileStructure.read(os.path.join(self.relativePermissionsDir,"permissions-template.json")))
         save = False
@@ -140,7 +140,7 @@ Please file a bug report explaining how you got here.\n"""+ str(e))
 
   def editPermissionsCLI(self):
     while True:
-      self.user.getEndUser().runEditor(self.permissions.writePath)
+      self.user.endUser.runEditor(self.permissions.writePath)
       try:
         initialPermissions = subuserlib.permissions.load(permissionsFilePath=self.permissionsDotJsonWritePath)
         break
@@ -155,16 +155,16 @@ Please file a bug report explaining how you got here.\n"""+ str(e))
     Remove the user set and template permission files.
     """
     try:
-      self.user.getRegistry().gitRepository.run(["rm",os.path.join(self.relativePermissionsDir,"permissions.json"),os.path.join(self.relativePermissionsDir,"permissions-template.json")])
+      self.user.registry.gitRepository.run(["rm",os.path.join(self.relativePermissionsDir,"permissions.json"),os.path.join(self.relativePermissionsDir,"permissions-template.json")])
     except subuserlib.classes.gitRepository.GitException:
       pass
     try:
-      self.user.getRegistry().gitRepository.run(["rm",os.path.join(self.relativePermissionsDir,"permissions.json"),os.path.join(self.relativePermissionsDir,"permissions-template.json")])
+      self.user.registry.gitRepository.run(["rm",os.path.join(self.relativePermissionsDir,"permissions.json"),os.path.join(self.relativePermissionsDir,"permissions-template.json")])
     except subuserlib.classes.gitRepository.GitException:
       pass
 
   def isImageInstalled(self):
-    return self.user.getDockerDaemon().getImageProperties(self.imageId) is not None
+    return self.user.dockerDaemon.getImageProperties(self.imageId) is not None
 
   def getRunReadyImage(self):
     if not self.__runReadyImage:
@@ -202,7 +202,7 @@ Please file a bug report explaining how you got here.\n"""+ str(e))
     """
     if self.permissions["stateful-home"]:
       try:
-        self.user.getEndUser().makedirs(self.homeDirOnHost)
+        self.user.endUser.makedirs(self.homeDirOnHost)
       except OSError as e:
         if e.errno() == errno.EEXIST:
           pass
@@ -215,7 +215,7 @@ Please file a bug report explaining how you got here.\n"""+ str(e))
           destinationPath = os.path.join("/subuser/userdirs",userDir)
           if not os.path.islink(symlinkPath):
             if os.path.exists(symlinkPath):
-              self.user.getEndUser().makedirs(os.path.join(self.homeDirOnHost,"subuser-user-dirs-backups"))
+              self.user.endUser.makedirs(os.path.join(self.homeDirOnHost,"subuser-user-dirs-backups"))
               os.rename(symlinkPath,os.path.join(self.homeDirOnHost,"subuser-user-dirs-backups",userDir))
             try:
               os.symlink(destinationPath,symlinkPath)
@@ -231,7 +231,7 @@ Please file a bug report explaining how you got here.\n"""+ str(e))
     Returns the path to the subuser's home dir. Unless the subuser is configured to have a stateless home, in which case returns None.
     """
     if self.permissions["stateful-home"]:
-      return os.path.join(self.user.getConfig()["subuser-home-dirs-dir"],self.name)
+      return os.path.join(self.user.config["subuser-home-dirs-dir"],self.name)
     else:
       return None
 
@@ -240,7 +240,7 @@ Please file a bug report explaining how you got here.\n"""+ str(e))
     if self.permissions["as-root"]:
       return "/root/"
     else:
-      return self.user.getEndUser().homeDir
+      return self.user.endUser.homeDir
 
   def describe(self):
     print("Subuser: "+self.name)
@@ -258,8 +258,8 @@ Please file a bug report explaining how you got here.\n"""+ str(e))
     Install a trivial executable script into the PATH which launches the subser image.
     """
     redirect = script
-    executablePath=os.path.join(self.user.getConfig()["bin-dir"], name)
-    with self.user.getEndUser().get_file(executablePath, 'w') as file_f:
+    executablePath=os.path.join(self.user.config["bin-dir"], name)
+    with self.user.endUser.get_file(executablePath, 'w') as file_f:
       file_f.write(redirect)
       st = os.stat(executablePath)
       os.chmod(executablePath, stat.S_IMODE(st.st_mode) | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)

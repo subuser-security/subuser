@@ -32,4 +32,4 @@ def getSubuserVersion(user):
     return stableVersion
 
 def getDockerInfo(user):
-  return user.getDockerDaemon().getInfo()
+  return user.dockerDaemon.getInfo()

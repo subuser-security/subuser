@@ -34,7 +34,7 @@ class Permissions(collections.OrderedDict,UserOwnedObject,FileBackedObject):
       self[permission] = value
 
   def save(self):
-    with self.user.getEndUser().get_file(self.writePath,'w') as fd:
+    with self.user.endUser.get_file(self.writePath,'w') as fd:
       fd.write(subuserlib.permissions.getJSONString(self))
 
   def describe(self):
@@ -46,11 +46,11 @@ class Permissions(collections.OrderedDict,UserOwnedObject,FileBackedObject):
         firstLine = "  - " + permission + ":"
         multiline = len(subPermissions) > 1
         if multiline:
-          self.user.getRegistry().log(firstLine)
+          self.user.registry.log(firstLine)
           for subPermission in subPermissions:
-            self.user.getRegistry().log("   * "+subPermission)
+            self.user.registry.log("   * "+subPermission)
         else:
-          self.user.getRegistry().log(firstLine + " " + subPermissions[0])
+          self.user.registry.log(firstLine + " " + subPermissions[0])
     def areAnyOfThesePermitted(permissions):
       permitted = False
       for permission in permissions:
@@ -59,8 +59,8 @@ class Permissions(collections.OrderedDict,UserOwnedObject,FileBackedObject):
       return permitted
     preludeDescriptions = sum([subuserlib.permissions.descriptions[permission](self[permission]) for permission in subuserlib.permissions.levels[0]["permissions"]],[])
     for description in preludeDescriptions:
-      self.user.getRegistry().log(" "+description)
+      self.user.registry.log(" "+description)
     for level in subuserlib.permissions.levels[1:]:
       if areAnyOfThesePermitted(level["permissions"]):
-        self.user.getRegistry().log(" "+level["description"])
+        self.user.registry.log(" "+level["description"])
         describePermissions(level["permissions"])

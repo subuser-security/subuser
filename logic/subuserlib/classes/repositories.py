@@ -24,7 +24,7 @@ class Repositories(collections.Mapping,UserOwnedObject,FileBackedObject):
     self.systemRepositoryListPaths = ["/etc/subuser/repositories.json"
        ,os.path.join(user.homeDir,".subuser","repositories.json")
        ,subuserlib.paths.getSubuserDataFile("repositories.json")] # TODO how does this work on windows?
-    self.userRepositoryListPath = os.path.join(self.user.getConfig()["registry-dir"],"repositories.json")
+    self.userRepositoryListPath = os.path.join(self.user.config["registry-dir"],"repositories.json")
     self.reloadRepositoryLists()
 
   def _getAllRepositories(self):
@@ -74,8 +74,8 @@ class Repositories(collections.Mapping,UserOwnedObject,FileBackedObject):
         repositories[repoName] = Repository(self.user,name=repoName,gitOriginURI=gitOriginURI,gitCommitHash=gitCommitHash,temporary=temporary,sourceDir=sourceDir)
       return repositories
     self.systemRepositories = loadRepositoryDict(subuserlib.loadMultiFallbackJsonConfigFile.getConfig(self.systemRepositoryListPaths))
-    registryFileStructure = self.user.getRegistry().gitRepository.getFileStructureAtCommit(self.user.getRegistry().gitReadHash)
-    if self.user.getRegistry().initialized and "repositories.json" in registryFileStructure.lsFiles("./"):
+    registryFileStructure = self.user.registry.gitRepository.getFileStructureAtCommit(self.user.registry.gitReadHash)
+    if self.user.registry.initialized and "repositories.json" in registryFileStructure.lsFiles("./"):
       self.userRepositories = loadRepositoryDict(json.loads(registryFileStructure.read("repositories.json")))
     else:
       self.userRepositories = {}
@@ -85,9 +85,9 @@ class Repositories(collections.Mapping,UserOwnedObject,FileBackedObject):
     Load the repository states from disk.
     Return them as a dictionary object.
     """
-    if not self.user.getRegistry().initialized:
+    if not self.user.registry.initialized:
       return {}
-    gitFileStructure = self.user.getRegistry().gitRepository.getFileStructureAtCommit(self.user.getRegistry().gitReadHash)
+    gitFileStructure = self.user.registry.gitRepository.getFileStructureAtCommit(self.user.registry.gitReadHash)
     if "repository-states.json" in gitFileStructure.lsFiles("./"):
       return json.loads(gitFileStructure.read("repository-states.json"))
     else:
@@ -95,9 +95,9 @@ class Repositories(collections.Mapping,UserOwnedObject,FileBackedObject):
 
   def addRepository(self,repository):
     if not repository.temporary:
-      self.user.getRegistry().logChange("Adding new repository "+repository.displayName)
+      self.user.registry.logChange("Adding new repository "+repository.displayName)
     else:
-      self.user.getRegistry().logChange("Adding new temporary repository "+repository.displayName)
+      self.user.registry.logChange("Adding new temporary repository "+repository.displayName)
     self.userRepositories[repository.name] = repository
 
   def removeRepository(self,name):
@@ -108,9 +108,9 @@ class Repositories(collections.Mapping,UserOwnedObject,FileBackedObject):
     if repository.isInUse():
       sys.exit("Cannot remove repository "+name+". Repository is in use. Subusers or installed images exist which rely on this repository.")
     if not repository.temporary:
-      self.user.getRegistry().logChange("Removing repository "+name)
+      self.user.registry.logChange("Removing repository "+name)
     else:
-      self.user.getRegistry().logChange("Removing temporary repository "+self[name].displayName)
+      self.user.registry.logChange("Removing temporary repository "+self[name].displayName)
     repository.removeGitRepo()
     del self.userRepositories[name]
 
@@ -149,10 +149,10 @@ class Repositories(collections.Mapping,UserOwnedObject,FileBackedObject):
 
     Note: This is done automatically for you when you ``commit()`` the registry.
     """
-    with self.user.getEndUser().get_file(self.userRepositoryListPath, 'w') as file_f:
+    with self.user.endUser.get_file(self.userRepositoryListPath, 'w') as file_f:
       json.dump(self.serializeRepositoriesToDict(self.userRepositories), file_f, indent=1, separators=(',', ': '))
-    repositoryStatesDotJsonPath = os.path.join(self.user.getConfig()["registry-dir"],"repository-states.json")
-    with self.user.getEndUser().get_file(repositoryStatesDotJsonPath,mode="w") as repositoryStatesDotJsonFile:
+    repositoryStatesDotJsonPath = os.path.join(self.user.config["registry-dir"],"repository-states.json")
+    with self.user.endUser.get_file(repositoryStatesDotJsonPath,mode="w") as repositoryStatesDotJsonFile:
       json.dump(self.serializeRepositoryStatesToDict(),repositoryStatesDotJsonFile, indent=1, separators=(',', ': '))
 
   def getNewUniqueTempRepoId(self):
@@ -160,6 +160,6 @@ class Repositories(collections.Mapping,UserOwnedObject,FileBackedObject):
     Return a new, unique, identifier for a temporary repository.  This function is useful when creating new temporary repositories.
     """
     idAsInt=0
-    while str(idAsInt) in self or os.path.exists(os.path.join(self.user.getConfig()["repositories-dir"],str(idAsInt))):
+    while str(idAsInt) in self or os.path.exists(os.path.join(self.user.config["repositories-dir"],str(idAsInt))):
       idAsInt = idAsInt + 1
     return str(idAsInt)

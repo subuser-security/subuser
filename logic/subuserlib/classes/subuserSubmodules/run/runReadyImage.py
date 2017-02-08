@@ -36,15 +36,15 @@ class RunReadyImage(UserOwnedObject):
     There is still some preparation that needs to be done before an image is ready to be run.  But this preparation requires run time information, so we cannot preform that preparation at build time.
     """
     dockerfileContents  = "FROM "+self.getSubuser().imageId+"\n"
-    dockerfileContents += "RUN useradd --uid="+str(self.user.getEndUser().uid)+" "+self.user.getEndUser().name+" ;export exitstatus=$? ; if [ $exitstatus -eq 4 ] ; then echo uid exists ; elif [ $exitstatus -eq 9 ]; then echo username exists. ; else exit $exitstatus ; fi\n"
-    dockerfileContents += "RUN test -d "+self.user.getEndUser().homeDir+" || mkdir "+self.user.getEndUser().homeDir+" && chown "+self.user.getEndUser().name+" "+self.user.getEndUser().homeDir+"\n"
+    dockerfileContents += "RUN useradd --uid="+str(self.user.endUser.uid)+" "+self.user.endUser.name+" ;export exitstatus=$? ; if [ $exitstatus -eq 4 ] ; then echo uid exists ; elif [ $exitstatus -eq 9 ]; then echo username exists. ; else exit $exitstatus ; fi\n"
+    dockerfileContents += "RUN test -d "+self.user.endUser.homeDir+" || mkdir "+self.user.endUser.homeDir+" && chown "+self.user.endUser.name+" "+self.user.endUser.homeDir+"\n"
     if self.getSubuser().permissions["serial-devices"]:
       dockerfileContents += "RUN groupadd dialout; export exitstatus=$? ; if [ $exitstatus -eq 4 ] ; then echo gid exists ; elif [ $exitstatus -eq 9 ]; then echo groupname exists. ; else exit $exitstatus ; fi\n"
       dockerfileContents += "RUN groupadd uucp; export exitstatus=$? ; if [ $exitstatus -eq 4 ] ; then echo gid exists ; elif [ $exitstatus -eq 9 ]; then echo groupname exists. ; else exit $exitstatus ; fi\n"
-      dockerfileContents += "RUN usermod -a -G dialout "+self.user.getEndUser().name+"\n"
-      dockerfileContents += "RUN usermod -a -G uucp "+self.user.getEndUser().name+"\n"
+      dockerfileContents += "RUN usermod -a -G dialout "+self.user.endUser.name+"\n"
+      dockerfileContents += "RUN usermod -a -G uucp "+self.user.endUser.name+"\n"
     if self.getSubuser().permissions["sudo"]:
-      dockerfileContents += "RUN (umask 337; echo \""+self.user.getEndUser().name+" ALL=(ALL) NOPASSWD: ALL\" > /etc/sudoers.d/allowsudo )\n"
+      dockerfileContents += "RUN (umask 337; echo \""+self.user.endUser.name+" ALL=(ALL) NOPASSWD: ALL\" > /etc/sudoers.d/allowsudo )\n"
     return dockerfileContents
 
   def build(self):
@@ -52,8 +52,8 @@ class RunReadyImage(UserOwnedObject):
     Returns the Id of the Docker image to be run.
     """
     try:
-      tag = subuserlib.docker.buildImageTag("subuser-"+self.user.getEndUser().name+"-"+self.getSubuser().name,self.getSubuser().permissions.getHash())
-      return self.user.getDockerDaemon().build(None,quietClient=True,useCache=True,tag=tag,forceRm=True,rm=True,dockerfile=self.generateImagePreparationDockerfile())
+      tag = subuserlib.docker.buildImageTag("subuser-"+self.user.endUser.name+"-"+self.getSubuser().name,self.getSubuser().permissions.getHash())
+      return self.user.dockerDaemon.build(None,quietClient=True,useCache=True,tag=tag,forceRm=True,rm=True,dockerfile=self.generateImagePreparationDockerfile())
     except subuserlib.classes.exceptions.ImageBuildException as e:
-      self.user.getRegistry().log("Error building run-ready image for subuser "+self.getSubuser().name+"\n"+str(e))
+      self.user.registry.log("Error building run-ready image for subuser "+self.getSubuser().name+"\n"+str(e))
       return None

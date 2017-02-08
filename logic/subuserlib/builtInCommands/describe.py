@@ -40,7 +40,7 @@ def runCommand(sysargs):
   elif args[0] == "subuser":
     for subuser in  args[1:]:
       try:
-        user.getRegistry().subusers[subuser].describe()
+        user.registry.subusers[subuser].describe()
       except KeyError:
         sys.exit("Subuser "+subuser+" does not exist.")
   else:

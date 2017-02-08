@@ -42,12 +42,10 @@ class User(object):
       self.homeDir = os.getcwd()
     else:
       self.homeDir = os.path.expanduser("~")
-    self.__endUser = EndUser(self)
+    self.endUser = EndUser(self)
 
-  def getEndUser(self):
-    return self.__endUser
-
-  def getConfig(self):
+  @property
+  def config(self):
     """
     Get the user's :doc:`Config <config>` object.
 
@@ -57,7 +55,8 @@ class User(object):
       self.__config = config.Config(self)
     return self.__config
 
-  def getRegistry(self):
+  @property
+  def registry(self):
     """
     Get the user's subuser :doc:`Registry <registry>`.
 
@@ -68,7 +67,8 @@ class User(object):
       self.__registry.ensureGitRepoInitialized()
     return self.__registry
 
-  def setRegistry(self, registry):
+  @registry.setter
+  def registry(self, registry):
     self.__registry = registry
 
   def reloadRegistry(self):
@@ -77,7 +77,8 @@ class User(object):
     """
     self.__registry = None
 
-  def getInstalledImages(self):
+  @property
+  def installedImages(self):
     """
     Get the user's  :doc:`InstalledImages <installed-images>` list.
 
@@ -87,7 +88,8 @@ class User(object):
       self.__installedImages = installedImages.InstalledImages(self)
     return self.__installedImages
 
-  def getDockerDaemon(self):
+  @property
+  def dockerDaemon(self):
     """
     Get the :doc:`DockerDaemon <docker>` object.  You will use this to communicate with the Docker daemon.
     """

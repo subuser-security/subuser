@@ -34,7 +34,7 @@ class ImageSource(UserOwnedObject,Describable):
     return self.name + "@" + self.repo.displayName
 
   def getDockerImageTag(self):
-    longTag = "subuser-" + self.user.getEndUser().name + "-" + self.getIdentifier()
+    longTag = "subuser-" + self.user.endUser.name + "-" + self.getIdentifier()
     return subuserlib.docker.buildImageTag(longTag,self.getHash())
 
   def getSubusers(self):
@@ -42,7 +42,7 @@ class ImageSource(UserOwnedObject,Describable):
      Get a list of subusers that were built from this ImageSource.
     """
     subusers = []
-    for subuser in self.user.getRegistry().subusers:
+    for subuser in self.user.registry.subusers:
       if subuser.imageSource==self:
         subusers.append(subuser)
     return subusers
@@ -72,19 +72,20 @@ class ImageSource(UserOwnedObject,Describable):
     """
     imageCreationDateTimeBestSoFar=''
     mostUpToDateImage = None
-    for installedImage in self.getInstalledImages():
+    for installedImage in self.installedImages:
       thisImagesCreationDateTime = installedImage.getCreationDateTime()
       if thisImagesCreationDateTime > imageCreationDateTimeBestSoFar:
         mostUpToDateImage = installedImage
         imageCreationDateTimeBestSoFar = thisImagesCreationDateTime
     return mostUpToDateImage
 
-  def getInstalledImages(self):
+  @property
+  def installedImages(self):
     """
     Return the installed images which are based on this image.
     """
     installedImagesBasedOnThisImageSource = []
-    for _,installedImage in self.user.getInstalledImages().items():
+    for _,installedImage in self.user.installedImages.items():
       if installedImage.imageSourceName == self.name and installedImage.sourceRepoId == self.repo.name:
         installedImagesBasedOnThisImageSource.append(installedImage)
     return installedImagesBasedOnThisImageSource
@@ -129,11 +130,11 @@ class ImageSource(UserOwnedObject,Describable):
           dockerfileContents = "FROM " + parent + "\n"
         else:
           dockerfileContents += line + "\n"
-    imageId = self.user.getDockerDaemon().build(relativeBuildContextPath=self.getImageDir(),repositoryFileStructure=self.repo.fileStructure,rm=True,dockerfile=dockerfileContents,useCache=useCache)
+    imageId = self.user.dockerDaemon.build(relativeBuildContextPath=self.getImageDir(),repositoryFileStructure=self.repo.fileStructure,rm=True,dockerfile=dockerfileContents,useCache=useCache)
     subuserSetupDockerFile = ""
     subuserSetupDockerFile += "FROM "+imageId+"\n"
     subuserSetupDockerFile += "RUN mkdir -p /subuser ; echo "+str(uuid.uuid4())+" > /subuser/uuid\n" # This ensures that all images have unique Ids.  Even images that are otherwise the same.
-    return self.user.getDockerDaemon().build(dockerfile=subuserSetupDockerFile,tag=self.getDockerImageTag(),useCache=False)
+    return self.user.dockerDaemon.build(dockerfile=subuserSetupDockerFile,tag=self.getDockerImageTag(),useCache=False)
 
   def getImageFile(self):
     if self.__explicitConfig:

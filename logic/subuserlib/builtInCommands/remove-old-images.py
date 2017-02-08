@@ -26,9 +26,9 @@ def runCommand(realArgs):
   """
   options,args = parseCliArgs(realArgs)
   user = User()
-  with user.getRegistry().getLock() as lockFileHandler:
+  with user.registry.getLock() as lockFileHandler:
     if not options.repoId is None:
-      if not options.repoId in user.getRegistry().repositories:
+      if not options.repoId in user.registry.repositories:
         repo = subuserlib.resolve.lookupRepositoryByURI(user,options.repoId)
         if repo is None:
           sys.exit("The repository <"+options.repoId+"> does not exist.")

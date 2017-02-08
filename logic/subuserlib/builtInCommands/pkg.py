@@ -61,10 +61,10 @@ def runCommand(realArgs):
       repoConfig = {}
       if options.imageSourcesDir:
         repoConfig["image-sources-dir"] = options.imageSourcesDir
-      with user.getEndUser().get_file("./.subuser.json","w") as subuserDotJson:
+      with user.endUser.get_file("./.subuser.json","w") as subuserDotJson:
         json.dump(repoConfig,subuserDotJson)
         if options.imageSourcesDir:
-          user.getEndUser().makedirs(options.imageSourcesDir)
+          user.endUser.makedirs(options.imageSourcesDir)
       subuserlib.print.printWithoutCrashing("Subuser repository initialized successfully!")
       subuserlib.print.printWithoutCrashing("You can add new image sources with:")
       subuserlib.print.printWithoutCrashing("$ subuser pkg add image-source-name")
@@ -83,7 +83,7 @@ def runCommand(realArgs):
       imageFile = os.path.join(buildContext,"SubuserImagefile")
       permissionsFile = os.path.join(imageSourceDir,"permissions.json")
       try:
-        user.getEndUser().makedirs(buildContext)
+        user.endUser.makedirs(buildContext)
       except OSError:
         pass
     else:
@@ -93,43 +93,43 @@ def runCommand(realArgs):
         sys.exit("If you specify non-default paths you must specify all of them. That is --image-file, --build-context AND --permissions-file. Cannot add image. Exiting...")
       imageFile = options.imageFile
       try:
-        user.getEndUser().makedirs(os.path.dirname(imageFile))
+        user.endUser.makedirs(os.path.dirname(imageFile))
       except OSError:
         pass
       buildContext = options.buildContext
       try:
-        user.getEndUser().makedirs(buildContext)
+        user.endUser.makedirs(buildContext)
       except OSError:
         pass
       permissionsFile = options.permissionsFile
       try:
-        user.getEndUser().makedirs(os.path.dirname(permissionsFile))
+        user.endUser.makedirs(os.path.dirname(permissionsFile))
       except OSError:
         pass
       repoConfig = repo.repoConfig
       if not "explicit-image-sources" in repoConfig:
         repoConfig["explicit-image-sources"] = {}
       repoConfig["explicit-image-sources"][imageSourceToAdd] = {"image-file":imageFile,"build-context":buildContext,"permissions-file":permissionsFile}
-      with user.getEndUser().get_file("./.subuser.json","w") as subuserDotJson:
+      with user.endUser.get_file("./.subuser.json","w") as subuserDotJson:
         json.dump(repoConfig,subuserDotJson,indent=1,separators=(",",": "))
     permissions = defaultPermissions
-    (returncode,maintainerName,stderr) = user.getEndUser().callCollectOutput(["git","config","user.name"])
+    (returncode,maintainerName,stderr) = user.endUser.callCollectOutput(["git","config","user.name"])
     subuserlib.print.printWithoutCrashing(stderr)
-    (returncode,maintainerEmail,stderr) = user.getEndUser().callCollectOutput(["git","config","user.email"])
+    (returncode,maintainerEmail,stderr) = user.endUser.callCollectOutput(["git","config","user.email"])
     subuserlib.print.printWithoutCrashing(stderr)
     permissions["maintainer"] = maintainerName.rstrip("\n")+" <"+maintainerEmail.rstrip("\n")+">"
     if not os.path.exists(permissionsFile):
-      with user.getEndUser().get_file(permissionsFile,"w") as pf:
+      with user.endUser.get_file(permissionsFile,"w") as pf:
         json.dump(permissions,pf,indent=1,separators=(",",": "))
     while True:
-      user.getEndUser().runEditor(permissionsFile)
+      user.endUser.runEditor(permissionsFile)
       try:
         Permissions(user,initialPermissions=subuserlib.permissions.load(permissionsFilePath=permissionsFile),writePath=permissionsFile).save()
         break
       except SyntaxError as e:
         input(str(e)+"\nPress ENTER to edit the file again.")
     if not os.path.exists(imageFile):
-      with user.getEndUser().get_file(imageFile,"w") as imgf:
+      with user.endUser.get_file(imageFile,"w") as imgf:
         imgf.write(defaultImageFileTemplate)
-    user.getEndUser().runEditor(imageFile)
+    user.endUser.runEditor(imageFile)
     subuserlib.print.printWithoutCrashing("Your application has now been packaged. Run subuser dev %s to test your work. Use subuser dev --update %s to iterate."%(imageSourceToAdd,imageSourceToAdd))

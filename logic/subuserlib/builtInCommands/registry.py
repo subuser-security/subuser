@@ -40,7 +40,7 @@ def runCommand(realArgs):
   """
   options,args = parseCliArgs(realArgs)
   user = User()
-  user.getRegistry().commit_message = " ".join(["subuser","repository"]+realArgs)
+  user.registry.commit_message = " ".join(["subuser","repository"]+realArgs)
   if len(args) < 1:
     sys.exit("No arguments given. Please use subuser registry -h for help.")
   elif ["log"] == args:
@@ -50,17 +50,17 @@ def runCommand(realArgs):
       commit = args[1]
     except KeyError:
       sys.exit("Wrong number of arguments.  Expected a commit.  Try running \nsubuser regsitry --help\nfor more info.")
-    with user.getRegistry().getLock():
-      if not user.getRegistry().gitRepository.doesCommitExist(commit):
+    with user.registry.getLock():
+      if not user.registry.gitRepository.doesCommitExist(commit):
         sys.exit("The commit "+commit+" does not exist. Use --help for help.")
       subuserlib.registry.rollback(user,commit=commit)
   elif ["live-log"] == args:
     liveLogDir = os.path.join(user.homeDir,".subuser/registry-live-log")
     liveLogPath = os.path.join(liveLogDir,str(os.getpid()))
     if not os.path.exists(liveLogDir):
-      user.getEndUser().makedirs(liveLogDir)
+      user.endUser.makedirs(liveLogDir)
     os.mkfifo(liveLogPath)
-    user.getEndUser().chown(liveLogPath)
+    user.endUser.chown(liveLogPath)
     # Why use os.open? http://stackoverflow.com/questions/5782279/why-does-a-read-only-open-of-a-named-pipe-block
     liveLog = os.open(liveLogPath,os.O_RDONLY|os.O_NONBLOCK)
     q = False

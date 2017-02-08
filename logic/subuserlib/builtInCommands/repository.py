@@ -37,7 +37,7 @@ def runCommand(sysargs):
   """
   options,args = parseCliArgs(sysargs)
   user = User()
-  user.getRegistry().commit_message = " ".join(["subuser","repository"]+sysargs)
+  user.registry.commit_message = " ".join(["subuser","repository"]+sysargs)
   try:
     action = args[0]
   except IndexError:
@@ -47,13 +47,13 @@ def runCommand(sysargs):
       sys.exit("Use subuser repository --help for help.")
     name = args[1]
     url = args[2]
-    with user.getRegistry().getLock():
+    with user.registry.getLock():
       subuserlib.repository.add(user,name,url)
   elif action == "remove":
     if not len(args) == 2:
       sys.exit("Use subuser repository --help for help.")
     name = args[1]
-    with user.getRegistry().getLock():
+    with user.registry.getLock():
       subuserlib.repository.remove(user,name)
   else:
      sys.exit("Action "+args[0]+" not supported. Please see:\n subuser repository --help")

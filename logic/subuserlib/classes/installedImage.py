@@ -23,19 +23,19 @@ class InstalledImage(UserOwnedObject,Describable):
 
   @property
   def imageSource(self):
-    return self.user.getRegistry().repositories[self.sourceRepoId][self.imageSourceName]
+    return self.user.registry.repositories[self.sourceRepoId][self.imageSourceName]
 
   def isDockerImageThere(self):
     """
     Does the Docker daemon have an image with this imageId?
     """
-    return not (self.user.getDockerDaemon().getImageProperties(self.imageId) == None)
+    return not (self.user.dockerDaemon.getImageProperties(self.imageId) == None)
 
   def removeCachedRuntimes(self):
     """
     Remove cached runtime environments.
     """
-    pathToImagesRuntimeCacheDir = os.path.join(self.user.getConfig()["runtime-cache"],self.imageId)
+    pathToImagesRuntimeCacheDir = os.path.join(self.user.config["runtime-cache"],self.imageId)
     try:
       for permissionsSpecificCacheInfoFileName in os.listdir(pathToImagesRuntimeCacheDir):
         permissionsSpecificCacheInfoFilePath = os.path.join(pathToImagesRuntimeCacheDir,permissionsSpecificCacheInfoFileName)
@@ -44,8 +44,8 @@ class InstalledImage(UserOwnedObject,Describable):
           try:
             try:
               imageId = permissionsSpecificCacheInfo['run-ready-image-id']
-              self.user.getRegistry().log("Removing runtime cache image %s"%imageId)
-              self.user.getDockerDaemon().removeImage(imageId)
+              self.user.registry.log("Removing runtime cache image %s"%imageId)
+              self.user.dockerDaemon.removeImage(imageId)
             except dockerDaemon.ImageDoesNotExistsException:
               pass
             os.remove(permissionsSpecificCacheInfoFilePath)
@@ -59,10 +59,10 @@ class InstalledImage(UserOwnedObject,Describable):
     Remove the image from the Docker daemon's image store.
     """
     try:
-      self.user.getRegistry().log("Removing image %s"%self.imageId)
-      self.user.getDockerDaemon().removeImage(self.imageId)
+      self.user.registry.log("Removing image %s"%self.imageId)
+      self.user.dockerDaemon.removeImage(self.imageId)
     except (dockerDaemon.ImageDoesNotExistsException,dockerDaemon.ContainerDependsOnImageException,dockerDaemon.ServerErrorException) as e:
-      self.user.getRegistry().log("Error removing image: "+self.imageId+"\n"+str(e))
+      self.user.registry.log("Error removing image: "+self.imageId+"\n"+str(e))
 
   def describe(self):
     print("Image Id: "+self.imageId)
@@ -79,9 +79,9 @@ class InstalledImage(UserOwnedObject,Describable):
     if self.__alreadyCheckedForUpdates:
       return False
     self.__alreadyCheckedForUpdates = True
-    self.user.getRegistry().log("Checking for updates to: " + self.imageSource.getIdentifier())
-    if self.user.getDockerDaemon().execute(["run","--rm","--entrypoint","/usr/bin/test",self.imageId,"-e","/subuser/check-for-updates"]) == 0:
-      returnCode = self.user.getDockerDaemon().execute(["run","--rm","--entrypoint","/subuser/check-for-updates",self.imageId])
+    self.user.registry.log("Checking for updates to: " + self.imageSource.getIdentifier())
+    if self.user.dockerDaemon.execute(["run","--rm","--entrypoint","/usr/bin/test",self.imageId,"-e","/subuser/check-for-updates"]) == 0:
+      returnCode = self.user.dockerDaemon.execute(["run","--rm","--entrypoint","/subuser/check-for-updates",self.imageId])
       if returnCode == 0:
         return True
     return False
@@ -90,7 +90,7 @@ class InstalledImage(UserOwnedObject,Describable):
     """
     Return the creation date/time of the installed docker image. Or None if the image does not exist.
     """
-    imageProperties = self.user.getDockerDaemon().getImageProperties(self.imageId)
+    imageProperties = self.user.dockerDaemon.getImageProperties(self.imageId)
     if not imageProperties is None:
       return imageProperties["Created"]
     else:
@@ -101,7 +101,7 @@ class InstalledImage(UserOwnedObject,Describable):
     Return the list(lineage) of id of Docker image layers which goes from a base image to this image including all of the image's ancestors in order of dependency.
     """
     def getLineageRecursive(imageId):
-      imageProperties = self.user.getDockerDaemon().getImageProperties(imageId)
+      imageProperties = self.user.dockerDaemon.getImageProperties(imageId)
       if imageProperties == None:
         return []
         #sys.exit("Failed to get properties of image "+imageId)
@@ -118,6 +118,6 @@ class InstalledImage(UserOwnedObject,Describable):
     lineage = []
     dockerImageLayers = self.getLineageLayers()
     for dockerImageLayer in dockerImageLayers:
-      if dockerImageLayer in self.user.getInstalledImages():
-        lineage.append(self.user.getInstalledImages()[dockerImageLayer])
+      if dockerImageLayer in self.user.installedImages:
+        lineage.append(self.user.installedImages[dockerImageLayer])
     return lineage

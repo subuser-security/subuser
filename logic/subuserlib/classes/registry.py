@@ -36,7 +36,7 @@ class Registry(userOwnedObject.UserOwnedObject):
     self.gitRepository = None
     self.gitReadHash = gitReadHash
     userOwnedObject.UserOwnedObject.__init__(self,user)
-    self.registryDir = self.user.getConfig()["registry-dir"]
+    self.registryDir = self.user.config["registry-dir"]
     self.logFilePath = os.path.join(self.registryDir,"commit_log")
     self.gitRepository = GitRepository(self.user,self.registryDir)
 
@@ -53,11 +53,11 @@ class Registry(userOwnedObject.UserOwnedObject):
     return self.__repositories
 
   def ensureGitRepoInitialized(self):
-    if not os.path.exists(os.path.join(self.user.getConfig()["registry-dir"],".git")):
+    if not os.path.exists(os.path.join(self.user.config["registry-dir"],".git")):
       self.initialized = False
       # Ensure git is setup before we start to make changes.
       self.gitRepository.getGitExecutable()
-      self.user.getEndUser().makedirs(self.user.getConfig()["registry-dir"])
+      self.user.endUser.makedirs(self.user.config["registry-dir"])
       self.gitRepository.run(["init"])
       self.logChange("Initial commit.")
       self.commit("Initial commit.")
@@ -104,7 +104,7 @@ class Registry(userOwnedObject.UserOwnedObject):
     if self.__changed:
       self.repositories.save()
       self.subusers.save()
-      with self.user.getEndUser().get_file(self.logFilePath) as fd:
+      with self.user.endUser.get_file(self.logFilePath) as fd:
         fd.write(self.__changeLog)
       self.gitRepository.run(["add","."])
       if message is None:
@@ -139,12 +139,12 @@ class Registry(userOwnedObject.UserOwnedObject):
     To be used with with.
     """
     try:
-      self.user.getEndUser().makedirs(self.user.getConfig()["lock-dir"])
+      self.user.endUser.makedirs(self.user.config["lock-dir"])
     except OSError as exception:
       if exception.errno != errno.EEXIST:
         raise
     try:
-      lock = subuserlib.lock.getLock(self.user.getEndUser().get_file(os.path.join(self.user.getConfig()["lock-dir"],"registry.lock"),'w'),timeout=1)
+      lock = subuserlib.lock.getLock(self.user.endUser.get_file(os.path.join(self.user.config["lock-dir"],"registry.lock"),'w'),timeout=1)
       with lock:
         yield
     except IOError as e:
