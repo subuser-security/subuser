@@ -109,7 +109,7 @@ def runCommand(sysargs):
     for id,installedImage in user.getInstalledImages().items():
       if not options.long:
         try:
-          identifier = installedImage.getImageSource().getIdentifier()
+          identifier = installedImage.imageSource.getIdentifier()
           if not options.broken:
             subuserlib.print.printWithoutCrashing(identifier+" "+id)
         except KeyError:

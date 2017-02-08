@@ -38,7 +38,7 @@ def removeOldImages(user,dryrun=False,yes=False,sourceRepo=None,imageSourceName=
   user.getRegistry().log("DOCKER-ID : SUBUSER-ID")
   # List images to be removed
   for installedImage in imagesToBeRemoved:
-    user.getRegistry().log("Removing unneeded image "+installedImage.imageId + " : " + installedImage.getImageSource().getIdentifier())
+    user.getRegistry().log("Removing unneeded image "+installedImage.imageId + " : " + installedImage.imageSource.getIdentifier())
   if dryrun:
     return
   # Ask user if we should continue?

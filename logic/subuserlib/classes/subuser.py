@@ -27,7 +27,7 @@ class Subuser(UserOwnedObject, Describable):
     self.__repoName = repoName
     self.__imageSourceName = imageSourceName
     self.imageId = imageId
-    self.__executableShortcutInstalled = executableShortcutInstalled
+    self.executableShortcutInstalled = executableShortcutInstalled
     self.__entryPointsExposed = entrypointsExposed
     self.__entryPointsExposedThisRun = False
     self.__locked = locked
@@ -40,7 +40,8 @@ class Subuser(UserOwnedObject, Describable):
     self.__permissionsTemplate = None
     UserOwnedObject.__init__(self,user)
 
-  def getImageSource(self):
+  @property
+  def imageSource(self):
     """
     Note, it is posssible that the subuser's image source no longer exists, in which case this function raises a NoImageSourceException.
     """
@@ -56,24 +57,21 @@ class Subuser(UserOwnedObject, Describable):
     if self.__imageSource is None:
       return self.__imageSourceName
     else:
-      return self.getImageSource().name
+      return self.imageSource.name
 
-  def getSourceRepoName(self):
+  @property
+  def sourceRepoName(self):
     if self.__imageSource is None:
       return self.__repoName
     else:
-      return self.getImageSource().repo.name
+      return self.imageSource.repo.name
 
-  def isExecutableShortcutInstalled(self):
-    return self.__executableShortcutInstalled
-
-  def setExecutableShortcutInstalled(self,installed):
-    self.__executableShortcutInstalled = installed
-
-  def areEntryPointsExposed(self):
+  @property
+  def entryPointsExposed(self):
     return self.__entryPointsExposed
 
-  def setEntrypointsExposed(self,exposed):
+  @entryPointsExposed.setter
+  def entrypointsExposed(self,exposed):
     self.__entryPointsExposed = exposed
     if exposed:
       self.__entryPointsExposedThisRun = True
@@ -81,7 +79,8 @@ class Subuser(UserOwnedObject, Describable):
   def wereEntryPointsExposedThisRun(self):
     return self.__entryPointsExposedThisRun
 
-  def getPermissionsDir(self):
+  @property
+  def permissionsDir(self):
     return os.path.join(self.getUser().getConfig()["registry-dir"],"permissions",self.name)
 
   def getRelativePermissionsDir(self):
@@ -91,12 +90,12 @@ class Subuser(UserOwnedObject, Describable):
     return os.path.join("permissions",self.name)
 
   def createPermissions(self,permissionsDict):
-    permissionsDotJsonWritePath = os.path.join(self.getPermissionsDir(),"permissions.json")
+    permissionsDotJsonWritePath = os.path.join(self.permissionsDir,"permissions.json")
     self.__permissions = Permissions(self.getUser(),initialPermissions=permissionsDict,writePath=permissionsDotJsonWritePath)
     return self.__permissions
 
   def getPermissionsDotJsonWritePath(self):
-    return os.path.join(self.getPermissionsDir(),"permissions.json")
+    return os.path.join(self.permissionsDir,"permissions.json")
 
   def loadPermissions(self):
     registryFileStructure = self.getUser().getRegistry().gitRepository.getFileStructureAtCommit(self.getUser().getRegistry().gitReadHash)
@@ -124,13 +123,13 @@ Please file a bug report explaining how you got here.\n"""+ str(e))
 
   def getPermissionsTemplate(self):
     if self.__permissionsTemplate is None:
-      permissionsDotJsonWritePath = os.path.join(self.getPermissionsDir(),"permissions-template.json")
+      permissionsDotJsonWritePath = os.path.join(self.permissionsDir,"permissions-template.json")
       registryFileStructure = self.getUser().getRegistry().gitRepository.getFileStructureAtCommit(self.getUser().getRegistry().gitReadHash)
       if os.path.join(self.getRelativePermissionsDir(),"permissions-template.json") in registryFileStructure.lsFiles(self.getRelativePermissionsDir()):
         initialPermissions = subuserlib.permissions.load(permissionsString=registryFileStructure.read(os.path.join(self.getRelativePermissionsDir(),"permissions-template.json")))
         save = False
       else:
-        initialPermissions = self.getImageSource().permissions
+        initialPermissions = self.imageSource.permissions
         save = True
       self.__permissionsTemplate = Permissions(self.getUser(),initialPermissions,writePath=permissionsDotJsonWritePath)
       if save:
@@ -265,7 +264,7 @@ Please file a bug report explaining how you got here.\n"""+ str(e))
     print("Subuser: "+self.name)
     print("------------------")
     try:
-      print(self.getImageSource().getIdentifier())
+      print(self.imageSource.getIdentifier())
     except subuserlib.classes.subuser.NoImageSourceException:
       print("Warning: This subuser has no image, nor does it have a valid image source to install an image from.")
     print("Docker image Id: "+str(self.imageId))

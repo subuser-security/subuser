@@ -44,7 +44,7 @@ class AcceptPermissionsAtCLI(PermissionsAccepter,UserOwnedObject):
         for removedPermission in removedPermissions:
           for line in subuserlib.permissions.descriptions[removedPermission](oldDefaults[removedPermission]):
             subuserlib.print.printWithoutCrashing("   - "+line)
-      if "entrypoints" in additionsAndChanges and subuser.areEntryPointsExposed():
+      if "entrypoints" in additionsAndChanges and subuser.entryPointsExposed:
         subuserlib.print.printWithoutCrashing(subuser.name+" would like to expose the following entrypoints to the system PATH:")
         for entrypoint in additionsAndChanges["entrypoints"].keys():
           subuserlib.print.printWithoutCrashing(entrypoint)

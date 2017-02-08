@@ -21,7 +21,8 @@ class InstalledImage(UserOwnedObject,Describable):
     self.__alreadyCheckedForUpdates = None
     UserOwnedObject.__init__(self,user)
 
-  def getImageSource(self):
+  @property
+  def imageSource(self):
     return self.getUser().getRegistry().repositories[self.sourceRepoId][self.imageSourceName]
 
   def isDockerImageThere(self):
@@ -66,7 +67,7 @@ class InstalledImage(UserOwnedObject,Describable):
   def describe(self):
     print("Image Id: "+self.imageId)
     try:
-      print("Image source: "+self.getImageSource().getIdentifier())
+      print("Image source: "+self.imageSource.getIdentifier())
     except KeyError:
       print("Image is broken, image source does not exist!")
     print("Last update time: "+self.getCreationDateTime())
@@ -78,7 +79,7 @@ class InstalledImage(UserOwnedObject,Describable):
     if self.__alreadyCheckedForUpdates:
       return False
     self.__alreadyCheckedForUpdates = True
-    self.getUser().getRegistry().log("Checking for updates to: " + self.getImageSource().getIdentifier())
+    self.getUser().getRegistry().log("Checking for updates to: " + self.imageSource.getIdentifier())
     if self.getUser().getDockerDaemon().execute(["run","--rm","--entrypoint","/usr/bin/test",self.imageId,"-e","/subuser/check-for-updates"]) == 0:
       returnCode = self.getUser().getDockerDaemon().execute(["run","--rm","--entrypoint","/subuser/check-for-updates",self.imageId])
       if returnCode == 0:

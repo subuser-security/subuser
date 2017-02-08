@@ -145,7 +145,7 @@ class Repository(dict,UserOwnedObject,Describable):
           return True
       for _,subuser in self.getUser().getRegistry().subusers.items():
         try:
-          if self.name == subuser.getImageSource().repo.name:
+          if self.name == subuser.imageSource.repo.name:
             return True
         except subuserlib.classes.subuser.NoImageSourceException:
           pass

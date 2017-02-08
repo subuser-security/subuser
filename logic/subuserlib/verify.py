@@ -30,7 +30,7 @@ def verify(user,permissionsAccepter=None,checkForUpdatesExternally=False,subuser
   user.getRegistry().log("Verifying registry consistency...")
   for subuser in subusers:
     try:
-      subuser.getImageSource()
+      subuser.imageSource
     except subuserlib.classes.subuser.NoImageSourceException:
       user.getRegistry().log("WARNING: "+subuser.name+" is no longer present in it's source repository. Support for this progam may have been dropped.")
       try:
@@ -92,9 +92,9 @@ def approvePermissions(user,subusers,permissionsAccepter):
       userApproved = None
     try:
       oldDefaults = subuser.getPermissionsTemplate()
-      newDefaults = subuser.getImageSource().permissions
+      newDefaults = subuser.imageSource.permissions
       permissionsAccepter.accept(subuser=subuser,oldDefaults=oldDefaults,newDefaults=newDefaults,userApproved=userApproved)
-      subuser.getPermissionsTemplate().update(subuser.getImageSource().permissions)
+      subuser.getPermissionsTemplate().update(subuser.imageSource.permissions)
       subuser.getPermissionsTemplate().save()
     except SyntaxError as e:
       subusersWhosPermissionsFailedToParse.append(subuser)
@@ -127,9 +127,9 @@ def rebuildBinDir(user):
     shutil.rmtree(user.getConfig()["bin-dir"])
   user.getEndUser().mkdir(user.getConfig()["bin-dir"])
   for _,subuser in user.getRegistry().subusers.items():
-    if subuser.isExecutableShortcutInstalled():
+    if subuser.executableShortcutInstalled:
       subuser.installExecutableShortcut()
-    if subuser.areEntryPointsExposed():
+    if subuser.entryPointsExposed:
       subuser.exposeEntrypoints()
 
 def cleanupRuntimeDirs(user):

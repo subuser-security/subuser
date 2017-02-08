@@ -43,7 +43,7 @@ class ImageSource(UserOwnedObject,Describable):
     """
     subusers = []
     for subuser in self.getUser().getRegistry().subusers:
-      if subuser.getImageSource()==self:
+      if subuser.imageSource==self:
         subusers.append(subuser)
     return subusers
 

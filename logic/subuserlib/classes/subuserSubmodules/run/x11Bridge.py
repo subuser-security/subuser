@@ -134,7 +134,7 @@ class XpraX11Bridge(Service):
   def addServerSubuser(self):
     subuserlib.subuser.addFromImageSourceNoVerify(self.getUser(),self.getServerSubuserName(),self.getUser().getRegistry().repositories["default"]["subuser-internal-xpra-server"])
     self.getSubuser().addServiceSubuser(self.getServerSubuserName())
-    self.getServerSubuser().createPermissions(self.getServerSubuser().getImageSource().permissions)
+    self.getServerSubuser().createPermissions(self.getServerSubuser().imageSource.permissions)
 
   def getClientSubuserName(self):
     return "!service-subuser-"+self.getSubuser().name+"-xpra-client"
@@ -145,7 +145,7 @@ class XpraX11Bridge(Service):
   def addClientSubuser(self):
     subuserlib.subuser.addFromImageSourceNoVerify(self.getUser(),self.getClientSubuserName(),self.getUser().getRegistry().repositories["default"]["subuser-internal-xpra-client"])
     self.getSubuser().addServiceSubuser(self.getClientSubuserName())
-    self.getClientSubuser().createPermissions(self.getClientSubuser().getImageSource().permissions)
+    self.getClientSubuser().createPermissions(self.getClientSubuser().imageSource.permissions)
 
   def cleanUp(self):
     """

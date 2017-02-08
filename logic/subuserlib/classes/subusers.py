@@ -35,10 +35,10 @@ class Subusers(dict,UserOwnedObject,FileBackedObject):
     serializedDict["unlocked"]=collections.OrderedDict()
     for subuser in self.getSortedList():
       serializedSubuser = collections.OrderedDict()
-      serializedSubuser["source-repo"] = subuser.getSourceRepoName()
+      serializedSubuser["source-repo"] = subuser.sourceRepoName
       serializedSubuser["image-source"] = subuser.imageSourceName
-      serializedSubuser["executable-shortcut-installed"] = subuser.isExecutableShortcutInstalled()
-      serializedSubuser["entrypoints-exposed"] = subuser.areEntryPointsExposed()
+      serializedSubuser["executable-shortcut-installed"] = subuser.executableShortcutInstalled
+      serializedSubuser["entrypoints-exposed"] = subuser.entryPointsExposed
       serializedSubuser["docker-image"] = subuser.imageId
       serializedSubuser["service-subusers"] = subuser.getServiceSubuserNames()
       if subuser.locked():

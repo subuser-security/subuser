@@ -74,7 +74,7 @@ def setExecutableShortcutInstalled(user,subusers,installed):
       user.getRegistry().logChange("Adding launcher for subuser "+subuser.name+" to $PATH.")
     else:
       user.getRegistry().logChange("Removing launcher for subuser "+subuser.name+" from $PATH.")
-    subuser.setExecutableShortcutInstalled(installed)
+    subuser.executableShortcutInstalled = installed
   subuserlib.verify.verify(user)
   user.getRegistry().commit()
 
@@ -84,6 +84,6 @@ def setEntrypointsExposed(user,subusers,exposed,permissionsAccepter):
       user.getRegistry().logChange("Exposing entrypoints for subuser "+subuser.name+" in the $PATH.")
     else:
       user.getRegistry().logChange("Removing entrypoints for subuser "+subuser.name+" from $PATH.")
-    subuser.setEntrypointsExposed(exposed)
+    subuser.entrypointsExposed = exposed
   subuserlib.verify.verify(user,subusers=subusers,permissionsAccepter=permissionsAccepter)
   user.getRegistry().commit()
