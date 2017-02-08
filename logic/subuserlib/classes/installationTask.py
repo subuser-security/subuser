@@ -71,7 +71,7 @@ class InstallationTask(UserOwnedObject):
         return False
       if not installed.imageId == target.getLatestInstalledImage().imageId:
         return False
-    if not installedImage.getImageSourceHash() == imageSource.getHash():
+    if not installedImage.imageSourceHash == imageSource.getHash():
       return False
     if self.checkForUpdatesExternally and installedImage.checkForUpdates():
       return False

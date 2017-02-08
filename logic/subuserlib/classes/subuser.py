@@ -139,7 +139,7 @@ Please file a bug report explaining how you got here.\n"""+ str(e))
 
   def editPermissionsCLI(self):
     while True:
-      self.getUser().getEndUser().runEditor(self.permissions.getWritePath())
+      self.getUser().getEndUser().runEditor(self.permissions.writePath)
       try:
         initialPermissions = subuserlib.permissions.load(permissionsFilePath=self.getPermissionsDotJsonWritePath())
         break

@@ -14,16 +14,10 @@ import subuserlib.permissions
 
 class Permissions(collections.OrderedDict,UserOwnedObject,FileBackedObject):
   def __init__(self,user,initialPermissions,writePath=None):
-    self.__writePath = writePath
+    self.writePath = writePath
     UserOwnedObject.__init__(self,user)
     collections.OrderedDict.__init__(self)
     self.update(initialPermissions)
-
-  def getWritePath(self):
-    """
-    Return the path to which the permissions object is to be saved.
-    """
-    return self.__writePath
 
   def getHash(self):
     """
@@ -40,7 +34,7 @@ class Permissions(collections.OrderedDict,UserOwnedObject,FileBackedObject):
       self[permission] = value
 
   def save(self):
-    with self.getUser().getEndUser().get_file(self.__writePath,'w') as fd:
+    with self.getUser().getEndUser().get_file(self.writePath,'w') as fd:
       fd.write(subuserlib.permissions.getJSONString(self))
 
   def describe(self):

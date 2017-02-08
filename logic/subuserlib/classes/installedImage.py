@@ -15,7 +15,7 @@ import subuserlib.classes.docker.dockerDaemon as dockerDaemon
 class InstalledImage(UserOwnedObject,Describable):
   def __init__(self,user,imageId,imageSourceName,sourceRepoId,imageSourceHash):
     self.imageId = imageId
-    self.__imageSourceHash = imageSourceHash
+    self.imageSourceHash = imageSourceHash
     self.imageSourceName = imageSourceName
     self.sourceRepoId = sourceRepoId
     self.__alreadyCheckedForUpdates = None
@@ -23,9 +23,6 @@ class InstalledImage(UserOwnedObject,Describable):
 
   def getImageSource(self):
     return self.getUser().getRegistry().getRepositories()[self.sourceRepoId][self.imageSourceName]
-
-  def getImageSourceHash(self):
-    return self.__imageSourceHash
 
   def isDockerImageThere(self):
     """

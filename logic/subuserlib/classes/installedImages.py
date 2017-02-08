@@ -53,7 +53,7 @@ class InstalledImages(dict,UserOwnedObject,FileBackedObject):
     installedImagesDict = {}
     for _,installedImage in self.items():
       imageAttributes = {}
-      imageAttributes["image-source-hash"] = installedImage.getImageSourceHash()
+      imageAttributes["image-source-hash"] = installedImage.imageSourceHash
       imageAttributes["image-source"] = installedImage.imageSourceName
       imageAttributes["source-repo"] = installedImage.sourceRepoId
       installedImagesDict[installedImage.imageId] = imageAttributes
