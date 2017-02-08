@@ -1,6 +1,14 @@
 Related projects
 ================
 
+ * `snap <https://www.ubuntu.com/desktop/snappy>`_
+
+ Snap is Canonical's new packaging and sandboxing system. It is quite similar to subuser. It supports packaging your apps for cross platform distribution, sandboxing your apps so that you can run untrusted code, and reverting/rolling back application upgrades just like subuser. The main difference is that subuser uses a more freeform packaging system, allowing you to package your apps simply by writting a Dockerfile. Snap is, on the other hand, a **real** packaging manager with a dependency resolution engine and everything. The result is that, snap packages install quicker, upgrade quicker, and use less space on disk, but subuser packages are much easier to create, especially for out of date or esoteric code. In the future, subuser will support `CAS <http://doc.cat-v.org/plan_9/4th_edition/papers/venti/>`_ deduplication and snap's advantages will fall away, allowing users to take advantage of the ease of packaging for subuser and the speed of snap at the same time. In the mean time snap and subuser can run side by side on the same system without interfering with eachother, so if you want to run evince using snap and some hard to package esoteric IDE with subuser, that's totally possible.
+
+ * `flatpak <http://flatpak.org/>`_
+
+ Flatpak is Redhat corporation's response to subuser and snap. It has its own special packaging format, so you'll have to rebuild and repackage your applications to work with flatpak. They got press for `having packaged libreoffice <https://whatofhow.wordpress.com/2015/08/11/libreoffice-in-a-box/>`_ for flatpak. No such blog post could be written for subuser, because with subuser, packaging libreoffice is as simple as writting the two line Dockerfile ``FROM debian``, ``RUN apt-get update && apt-get install -y libreoffice`` and adding a `permissions.json <http://subuser.org/subuser-standard/permissions-dot-json-file-format.html>`_ file. Flatpak also uses its own "ports" protocol for sandboxing so only applications that are specifically designed for flatpak's sandbox can be contained. Finally, the sandbox is disabled by default which means that when you install an application with flatpak you don't know if it is safe or not. On the bright side, flatpak uses `OSTree <https://github.com/ostreedev/ostree>`_ under the hood, which supports seamless file deduplication and thus is way better at efficiently storing and updating images than subuser/Docker's layered image format. Another point in flatpak's favor, is that their ports protocol will likely lead to better desktop integration for those apps which decide to take the jump and design with flatpak in mind. The best news of all, is that flatpak and subuser can run side by side on the same system without interfering with eachother, so if you want to run evince using flatpak and some hard to package esoteric IDE with subuser, that's totally possible.
+
  * `Qubes OS <https://qubes-os.org/>`_
 
  Qubes OS aims to be the more secure, more resource intensive, big brother to subuser.  It divides your computer into security domains which each run on their own separate virtual machine.  If you want rock solid NSA proof security, I strongly recommend you check it out.
@@ -20,10 +28,6 @@ Related projects
  * `X11-Docker <https://github.com/mviereck/x11docker>`_
 
  Run applications in docker with access to the X11 server also supports xpra and xephyr for secure window display, just like subuser. Looks very nice and UNIXy! Certainly more flexible/manual than subuser. Written in bash. Is more traditional in its approach to dependencies, for instance, using xpra actually requires xpra to be installed on your host system as well as within the container ;). On subuser this isn't needed!
-
- * `Gnome sandboxes <https://wiki.gnome.org/Projects/SandboxedApps>`_
-
- This is a project started after Subuser was already around for a while. While this seems in some abstract sense to be quite similar to subuser it seems to be very Gnome specific.
 
  * `zero-install <http://zero-install.sourceforge.net/>`_, `Portable Linux Apps <http://portablelinuxapps.org/>`_, `Autopackage <https://en.wikipedia.org/wiki/Autopackage>`_, `Listaller <http://listaller.tenstral.net/>`_, `Limba <http://blog.tenstral.net/2015/03/limba-project-progress.html>`_, and to a lesser extent: `PPAs <http://www.ubuntu.com/news/launchpad-ppa>`_ and `One Click Install <http://en.opensuse.org/openSUSE:One_Click_Install>`_
 
