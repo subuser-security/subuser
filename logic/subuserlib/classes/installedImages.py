@@ -54,9 +54,9 @@ class InstalledImages(dict,UserOwnedObject,FileBackedObject):
     for _,installedImage in self.items():
       imageAttributes = {}
       imageAttributes["image-source-hash"] = installedImage.getImageSourceHash()
-      imageAttributes["image-source"] = installedImage.getImageSourceName()
-      imageAttributes["source-repo"] = installedImage.getSourceRepoId()
-      installedImagesDict[installedImage.getImageId()] = imageAttributes
+      imageAttributes["image-source"] = installedImage.imageSourceName
+      imageAttributes["source-repo"] = installedImage.sourceRepoId
+      installedImagesDict[installedImage.imageId] = imageAttributes
     return installedImagesDict
 
   def save(self):

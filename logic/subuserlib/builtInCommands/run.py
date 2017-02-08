@@ -76,7 +76,7 @@ def runCommand(args):
         if not options.dry:
           runtime.run(argParser.subuserArgs)
         else:
-          if subuser.getImageId():
+          if subuser.imageId:
             print("The image will be prepared using the Dockerfile:")
             print(subuser.getRunReadyImage().generateImagePreparationDockerfile())
             print("The command to launch the image is:")

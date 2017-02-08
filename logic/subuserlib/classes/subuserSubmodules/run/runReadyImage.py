@@ -35,7 +35,7 @@ class RunReadyImage(UserOwnedObject):
     """
     There is still some preparation that needs to be done before an image is ready to be run.  But this preparation requires run time information, so we cannot preform that preparation at build time.
     """
-    dockerfileContents  = "FROM "+self.getSubuser().getImageId()+"\n"
+    dockerfileContents  = "FROM "+self.getSubuser().imageId+"\n"
     dockerfileContents += "RUN useradd --uid="+str(self.getUser().getEndUser().uid)+" "+self.getUser().getEndUser().name+" ;export exitstatus=$? ; if [ $exitstatus -eq 4 ] ; then echo uid exists ; elif [ $exitstatus -eq 9 ]; then echo username exists. ; else exit $exitstatus ; fi\n"
     dockerfileContents += "RUN test -d "+self.getUser().getEndUser().homeDir+" || mkdir "+self.getUser().getEndUser().homeDir+" && chown "+self.getUser().getEndUser().name+" "+self.getUser().getEndUser().homeDir+"\n"
     if self.getSubuser().permissions["serial-devices"]:

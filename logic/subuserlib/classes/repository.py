@@ -150,7 +150,7 @@ class Repository(dict,UserOwnedObject,Describable):
     Are there any installed images or subusers from this repository?
     """
     for _,installedImage in self.getUser().getInstalledImages().items():
-      if self.name == installedImage.getSourceRepoId():
+      if self.name == installedImage.sourceRepoId:
           return True
       for _,subuser in self.getUser().getRegistry().getSubusers().items():
         try:

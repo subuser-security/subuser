@@ -85,7 +85,7 @@ class ImageSource(UserOwnedObject,Describable):
     """
     installedImagesBasedOnThisImageSource = []
     for _,installedImage in self.getUser().getInstalledImages().items():
-      if installedImage.getImageSourceName() == self.name and installedImage.getSourceRepoId() == self.repo.name:
+      if installedImage.imageSourceName == self.name and installedImage.sourceRepoId == self.repo.name:
         installedImagesBasedOnThisImageSource.append(installedImage)
     return installedImagesBasedOnThisImageSource
 

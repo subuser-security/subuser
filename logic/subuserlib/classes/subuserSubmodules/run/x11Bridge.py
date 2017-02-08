@@ -162,7 +162,7 @@ class XpraX11Bridge(Service):
       if not e.errno == errno.ENOENT:
         self.getUser().getRegistry().log("An error occured while setting up xpra X11 socket.",verbosityLevel=3)
         self.getUser().getRegistry().log(str(e),verbosityLevel=3)
-        self.getUser().getDockerDaemon().execute(["run","--rm","--volume",os.path.join(self.getUser().getConfig()["volumes-dir"],"xpra")+":/xpra-volume","--entrypoint","/bin/rm",self.getServerSubuser().getImageId(),"-rf",os.path.join("/xpra-volume/",self.getSubuser().name)])
+        self.getUser().getDockerDaemon().execute(["run","--rm","--volume",os.path.join(self.getUser().getConfig()["volumes-dir"],"xpra")+":/xpra-volume","--entrypoint","/bin/rm",self.getServerSubuser().imageId,"-rf",os.path.join("/xpra-volume/",self.getSubuser().name)])
 
   def createAndSetupSpecialVolumes(self,errorCount=0):
     def clearAndTryAgain():

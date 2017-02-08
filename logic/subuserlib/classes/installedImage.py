@@ -14,24 +14,15 @@ import subuserlib.classes.docker.dockerDaemon as dockerDaemon
 
 class InstalledImage(UserOwnedObject,Describable):
   def __init__(self,user,imageId,imageSourceName,sourceRepoId,imageSourceHash):
-    self.__imageId = imageId
+    self.imageId = imageId
     self.__imageSourceHash = imageSourceHash
-    self.__imageSourceName = imageSourceName
-    self.__sourceRepoId = sourceRepoId
+    self.imageSourceName = imageSourceName
+    self.sourceRepoId = sourceRepoId
     self.__alreadyCheckedForUpdates = None
     UserOwnedObject.__init__(self,user)
 
-  def getImageId(self):
-    return self.__imageId
-
-  def getSourceRepoId(self):
-    return self.__sourceRepoId
-
-  def getImageSourceName(self):
-    return self.__imageSourceName
-
   def getImageSource(self):
-    return self.getUser().getRegistry().getRepositories()[self.getSourceRepoId()][self.getImageSourceName()]
+    return self.getUser().getRegistry().getRepositories()[self.sourceRepoId][self.imageSourceName]
 
   def getImageSourceHash(self):
     return self.__imageSourceHash
@@ -40,13 +31,13 @@ class InstalledImage(UserOwnedObject,Describable):
     """
     Does the Docker daemon have an image with this imageId?
     """
-    return not (self.getUser().getDockerDaemon().getImageProperties(self.getImageId()) == None)
+    return not (self.getUser().getDockerDaemon().getImageProperties(self.imageId) == None)
 
   def removeCachedRuntimes(self):
     """
     Remove cached runtime environments.
     """
-    pathToImagesRuntimeCacheDir = os.path.join(self.getUser().getConfig()["runtime-cache"],self.getImageId())
+    pathToImagesRuntimeCacheDir = os.path.join(self.getUser().getConfig()["runtime-cache"],self.imageId)
     try:
       for permissionsSpecificCacheInfoFileName in os.listdir(pathToImagesRuntimeCacheDir):
         permissionsSpecificCacheInfoFilePath = os.path.join(pathToImagesRuntimeCacheDir,permissionsSpecificCacheInfoFileName)
@@ -70,13 +61,13 @@ class InstalledImage(UserOwnedObject,Describable):
     Remove the image from the Docker daemon's image store.
     """
     try:
-      self.getUser().getRegistry().log("Removing image %s"%self.getImageId())
-      self.getUser().getDockerDaemon().removeImage(self.getImageId())
+      self.getUser().getRegistry().log("Removing image %s"%self.imageId)
+      self.getUser().getDockerDaemon().removeImage(self.imageId)
     except (dockerDaemon.ImageDoesNotExistsException,dockerDaemon.ContainerDependsOnImageException,dockerDaemon.ServerErrorException) as e:
-      self.getUser().getRegistry().log("Error removing image: "+self.getImageId()+"\n"+str(e))
+      self.getUser().getRegistry().log("Error removing image: "+self.imageId+"\n"+str(e))
 
   def describe(self):
-    print("Image Id: "+self.getImageId())
+    print("Image Id: "+self.imageId)
     try:
       print("Image source: "+self.getImageSource().getIdentifier())
     except KeyError:
@@ -91,8 +82,8 @@ class InstalledImage(UserOwnedObject,Describable):
       return False
     self.__alreadyCheckedForUpdates = True
     self.getUser().getRegistry().log("Checking for updates to: " + self.getImageSource().getIdentifier())
-    if self.getUser().getDockerDaemon().execute(["run","--rm","--entrypoint","/usr/bin/test",self.getImageId(),"-e","/subuser/check-for-updates"]) == 0:
-      returnCode = self.getUser().getDockerDaemon().execute(["run","--rm","--entrypoint","/subuser/check-for-updates",self.getImageId()])
+    if self.getUser().getDockerDaemon().execute(["run","--rm","--entrypoint","/usr/bin/test",self.imageId,"-e","/subuser/check-for-updates"]) == 0:
+      returnCode = self.getUser().getDockerDaemon().execute(["run","--rm","--entrypoint","/subuser/check-for-updates",self.imageId])
       if returnCode == 0:
         return True
     return False
@@ -101,7 +92,7 @@ class InstalledImage(UserOwnedObject,Describable):
     """
     Return the creation date/time of the installed docker image. Or None if the image does not exist.
     """
-    imageProperties = self.getUser().getDockerDaemon().getImageProperties(self.getImageId())
+    imageProperties = self.getUser().getDockerDaemon().getImageProperties(self.imageId)
     if not imageProperties is None:
       return imageProperties["Created"]
     else:
@@ -120,7 +111,7 @@ class InstalledImage(UserOwnedObject,Describable):
         return getLineageRecursive(imageProperties["Parent"]) + [imageId]
       else:
         return [imageId]
-    return getLineageRecursive(self.getImageId())
+    return getLineageRecursive(self.imageId)
 
   def getImageLineage(self):
     """

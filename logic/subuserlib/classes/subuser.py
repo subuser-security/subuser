@@ -26,7 +26,7 @@ class Subuser(UserOwnedObject, Describable):
     self.__imageSource = imageSource
     self.__repoName = repoName
     self.__imageSourceName = imageSourceName
-    self.__imageId = imageId
+    self.imageId = imageId
     self.__executableShortcutInstalled = executableShortcutInstalled
     self.__entryPointsExposed = entrypointsExposed
     self.__entryPointsExposedThisRun = False
@@ -51,7 +51,8 @@ class Subuser(UserOwnedObject, Describable):
         raise NoImageSourceException()
     return self.__imageSource
 
-  def getImageSourceName(self):
+  @property
+  def imageSourceName(self):
     if self.__imageSource is None:
       return self.__imageSourceName
     else:
@@ -161,21 +162,8 @@ Please file a bug report explaining how you got here.\n"""+ str(e))
     except subuserlib.classes.gitRepository.GitException:
       pass
 
-  def getImageId(self):
-    """
-    Get the Id of the Docker image associated with this subuser.
-    None, if the subuser has no installed image yet.
-    """
-    return self.__imageId
-
-  def setImageId(self,imageId):
-    """
-    Set the installed image associated with this subuser.
-    """
-    self.__imageId = imageId
-
   def isImageInstalled(self):
-    return self.getUser().getDockerDaemon().getImageProperties(self.getImageId()) is not None
+    return self.getUser().getDockerDaemon().getImageProperties(self.imageId) is not None
 
   def getServiceSubuserNames(self):
     """
@@ -280,7 +268,7 @@ Please file a bug report explaining how you got here.\n"""+ str(e))
       print(self.getImageSource().getIdentifier())
     except subuserlib.classes.subuser.NoImageSourceException:
       print("Warning: This subuser has no image, nor does it have a valid image source to install an image from.")
-    print("Docker image Id: "+str(self.getImageId()))
+    print("Docker image Id: "+str(self.imageId))
     self.permissions.describe()
     print("")
 

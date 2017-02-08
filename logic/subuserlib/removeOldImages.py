@@ -14,11 +14,11 @@ def getInstalledImagesThatAreInUse(user):
   """
   installedImagesThatAreInUse = {} # {imageId : installedImage}
   for _,subuser in user.getRegistry().getSubusers().items():
-    if subuser.getImageId():
+    if subuser.imageId:
       try:
-        installedImage = subuser.getUser().getInstalledImages()[subuser.getImageId()]
+        installedImage = subuser.getUser().getInstalledImages()[subuser.imageId]
         for inUseInstalledImage in installedImage.getImageLineage():
-          installedImagesThatAreInUse[inUseInstalledImage.getImageId()] = inUseInstalledImage
+          installedImagesThatAreInUse[inUseInstalledImage.imageId] = inUseInstalledImage
       except KeyError:
         user.getRegistry().log("Warning: No image for %s installed."%subuser.name)
   return installedImagesThatAreInUse
@@ -28,8 +28,8 @@ def removeOldImages(user,dryrun=False,yes=False,sourceRepo=None,imageSourceName=
   imagesToBeRemoved = []
   for installedImageId,installedImage in user.getInstalledImages().items():
     if (   (not installedImageId in installedImagesThatAreInUse)
-       and (not sourceRepo or installedImage.getSourceRepoId() == sourceRepo.getId())
-       and (not imageSourceName or installedImage.getImageSourceName() == imageSourceName)):
+       and (not sourceRepo or installedImage.sourceRepoId == sourceRepo.getId())
+       and (not imageSourceName or installedImage.imageSourceName == imageSourceName)):
       imagesToBeRemoved.append(installedImage)
   if not imagesToBeRemoved:
     user.getRegistry().log("There are no unused images to be removed.")
@@ -38,7 +38,7 @@ def removeOldImages(user,dryrun=False,yes=False,sourceRepo=None,imageSourceName=
   user.getRegistry().log("DOCKER-ID : SUBUSER-ID")
   # List images to be removed
   for installedImage in imagesToBeRemoved:
-    user.getRegistry().log("Removing unneeded image "+installedImage.getImageId() + " : " + installedImage.getImageSource().getIdentifier())
+    user.getRegistry().log("Removing unneeded image "+installedImage.imageId + " : " + installedImage.getImageSource().getIdentifier())
   if dryrun:
     return
   # Ask user if we should continue?

@@ -46,7 +46,7 @@ class InstallationTask(UserOwnedObject):
                 self.__outOfDateImageSources.add(imageSource)
                 self.__outOfDateSubusers.add(subuser)
                 break
-          if subuser.getImageSource().getLatestInstalledImage() is None or subuser.getImageId() is None or not subuser.isImageInstalled():
+          if subuser.getImageSource().getLatestInstalledImage() is None or subuser.imageId is None or not subuser.isImageInstalled():
             if subuser.locked():
               self.getUser().getRegistry().log("Subuser "+subuser.name+" has no image. But is locked. Marking for installation anyways.")
             self.__outOfDateSubusers.add(subuser)
@@ -69,7 +69,7 @@ class InstallationTask(UserOwnedObject):
     for installed,target in sideBySideLineages:
       if target in self.__outOfDateImageSources:
         return False
-      if not installed.getImageId() == target.getLatestInstalledImage().getImageId():
+      if not installed.imageId == target.getLatestInstalledImage().imageId:
         return False
     if not installedImage.getImageSourceHash() == imageSource.getHash():
       return False
@@ -86,7 +86,7 @@ class InstallationTask(UserOwnedObject):
       try:
         for imageSource in getTargetLineage(subuser.getImageSource()):
           if imageSource in self.__upToDateImageSources:
-            parent = imageSource.getLatestInstalledImage().getImageId()
+            parent = imageSource.getLatestInstalledImage().imageId
           elif imageSource in self.__outOfDateImageSources:
             parent = installImage(imageSource,parent=parent,useCache=useCache)
             self.__outOfDateImageSources.remove(imageSource)
@@ -95,11 +95,11 @@ class InstallationTask(UserOwnedObject):
             if not self.isUpToDate(imageSource):
               parent = installImage(imageSource,parent=parent,useCache=useCache)
             else:
-              parent = imageSource.getLatestInstalledImage().getImageId()
+              parent = imageSource.getLatestInstalledImage().imageId
             self.__upToDateImageSources.add(imageSource)
-        if not subuser.getImageId() == parent:
-          subuser.setImageId(parent)
-          subuser.getUser().getRegistry().logChange("Installed new image <"+subuser.getImageId()+"> for subuser "+subuser.name)
+        if not subuser.imageId == parent:
+          subuser.imageId = parent
+          subuser.getUser().getRegistry().logChange("Installed new image <"+subuser.imageId+"> for subuser "+subuser.name)
       except exceptions.ImageBuildException as e:
         self.getUser().getRegistry().log(str(e))
         self.__subusersWhosImagesFailedToBuild.add(subuser)
