@@ -31,7 +31,7 @@ class ImageSource(UserOwnedObject,Describable):
     """
     Return a standard human readable identifier for an ImageSource.
     """
-    return self.name + "@" + self.repo.getDisplayName()
+    return self.name + "@" + self.repo.displayName
 
   def getDockerImageTag(self):
     longTag = "subuser-" + self.getUser().getEndUser().name + "-" + self.getIdentifier()
@@ -53,17 +53,17 @@ class ImageSource(UserOwnedObject,Describable):
     imageDir = os.path.join(self.getRelativeSourceDir(),"image")
     # If the image dir does not exist,
     # Look for the old, deprecated, docker-image dir
-    if not self.repo.getFileStructure().exists(imageDir):
+    if not self.repo.fileStructure.exists(imageDir):
       imageDir = os.path.join(self.getRelativeSourceDir(),"docker-image")
-      if not self.repo.getFileStructure().exists(imageDir):
+      if not self.repo.fileStructure.exists(imageDir):
         raise exceptions.ImageBuildException("Image source "+self.getIdentifier()+ " does not have an image dir with sources from which to build.")
     return imageDir
 
   def getSourceDir(self):
-    return os.path.join(self.repo.getImageSourcesDir(),self.name)
+    return os.path.join(self.repo.imageSourcesDir,self.name)
 
   def getRelativeSourceDir(self):
-    return os.path.join(self.repo.getRelativeImageSourcesDir(),self.name)
+    return os.path.join(self.repo.relativeImageSourcesDir,self.name)
 
   def getLatestInstalledImage(self):
     """
@@ -91,7 +91,7 @@ class ImageSource(UserOwnedObject,Describable):
 
   def getPermissionsFilePath(self):
     relativePath = self.getRelativePermissionsFilePath()
-    return os.path.join(self.repo.getRepoPath(),relativePath)
+    return os.path.join(self.repo.repoPath,relativePath)
 
   def getRelativePermissionsFilePath(self):
     if self.__explicitConfig is not None:
@@ -103,7 +103,7 @@ class ImageSource(UserOwnedObject,Describable):
   @property
   def permissions(self):
     if not self.__permissions:
-      permissionsString = self.repo.getFileStructure().read(self.getRelativePermissionsFilePath())
+      permissionsString = self.repo.fileStructure.read(self.getRelativePermissionsFilePath())
       initialPermissions = subuserlib.permissions.load(permissionsString=permissionsString)
       self.__permissions = subuserlib.classes.permissions.Permissions(self.getUser(),initialPermissions,writePath=self.getPermissionsFilePath())
     return self.__permissions
@@ -129,7 +129,7 @@ class ImageSource(UserOwnedObject,Describable):
           dockerfileContents = "FROM " + parent + "\n"
         else:
           dockerfileContents += line + "\n"
-    imageId = self.getUser().getDockerDaemon().build(relativeBuildContextPath=self.getImageDir(),repositoryFileStructure=self.repo.getFileStructure(),rm=True,dockerfile=dockerfileContents,useCache=useCache)
+    imageId = self.getUser().getDockerDaemon().build(relativeBuildContextPath=self.getImageDir(),repositoryFileStructure=self.repo.fileStructure,rm=True,dockerfile=dockerfileContents,useCache=useCache)
     subuserSetupDockerFile = ""
     subuserSetupDockerFile += "FROM "+imageId+"\n"
     subuserSetupDockerFile += "RUN mkdir -p /subuser ; echo "+str(uuid.uuid4())+" > /subuser/uuid\n" # This ensures that all images have unique Ids.  Even images that are otherwise the same.
@@ -139,17 +139,17 @@ class ImageSource(UserOwnedObject,Describable):
     if self.__explicitConfig:
       return self.__explicitConfig["image-file"]
     dockerfilePath = os.path.join(self.getImageDir(),"Dockerfile")
-    if self.repo.getFileStructure().exists(dockerfilePath):
+    if self.repo.fileStructure.exists(dockerfilePath):
       return dockerfilePath
     subuserImagefilePath = os.path.join(self.getImageDir(),"SubuserImagefile")
-    if self.repo.getFileStructure().exists(subuserImagefilePath):
+    if self.repo.fileStructure.exists(subuserImagefilePath):
       return subuserImagefilePath
 
   def getImageFileType(self):
     return os.path.basename(self.getImageFile())
 
   def getImageFileContents(self):
-    return self.repo.getFileStructure().read(self.getImageFile())
+    return self.repo.fileStructure.read(self.getImageFile())
 
   def getDependency(self):
     """
@@ -175,4 +175,4 @@ class ImageSource(UserOwnedObject,Describable):
 
   def getHash(self):
     """ Return the hash of the ``image`` directory. """
-    return self.repo.getFileStructure().hash(self.getImageDir())
+    return self.repo.fileStructure.hash(self.getImageDir())

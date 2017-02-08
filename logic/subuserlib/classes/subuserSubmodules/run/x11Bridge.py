@@ -132,7 +132,7 @@ class XpraX11Bridge(Service):
     return AcceptPermissionsAtCLI(self.getUser(),alwaysAccept=True)
 
   def addServerSubuser(self):
-    subuserlib.subuser.addFromImageSourceNoVerify(self.getUser(),self.getServerSubuserName(),self.getUser().getRegistry().getRepositories()["default"]["subuser-internal-xpra-server"])
+    subuserlib.subuser.addFromImageSourceNoVerify(self.getUser(),self.getServerSubuserName(),self.getUser().getRegistry().repositories["default"]["subuser-internal-xpra-server"])
     self.getSubuser().addServiceSubuser(self.getServerSubuserName())
     self.getServerSubuser().createPermissions(self.getServerSubuser().getImageSource().permissions)
 
@@ -143,7 +143,7 @@ class XpraX11Bridge(Service):
     return self.getUser().getRegistry().subusers[self.getClientSubuserName()]
 
   def addClientSubuser(self):
-    subuserlib.subuser.addFromImageSourceNoVerify(self.getUser(),self.getClientSubuserName(),self.getUser().getRegistry().getRepositories()["default"]["subuser-internal-xpra-client"])
+    subuserlib.subuser.addFromImageSourceNoVerify(self.getUser(),self.getClientSubuserName(),self.getUser().getRegistry().repositories["default"]["subuser-internal-xpra-client"])
     self.getSubuser().addServiceSubuser(self.getClientSubuserName())
     self.getClientSubuser().createPermissions(self.getClientSubuser().getImageSource().permissions)
 

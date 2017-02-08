@@ -22,7 +22,7 @@ class InstalledImage(UserOwnedObject,Describable):
     UserOwnedObject.__init__(self,user)
 
   def getImageSource(self):
-    return self.getUser().getRegistry().getRepositories()[self.sourceRepoId][self.imageSourceName]
+    return self.getUser().getRegistry().repositories[self.sourceRepoId][self.imageSourceName]
 
   def isDockerImageThere(self):
     """

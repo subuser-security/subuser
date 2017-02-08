@@ -53,14 +53,14 @@ def runCommand(sysargs):
     if len(args) > 1:
       reposToList = args[1:]
     else:
-      reposToList = user.getRegistry().getRepositories().keys()
+      reposToList = user.getRegistry().repositories.keys()
     availableDict = {}
     for repoIdentifier in reposToList:
       try:
         repoIdentifier = repoIdentifier.decode("utf-8")
       except AttributeError:
         pass
-      if repoIdentifier in user.getRegistry().getRepositories():
+      if repoIdentifier in user.getRegistry().repositories:
         temp = False
       else:
         temp = True
@@ -120,11 +120,11 @@ def runCommand(sysargs):
         installedImage.describe()
   elif args[0] == 'repositories':
     if options.json:
-      subuserlib.print.printWithoutCrashing(json.dumps(user.getRegistry().getRepositories().serializeToDict(),indent=1,separators=(",",": ")))
+      subuserlib.print.printWithoutCrashing(json.dumps(user.getRegistry().repositories.serializeToDict(),indent=1,separators=(",",": ")))
       sys.exit()
-    for name,repo in user.getRegistry().getRepositories().items():
+    for name,repo in user.getRegistry().repositories.items():
       if not options.long:
-        subuserlib.print.printWithoutCrashing(repo.getDisplayName())
+        subuserlib.print.printWithoutCrashing(repo.displayName)
       else:
         repo.describe()
         subuserlib.print.printWithoutCrashing("")

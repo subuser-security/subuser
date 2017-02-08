@@ -114,13 +114,13 @@ def ensureServiceSubusersAreSetup(user,subusers):
 def trimUnneededTempRepos(user):
   user.getRegistry().log("Running garbage collector on temporary repositories...")
   reposToRemove = []
-  for repoId,repo in user.getRegistry().getRepositories().userRepositories.items():
-    if repo.isTemporary() and not repo.isInUse():
-      user.getRegistry().logChange("Removing uneeded temporary repository: "+repo.getDisplayName())
+  for repoId,repo in user.getRegistry().repositories.userRepositories.items():
+    if repo.temporary and not repo.isInUse():
+      user.getRegistry().logChange("Removing uneeded temporary repository: "+repo.displayName)
       repo.removeGitRepo()
       reposToRemove.append(repoId)
   for repoId in reposToRemove:
-    del user.getRegistry().getRepositories().userRepositories[repoId]
+    del user.getRegistry().repositories.userRepositories[repoId]
 
 def rebuildBinDir(user):
   if os.path.exists(user.getConfig()["bin-dir"]):

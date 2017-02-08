@@ -46,7 +46,7 @@ class Subuser(UserOwnedObject, Describable):
     """
     if self.__imageSource is None:
       try:
-        self.__imageSource = self.getUser().getRegistry().getRepositories()[self.__repoName][self.__imageSourceName]
+        self.__imageSource = self.getUser().getRegistry().repositories[self.__repoName][self.__imageSourceName]
       except KeyError:
         raise NoImageSourceException()
     return self.__imageSource

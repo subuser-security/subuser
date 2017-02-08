@@ -22,66 +22,63 @@ class Repository(dict,UserOwnedObject,Describable):
     Repositories can either be managed by git, or simply be normal directories on the user's computer. If ``sourceDir`` is not set to None, then ``gitOriginURI`` is ignored and the repository is assumed to be a simple directory.
     """
     self.name = name
-    self.__gitOriginURI = gitOriginURI
-    self.__lastGitCommitHash = gitCommitHash
-    self.__temporary = temporary
-    self.__sourceDir = sourceDir
+    self.gitOriginURI = gitOriginURI
+    self.gitCommitHash = gitCommitHash
+    self.temporary = temporary
+    self.sourceDir = sourceDir
     self.__fileStructure = None
     UserOwnedObject.__init__(self,user)
-    self.gitRepository = GitRepository(user,self.getRepoPath())
+    self.gitRepository = GitRepository(user,self.repoPath)
     if not self.isPresent():
       self.updateSources(initialUpdate=True)
-    self.__repoConfig = self.loadRepoConfig()
+    self.repoConfig = self.loadRepoConfig()
     if self.isPresent():
       self.loadImageSources()
 
-  def getURI(self):
-    if self.isLocal():
-      return self.getSourceDir()
+  @property
+  def uri(self):
+    if self.isLocal:
+      return self.sourceDir
     else:
-      return self.getGitOriginURI()
+      return self.gitOriginURI
 
-  def getSourceDir(self):
-    return self.__sourceDir
-
-  def getGitOriginURI(self):
-    return self.__gitOriginURI
-
-  def getFileStructure(self):
+  @property
+  def fileStructure(self):
     if self.__fileStructure is None:
-      if self.isLocal():
-        self.__fileStructure = BasicFileStructure(self.getSourceDir())
+      if self.isLocal:
+        self.__fileStructure = BasicFileStructure(self.sourceDir)
       else:
-        if self.getGitCommitHash() is None:
+        if self.gitCommitHash is None:
           self.updateGitCommitHash()
-        self.__fileStructure = self.gitRepository.getFileStructureAtCommit(self.getGitCommitHash())
+        self.__fileStructure = self.gitRepository.getFileStructureAtCommit(self.gitCommitHash)
     return self.__fileStructure
 
-  def getDisplayName(self):
+  @property
+  def displayName(self):
     """
     How should we refer to this repository when communicating with the user?
     """
-    if self.isTemporary():
-      if self.isLocal():
-        return self.getSourceDir()
+    if self.temporary:
+      if self.isLocal:
+        return self.sourceDir
       else:
-        return self.getGitOriginURI()
+        return self.gitOriginURI
     else:
       return self.name
 
   def describe(self):
-    print("Repository: "+self.getDisplayName())
+    print("Repository: "+self.displayName)
     print("------------")
-    if self.isLocal():
+    if self.isLocal:
       print("Is a local(non-git) repository.")
-      if not self.isTemporary():
-        print("Located at: " + self.getRepoPath())
-    if self.isTemporary():
+      if not self.temporary:
+        print("Located at: " + self.repoPath)
+    if self.temporary:
       print("Is a temporary repository.")
     else:
-      if not self.isLocal():
-        print("Cloned from: "+self.getGitOriginURI())
-        print("Currently at commit: "+self.getGitCommitHash())
+      if not self.isLocal:
+        print("Cloned from: "+self.gitOriginURI)
+        print("Currently at commit: "+self.gitCommitHash)
 
   def getSortedList(self):
     """
@@ -89,10 +86,11 @@ class Repository(dict,UserOwnedObject,Describable):
     """
     return list(sorted(self.values(),key=lambda imageSource:imageSource.name))
 
-  def getRepoPath(self):
+  @property
+  def repoPath(self):
     """ Get the path of the repo's sources on disk. """
-    if self.isLocal():
-      return self.getSourceDir()
+    if self.isLocal:
+      return self.sourceDir
     else:
       return os.path.join(self.getUser().getConfig()["repositories-dir"],self.name)
 
@@ -108,8 +106,8 @@ class Repository(dict,UserOwnedObject,Describable):
       for path in paths:
         if path in dictionary and path.startswith("../") or "/../" in path:
           raise ValueError("Paths in .subuser.json may not be relative to a higher directory.")
-    if self.getFileStructure().exists("./.subuser.json"):
-      configFileContents = self.getFileStructure().read("./.subuser.json")
+    if self.fileStructure.exists("./.subuser.json"):
+      configFileContents = self.fileStructure.read("./.subuser.json")
     else:
       return None
     repoConfig = json.loads(configFileContents)
@@ -120,27 +118,23 @@ class Repository(dict,UserOwnedObject,Describable):
         verifyPaths(explicitImageSource,["image-file","permissions-file","build-context"])
     return repoConfig
 
-  def getRepoConfig(self):
-    return self.__repoConfig
-
-  def getImageSourcesDir(self):
+  @property
+  def imageSourcesDir(self):
     """
     Get the path of the repo's subuser root on disk on the host.
     """
-    return os.path.join(self.getRepoPath(),self.getRelativeImageSourcesDir())
+    return os.path.join(self.repoPath,self.relativeImageSourcesDir)
 
-  def getRelativeImageSourcesDir(self):
+  @property
+  def relativeImageSourcesDir(self):
     """
     Get the path of the repo's subuser root on disk on the host.
     """
-    repoConfig = self.getRepoConfig()
+    repoConfig = self.repoConfig
     if repoConfig and "image-sources-dir" in repoConfig:
       return repoConfig["image-sources-dir"]
     else:
       return "./"
-
-  def isTemporary(self):
-    return self.__temporary
 
   def isInUse(self):
     """
@@ -157,8 +151,9 @@ class Repository(dict,UserOwnedObject,Describable):
           pass
     return False
 
+  @property
   def isLocal(self):
-    if self.__sourceDir:
+    if self.sourceDir:
       return True
     return False
 
@@ -166,25 +161,25 @@ class Repository(dict,UserOwnedObject,Describable):
     """
     Remove the downloaded git repo associated with this repository from disk.
     """
-    if not self.isLocal():
-      shutil.rmtree(self.getRepoPath())
+    if not self.isLocal:
+      shutil.rmtree(self.repoPath)
 
   def isPresent(self):
     """
     Returns True if the repository's files are present on the system. (Cloned or local)
     """
-    return os.path.exists(self.getRepoPath())
+    return os.path.exists(self.repoPath)
 
   def updateSources(self,initialUpdate=False):
     """
     Pull(or clone) the repo's ImageSources from git origin.
     """
-    if self.isLocal():
+    if self.isLocal:
       return
     if not self.isPresent():
       new = True
-      self.getUser().getRegistry().log("Cloning repository "+self.name+" from "+self.getGitOriginURI())
-      if self.gitRepository.clone(self.getGitOriginURI()) != 0:
+      self.getUser().getRegistry().log("Cloning repository "+self.name+" from "+self.gitOriginURI)
+      if self.gitRepository.clone(self.gitOriginURI) != 0:
         self.getUser().getRegistry().log("Clone failed.")
         return
     else:
@@ -195,7 +190,7 @@ class Repository(dict,UserOwnedObject,Describable):
       pass
     if self.updateGitCommitHash():
       if not new:
-        self.getUser().getRegistry().logChange("Updated repository "+self.getDisplayName())
+        self.getUser().getRegistry().logChange("Updated repository "+self.displayName)
       if not initialUpdate:
         self.loadImageSources()
 
@@ -212,14 +207,14 @@ class Repository(dict,UserOwnedObject,Describable):
     """
     Load ImageSources from disk into memory.
     """
-    imageNames = self.getFileStructure().lsFolders(self.getRelativeImageSourcesDir())
+    imageNames = self.fileStructure.lsFolders(self.relativeImageSourcesDir)
     imageNames = [os.path.basename(path) for path in imageNames]
     for imageName in imageNames:
       imageSource = ImageSource(self.getUser(),self,imageName)
-      if self.getFileStructure().exists(imageSource.getRelativePermissionsFilePath()):
+      if self.fileStructure.exists(imageSource.getRelativePermissionsFilePath()):
         self[imageName] = imageSource
-    if self.getRepoConfig() is not None and "explicit-image-sources" in self.getRepoConfig():
-      for imageName,config in self.getRepoConfig()["explicit-image-sources"].items():
+    if self.repoConfig is not None and "explicit-image-sources" in self.repoConfig:
+      for imageName,config in self.repoConfig["explicit-image-sources"].items():
         assert config is not None
         self[imageName] = ImageSource(self.getUser(),self,imageName,explicitConfig = config)
 
@@ -229,7 +224,7 @@ class Repository(dict,UserOwnedObject,Describable):
     Returns True if the repository has been updated.
     Otherwise false.
     """
-    if self.isLocal():
+    if self.isLocal:
       return True
     # Default
     newCommitHash = self.gitRepository.getHashOfRef("refs/remotes/origin/master")
@@ -261,10 +256,7 @@ class Repository(dict,UserOwnedObject,Describable):
             break
         else:
           raise SyntaxError("Error reading .subuser.json file, no version constraints matched the current subuser version ("+subuserVersion+").\n\n"+str(versionConstraints))
-    updated = not (newCommitHash == self.__lastGitCommitHash)
-    self.__lastGitCommitHash = newCommitHash
+    updated = not (newCommitHash == self.gitCommitHash)
+    self.gitCommitHash = newCommitHash
     self.__fileStructure = None
     return updated
-
-  def getGitCommitHash(self):
-    return self.__lastGitCommitHash

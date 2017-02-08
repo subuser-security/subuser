@@ -94,10 +94,10 @@ class Repositories(collections.Mapping,UserOwnedObject,FileBackedObject):
       return {}
 
   def addRepository(self,repository):
-    if not repository.isTemporary():
-      self.getUser().getRegistry().logChange("Adding new repository "+repository.getDisplayName())
+    if not repository.temporary:
+      self.getUser().getRegistry().logChange("Adding new repository "+repository.displayName)
     else:
-      self.getUser().getRegistry().logChange("Adding new temporary repository "+repository.getDisplayName())
+      self.getUser().getRegistry().logChange("Adding new temporary repository "+repository.displayName)
     self.userRepositories[repository.name] = repository
 
   def removeRepository(self,name):
@@ -107,10 +107,10 @@ class Repositories(collections.Mapping,UserOwnedObject,FileBackedObject):
       sys.exit("Cannot remove repository "+name+". Repository does not exist.")
     if repository.isInUse():
       sys.exit("Cannot remove repository "+name+". Repository is in use. Subusers or installed images exist which rely on this repository.")
-    if not repository.isTemporary():
+    if not repository.temporary:
       self.getUser().getRegistry().logChange("Removing repository "+name)
     else:
-      self.getUser().getRegistry().logChange("Removing temporary repository "+self[name].getDisplayName())
+      self.getUser().getRegistry().logChange("Removing temporary repository "+self[name].displayName)
     repository.removeGitRepo()
     del self.userRepositories[name]
 
@@ -129,18 +129,18 @@ class Repositories(collections.Mapping,UserOwnedObject,FileBackedObject):
     repositoryListDict = collections.OrderedDict()
     for name,repository in sorted(repositories.items(),key=lambda t:t[0]):
       repositoryListDict[name] = collections.OrderedDict()
-      if repository.getGitOriginURI():
-        repositoryListDict[name]["git-origin"] = repository.getGitOriginURI()
+      if repository.gitOriginURI:
+        repositoryListDict[name]["git-origin"] = repository.gitOriginURI
       else:
-        repositoryListDict[name]["source-dir"] = repository.getRepoPath()
-      repositoryListDict[name]["temporary"] = repository.isTemporary()
+        repositoryListDict[name]["source-dir"] = repository.repoPath
+      repositoryListDict[name]["temporary"] = repository.temporary
     return repositoryListDict
 
   def serializeRepositoryStatesToDict(self):
     repositoryStates = collections.OrderedDict()
     for repoName,repository in sorted(self.items(),key=lambda t:t[0]):
       repositoryStates[repoName] = collections.OrderedDict()
-      repositoryStates[repoName]["git-commit-hash"] = repository.getGitCommitHash()
+      repositoryStates[repoName]["git-commit-hash"] = repository.gitCommitHash
     return repositoryStates
 
   def save(self):

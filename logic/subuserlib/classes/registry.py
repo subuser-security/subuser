@@ -46,7 +46,8 @@ class Registry(userOwnedObject.UserOwnedObject):
       self.__subusers = subusers.Subusers(self.getUser())
     return self.__subusers
 
-  def getRepositories(self):
+  @property
+  def repositories(self):
     if not self.__repositories:
       self.__repositories = repositories.Repositories(self.getUser())
     return self.__repositories
@@ -101,7 +102,7 @@ class Registry(userOwnedObject.UserOwnedObject):
     Git commit the changes to the registry files, installed-miages.json and subusers.json.
     """
     if self.__changed:
-      self.getRepositories().save()
+      self.repositories.save()
       self.subusers.save()
       with self.getUser().getEndUser().get_file(self.logFilePath) as fd:
         fd.write(self.__changeLog)

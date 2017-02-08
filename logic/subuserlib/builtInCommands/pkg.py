@@ -78,7 +78,7 @@ def runCommand(realArgs):
     subuserlib.print.printWithoutCrashing("Adding new image source "+imageSourceToAdd)
     useDefaultLocations = options.imageFile is None and options.permissionsFile is None and options.buildContext is None
     if useDefaultLocations:
-      imageSourceDir = os.path.join(repo.getImageSourcesDir(),imageSourceToAdd)
+      imageSourceDir = os.path.join(repo.imageSourcesDir,imageSourceToAdd)
       buildContext = os.path.join(imageSourceDir,"image")
       imageFile = os.path.join(buildContext,"SubuserImagefile")
       permissionsFile = os.path.join(imageSourceDir,"permissions.json")
@@ -87,7 +87,7 @@ def runCommand(realArgs):
       except OSError:
         pass
     else:
-      if repo.getRepoConfig() is None:
+      if repo.repoConfig is None:
         sys.exit("You must initialize your repository with 'pkg init' before adding image sources to it.")
       if options.buildContext is None or options.imageFile is None or options.permissionsFile is None:
         sys.exit("If you specify non-default paths you must specify all of them. That is --image-file, --build-context AND --permissions-file. Cannot add image. Exiting...")
@@ -106,7 +106,7 @@ def runCommand(realArgs):
         user.getEndUser().makedirs(os.path.dirname(permissionsFile))
       except OSError:
         pass
-      repoConfig = repo.getRepoConfig()
+      repoConfig = repo.repoConfig
       if not "explicit-image-sources" in repoConfig:
         repoConfig["explicit-image-sources"] = {}
       repoConfig["explicit-image-sources"][imageSourceToAdd] = {"image-file":imageFile,"build-context":buildContext,"permissions-file":permissionsFile}
