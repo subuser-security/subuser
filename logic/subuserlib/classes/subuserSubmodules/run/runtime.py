@@ -26,8 +26,8 @@ def getRecursiveDirectoryContents(directory):
 class Runtime(UserOwnedObject):
   def __init__(self,user,subuser,environment,extraDockerFlags=None,entrypoint = None):
     self.subuser = subuser
-    self.__environment = environment
-    self.__backgroundSuppressOutput = True
+    self.env = environment
+    self.backgroundSuppressOutput = True
     self.__backgroundCollectStdout = False
     self.__backgroundCollectStderr = False
     self.__executionSpoolReader = None
@@ -39,11 +39,11 @@ class Runtime(UserOwnedObject):
       self.entrypoint = self.subuser.permissions["executable"]
     else:
       self.entrypoint = entrypoint
-    self.__background = False
+    self.background = False
     if not subuserlib.test.testing:
-      self.__hostname = binascii.b2a_hex(os.urandom(10)).decode()
+      self.hostname = binascii.b2a_hex(os.urandom(10)).decode()
     else:
-      self.__hostname = "<random-hostname>"
+      self.hostname = "<random-hostname>"
     UserOwnedObject.__init__(self,user)
 
   def getRunReadyImageId(self):
@@ -55,12 +55,9 @@ class Runtime(UserOwnedObject):
 $ subuser repair
 """)
 
-  def getEnvironment(self):
-    return self.__environment
-
   def getEnvvar(self,var):
     try:
-      return self.getEnvironment()[var]
+      return self.env[var]
     except KeyError:
       sys.exit("The env var %s is not set. Are you sure you are running as a normal user?" % var)
 
@@ -72,7 +69,7 @@ $ subuser repair
 
   def getBasicFlags(self):
     common = ["--rm"]
-    if self.getBackground():
+    if self.background:
       return common + ["--cidfile",self.getCidFile()]
     else:
       if sys.stdout.isatty() and sys.stdin.isatty():
@@ -89,7 +86,7 @@ $ subuser repair
     Generate the arguments required to pass on a given ENV var to the container from the host.
     """
     try:
-      return ["-e",envVar+"="+self.getEnvironment()[envVar]]
+      return ["-e",envVar+"="+self.env[envVar]]
     except KeyError:
       return []
 
@@ -163,15 +160,9 @@ $ subuser repair
     self.__extraFlags.append("-e")
     self.__extraFlags.append(envVar+"="+value)
 
-  def setHostname(self,hostname):
-    self.__hostname = hostname
-
-  def getHostname(self):
-    return self.__hostname
-
   def getHostnameFlag(self):
-    if not self.__hostname is None:
-      return ["--hostname",self.__hostname]
+    if not self.hostname is None:
+      return ["--hostname",self.hostname]
     else:
       return []
 
@@ -195,20 +186,8 @@ $ subuser repair
     command = self.getCommand(args)
     return "docker '"+"' '".join(command)+"'"
 
-  def getBackground(self):
-    return self.__background
-
-  def setBackground(self,background):
-    self.__background = background
-
-  def getBackgroundSuppressOutput(self):
-    return self.__backgroundSuppressOutput
-
   def getBackgroundCollectOutput(self):
     return (self.__backgroundCollectStdout, self.__backgroundCollectStderr)
-
-  def setBackgroundSuppressOutput(self,suppressOutput):
-    self.__backgroundSuppressOutput = suppressOutput
 
   def setBackgroundCollectOutput(self,collectStdout,collectStderr):
     self.__backgroundCollectStdout = collectStdout
@@ -242,7 +221,7 @@ $ subuser repair
       rest = xauthFile.read()
     with open(self.getXautorityFilePath(),"wb") as xauthFile:
       xauthFile.write(start)
-      hostname = self.getHostname()
+      hostname = self.hostname
       hostname = hostname.encode("ascii")
       xauthFile.write(struct.pack("b",len(hostname)))
       xauthFile.write(hostname)
@@ -271,7 +250,7 @@ $ subuser repair
       if self.subuser.permissions["run-commands-on-host"]:
         self.user.registry.log("Launching execution spool daemon.",verbosityLevel=4)
         self.setupExecutionSpool()
-      if self.getBackground():
+      if self.background:
         try:
           os.remove(self.getCidFile())
         except OSError:
@@ -286,14 +265,14 @@ $ subuser repair
       (collectStdout,collectStderr) = self.getBackgroundCollectOutput()
       self.user.registry.log("Running subuser with Docker.",verbosityLevel=4)
       self.user.registry.log(self.getPrettyCommand(args),verbosityLevel=4)
-      returnValue = self.user.dockerDaemon.execute(command,background=self.getBackground(),backgroundSuppressOutput=self.getBackgroundSuppressOutput(),backgroundCollectStdout=collectStdout,backgroundCollectStderr=collectStderr)
+      returnValue = self.user.dockerDaemon.execute(command,background=self.background,backgroundSuppressOutput=self.backgroundSuppressOutput,backgroundCollectStdout=collectStdout,backgroundCollectStderr=collectStderr)
       if self.subuser.permissions["run-commands-on-host"]:
         self.user.registry.log("Stopping execution spool.",verbosityLevel=4)
         self.tearDownExecutionSpool()
       if not self.subuser.permissions["gui"] is None:
         self.user.registry.log("Disconnecting from X11 bridge.",verbosityLevel=4)
         self.subuser.x11Bridge.removeClient()
-      if self.getBackground():
+      if self.background:
         self.user.registry.log("Waiting for CID file to be generated.",verbosityLevel=4)
         while not os.path.exists(self.getCidFile()) or os.path.getsize(self.getCidFile()) == 0:
           time.sleep(0.05)

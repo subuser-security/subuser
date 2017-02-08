@@ -11,7 +11,7 @@ from subuserlib.classes.userOwnedObject import UserOwnedObject
 
 class Container(UserOwnedObject):
   def __init__(self,user,containerId):
-    self.__containerId = containerId
+    self.id = containerId
     UserOwnedObject.__init__(self,user)
 
   def inspect(self):
@@ -19,7 +19,7 @@ class Container(UserOwnedObject):
      Returns a dictionary of container properties.
      If the container no longer exists, return None.
     """
-    self.user.dockerDaemon.getConnection().request("GET","/v1.13/containers/"+self.__containerId+"/json")
+    self.user.dockerDaemon.getConnection().request("GET","/v1.13/containers/"+self.id+"/json")
     response = self.user.dockerDaemon.getConnection().getresponse()
     if not response.status == 200:
       response.read() # Read the response and discard it to prevent the server from getting locked up: http://stackoverflow.com/questions/3231543/python-httplib-responsenotready
@@ -44,5 +44,3 @@ class Container(UserOwnedObject):
     response = self.user.dockerDaemon.getConnection().getresponse()
     response.read()
 
-  def getId(self):
-    return self.__containerId

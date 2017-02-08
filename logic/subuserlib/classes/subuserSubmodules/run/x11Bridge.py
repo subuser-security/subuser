@@ -39,12 +39,9 @@ import subuserlib.subuser
 
 class XpraX11Bridge(Service):
   def __init__(self,user,subuser):
-    self.__subuser = subuser
+    self.subuser = subuser
     Service.__init__(self,user,subuser)
     self.name = "xpra"
-
-  def getSubuser(self):
-    return self.__subuser
 
   def isSetup(self):
     clientSubuserInstalled = self.getClientSubuserName() in self.user.registry.subusers
@@ -219,11 +216,11 @@ class XpraX11Bridge(Service):
     serverArgs.append(":100")
     serverRuntime = self.getServerSubuser().getRuntime(os.environ)
     serverRuntime.logIfInteractive("Starting xpra server...")
-    serverRuntime.setHostname(self.getServerSubuserHostname())
+    serverRuntime.hostname = self.getServerSubuserHostname()
     self.user.registry.log("Hostname set.",verbosityLevel=4)
     serverRuntime.setEnvVar("TMPDIR",os.path.join(self.user.endUser.homeDir,"tmp"))
-    serverRuntime.setBackground(True)
-    serverRuntime.setBackgroundSuppressOutput(suppressOutput)
+    serverRuntime.background = True
+    serverRuntime.backgroundSuppressOutput = suppressOutput
     serverRuntime.setBackgroundCollectOutput(False,True)
     self.user.registry.log("Entering run subrutine.",verbosityLevel=4)
     (serverContainer, serverProcess) = serverRuntime.run(args=serverArgs)
@@ -244,8 +241,8 @@ class XpraX11Bridge(Service):
     clientRuntime.logIfInteractive("Starting xpra client...")
     clientRuntime.setEnvVar("XPRA_SOCKET_HOSTNAME","server")
     clientRuntime.setEnvVar("TMPDIR",os.path.join(self.user.endUser.homeDir,"tmp"))
-    clientRuntime.setBackground(True)
-    clientRuntime.setBackgroundSuppressOutput(suppressOutput)
+    clientRuntime.background = True
+    clientRuntime.backgroundSuppressOutput = suppressOutput
     (clientContainer, clientProcess) = clientRuntime.run(args=clientArgs)
     serviceStatus["xpra-client-service-cid"] = clientContainer.id
     return serviceStatus
