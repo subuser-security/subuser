@@ -16,7 +16,6 @@ from subuserlib.classes import subusers
 from subuserlib.classes import userOwnedObject
 from subuserlib.classes.gitRepository import GitRepository
 import subuserlib.print
-import subuserlib.lock
 
 class Registry(userOwnedObject.UserOwnedObject):
   def __init__(self,user,gitReadHash="master", ignoreVersionLocks=False, initialized = False):
@@ -61,7 +60,7 @@ class Registry(userOwnedObject.UserOwnedObject):
       self.user.endUser.makedirs(self.user.config["registry-dir"])
       self.gitRepository.run(["init"])
       self.logChange("Initial commit.")
-      self.commit("Initial commit.")
+      self.commit("Initial commit.",_no_lock_needed = True)
     self.initialized = True
 
   def log(self,message,verbosityLevel=1):
@@ -97,10 +96,12 @@ class Registry(userOwnedObject.UserOwnedObject):
     """
     self.__changeLog = message + u"\n" + self.__changeLog
 
-  def commit(self,message=None):
+  def commit(self,message=None,_no_lock_needed=False):
     """
     Git commit the changes to the registry files, installed-miages.json and subusers.json.
     """
+    if (not self.user._has_lock) and (not _no_lock_needed):
+      sys.exit("Programmer error. Committing to registry without first aquiring lock! Please report this incident to: https://github.com/subuser-security/subuser/issues")
     if self.__changed:
       self.repositories.save()
       self.subusers.save()
@@ -133,25 +134,6 @@ class Registry(userOwnedObject.UserOwnedObject):
           pass
         # TODO Note: We don't close the file descriptors, because doing so makes the pipe close on the other end too. This would be a file descriptor leak if this method was used in any long running process(which it is not).
 
-  @contextmanager
-  def getLock(self):
-    """
-    To be used with with.
-    """
-    try:
-      self.user.endUser.makedirs(self.user.config["lock-dir"])
-    except OSError as exception:
-      if exception.errno != errno.EEXIST:
-        raise
-    try:
-      lock = subuserlib.lock.getLock(self.user.endUser.get_file(os.path.join(self.user.config["lock-dir"],"registry.lock"),'w'),timeout=1)
-      with lock:
-        yield
-    except IOError as e:
-      if e.errno != errno.EINTR:
-        raise e
-      sys.exit("Another subuser process is currently running and has a lock on the registry. Please try again later.")
-
   def cleanOutOldPermissions(self):
     for _,_,_,permissionsPath in self.gitRepository.getFileStructureAtCommit(self.gitReadHash).lsTree("permissions"):
       _,subuserName = os.path.split(permissionsPath)
@@ -162,4 +144,3 @@ class Registry(userOwnedObject.UserOwnedObject):
           self.gitRepository.run(["rm","-r",permissionsPath])
         except subuserlib.classes.gitRepository.GitException as e:
           self.log(" %s"%str(e))
- 

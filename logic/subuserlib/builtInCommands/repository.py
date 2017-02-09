@@ -4,7 +4,7 @@
 import sys
 import optparse
 #internal imports
-from subuserlib.classes.user import User
+from subuserlib.classes.user import LockedUser
 import subuserlib.resolve
 import subuserlib.repository
 import subuserlib.commandLineArguments
@@ -36,24 +36,23 @@ def runCommand(sysargs):
   Manage named subuser repositories.
   """
   options,args = parseCliArgs(sysargs)
-  user = User()
-  user.registry.commit_message = " ".join(["subuser","repository"]+sysargs)
-  try:
-    action = args[0]
-  except IndexError:
-    sys.exit("Use subuser repository --help for help.")
-  if action == "add":
-    if not len(args) == 3:
+  lockedUser = LockedUser()
+  with lockedUser as user:
+    user.registry.commit_message = " ".join(["subuser","repository"]+sysargs)
+    try:
+      action = args[0]
+    except IndexError:
       sys.exit("Use subuser repository --help for help.")
-    name = args[1]
-    url = args[2]
-    with user.registry.getLock():
+    if action == "add":
+      if not len(args) == 3:
+        sys.exit("Use subuser repository --help for help.")
+      name = args[1]
+      url = args[2]
       subuserlib.repository.add(user,name,url)
-  elif action == "remove":
-    if not len(args) == 2:
-      sys.exit("Use subuser repository --help for help.")
-    name = args[1]
-    with user.registry.getLock():
+    elif action == "remove":
+      if not len(args) == 2:
+        sys.exit("Use subuser repository --help for help.")
+      name = args[1]
       subuserlib.repository.remove(user,name)
-  else:
-     sys.exit("Action "+args[0]+" not supported. Please see:\n subuser repository --help")
+    else:
+       sys.exit("Action "+args[0]+" not supported. Please see:\n subuser repository --help")

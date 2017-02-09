@@ -63,6 +63,8 @@ class InstalledImages(dict,UserOwnedObject,FileBackedObject):
     """
     Save attributes of the installed images to disk.
     """
+    if not self.user._has_lock:
+      sys.exit("Programmer error. Saving installed images list without first aquiring lock! Please report this incident to: https://github.com/subuser-security/subuser/issues")
     # Write that dictionary to disk.
     installedImagesPath = self.user.config["installed-images-list"]
     with self.user.endUser.get_file(installedImagesPath, 'w') as file_f:

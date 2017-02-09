@@ -9,6 +9,7 @@ import getpass
 import os
 import sys
 import pwd
+import errno
 #internal imports
 from subuserlib.classes import registry
 from subuserlib.classes import config
@@ -17,6 +18,7 @@ from subuserlib.classes.docker import dockerDaemon
 from subuserlib.classes.endUser import EndUser
 from subuserlib import test
 from subuserlib import paths
+import subuserlib.lock
 
 class User(object):
   """
@@ -29,12 +31,13 @@ class User(object):
   >>> u.homeDir
   '/root/'
   """
-  def __init__(self,name=None,homeDir=None):
+  def __init__(self,name=None,homeDir=None,_locked=False):
     self.__config = None
     self.__registry = None
     self.__installedImages = None
     self.__dockerDaemon = None
     self.__runtimeCache = None
+    self._has_lock = _locked
     self.name = name
     if homeDir:
       self.homeDir = homeDir
@@ -96,3 +99,26 @@ class User(object):
     if self.__dockerDaemon == None:
       self.__dockerDaemon = dockerDaemon.DockerDaemon(self)
     return self.__dockerDaemon
+
+class LockedUser():
+  def __init__(self,name=None,homeDir=None):
+    self.lock = None
+    self.__user = User(name=name,homeDir=homeDir,_locked=True)
+
+  def __enter__(self):
+    try:
+      self.__user.endUser.makedirs(self.__user.config["lock-dir"])
+    except OSError as exception:
+      if exception.errno != errno.EEXIST:
+        raise
+    try:
+      self.lock = subuserlib.lock.getLock(self.__user.endUser.get_file(os.path.join(self.__user.config["lock-dir"],"registry.lock"),'w'),timeout=1)
+      self.lock.__enter__()
+    except IOError as e:
+      if e.errno != errno.EINTR:
+        raise e
+      sys.exit("Another subuser process is currently running and has a lock on the registry. Please try again later.")
+    return self.__user
+
+  def __exit__(self, type, value, traceback):
+    self.lock.__exit__()

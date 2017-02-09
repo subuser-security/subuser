@@ -8,7 +8,7 @@ import select
 import json
 #internal imports
 import subuserlib.commandLineArguments
-from subuserlib.classes.user import User
+from subuserlib.classes.user import User, LockedUser
 import subuserlib.profile
 import subuserlib.registry
 
@@ -40,7 +40,7 @@ def runCommand(realArgs):
   """
   options,args = parseCliArgs(realArgs)
   user = User()
-  user.registry.commit_message = " ".join(["subuser","repository"]+realArgs)
+  lockedUser = LockedUser() 
   if len(args) < 1:
     sys.exit("No arguments given. Please use subuser registry -h for help.")
   elif ["log"] == args:
@@ -50,7 +50,8 @@ def runCommand(realArgs):
       commit = args[1]
     except KeyError:
       sys.exit("Wrong number of arguments.  Expected a commit.  Try running \nsubuser regsitry --help\nfor more info.")
-    with user.registry.getLock():
+    with lockedUser as user:
+      user.registry.commit_message = " ".join(["subuser","repository"]+realArgs)
       if not user.registry.gitRepository.doesCommitExist(commit):
         sys.exit("The commit "+commit+" does not exist. Use --help for help.")
       subuserlib.registry.rollback(user,commit=commit)

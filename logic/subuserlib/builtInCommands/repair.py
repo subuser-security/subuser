@@ -4,7 +4,7 @@
 import sys
 import optparse
 #internal imports
-from subuserlib.classes.user import User
+from subuserlib.classes.user import LockedUser
 import subuserlib.verify
 import subuserlib.commandLineArguments
 import subuserlib.profile
@@ -26,10 +26,10 @@ This is usefull when migrating from one machine to another.  You can copy your ~
 @subuserlib.profile.do_cprofile
 def runCommand(realArgs):
   options,arguments=parseCliArgs(realArgs)
-  user = User()
-  user.registry.commit_message = " ".join(["subuser","repair"]+realArgs)
-  permissionsAccepter = AcceptPermissionsAtCLI(user,alwaysAccept = options.accept)
-  with user.registry.getLock() as LockFileHandle:
+  lockedUser = LockedUser()
+  with lockedUser as user:
+    user.registry.commit_message = " ".join(["subuser","repair"]+realArgs)
+    permissionsAccepter = AcceptPermissionsAtCLI(user,alwaysAccept = options.accept)
     subusers = user.registry.subusers.getSortedList()
     subuserlib.verify.verify(user,subusers=subusers,permissionsAccepter=permissionsAccepter,prompt=options.prompt)
     user.registry.commit()

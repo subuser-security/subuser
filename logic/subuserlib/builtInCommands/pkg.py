@@ -124,7 +124,9 @@ def runCommand(realArgs):
     while True:
       user.endUser.runEditor(permissionsFile)
       try:
-        Permissions(user,initialPermissions=subuserlib.permissions.load(permissionsFilePath=permissionsFile),writePath=permissionsFile).save()
+        permissions = subuserlib.permissions.load(permissionsFilePath=permissionsFile)
+        with user.endUser.get_file(permissionsFile,'w') as fd:
+          fd.write(subuserlib.permissions.getJSONString(permissions))
         break
       except SyntaxError as e:
         input(str(e)+"\nPress ENTER to edit the file again.")

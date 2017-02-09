@@ -5,7 +5,7 @@ import sys
 import optparse
 import os
 #internal imports
-from subuserlib.classes.user import User
+from subuserlib.classes.user import LockedUser
 from subuserlib.classes.permissionsAccepters.acceptPermissionsAtCLI import AcceptPermissionsAtCLI
 import subuserlib.commandLineArguments
 import subuserlib.subuser
@@ -79,24 +79,22 @@ def runCommand(sysargs):
   except IndexError:
     print("Wrong number of arguments!")
     parseCliArgs(["--help"])
-  user = User()
-  user.registry.commit_message = " ".join(["subuser","subuser"]+sysargs)
-  permissionsAccepter = AcceptPermissionsAtCLI(user,alwaysAccept = options.accept)
-  if action == "add":
-    if not len(args) == 3:
-      sys.exit("Wrong number of arguments to add.  See `subuser subuser -h`.")
-    subuserName = args[1]
-    imageSourceId = args[2]
-    with user.registry.getLock():
+  lockedUser = LockedUser()
+  with lockedUser as user:
+    user.registry.commit_message = " ".join(["subuser","subuser"]+sysargs)
+    permissionsAccepter = AcceptPermissionsAtCLI(user,alwaysAccept = options.accept)
+    if action == "add":
+      if not len(args) == 3:
+        sys.exit("Wrong number of arguments to add.  See `subuser subuser -h`.")
+      subuserName = args[1]
+      imageSourceId = args[2]
       subuserlib.subuser.add(user,subuserName,imageSourceId,permissionsAccepter=permissionsAccepter,prompt=options.prompt,forceInternal=options.forceInternal)
-  else:
-    subuserNames = list(set(args[1:]))
-    with user.registry.getLock():
+    else:
+      subuserNames = list(set(args[1:]))
       subusers = []
       if not options.prefix is None:
         allSubuserNames = user.registry.subusers.keys()
         subuserNames.extend([subuserName for subuserName in allSubuserNames if subuserName.startswith(options.prefix)])
-
       for subuserName in subuserNames:
         try:
           subusers.append(user.registry.subusers[subuserName])

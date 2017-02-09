@@ -46,8 +46,8 @@ def lockSubuser(user,subuser,commit):
   except KeyError:
     sys.exit("Subuser, "+subuser.name+" did not exist yet at commit "+commit+". Cannot lock to commit.")
   subuser.imageId = oldSubuser.imageId
-  oldSubuser.permissions.save()
-  oldSubuser.getPermissionsTemplate().save()
+  oldSubuser.permissions.save(_have_lock=True)
+  oldSubuser.getPermissionsTemplate().save(_have_lock=True)
   user.registry.logChange("Locking subuser "+subuser.name+" to commit: "+commit)
   user.registry.logChange("New image id is "+subuser.imageId)
   subuser.locked = True

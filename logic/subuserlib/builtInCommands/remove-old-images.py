@@ -4,7 +4,7 @@
 import sys
 import optparse
 #internal imports
-from subuserlib.classes.user import User
+from subuserlib.classes.user import LockedUser
 import subuserlib.commandLineArguments
 import subuserlib.removeOldImages
 import subuserlib.profile
@@ -25,8 +25,8 @@ def runCommand(realArgs):
   Remove images that are installed, but are not associated with any subusers.
   """
   options,args = parseCliArgs(realArgs)
-  user = User()
-  with user.registry.getLock() as lockFileHandler:
+  lockedUser = LockedUser()
+  with lockedUser as user:
     if not options.repoId is None:
       if not options.repoId in user.registry.repositories:
         repo = subuserlib.resolve.lookupRepositoryByURI(user,options.repoId)

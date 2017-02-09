@@ -7,6 +7,7 @@ Each subuser has a set of permissions which specify what parts of the host syste
 #external imports
 import collections
 import hashlib
+import sys
 #internal imports
 from subuserlib.classes.userOwnedObject import UserOwnedObject
 from subuserlib.classes.fileBackedObject import FileBackedObject
@@ -33,7 +34,9 @@ class Permissions(collections.OrderedDict,UserOwnedObject,FileBackedObject):
     for permission,value in permissionsToAddOrChange.items():
       self[permission] = value
 
-  def save(self):
+  def save(self,_have_lock=False):
+    if (not self.user._has_lock) and (not _have_lock):
+      sys.exit("Programmer error. Saving permissions without first aquiring lock! Please report this incident to: https://github.com/subuser-security/subuser/issues")
     with self.user.endUser.get_file(self.writePath,'w') as fd:
       fd.write(subuserlib.permissions.getJSONString(self))
 

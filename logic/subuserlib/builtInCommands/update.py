@@ -5,7 +5,7 @@ import sys
 import optparse
 #internal imports
 import subuserlib.commandLineArguments
-from subuserlib.classes.user import User
+from subuserlib.classes.user import LockedUser
 import subuserlib.update
 import subuserlib.profile
 from subuserlib.classes.permissionsAccepters.acceptPermissionsAtCLI import AcceptPermissionsAtCLI
@@ -49,51 +49,48 @@ def runCommand(realArgs):
   Update your subuser installation.
   """
   options,args = parseCliArgs(realArgs)
-  user = User()
-  user.registry.commit_message = " ".join(["subuser","update"]+realArgs)
-  permissionsAccepter = AcceptPermissionsAtCLI(user,alwaysAccept = options.accept)
   if len(args) < 1:
     sys.exit("No arguments given. Please use subuser update -h for help.")
-  elif ["all"] == args:
-    with user.registry.getLock():
+  lockedUser = LockedUser()
+  with lockedUser as user:
+    user.registry.commit_message = " ".join(["subuser","update"]+realArgs)
+    permissionsAccepter = AcceptPermissionsAtCLI(user,alwaysAccept = options.accept)
+    if ["all"] == args:
       subuserlib.update.all(user,permissionsAccepter=permissionsAccepter,prompt=options.prompt,useCache=options.useCache)
-  elif "subusers" == args[0]:
-    subuserNamesToUpdate = args[1:]
-    subusersToUpdate = []
-    for subuserName in subuserNamesToUpdate:
-      try:
-        subusersToUpdate.append(user.registry.subusers[subuserName])
-      except KeyError:
-        sys.exit("Subuser "+subuserName+" does not exist. Use --help for help.")
-    if subusersToUpdate:
-      with user.registry.getLock():
+    elif "subusers" == args[0]:
+      subuserNamesToUpdate = args[1:]
+      subusersToUpdate = []
+      for subuserName in subuserNamesToUpdate:
+        try:
+          subusersToUpdate.append(user.registry.subusers[subuserName])
+        except KeyError:
+          sys.exit("Subuser "+subuserName+" does not exist. Use --help for help.")
+      if subusersToUpdate:
         subuserlib.update.subusers(user,subusers=subusersToUpdate,permissionsAccepter=permissionsAccepter,prompt=options.prompt,useCache=options.useCache)
-    else:
-      sys.exit("You did not specify any subusers to be updated. Use --help for help. Exiting...")
-  elif "lock-subuser-to" == args[0]:
-    try:
-      subuserName = args[1]
-      commit = args[2]
-    except IndexError:
-      sys.exit("Wrong number of arguments.  Expected a subuser name and a commit.  Try running\nsubuser update --help\n for more info.")
-    with user.registry.getLock():
+      else:
+        sys.exit("You did not specify any subusers to be updated. Use --help for help. Exiting...")
+    elif "lock-subuser-to" == args[0]:
+      try:
+        subuserName = args[1]
+        commit = args[2]
+      except IndexError:
+        sys.exit("Wrong number of arguments.  Expected a subuser name and a commit.  Try running\nsubuser update --help\n for more info.")
       try:
         subuser = user.registry.subusers[subuserName]
       except KeyError:
         sys.exit("Subuser "+subuserName+" does not exist and therefore cannot be locked. Use --help for help.")
       subuserlib.update.lockSubuser(user,subuser=subuser,commit=commit)
-  elif "unlock-subuser" == args[0]:
-    try:
-      subuserName = args[1]
-    except IndexError:
-      sys.exit("Wrong number of arguments.  Expected a subuser's name. Try running\nsubuser update --help\nfor more information.")
-    try:
-      subuser = user.registry.subusers[subuserName]
-    except KeyError:
-      sys.exit("Subuser "+subuserName+" does not exist. Cannot lock. Use --help for help.")
-    with user.registry.getLock():
+    elif "unlock-subuser" == args[0]:
+      try:
+        subuserName = args[1]
+      except IndexError:
+        sys.exit("Wrong number of arguments.  Expected a subuser's name. Try running\nsubuser update --help\nfor more information.")
+      try:
+        subuser = user.registry.subusers[subuserName]
+      except KeyError:
+        sys.exit("Subuser "+subuserName+" does not exist. Cannot lock. Use --help for help.")
       subuserlib.update.unlockSubuser(user,subuser=subuser,permissionsAccepter=permissionsAccepter,prompt=options.prompt)
-  elif len(args) == 1:
-    sys.exit(" ".join(args) + " is not a valid update subcommand. Please use subuser update -h for help.")
-  else:
-    sys.exit(" ".join(args) + " is not a valid update subcommand. Please use subuser update -h for help.")
+    elif len(args) == 1:
+      sys.exit(" ".join(args) + " is not a valid update subcommand. Please use subuser update -h for help.")
+    else:
+      sys.exit(" ".join(args) + " is not a valid update subcommand. Please use subuser update -h for help.")
