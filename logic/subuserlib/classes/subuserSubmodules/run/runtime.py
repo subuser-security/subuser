@@ -35,10 +35,8 @@ class Runtime(UserOwnedObject):
       self.__extraFlags = []
     else:
       self.__extraFlags = extraDockerFlags
-    if not entrypoint:
-      self.entrypoint = self.getSubuser().getPermissions()["executable"]
-    else:
-      self.entrypoint = entrypoint
+
+    self.entrypoint = entrypoint if entrypoint else "executable"
     self.__background = False
     if not subuserlib.test.testing:
       self.__hostname = binascii.b2a_hex(os.urandom(10)).decode()
@@ -82,6 +80,18 @@ $ subuser repair
         return common + ["-i","-t"]
       else:
         return common + ["-i"]
+
+  def getExecutable(self):
+    if self.entrypoint == "executable":
+      return self.getSubuser().getPermissions()["executable"]
+    entrypoints = self.getSubuser().getPermissions()["entrypoints"]
+    return entrypoints.get(self.entrypoint, self.entrypoint)
+
+  def getEntryArgs(self):
+    args = self.getSubuser().getPermissions()["entry-args"]
+    if args and self.entrypoint in args:
+      return args[self.entrypoint]
+    return []
 
   def logIfInteractive(self,message):
     if sys.stdout.isatty():
@@ -191,7 +201,7 @@ $ subuser repair
     for permission, flagGenerator in permissionFlagDict.items():
       flags.extend(flagGenerator(permissions[permission]))
     flags.extend(self.getHostnameFlag())
-    return ["run"]+flags+["--entrypoint"]+[self.entrypoint]+[self.getRunReadyImageId()]+args
+    return ["run"]+flags+["--entrypoint"]+[self.getExecutable()]+[self.getRunReadyImageId()]+self.getEntryArgs()+args
 
   def getPrettyCommand(self,args):
     """

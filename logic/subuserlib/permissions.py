@@ -25,6 +25,7 @@ defaults = {
  ,"inherit-locale": False
  ,"inherit-timezone": False
  ,"entrypoints":{}
+ ,"entry-args": {}
  ,"memory-limit": None
  ,"max-cpus": None
  # Moderate permissions
@@ -60,7 +61,7 @@ basicCommonPermissions = ["stateful-home","inherit-locale","inherit-timezone"]
 levels = [
   {"name" : "prelude",
    "description" : "",
-   "permissions" : ["description", "maintainer", "executable","entrypoints"]},
+   "permissions" : ["description", "maintainer", "executable", "entrypoints", "entry-args"]},
   {"name" : "conservative",
    "description" : "Conservative permissions(These are safe):",
    "permissions" : ["stateful-home", "inherit-locale", "inherit-timezone", "memory-limit", "max-cpus"]},
@@ -80,6 +81,7 @@ descriptions = {
   ,"maintainer":lambda maintainer : ["Maintainer: "+maintainer]
   ,"executable":lambda executable : ["Executable: "+executable] if executable else ["Is a library."]
   ,"entrypoints": lambda entrypoints: ["Entry points: '"+ "' '".join(entrypoints.keys())+"'"] if entrypoints else []
+  ,"entry-args":lambda entryArgs : ["Entry arguments: " + os.linesep.join(entry + ": " + " ".join(args) for entry, args in entryArgs.items())] if entryArgs else []
   # Conservative
   ,"stateful-home": lambda p : ["To have its own home directory where it can save files and settings."] if p else []
   ,"inherit-locale": lambda p : ["To find out which language you speak and what region you live in."] if p else []
