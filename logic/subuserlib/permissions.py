@@ -553,14 +553,12 @@ def getDescription(permissionsToDescribe):
 
 def compare(oldDefaults,newDefaults,userApproved):
   """
-  Analize permission sets for changes.
+  Analize permission dictionaries for changes.
   First, compare the old defaults to the user approved permissions.
   By doing so, we aquire an understanding of which permissions have been set by the user, and which are still at their default values.
   We will leave the user-set permissions alone.
 
-  Next, we compair the old non-user set permissions to the new defaults.
-
-  Finally, we return a list of permissions that have been removed as well as a dictionary of permissions which have been added or changed.
+  Next, we compare the old non-user set permissions to the new defaults.
 
   The return value is a tuple of the form: ([removed-permisions],{additions/changes})
   """
@@ -568,31 +566,45 @@ def compare(oldDefaults,newDefaults,userApproved):
 
 def __compare(oldDefaults,newDefaults,userApproved):
   """
-  Analize permission sets for changes.
-  First, compare the old defaults to the user approved permissions.
-  By doing so, we aquire an understanding of which permissions have been set by the user, and which are still at their default values.
-  We will leave the user-set permissions alone.
-
-  Next, we compair the old non-user set permissions to the new defaults.
-
-  Finally, we return a list of permissions that have been removed as well as a dictionary of permissions which have been added or changed.
-
   >>> import subuserlib.permissions
   >>> subuserlib.permissions.__compare(oldDefaults={"a":1,"b":2,"c":3,"d":4,"e":5},newDefaults={"a":1,"b":3,"c":4,"f":4},userApproved={"a":1,"b":5,"e":5,"z":7}) == (["e"],{"f":4})
   True
+
+  If the permissions contain an OrderedDict subgroup where the order doesn't match, the comparison still works.
+
+  >>> from collections import OrderedDict
+  >>> subuserlib.permissions.__compare(oldDefaults={"a":1,"b":2,"c":3,"d":4,"e":5,"g":OrderedDict([("a",1),("b",2)])},newDefaults={"a":1,"b":3,"c":4,"f":4,"g":OrderedDict([("b",2),("a",1)])},userApproved={"a":1,"b":5,"e":5,"z":7,"g":OrderedDict([("a",1),("b",2)])}) == (["e"],{"f":4})
+  True
+  >>> subuserlib.permissions.__compare(oldDefaults={"a":1,"b":2,"c":3,"d":4,"e":5,"g":OrderedDict([("a",1),("b",2)])},newDefaults={"a":1,"b":3,"c":4,"f":4,"g":OrderedDict([("b",3),("a",1)])},userApproved={"a":1,"b":5,"e":5,"z":7,"g":OrderedDict([("a",1),("b",2)])}) == (["e"],{"f":4,"g":OrderedDict([("b",3),("a",1)])})
+  True
   """
-  userSetPermissions = {}
+  def neq(a,b):
+    if type(a) == type(b) and type(a) == OrderedDict:
+      if len(a) != len(b):
+        return True
+      for key,value in a.items():
+        if b[key] != value:
+          return True
+      return False
+    else:
+      return a != b
+  # This set is the union of the user approved permissions
+  userChangedPermissions = set()
   for key,value in userApproved.items():
-    # Cleaver code is evil, but I have given into temptation in this case ^_^
-    if (not key in oldDefaults) or (oldDefaults[key] != value):
-      userSetPermissions[key] = value
+    try:
+      if neq(oldDefaults[key],value):
+        userChangedPermissions.add(key)
+    except KeyError:
+      userChangedPermissions.add(key)
+  userDeniedPermissions = set()
   for key,value in oldDefaults.items():
     if (not key in userApproved):
-      userSetPermissions[key] = value
+      userDeniedPermissions.add(key)
+  userSetPermissions = userChangedPermissions.union(userDeniedPermissions)
   addedOrChangedPermissions = {}
   for key,value in newDefaults.items():
     #                                                         added  or  changed
-    if (not key in userSetPermissions) and ((not key in oldDefaults) or (key in oldDefaults and oldDefaults[key] != value)):
+    if (not key in userSetPermissions) and ((not key in oldDefaults) or (key in oldDefaults and neq(oldDefaults[key],value))):
       addedOrChangedPermissions[key] = value
   droppedPermissions = []
   for key in oldDefaults.keys():
