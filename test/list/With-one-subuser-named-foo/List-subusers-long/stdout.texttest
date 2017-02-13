@@ -3,8 +3,7 @@ Subuser: foo
 ------------------
 foo@default
 Docker image Id: 2
- Description:
- Maintainer:
- Executable: /usr/bin/foo
- Entry points: 'foo' 'bar'
+ Prelude:
+  - executable: /usr/bin/foo
+  - entrypoints: 'foo', 'bar'
 

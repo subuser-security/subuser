@@ -108,7 +108,7 @@ def approvePermissions(user,subusers,permissionsAccepter):
 def ensureServiceSubusersAreSetup(user,subusers):
   newServiceSubusers = []
   for subuser in subusers:
-    if not subuser.permissions["gui"] is None:
+    if subuser.permissions["gui"]:
       newServiceSubusers += subuser.x11Bridge.setup()
   return newServiceSubusers
 

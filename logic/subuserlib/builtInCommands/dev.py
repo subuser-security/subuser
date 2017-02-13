@@ -8,6 +8,7 @@ import json
 import os
 import uuid
 import subprocess
+from collections import OrderedDict
 #internal imports
 import subuserlib.commandLineArguments
 import subuserlib.profile
@@ -38,7 +39,7 @@ def runCommand(realArgs):
   subuserNames = []
   if os.path.exists(devSubuserRegistry):
     with open(devSubuserRegistry,"r") as fd:
-      devSubusers = json.load(fd)
+      devSubusers = json.load(fd, object_pairs_hook=OrderedDict)
   for devSubuser in devSubusers.values():
     subuserNames.append(devSubuser)
 

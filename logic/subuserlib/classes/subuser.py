@@ -10,6 +10,7 @@ import stat
 import errno
 import json
 import sys
+import collections
 #internal imports
 import subuserlib.permissions
 from subuserlib.classes.userOwnedObject import UserOwnedObject
@@ -102,7 +103,7 @@ class Subuser(UserOwnedObject, Describable):
   def loadPermissions(self):
     registryFileStructure = self.user.registry.gitRepository.getFileStructureAtCommit(self.user.registry.gitReadHash)
     try:
-      initialPermissions = subuserlib.permissions.load(permissionsString=registryFileStructure.read(os.path.join(self.relativePermissionsDir,"permissions.json")))
+      initialPermissions = subuserlib.permissions.load(permissionsString=registryFileStructure.read(os.path.join(self.relativePermissionsDir,"permissions.json")),logger=self.user.registry)
     except OSError:
       raise SubuserHasNoPermissionsException("The subuser <"+self.name+"""> has no permissions.
 
@@ -112,7 +113,7 @@ $ subuser repair
 
 To repair your subuser installation.\n""")
     except SyntaxError as e:
-      sys.exit("The subuser <"+self.name+""">'s permissions appears to be corrupt.
+      sys.exit("The subuser <"+self.name+""">'s permissions appear to be corrupt.
 
 Please file a bug report explaining how you got here.\n"""+ str(e))
     self.__permissions = Permissions(self.user,initialPermissions,writePath=self.permissionsDotJsonWritePath)
@@ -128,7 +129,7 @@ Please file a bug report explaining how you got here.\n"""+ str(e))
       permissionsDotJsonWritePath = os.path.join(self.permissionsDir,"permissions-template.json")
       registryFileStructure = self.user.registry.gitRepository.getFileStructureAtCommit(self.user.registry.gitReadHash)
       if os.path.join(self.relativePermissionsDir,"permissions-template.json") in registryFileStructure.lsFiles(self.relativePermissionsDir):
-        initialPermissions = subuserlib.permissions.load(permissionsString=registryFileStructure.read(os.path.join(self.relativePermissionsDir,"permissions-template.json")))
+        initialPermissions = subuserlib.permissions.load(permissionsString=registryFileStructure.read(os.path.join(self.relativePermissionsDir,"permissions-template.json")),logger=self.user.registry)
         save = False
       else:
         initialPermissions = self.imageSource.permissions
@@ -200,7 +201,7 @@ Please file a bug report explaining how you got here.\n"""+ str(e))
     """
     Sets up the subuser's home dir, along with creating symlinks to shared user dirs.
     """
-    if self.permissions["stateful-home"]:
+    if self.permissions["basic-common-permissions"] and self.permissions["basic-common-permissions"]["stateful-home"]:
       try:
         self.user.endUser.makedirs(self.homeDirOnHost)
       except OSError as e:
@@ -230,7 +231,7 @@ Please file a bug report explaining how you got here.\n"""+ str(e))
     """
     Returns the path to the subuser's home dir. Unless the subuser is configured to have a stateless home, in which case returns None.
     """
-    if self.permissions["stateful-home"]:
+    if self.permissions["basic-common-permissions"]["stateful-home"]:
       return os.path.join(self.user.config["subuser-home-dirs-dir"],self.name)
     else:
       return None

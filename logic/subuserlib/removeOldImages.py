@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #external imports
-#import
+from collections import OrderedDict
 #internal imports
 import subuserlib.verify
 import subuserlib.print
@@ -12,7 +12,7 @@ def getInstalledImagesThatAreInUse(user):
 
   Returns {imageId(string) : InstalledImage}
   """
-  installedImagesThatAreInUse = {} # {imageId : installedImage}
+  installedImagesThatAreInUse = OrderedDict() # {imageId : installedImage}
   for _,subuser in user.registry.subusers.items():
     if subuser.imageId:
       try:

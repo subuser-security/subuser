@@ -7,6 +7,7 @@ Stores metadata about images which are built to encorporate changes to subuser i
 #external imports
 import os
 import json
+from collections import OrderedDict
 #internal imports
 from subuserlib.classes.userOwnedObject import UserOwnedObject
 from subuserlib.classes.fileBackedObject import FileBackedObject
@@ -43,7 +44,7 @@ class RuntimeCache(dict,UserOwnedObject,FileBackedObject):
     runtimeCacheFilePath = self.runtimeCacheFilePath
     if os.path.exists(runtimeCacheFilePath):
       with open(runtimeCacheFilePath,mode="r") as runtimeCacheFileHandle:
-        runtimeCacheInfo = json.load(runtimeCacheFileHandle)
+        runtimeCacheInfo = json.load(runtimeCacheFileHandle, object_pairs_hook=OrderedDict)
         self.update(runtimeCacheInfo)
 
 class NoRuntimeCacheForSubusersWhichDontHaveExistantImagesException(Exception):

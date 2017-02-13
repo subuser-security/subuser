@@ -7,6 +7,7 @@ Module used for loading multiple json config files, where attributes consequtive
 #external imports
 import os
 import json
+from collections import OrderedDict
 #internal imports
 import subuserlib.paths
 
@@ -54,6 +55,6 @@ def getConfig(configFileHierarchy):
   config = {}
   for _configFile in configPaths:
     with open(_configFile, 'r') as configFile:
-      _config = json.load(configFile)
+      _config = json.load(configFile, object_pairs_hook=OrderedDict)
       config.update(_config)
   return config

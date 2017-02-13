@@ -8,6 +8,7 @@ In order to make our test suit work, we must use a MockDockerDaemon rather than 
 #external imports
 import json
 import os
+from collections import OrderedDict
 #internal imports
 from subuserlib.classes.userOwnedObject import UserOwnedObject
 import subuserlib.classes.docker.dockerDaemon
@@ -28,7 +29,7 @@ class MockDockerDaemon(UserOwnedObject):
 
   def __load(self):
     with open(self.imagesPath,"r") as imagesFile:
-      self.images = json.load(imagesFile)
+      self.images = json.load(imagesFile, object_pairs_hook=OrderedDict)
 
   def __save(self):
     with open(self.imagesPath,"w") as imagesFile:

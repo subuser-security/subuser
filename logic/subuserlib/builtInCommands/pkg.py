@@ -37,7 +37,7 @@ def parseCliArgs(realArgs):
 
 defaultImageFileTemplate = """FROM-SUBUSER-IMAGE libx11@default
 RUN apt-get update && apt-get upgrade -y && apt-get install -y PKG"""
-defaultPermissions = copy.deepcopy(subuserlib.permissions.defaults)
+defaultPermissions = subuserlib.permissions.getDefaults()
 if subuserlib.test.testing:
   defaultImageFileTemplate = """FROM-SUBUSER-IMAGE foo@default"""
   defaultPermissions["executable"] = "/usr/bin/nothing"
@@ -124,7 +124,7 @@ def runCommand(realArgs):
     while True:
       user.endUser.runEditor(permissionsFile)
       try:
-        permissions = subuserlib.permissions.load(permissionsFilePath=permissionsFile)
+        permissions = subuserlib.permissions.load(permissionsFilePath=permissionsFile,logger=user.registry)
         with user.endUser.get_file(permissionsFile,'w') as fd:
           fd.write(subuserlib.permissions.getJSONString(permissions))
         break

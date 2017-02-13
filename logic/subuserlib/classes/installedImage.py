@@ -7,6 +7,7 @@ Each user has a set of images that have been installed.
 #external imports
 import os
 import json
+from collections import OrderedDict
 #internal imports
 from subuserlib.classes.userOwnedObject import UserOwnedObject
 from subuserlib.classes.describable import Describable
@@ -40,7 +41,7 @@ class InstalledImage(UserOwnedObject,Describable):
       for permissionsSpecificCacheInfoFileName in os.listdir(pathToImagesRuntimeCacheDir):
         permissionsSpecificCacheInfoFilePath = os.path.join(pathToImagesRuntimeCacheDir,permissionsSpecificCacheInfoFileName)
         with open(permissionsSpecificCacheInfoFilePath,mode='r') as permissionsSpecificCacheInfoFileHandle:
-          permissionsSpecificCacheInfo = json.load(permissionsSpecificCacheInfoFileHandle)
+          permissionsSpecificCacheInfo = json.load(permissionsSpecificCacheInfoFileHandle, object_pairs_hook=OrderedDict)
           try:
             try:
               imageId = permissionsSpecificCacheInfo['run-ready-image-id']

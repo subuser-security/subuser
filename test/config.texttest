@@ -18,6 +18,9 @@ stdout:Currently at commit{WORD 4}
 stdout:root-commit{WORD 3}
 stdout:home/[^/\']*{REPLACE home/user}
 stdout:.texttest\/tmp.*\/texttest{REPLACE texttest-write-dir}
+stdout:show .*:{REPLACE show <commit>:}
+stdout:ls-tree -d .* {REPLACE ls-tree -d <commit> }
+stdout: does not exist in .*{REPLACE does not exist in <commit>}
 
 stderr:.texttest\/tmp.*\/texttest{REPLACE texttest-write-dir}
 stderr:home/[^/\']*{REPLACE home/user}

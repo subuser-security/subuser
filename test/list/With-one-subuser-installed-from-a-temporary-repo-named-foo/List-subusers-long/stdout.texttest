@@ -1,9 +1,10 @@
 The following subusers are registered.
 Subuser: foo
 ------------------
-bar@file:////home/timothy/.texttest/tmp/texttest.01Jan205642.7/texttest/list/With-one-subuser-installed-from-a-temporary-repo-named-foo/List-subusers-long/test-repos/remote-test-repo
+bar@file:////home/timothy/.texttest/tmp/texttest.16Feb215032.9454/texttest/list/With-one-subuser-installed-from-a-temporary-repo-named-foo/List-subusers-long/test-repos/remote-test-repo
 Docker image Id: 2
- Description: bar
- Maintainer: fred
- Executable: /usr/bin/bar
+ Prelude:
+  - description: bar
+  - maintainer: fred
+  - executable: /usr/bin/bar
 

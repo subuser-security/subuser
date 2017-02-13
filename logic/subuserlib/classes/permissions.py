@@ -29,8 +29,9 @@ class Permissions(collections.OrderedDict,UserOwnedObject,FileBackedObject):
     return hasher.hexdigest()
 
   def applyChanges(self,permissionsToRemove,permissionsToAddOrChange):
+    defaults = subuserlib.permissions.getDefaults()
     for permission in permissionsToRemove:
-      self[permission] = subuserlib.permissions.defaults[permission]
+      self[permission] = defaults[permission]
     for permission,value in permissionsToAddOrChange.items():
       self[permission] = value
 
@@ -40,30 +41,9 @@ class Permissions(collections.OrderedDict,UserOwnedObject,FileBackedObject):
     with self.user.endUser.get_file(self.writePath,'w') as fd:
       fd.write(subuserlib.permissions.getJSONString(self))
 
+  @property
+  def description(self):
+    return subuserlib.permissions.getDescription(self)
+
   def describe(self):
-    def describePermissions(permissions):
-      for permission in permissions:
-        subPermissions = subuserlib.permissions.descriptions[permission](self[permission])
-        if not subPermissions:
-          continue
-        firstLine = "  - " + permission + ":"
-        multiline = len(subPermissions) > 1
-        if multiline:
-          self.user.registry.log(firstLine)
-          for subPermission in subPermissions:
-            self.user.registry.log("   * "+subPermission)
-        else:
-          self.user.registry.log(firstLine + " " + subPermissions[0])
-    def areAnyOfThesePermitted(permissions):
-      permitted = False
-      for permission in permissions:
-        if self[permission]:
-          permitted = True
-      return permitted
-    preludeDescriptions = sum([subuserlib.permissions.descriptions[permission](self[permission]) for permission in subuserlib.permissions.levels[0]["permissions"]],[])
-    for description in preludeDescriptions:
-      self.user.registry.log(" "+description)
-    for level in subuserlib.permissions.levels[1:]:
-      if areAnyOfThesePermitted(level["permissions"]):
-        self.user.registry.log(" "+level["description"])
-        describePermissions(level["permissions"])
+    self.user.registry.log(self.description)

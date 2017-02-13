@@ -50,7 +50,9 @@ class Runtime(UserOwnedObject):
     try:
       return self.subuser.getRunReadyImage().id
     except KeyError:
-      sys.exit("""No run ready image is prepaired for this subuser. Please run:
+      runtimeCache = str(os.listdir(self.user.config["runtime-cache"]))
+      sys.exit(runtimeCache +"\n"+self.subuser.getRuntimeCache().runtimeCacheFilePath+ """
+No run ready image is prepaired for this subuser. Please run:
 
 $ subuser repair
 """)
@@ -103,15 +105,26 @@ $ subuser repair
         soundArgs += ["--device=/dev/dsp"]
     return soundArgs
 
+  def getBasicCommonPermissionFlags(self,bcps):
+    bcpd = collections.OrderedDict([
+      ("stateful-home", lambda p : ["--volume="+self.subuser.homeDirOnHost+":"+self.subuser.dockersideHome+":rw","-e","HOME="+self.subuser.dockersideHome] if p else ["-e","HOME="+self.subuser.dockersideHome]),
+      ("inherit-locale", lambda p : self.passOnEnvVar("LANG")+self.passOnEnvVar("LANGUAGE") if p else []),
+      ("inherit-timezone", lambda p : self.passOnEnvVar("TZ")+["--volume=/etc/localtime:/etc/localtime:ro"] if p else [])])
+    flags = []
+    for permission,flagGenerator in bcpd.items():
+      if type(bcps) == collections.OrderedDict and permission in bcps:
+        flags.extend(flagGenerator(bcps[permission]))
+      else:
+        flags.extend(flagGenerator(False))
+    return flags
+
   def getPermissionFlagDict(self):
     """
     This is a dictionary mapping permissions to functions which when given the permission's values return docker run flags.
     """
     return collections.OrderedDict([
      # Conservative permissions
-     ("stateful-home", lambda p : ["--volume="+self.subuser.homeDirOnHost+":"+self.subuser.dockersideHome+":rw","-e","HOME="+self.subuser.dockersideHome] if p else ["-e","HOME="+self.subuser.dockersideHome]),
-     ("inherit-locale", lambda p : self.passOnEnvVar("LANG")+self.passOnEnvVar("LANGUAGE") if p else []),
-     ("inherit-timezone", lambda p : self.passOnEnvVar("TZ")+["--volume=/etc/localtime:/etc/localtime:ro"] if p else []),
+     ("basic-common-permissions", self.getBasicCommonPermissionFlags),
      ("memory-limit", lambda p: ["--memory="+str(p)] if p else []),
      ("max-cpus", lambda p: ["--cpus="+str(p)] if p else []),
      # Moderate permissions
@@ -238,14 +251,14 @@ $ subuser repair
     def reallyRun():
       if not self.entrypoint:
         sys.exit("Cannot run subuser, no executable configured in permissions.json file.")
-      if self.subuser.permissions["stateful-home"]:
+      if self.subuser.permissions["basic-common-permissions"] and self.subuser.permissions["basic-common-permissions"]["stateful-home"]:
         self.user.registry.log("Setting up subuser home dir.",verbosityLevel=4)
         self.subuser.setupHomeDir()
-      if self.subuser.permissions["stateful-home"] and self.subuser.permissions["user-dirs"]:
-        self.user.registry.log("Creating user dir symlinks in subuser home dir.",verbosityLevel=4)
-        userDirsDir = os.path.join(self.subuser.homeDirOnHost,"Userdirs")
-        if os.path.islink(userDirsDir):
-          sys.exit("Please remove the old Userdirs directory, it is no longer needed. The path is:"+userDirsDir)
+        if self.subuser.permissions["user-dirs"]:
+          self.user.registry.log("Creating user dir symlinks in subuser home dir.",verbosityLevel=4)
+          userDirsDir = os.path.join(self.subuser.homeDirOnHost,"Userdirs")
+          if os.path.islink(userDirsDir):
+            sys.exit("Please remove the old Userdirs directory, it is no longer needed. The path is:"+userDirsDir)
       if self.subuser.permissions["x11"]:
         self.user.registry.log("Generating xauth file.",verbosityLevel=4)
         self.setupXauth()
@@ -259,7 +272,7 @@ $ subuser repair
           pass
       #Note, subusers with gui permission cannot be run in the background.
       # Make sure that everything is setup and ready to go.
-      if not self.subuser.permissions["gui"] is None:
+      if self.subuser.permissions["gui"]:
         self.user.registry.log("Requesting connection to X11 bridge.",verbosityLevel=4)
         self.subuser.x11Bridge.addClient()
       self.user.registry.log("Building run command.",verbosityLevel=4)
@@ -271,7 +284,7 @@ $ subuser repair
       if self.subuser.permissions["run-commands-on-host"]:
         self.user.registry.log("Stopping execution spool.",verbosityLevel=4)
         self.tearDownExecutionSpool()
-      if not self.subuser.permissions["gui"] is None:
+      if self.subuser.permissions["gui"]:
         self.user.registry.log("Disconnecting from X11 bridge.",verbosityLevel=4)
         self.subuser.x11Bridge.removeClient()
       if self.background:

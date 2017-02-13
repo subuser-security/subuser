@@ -129,7 +129,10 @@ class XpraX11Bridge(Service):
     return AcceptPermissionsAtCLI(self.user,alwaysAccept=True)
 
   def addServerSubuser(self):
-    subuserlib.subuser.addFromImageSourceNoVerify(self.user,self.getServerSubuserName(),self.user.registry.repositories["default"]["subuser-internal-xpra-server"])
+    try:
+      subuserlib.subuser.addFromImageSourceNoVerify(self.user,self.getServerSubuserName(),self.user.registry.repositories["default"]["subuser-internal-xpra-server"])
+    except KeyError:
+      sys.exit("Your default repository does not provide a subuser-internal-xpra-server. This means we cannot use the xpra-x11 bridge. Please fix the default repository or file a bug report.")
     self.subuser.serviceSubuserNames.append(self.getServerSubuserName())
     self.getServerSubuser().createPermissions(self.getServerSubuser().imageSource.permissions)
 

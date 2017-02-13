@@ -105,7 +105,7 @@ class ImageSource(UserOwnedObject,Describable):
   def permissions(self):
     if not self.__permissions:
       permissionsString = self.repo.fileStructure.read(self.getRelativePermissionsFilePath())
-      initialPermissions = subuserlib.permissions.load(permissionsString=permissionsString)
+      initialPermissions = subuserlib.permissions.load(permissionsString=permissionsString,logger=self.user.registry)
       self.__permissions = subuserlib.classes.permissions.Permissions(self.user,initialPermissions,writePath=self.getPermissionsFilePath())
     return self.__permissions
 

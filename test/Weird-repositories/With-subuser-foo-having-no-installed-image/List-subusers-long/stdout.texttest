@@ -3,7 +3,8 @@ Subuser: foo
 ------------------
 Warning: This subuser has no image, nor does it have a valid image source to install an image from.
 Docker image Id: None
- Description: broken-syntax
- Maintainer: fred
- Executable: /usr/bin/foo
+ Prelude:
+  - description: broken-syntax
+  - maintainer: fred
+  - executable: /usr/bin/foo
 

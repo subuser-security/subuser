@@ -7,16 +7,17 @@ This is the set of installed images that bellongs to a given user.
 #external imports
 import os
 import json
-import collections
+from collections import OrderedDict
 import sys
 #internal imports
 from subuserlib.classes.installedImage import InstalledImage
 from subuserlib.classes.fileBackedObject import FileBackedObject
 from subuserlib.classes.userOwnedObject import UserOwnedObject
 
-class InstalledImages(dict,UserOwnedObject,FileBackedObject):
+class InstalledImages(OrderedDict,UserOwnedObject,FileBackedObject):
   def __init__(self,user):
     UserOwnedObject.__init__(self,user)
+    super().__init__()
     self.reloadInstalledImagesList()
 
   def reloadInstalledImagesList(self):
@@ -29,11 +30,11 @@ class InstalledImages(dict,UserOwnedObject,FileBackedObject):
     if os.path.exists(installedImagesPath):
       with open(installedImagesPath, 'r') as file_f:
         try:
-          installedImagesDict = json.load(file_f, object_pairs_hook=collections.OrderedDict)
+          installedImagesDict = json.load(file_f, object_pairs_hook=OrderedDict)
         except ValueError:
           sys.exit("Error:  installed-images.json is not a valid JSON file. Perhaps it is corrupted.")
     else:
-      installedImagesDict = {}
+      installedImagesDict = OrderedDict()
     # Create the InstalledImage objects.
     for imageId,imageAttributes in installedImagesDict.items():
       try:
@@ -50,9 +51,9 @@ class InstalledImages(dict,UserOwnedObject,FileBackedObject):
 
   def serializeToDict(self):
     # Build a dictionary of installed images.
-    installedImagesDict = {}
+    installedImagesDict = OrderedDict()
     for _,installedImage in self.items():
-      imageAttributes = {}
+      imageAttributes = OrderedDict()
       imageAttributes["image-source-hash"] = installedImage.imageSourceHash
       imageAttributes["image-source"] = installedImage.imageSourceName
       imageAttributes["source-repo"] = installedImage.sourceRepoId

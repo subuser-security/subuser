@@ -8,6 +8,7 @@ A repository is a collection of ``ImageSource`` s which are published in a git r
 import os
 import shutil
 import json
+from collections import OrderedDict
 #internal imports
 from subuserlib.classes.userOwnedObject import UserOwnedObject
 from subuserlib.classes.imageSource import ImageSource
@@ -16,7 +17,7 @@ from subuserlib.classes.gitRepository import GitRepository
 from subuserlib.classes.fileStructure import BasicFileStructure
 import subuserlib.version
 
-class Repository(dict,UserOwnedObject,Describable):
+class Repository(OrderedDict,UserOwnedObject,Describable):
   def __init__(self,user,name,gitOriginURI=None,gitCommitHash=None,temporary=False,sourceDir=None):
     """
     Repositories can either be managed by git, or simply be normal directories on the user's computer. If ``sourceDir`` is not set to None, then ``gitOriginURI`` is ignored and the repository is assumed to be a simple directory.
@@ -28,6 +29,7 @@ class Repository(dict,UserOwnedObject,Describable):
     self.sourceDir = sourceDir
     self.__fileStructure = None
     UserOwnedObject.__init__(self,user)
+    super().__init__()
     self.gitRepository = GitRepository(user,self.repoPath)
     if not self.isPresent():
       self.updateSources(initialUpdate=True)

@@ -1,14 +1,13 @@
 Initial commit.
-Cloning repository default from file:///home/timothy/.texttest/tmp/texttest.08Feb220443.8712/texttest/subuser/add-subuser-§€č/test-repos/default-test-repo
+Cloning repository default from file:///home/timothy/.texttest/tmp/texttest.3_from_15Feb180900.28736/texttest/subuser/add-subuser-§€č/test-repos/default-test-repo
 Adding subuser §€č with image foo
 Verifying subuser configuration.
 Verifying registry consistency...
 Unregistering any non-existant installed images.
 §€č: would like to have the following permissions:
- Description:
- Maintainer:
- Executable: /usr/bin/foo
- Entry points: 'foo' 'bar'
+ Prelude:
+  - executable: /usr/bin/foo
+  - entrypoints: 'foo', 'bar'
 A - Accept and apply changes
 E - Apply changes and edit result
 r - Reject permissions.
@@ -27,6 +26,6 @@ Building...
 Successfully built 2
 Installed new image <2> for subuser §€č
 Running garbage collector on temporary repositories...
-Clearing directory /home/timothy/.texttest/tmp/texttest.08Feb220443.8712/texttest/subuser/add-subuser-§€č/.subuser/volumes/execute
-Clearing directory /home/timothy/.texttest/tmp/texttest.08Feb220443.8712/texttest/subuser/add-subuser-§€č/.subuser/volumes/x11
+Clearing directory /home/timothy/.texttest/tmp/texttest.3_from_15Feb180900.28736/texttest/subuser/add-subuser-§€č/.subuser/volumes/execute
+Clearing directory /home/timothy/.texttest/tmp/texttest.3_from_15Feb180900.28736/texttest/subuser/add-subuser-§€č/.subuser/volumes/x11
 Verify complete.

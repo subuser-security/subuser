@@ -29,15 +29,14 @@ class AcceptPermissionsAtCLI(PermissionsAccepter,UserOwnedObject):
         return
       if not additionsAndChanges == {}:
         subuserlib.print.printWithoutCrashing(subuser.name+" would like to add/change the following permissions:")
-        for permission,value in additionsAndChanges.items():
-          for line in subuserlib.permissions.descriptions[permission](value):
-            subuserlib.print.printWithoutCrashing("   - "+line)
+        subuserlib.print.printWithoutCrashing(subuserlib.permissions.getDescription(additionsAndChanges))
       if not removedPermissions == []:
         subuserlib.print.printWithoutCrashing("")
         subuserlib.print.printWithoutCrashing(subuser.name+" no longer needs the following permissions:")
+        removedPermisisonsDict = {}
         for removedPermission in removedPermissions:
-          for line in subuserlib.permissions.descriptions[removedPermission](oldDefaults[removedPermission]):
-            subuserlib.print.printWithoutCrashing("   - "+line)
+          removedPermisisonsDict[removedPermission] = oldDefaults[removedPermission]
+        subuserlib.print.printWithoutCrashing(subuserlib.permissions.getDescription(removedPermisisonsDict))
       if "entrypoints" in additionsAndChanges and subuser.entryPointsExposed:
         subuserlib.print.printWithoutCrashing(subuser.name+" would like to expose the following entrypoints to the system PATH:")
         for entrypoint in additionsAndChanges["entrypoints"].keys():
@@ -79,5 +78,5 @@ class AcceptPermissionsAtCLI(PermissionsAccepter,UserOwnedObject):
       subuser.editPermissionsCLI()
     if choice == "r":
       if createNewPermissions:
-        subuser.createPermissions(subuserlib.permissions.load(permissionsString="{}"))
+        subuser.createPermissions(subuserlib.permissions.load(permissionsString="{}",logger=self.user.registry))
         subuser.permissions.save()
