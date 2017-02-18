@@ -1,0 +1,14 @@
+Initial commit.
+Cloning repository default from file:///home/timothy/.texttest/tmp/texttest.18Feb171335.31928/texttest/Weird-repositories/incorrect-permission-types/test-repos/default-test-repo
+Adding subuser foo with image permissions-with-incorrect-types@//home/timothy/.texttest/tmp/texttest.18Feb171335.31928/texttest/Weird-repositories/incorrect-permission-types/test-repos/local-test-repo-§€č
+Adding new temporary repository //home/timothy/.texttest/tmp/texttest.18Feb171335.31928/texttest/Weird-repositories/incorrect-permission-types/test-repos/local-test-repo-§€č
+Verifying subuser configuration.
+Verifying registry consistency...
+Unregistering any non-existant installed images.
+Checking if images need to be updated or installed...
+Permisison description set to invalid value <3>. Expected string
+Running garbage collector on temporary repositories...
+Removing uneeded temporary repository: //home/timothy/.texttest/tmp/texttest.18Feb171335.31928/texttest/Weird-repositories/incorrect-permission-types/test-repos/local-test-repo-§€č
+Clearing directory /home/timothy/.texttest/tmp/texttest.18Feb171335.31928/texttest/Weird-repositories/incorrect-permission-types/.subuser/volumes/execute
+Clearing directory /home/timothy/.texttest/tmp/texttest.18Feb171335.31928/texttest/Weird-repositories/incorrect-permission-types/.subuser/volumes/x11
+Verify complete.
