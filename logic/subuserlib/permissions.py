@@ -33,6 +33,7 @@ supportedPermissions = OrderedDict([
 #    [("describe",<lambda that generates english langauge description of permission, given its value.>)
 #    ,("default",<default value of permission>)
 #    ,("types",[<valid types that the permissions value can have, used for permission file validation>])
+#    ,("description","""Description meant to show up in standard manaual."""
 #    OPTIONALLY
 #    ,("subpermissions",
 #      [
@@ -46,21 +47,45 @@ supportedPermissions = OrderedDict([
 
   OrderedDict([("description",
     {"describe":lambda v: v
+    ,"description":"""This field describes what the subuser is/what it does.
+
+  Ex::
+
+    "description"                : "Simple universal text editor."
+"""
     ,"default":""
     ,"types":[str]})
 
   ,("maintainer",
     {"describe":lambda maintainer : maintainer
+    ,"description":"""This field marks who is responsible for the ``permissions.json`` file, and accompanying ``Dockerfile``.  It does NOT mark who is responsible for the image itself.
+
+  Ex::
+
+    ,"maintainer"                : "Timothy Hobbs <timothyhobbs (at) seznam dot cz>"
+"""
     ,"default":""
     ,"types":[str]})
 
   ,("executable",
     {"describe":lambda executable : executable if executable else "Is a library."
+    ,"description":"""This field denotes the absolute path within the Docker image where the given image's executable resides. This value is optional. if it is not present, than the subuser image cannot be run (but may be depended upon by other subuser images).
+
+  Ex::
+
+    ,"executable"                : "/usr/bin/vim"
+"""
     ,"default":None
     ,"types":[type(None),str]})
 
   ,("entrypoints",
     {"describe":lambda entrypoints: "'"+ "', '".join(entrypoints.keys())+"'" if entrypoints else ""
+    ,"description":"""This optional feild allows you to add "entrypoints" to your subuser. These are executables that can be added, if the user so wishes, to the PATH on the host system. This is a dictionary which maps "desired name on host" to "path within subuser image".
+
+  Ex::
+
+    ,"entrypoints"                : {"mk":"/usr/bin/mk","cc","/usr/local/bin/cc"}
+"""
     ,"default":None
     ,"types":[type(None),OrderedDict]})
   ])
@@ -69,6 +94,19 @@ supportedPermissions = OrderedDict([
 
   ("basic-common-permissions",
     {"describe":lambda v: "To access basic information such as timezone and local and to save data to its own homedir." if v is True else ""
+    ,"description":"""Grant access to asic information such as timezone and local and to save data to its own homedir.
+
+  Ex::
+
+    ,"basic-common-permissions"                : true
+
+
+  Ex1::
+
+
+    ,"basic-common-permissions"                : {"stateful-home":true,"inherit-timezone":false}
+
+"""
     ,"default":False
     ,"types":[bool,OrderedDict]
     ,"subpermissions-batch-set":True
@@ -76,16 +114,22 @@ supportedPermissions = OrderedDict([
 
       ("stateful-home",
         {"describe":lambda p : "To have its own home directory where it can save files and settings." if p else ""
+        ,"description":"""Changes that the subuser makes to it's home directory should be saved to a special subuser-homes directory.
+"""
         ,"default":False
         ,"types":[bool]})
 
       ,("inherit-locale",
         {"describe":lambda p : "To find out which language you speak and what region you live in." if p else ""
+        ,"description":"""Automatically set the $LANG and $LANGUAGE environment variable in the container to the value outside of the container. Note: You do not have to set this if you have set ``basic-common-permissions``.
+"""
         ,"default":False
         ,"types":[bool]})
 
       ,("inherit-timezone",
         {"describe": lambda p : "To find out your current timezone." if p else ""
+        ,"description":"""Automatically set the $TZ environment variable in the container to the value outside of the container.  Give the sub user read only access to the ``/etc/localtime`` file. Note: You do not have to set this if you have set ``basic-common-permissions``.
+"""
         ,"default":False
         ,"types":[bool]})
       ])
@@ -93,11 +137,23 @@ supportedPermissions = OrderedDict([
 
   ,("memory-limit",
     {"describe": lambda p: "Memory limited to %s"%p if p else ""
+    ,"description":"""Limit subuser's available memory to this value. This is a string of format "100m" or "2g", where "m" is megabytes and "g" is gigabytes.
+
+  Ex::
+
+     "memory-limit":"200m"
+"""
     ,"default":None
     ,"types":[type(None),str]})
 
   ,("max-cpus",
     {"describe":lambda p: "CPUs limited to %s"%p if p else ""
+    ,"description":"""Limit number of CPUs subuser can use. This is a float.
+
+  Ex::
+
+    "max-cpus":2.0
+"""
     ,"default":None
     ,"types":[type(None),float]})
   ])
@@ -106,6 +162,16 @@ supportedPermissions = OrderedDict([
 
   ("gui",
     {"describe": lambda guiOptions : "To be able to display windows." if guiOptions else ""
+    ,"description":"""Is the subuser allowed to display a graphical user interface?
+
+  Ex (enable gui, but do not enable extra fetures such as clipboard or system-tray icons)::
+
+     "gui":true
+
+  Ex1 (enable gui along with select features)::
+
+    "gui":{"clipboard":true}
+"""
     ,"default":False
     ,"types":[bool,OrderedDict]
     ,"conflicts":["x11"]
@@ -113,49 +179,95 @@ supportedPermissions = OrderedDict([
 
       ("clipboard",
         {"describe":lambda p : "To be able to access the host's clipboard." if p else ""
+        ,"description":"""Is the subuser allowed to read and write to the clipboard?
+"""
         ,"default":False
         ,"types":[bool]})
 
       ,("system-tray",
         {"describe":lambda p : "To be able to create system tray icons." if p else ""
+        ,"description":"""Is this subuser allowed to display system-tray icons?
+"""
         ,"default":False
         ,"types":[bool]})
 
       ,("cursors",
         {"describe":lambda p : "To be able to change the mouse's cursor icon." if p else ""
+        ,"description":"""Is this subuser allowed to change the way the mouse cursor is displayed?
+"""
         ,"default":False
         ,"types":[bool]})
+
+      ,("border-color",
+        {"describe":lambda p : "The border color will be "+p if p else "Warning: There will be no border coloring."
+        ,"description":"""Set the border color for the window. This allows you to easily distinguish between untrusted windows and trusted ones.
+
+  Ex (set border color to green)::
+
+    "gui":{"border-color":"green"}
+
+  Ex1 (display windows without adding special border color.)::
+
+    "gui":{"border-color":nil}
+
+"""
+        ,"default":"red"
+        ,"types":[type(None),str]})
       ])
     })
 
   ,("user-dirs",
     {"describe":lambda userDirs : "To access to the following user directories: '~/"+"' '~/".join(userDirs)+"'" if userDirs else ""
+    ,"description":"""A list of relative paths to user directories which are to be shared between the host and the given image. The subuser is given read-write access to any user directories listed.
+
+  Ex::
+
+     ,"user-dirs"                 : ["Downloads"]
+
+  In this example, the subuser is able to access the ``~/Downloads`` directory on the host by visiting the ``~/Userdirs/Downloads`` directory within the container.
+"""
     ,"default":[]
     ,"validate": validateUserDirs
     ,"types":[ListOfStrings]})
 
   ,("inherit-envvars",
     {"describe":lambda envVars : "To access to the following environment variables: "+" ".join(envVars) if envVars else ""
+    ,"description":"""A list of environment variables which the image will inherit from the host environment when started.
+
+  Ex::
+
+     ,"inherit-envvars"           : ["PGUSER","PGHOST"]
+"""
     ,"default":[]
     ,"types":[ListOfStrings]})
 
   ,("sound-card",
     {"describe":lambda p : "To access to your soundcard, can play sounds/record sound." if p else ""
+    ,"description":"""The subuser is allowed to access the soundcard on the host.
+
+  .. warning:: This means, not only can the subuser play sounds, but it may listen to your microphone too!
+"""
     ,"default":False
     ,"types":[bool]})
 
   ,("webcam",
     {"describe":lambda p : "To access your computer's webcam/can see you." if p else ""
+    ,"description":"""The subuser is allowed to access the computer's webcam/USB webcams.
+"""
     ,"default":False
     ,"types":[bool]})
 
   ,("access-working-directory",
     {"describe":lambda p: "To access the directory from which it was launched." if p else ""
+    ,"description":"""The subuser is given read-write access to the host user's current working directory.
+"""
     ,"default":False
     ,"types":[bool]})
 
   ,("allow-network-access",
     {"describe":lambda p : "To access the network/internet." if p else ""
+    ,"description":"""Should the subuser be allowed to access the network/internet?
+"""
     ,"default":False
     ,"types":[bool]})
 
@@ -165,36 +277,58 @@ supportedPermissions = OrderedDict([
 
   ("x11",
     {"describe":lambda p: "To display X11 windows and interact with your X11 server directly(log keypresses, read over your shoulder, steal your passwords, control your computer ect.)" if p else ""
+    ,"description":"""The subuser is allowed to interact with the x11 server on the host.
+
+  .. note:: Known to be insecure!
+"""
     ,"default":False
     ,"types":[bool]})
 
   ,("system-dirs",
     {"describe":lambda systemDirs : " ".join(["To read and write to the host's `"+source+"` directory, mounted in the container as:`"+dest+"`\n" for source,dest in systemDirs.items()])
+    ,"description":"""A dictionary of absolute paths to directories which are to be shared between the host and the given image. The subuser is given read-write access to any user directories listed.
+
+  Ex::
+
+     ,"system-dirs"                 : {"/var/log":"/host/var/log"}
+
+  In this example, the subuser is able to access the ``/var/log`` directory on the host by visiting the ``/host/var/log`` directory within the container.
+"""
     ,"default":OrderedDict()
     ,"types":[OrderedDict]})
 
   ,("graphics-card",
     {"describe":lambda p : "To access your graphics-card directly for OpenGL tasks." if p else "" 
+    ,"description":"""The subuser is allowed to access the graphics-card directly(OpenGL).
+"""
     ,"default":False
     ,"types":[bool]})
 
   ,("serial-devices",
     {"describe":lambda p : "To access serial devices such as programmable micro-controllers and modems." if p else ""
+    ,"description":"""The subuser is allowed to access serial devices: ``/dev/ttyACM*``, ``/dev/ttyUSB*``, and ``/dev/ttyS*``.
+"""
     ,"default":[]
     ,"types":[ListOfStrings]})
 
   ,("system-dbus",
     {"describe":lambda p: "To talk to the system dbus daemon." if p else ""
+    ,"description":"""Should the subuser be allowed to communicate with the system wide dbus daemon?
+"""
     ,"default":False
     ,"types":[bool]})
 
   ,("sudo",
     {"describe": lambda p: "To be allowed to use the sudo command to run subproccesses as root in the container." if p else ""
+    ,"description":"""Grant the subuser sudo privileges within the container.
+"""
     ,"default":False
     ,"types":[bool]})
 
   ,("as-root",
     {"describe": lambda p: "To be allowed to run as root within the container." if p else ""
+    ,"description":"""Run the subuser as the root user within the container.
+"""
     ,"default":False
     ,"types":[bool]})
 
@@ -204,11 +338,19 @@ supportedPermissions = OrderedDict([
  
   ("privileged",
     {"describe": lambda p: "To have full access to your system.  To even do things as root outside of its container." if p else ""
+    ,"description":"""Should the subuser's Docker container be run in ``privileged`` mode?
+
+  .. warning:: Completely insecure!
+"""
     ,"default":False
     ,"types":[bool]})
 
   ,("run-commands-on-host",
     {"describe": lambda p: "To run commands as a normal user on the host system." if p else ""
+    ,"description":"""Should the subuser be able to execute commands as the normal user on the host system? If this is enabled, a ``/subuser/execute`` file will be present in the container. Any text appended to this file will be piped to ``/bin/sh`` on the host machine.
+
+  .. warning:: Obviously completely compromises security.
+"""
     ,"default":False
     ,"types":[bool]})
 
@@ -221,6 +363,22 @@ def getDefaults():
     for permission,value in permissions.items():
       default_permissions[permission] = copy.deepcopy(value["default"])
   return default_permissions
+
+def getTypeDescriptions(types):
+  typeDescriptions = {
+    str:"string"
+   ,type(None):"nil"
+   ,bool:"bool"
+   ,float:"floating point number"
+   ,ListOfStrings:"List of strings"
+   ,OrderedDict: "set of subpermissions"}
+  typestrings = []
+  for t in types:
+    if t in typeDescriptions:
+      typestrings.append(typeDescriptions[t])
+    else:
+      typestrings.append(str(t))
+  return typestrings
 
 basicCommonPermissions = ["stateful-home","inherit-locale","inherit-timezone"]
 
@@ -298,17 +456,7 @@ def load(permissionsFilePath=None,permissionsString=None, logger = None):
           if not type(s) == str:
             raise SyntaxError("Permission "+permission+" set to invalid value <"+str(value)+">. Expected a list of strings.")
       else:
-        typeDescriptions = {
-          str:"string"
-         ,type(None):"nil"
-         ,float:"floating point number"
-         ,OrderedDict: "set of subpermissions"}
-        typestrings = []
-        for t in types:
-          if t in typeDescriptions:
-            typestrings.append(typeDescriptions[t])
-          else:
-            typestrings.append(str(t))
+        typestrings = getTypeDescriptions(types)
         raise SyntaxError("Permisison "+permission+" set to invalid value <"+str(value)+">. Expected "+" or ".join(typestrings))
     if "validate" in attrs:
       attrs["validate"](value)
@@ -451,3 +599,82 @@ def __compare(oldDefaults,newDefaults,userApproved):
     if (key not in userSetPermissions) and (key not in newDefaults):
       droppedPermissions.append(key)
   return (droppedPermissions,addedOrChangedPermissions)
+
+docs_header = """The permissions.json file format
+================================
+
+A permissions.json file is a file which describes the rights or permissions of a given subuser.  These permissions pertain mainly to that image's ability to interact with it's host operating system.
+
+Each permissions.json file is to be a valid `json <http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf>`_ file containing a single json object.
+
+All permissions are optional. If they are not included in the ``permissions.json`` file, than they are set to their default (and most restrictive) setting.
+
+Setting a permission to an empty string is not a valid way of requesting it's default value.  If you want the default value, don't include the permission at all.
+
+Permissions are categorized into 4 levels of permissiveness:
+
+ 1. conservative: These permissions should be 100% safe in all cases.
+ 2. moderate: These permissions have the potential to give the subuser access to some user data but not all.
+ 3. liberal: These permissions give the subuser access to some or all user data, and/or present a significantly increased risk of the subuser breaking out of the container.
+ 4. anarchistic: These permissions give the subuser full access to the system.
+
+"""
+
+depricatedPermissions = """
+Depricated
+----------
+
+These permissions can still be used as top level permissions. However, they have now been rolled in as subpermissions to ``basic-common-permissions``.
+
+ * ``stateful-home``: Changes that the subuser makes to it's home directory should be saved to a special subuser-homes directory.
+
+  **Default**: ``false``
+
+ * ``inherit-locale``: Automatically set the $LANG and $LANGUAGE environment variable in the container to the value outside of the container. Note: You do not have to set this if you have set ``basic-common-permissions``.
+
+  **Default**: ``false``
+
+ * ``inherit-timezone``: Automatically set the $TZ environment variable in the container to the value outside of the container.  Give the sub user read only access to the ``/etc/localtime`` file. Note: You do not have to set this if you have set ``basic-common-permissions``.
+
+  **Default**: ``false``
+"""
+
+def get_default_description(default):
+  default_descriptions = {
+    "" : '""'
+    ,True:"true"
+    ,False:"false"
+    ,None:"nil"
+    ,OrderedDict:"{}"}
+  try:
+    return default_descriptions[default]
+  except (KeyError,TypeError):
+    try:
+      return default_descriptions[type(default)]
+    except KeyError:
+      return str(default)
+
+def get_permission_description(indent1,indent2,permission,permission_attrs):
+  docs = ""
+  try:
+    docs += indent1+" ``"+permission+"``: "+permission_attrs["description"].replace("\n","\n"+indent2)+"\n"
+  except KeyError:
+    docs += indent1+" ``"+permission+"``:\n"
+  docs += indent2+"Default: ``"+get_default_description(permission_attrs["default"])+"``\n\n"
+  docs += indent2+"Types: ``"+"``, ``".join(getTypeDescriptions(permission_attrs["types"]))+"``\n\n"
+  return docs
+
+
+def getDocs():
+  docs = docs_header
+  for (level,level_description),permissions in supportedPermissions.items():
+    docs += level_description+"\n"
+    docs += "-"*len(level_description)+"\n"
+    for permission,permission_attrs in permissions.items():
+      docs += get_permission_description(" *","  ",permission,permission_attrs)
+      if "subpermissions" in permission_attrs:
+        docs += "  ``"+permission+"`` **subpermissions:**\n\n"
+        for subpermission,subpermission_attrs in permission_attrs["subpermissions"].items():
+          docs += get_permission_description("   -","    ",subpermission,subpermission_attrs)
+  docs += depricatedPermissions
+  return docs

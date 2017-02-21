@@ -7,6 +7,10 @@ SPHINXBUILD   = sphinx-build
 PAPER         =
 BUILDDIR      = _build
 
+subuser-standard/permissions-dot-json-file-format.rst: ../logic/subuserlib/permissions.py
+	cd subuser-standard ; ./generate-permissions-rst.py
+	echo DONE GENERATING PERMISSION DOCS
+
 command-docs:
 	cd commands ; ./generate-command-docs.py
 	echo DONE GENERATING COMMAND DOCS
@@ -39,7 +43,7 @@ sphynx:
 copy-images:
 	cp images/* _build/html/_images/
 
-html: command-docs pylint community.rst developers/contributing.rst developers/images/object-hierarchy.png news/images/x11-bridge.png  news/images/virtualbox.png news/images/wayland.png sphynx copy-images
+html: subuser-standard/permissions-dot-json-file-format.rst command-docs pylint community.rst developers/contributing.rst developers/images/object-hierarchy.png news/images/x11-bridge.png  news/images/virtualbox.png news/images/wayland.png sphynx copy-images
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
 

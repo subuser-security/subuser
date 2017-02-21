@@ -4,7 +4,7 @@ commands/*
 !commands/generate-command-docs.py
 _themes/sphinx_rtd_theme/static/images/subuser-website.svg
 _themes/sphinx_rtd_theme/static/images/subuser-vision.mp4
-subuser-standard
+subuser-standard/permissions-dot-json-file-format.rst
 developers/pylint.rst
 developers/images/*
 news/images/*
