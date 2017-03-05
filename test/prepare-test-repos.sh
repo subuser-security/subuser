@@ -16,6 +16,12 @@ git add . > /dev/null
 git commit -m 'test' > /dev/null
 cd ../..
 
+cd test-repos/different-sets-of-permissions
+git init > /dev/null
+git add . > /dev/null
+git commit -m 'test' > /dev/null
+cd ../..
+
 cd test-repos/version-constrained-test-repo
 git init > /dev/null
 git add . > /dev/null

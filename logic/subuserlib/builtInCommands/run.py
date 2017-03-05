@@ -27,6 +27,7 @@ If the SUBUSER_EXTRA_DOCKER_ARGS environment variable is set. Those arguments wi
   parser=optparse.OptionParser(usage=usage,description=description,formatter=subuserlib.commandLineArguments.HelpFormatterThatDoesntReformatDescription())
   parser.add_option("--entrypoint", dest="entrypoint",default=None,help="Override the default executable for this subuser.")
   parser.add_option("--dry", dest="dry",action="store_true",default=False,help="Dry run, only display what commands would be called by subuser, don't actually run anything.")
+  parser.add_option("--dry-one-arg-per-line", dest="dry_one_arg_per_line",action="store_true",default=False,help="Dry run, only display what commands would be called by subuser, don't actually run anything. Displays one argument per line when displaying the commands that would be calleed by subuser, in order to improve the ability for the test suit to detect changes to the command using a line based diff.")
   return parser.parse_args(args=sysargs)
 
 class ArgParser():
@@ -73,19 +74,23 @@ def runCommand(args):
       subuser = user.registry.subusers[argParser.subuserName]
       runtime = subuser.getRuntime(os.environ,extraDockerFlags=extraDockerFlags,entrypoint=options.entrypoint)
       if runtime:
-        if not options.dry:
-          runtime.run(argParser.subuserArgs)
-        else:
+        if options.dry or options.dry_one_arg_per_line:
           if subuser.imageId:
             print("The image will be prepared using the Dockerfile:")
             print(subuser.getRunReadyImage().generateImagePreparationDockerfile())
             print("The command to launch the image is:")
-            print(runtime.getPrettyCommand(argParser.subuserArgs))
+            if options.dry:
+              print(runtime.getPrettyCommand(argParser.subuserArgs))
+            elif options.dry_one_arg_per_line:
+              print("docker \\")
+              print("  `"+"` \\\n  `".join(runtime.getCommand(argParser.subuserArgs))+"`")
           else:
             sys.exit("There is no installed image for this subuser. Cannot run.")
+        else:
+          runtime.run(argParser.subuserArgs)
       else:
         sys.exit("The subuser's image failed to build. Please use the subuser registry log and subuser repair commands for more information.")
     except (subuserlib.classes.subuser.SubuserHasNoPermissionsException,subuserlib.classes.subuserSubmodules.run.runtimeCache.NoRuntimeCacheForSubusersWhichDontHaveExistantImagesException) as e:
       sys.exit(str(e))
   else:
-    sys.exit(argParser.subuserName + " not found.\nUse --help for help.")
+    sys.exit("Subuser "+argParser.subuserName + " not found.\nUse --help for help.")

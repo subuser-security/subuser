@@ -8,6 +8,8 @@ Adding a new permission
 
  2. Tell subuser how to apply the permission in the `runtime class <https://github.com/subuser-security/subuser/blob/master/logic/subuserlib/classes/subuserSubmodules/run/runtime.py>`_
 
+ 3. Test your permission by adding it to the `all-permissions` image in the test suit and running the test suit.
+
 Running the test suit
 ---------------------
 

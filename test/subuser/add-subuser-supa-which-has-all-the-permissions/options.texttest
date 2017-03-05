@@ -1,0 +1,1 @@
+subuser add supa all-permissions@file:///$TEXTTEST_SANDBOX/test-repos/different-sets-of-permissions --accept

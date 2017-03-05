@@ -1,0 +1,4 @@
+{
+ "description": "Test xpra-x11 bridge client",
+ "maintainer": "Timothy Hobbs <timothyhobbs@seznam.cz>"
+}

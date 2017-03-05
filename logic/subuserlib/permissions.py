@@ -17,6 +17,12 @@ allImagesMustHavePermissions = "All subuser images must have a permissions.json 
 class ListOfStrings():
   pass
 
+class StringToStringDict():
+  pass
+
+class StringToCommandDict():
+  pass
+
 def validateUserDirs(userDirs):
   for userDir in userDirs:
     if ".." in userDir or userDir.startswith("./"):
@@ -76,7 +82,7 @@ supportedPermissions = OrderedDict([
     ,"executable"                : "/usr/bin/vim"
 """
     ,"default":None
-    ,"types":[type(None),str]})
+    ,"types":[type(None),str,ListOfStrings]})
 
   ,("entrypoints",
     {"describe":lambda entrypoints: "'"+ "', '".join(entrypoints.keys())+"'" if entrypoints else ""
@@ -87,7 +93,7 @@ supportedPermissions = OrderedDict([
     ,"entrypoints"                : {"mk":"/usr/bin/mk","cc","/usr/local/bin/cc"}
 """
     ,"default":None
-    ,"types":[type(None),OrderedDict]})
+    ,"types":[type(None),StringToCommandDict]})
   ])
 
 ),(("conservative","Conservative permissions(These are safe):"),OrderedDict([
@@ -295,7 +301,7 @@ supportedPermissions = OrderedDict([
   In this example, the subuser is able to access the ``/var/log`` directory on the host by visiting the ``/host/var/log`` directory within the container.
 """
     ,"default":OrderedDict()
-    ,"types":[OrderedDict]})
+    ,"types":[StringToStringDict]})
 
   ,("graphics-card",
     {"describe":lambda p : "To access your graphics-card directly for OpenGL tasks." if p else "" 
@@ -308,8 +314,8 @@ supportedPermissions = OrderedDict([
     {"describe":lambda p : "To access serial devices such as programmable micro-controllers and modems." if p else ""
     ,"description":"""The subuser is allowed to access serial devices: ``/dev/ttyACM*``, ``/dev/ttyUSB*``, and ``/dev/ttyS*``.
 """
-    ,"default":[]
-    ,"types":[ListOfStrings]})
+    ,"default":False
+    ,"types":[bool]})
 
   ,("system-dbus",
     {"describe":lambda p: "To talk to the system dbus daemon." if p else ""
@@ -334,7 +340,7 @@ supportedPermissions = OrderedDict([
 
   ])
 
-),(("anarchistic","WARNING: These permissions give the subuser full access to your system when run."),OrderedDict([
+),(("anarchistic","Anarchistic permissions\n   WARNING: These permissions give the subuser full access to your system when run."),OrderedDict([
  
   ("privileged",
     {"describe": lambda p: "To have full access to your system.  To even do things as root outside of its container." if p else ""
@@ -371,6 +377,8 @@ def getTypeDescriptions(types):
    ,bool:"bool"
    ,float:"floating point number"
    ,ListOfStrings:"List of strings"
+   ,StringToStringDict:"Dict of strings."
+   ,StringToCommandDict:"Dict mapping names to commands."
    ,OrderedDict: "set of subpermissions"}
   typestrings = []
   for t in types:
@@ -455,6 +463,12 @@ def load(permissionsFilePath=None,permissionsString=None, logger = None):
         for s in value:
           if not type(s) == str:
             raise SyntaxError("Permission "+permission+" set to invalid value <"+str(value)+">. Expected a list of strings.")
+      elif type(value) == OrderedDict and (StringToStringDict in types or StringToCommandDict in types):
+        for s in value.values():
+          if not type(s) == str:
+            if type(s) == list and StringToCommandDict in types:
+              continue
+            raise SyntaxError("Permission "+permission+" set to invalid value <"+str(value)+">. Expected a string to string dictionary.")
       else:
         typestrings = getTypeDescriptions(types)
         raise SyntaxError("Permisison "+permission+" set to invalid value <"+str(value)+">. Expected "+" or ".join(typestrings))

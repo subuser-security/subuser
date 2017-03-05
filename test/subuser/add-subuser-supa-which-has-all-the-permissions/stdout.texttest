@@ -1,0 +1,84 @@
+Initial commit.
+Cloning repository default from file:///home/timothy/.texttest/tmp/texttest.05Mar191334.2622/texttest/subuser/add-subuser-supa-which-has-all-the-permissions/test-repos/default-test-repo
+Adding subuser supa with image all-permissions@file:////home/timothy/.texttest/tmp/texttest.05Mar191334.2622/texttest/subuser/add-subuser-supa-which-has-all-the-permissions/test-repos/different-sets-of-permissions
+Cloning repository 0 from file:////home/timothy/.texttest/tmp/texttest.05Mar191334.2622/texttest/subuser/add-subuser-supa-which-has-all-the-permissions/test-repos/different-sets-of-permissions
+Adding new temporary repository file:////home/timothy/.texttest/tmp/texttest.05Mar191334.2622/texttest/subuser/add-subuser-supa-which-has-all-the-permissions/test-repos/different-sets-of-permissions
+Verifying subuser configuration.
+Verifying registry consistency...
+Unregistering any non-existant installed images.
+supa: would like to have the following permissions:
+ Prelude:
+  - description: A subuser with all permissions
+  - maintainer: Timothy Hobbs <timothyhobbs@seznam.cz>
+  - executable: /bin/bash
+  - entrypoints: 'foo'
+ Conservative permissions(These are safe):
+  - basic-common-permissions: 
+   * To have its own home directory where it can save files and settings.
+  - memory-limit: Memory limited to 3g
+  - max-cpus: CPUs limited to 3.5
+ Moderate permissions(These are probably safe):
+  - gui: To be able to display windows.
+   * To be able to access the host's clipboard.
+   * The border color will be yellow
+  - user-dirs: To access to the following user directories: '~/Downloads'
+  - inherit-envvars: To access to the following environment variables: GCC
+  - sound-card: To access to your soundcard, can play sounds/record sound.
+  - webcam: To access your computer's webcam/can see you.
+  - access-working-directory: To access the directory from which it was launched.
+  - allow-network-access: To access the network/internet.
+ Liberal permissions(These may pose a security risk):
+  - system-dirs: To read and write to the host's `/var/log` directory, mounted in the container as:`/host/logs`
+
+  - graphics-card: To access your graphics-card directly for OpenGL tasks.
+  - serial-devices: To access serial devices such as programmable micro-controllers and modems.
+  - system-dbus: To talk to the system dbus daemon.
+  - sudo: To be allowed to use the sudo command to run subproccesses as root in the container.
+  - as-root: To be allowed to run as root within the container.
+ Anarchistic permissions
+   WARNING: These permissions give the subuser full access to your system when run.
+  - privileged: To have full access to your system.  To even do things as root outside of its container.
+  - run-commands-on-host: To run commands as a normal user on the host system.
+A - Accept and apply changes
+E - Apply changes and edit result
+r - Reject permissions.
+A
+Checking if images need to be updated or installed...
+New images for the following subusers need to be installed:
+!service-subuser-supa-xpra-server
+!service-subuser-supa-xpra-client
+supa
+Installing subuser-internal-xpra-server ...
+Building→→→
+Building...
+Building...
+Successfully built 1
+Building→→→
+Building...
+Building...
+Successfully built 2
+Installed new image <2> for subuser !service-subuser-supa-xpra-server
+Installing subuser-internal-xpra-client ...
+Building→→→
+Building...
+Building...
+Successfully built 3
+Building→→→
+Building...
+Building...
+Successfully built 4
+Installed new image <4> for subuser !service-subuser-supa-xpra-client
+Installing all-permissions ...
+Building→→→
+Building...
+Building...
+Successfully built 5
+Building→→→
+Building...
+Building...
+Successfully built 6
+Installed new image <6> for subuser supa
+Running garbage collector on temporary repositories...
+Clearing directory /home/timothy/.texttest/tmp/texttest.05Mar191334.2622/texttest/subuser/add-subuser-supa-which-has-all-the-permissions/.subuser/volumes/execute
+Clearing directory /home/timothy/.texttest/tmp/texttest.05Mar191334.2622/texttest/subuser/add-subuser-supa-which-has-all-the-permissions/.subuser/volumes/x11
+Verify complete.
