@@ -101,7 +101,7 @@ $ subuser repair
     except KeyError:
       return []
 
-  def getSoundArgs(self):
+  def getSoundCardArgs(self):
     soundArgs = []
     if os.path.exists("/dev/snd"):
       soundArgs += ["--volume=/dev/snd:/dev/snd:ro"]
@@ -113,6 +113,14 @@ $ subuser repair
       else:
         soundArgs += ["--device=/dev/dsp"]
     return soundArgs
+
+  def getPulseAudioArgs(self):
+    return ["--volume="+os.path.join(self.subuser.homeDirOnHost,".pulse","cookie")+":/subuser/pulse/cookie"
+           ,"--volume="+os.path.join("/run","user",str(self.user.endUser.uid),"pulse","native")+":/subuser/pulse/socket"
+           ,"-e"
+           ,"PULSE_COOKIE=/subuser/pulse/cookie"
+           ,"-e"
+           ,"PULSE_SERVER=/subuser/pulse/socket"]
 
   def getBasicCommonPermissionFlags(self,bcps):
     bcpd = collections.OrderedDict([
@@ -140,7 +148,8 @@ $ subuser repair
      ("gui", lambda p : ["-e","DISPLAY=unix:100","--volume",self.subuser.x11Bridge.getServerSideX11Path()+":/tmp/.X11-unix:rw"] if p else []),
      ("user-dirs", lambda userDirs : ["--volume="+os.path.join(self.subuser.user.endUser.homeDir,userDir)+":"+os.path.join("/subuser/userdirs/",userDir)+":rw" for userDir in userDirs]),
      ("inherit-envvars", lambda envVars: [arg for var in envVars for arg in self.passOnEnvVar (var)]),
-     ("sound-card", lambda p: self.getSoundArgs() if p else []),
+     ("sound-card", lambda p: self.getSoundCardArgs() if p else []),
+     ("pulseaudio", lambda p: self.getPulseAudioArgs() if p else []),
      ("webcam", lambda p: ["--device=/dev/"+device for device in os.listdir("/dev/") if device.startswith("video")] if p else []),
      ("access-working-directory", lambda p: ["--volume="+os.getcwd()+":/pwd:rw","--workdir=/pwd"] if p else ["--workdir="+self.subuser.dockersideHome]),
      ("allow-network-access", lambda p: ["--net=bridge"] if p else ["--net=none"]),

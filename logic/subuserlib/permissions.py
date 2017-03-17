@@ -247,6 +247,15 @@ supportedPermissions = OrderedDict([
     ,"default":[]
     ,"types":[ListOfStrings]})
 
+  ,("pulseaudio",
+    {"describe":lambda p : "To access to your pulseaudio server, can play sounds/record sound." if p else ""
+    ,"description":"""The subuser is allowed to access the pulseaudio server on the host.
+
+  .. warning:: This means, not only can the subuser play sounds, but it may listen to your microphone too!
+"""
+    ,"default":False
+    ,"types":[bool]})
+
   ,("sound-card",
     {"describe":lambda p : "To access to your soundcard, can play sounds/record sound." if p else ""
     ,"description":"""The subuser is allowed to access the soundcard on the host.
