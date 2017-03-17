@@ -115,12 +115,24 @@ $ subuser repair
     return soundArgs
 
   def getPulseAudioArgs(self):
-    return ["--volume="+os.path.join(self.subuser.homeDirOnHost,".pulse","cookie")+":/subuser/pulse/cookie"
-           ,"--volume="+os.path.join("/run","user",str(self.user.endUser.uid),"pulse","native")+":/subuser/pulse/socket"
-           ,"-e"
-           ,"PULSE_COOKIE=/subuser/pulse/cookie"
-           ,"-e"
-           ,"PULSE_SERVER=/subuser/pulse/socket"]
+    #TODO suport the plethora of alternate locations for these things...
+    if "PULSE_SERVER" in self.env:
+      pulseSocket = self.env["PULSE_SERVER"]
+    else:
+      pulseSocket = os.path.join("/run","user",str(self.user.endUser.uid),"pulse","native")
+    if "PULSE_COOKIE" in self.env:
+      pulseCookieFile = self.env["PULSE_COOKIE"]
+    else:
+      pulseCookieFile = os.path.join(self.subuser.homeDirOnHost,".pulse","cookie")
+    if os.path.exists(pulseSocket) and os.path.exists(pulseCookieFile):
+      return ["--volume="+pulseCookieFile+":/subuser/pulse/cookie"
+             ,"--volume="+pulseSocket+":/subuser/pulse/socket"
+             ,"-e"
+             ,"PULSE_COOKIE=/subuser/pulse/cookie"
+             ,"-e"
+             ,"PULSE_SERVER=/subuser/pulse/socket"]
+    else:
+      return []
 
   def getBasicCommonPermissionFlags(self,bcps):
     bcpd = collections.OrderedDict([
