@@ -63,6 +63,7 @@ Edit a subuser's permissions.
 """
   parser=optparse.OptionParser(usage=usage,description=description,formatter=subuserlib.commandLineArguments.HelpFormatterThatDoesntReformatDescription())
   parser.add_option("--prefix",dest="prefix",default=None,help="When removing subusers, remove all subusers who's names start with prefix.")
+  parser.add_option("--home-dir",dest="homeDir",default=None,help="When adding a subuser set its home dir on the host to a non-default location.")
   parser.add_option("--accept",dest="accept",action="store_true",default=False,help="Accept permissions without asking.")
   parser.add_option("--prompt",dest="prompt",action="store_true",default=False,help="Prompt before installing new images.")
   parser.add_option("--force-internal",dest="forceInternal",action="store_true",default=False,help="Force a subuser who's name starts with ! to be added, despite the fact that ! marks interal subusers and is normally forbidden.")
@@ -88,7 +89,7 @@ def runCommand(sysargs):
         sys.exit("Wrong number of arguments to add.  See `subuser subuser -h`.")
       subuserName = args[1]
       imageSourceId = args[2]
-      subuserlib.subuser.add(user,subuserName,imageSourceId,permissionsAccepter=permissionsAccepter,prompt=options.prompt,forceInternal=options.forceInternal)
+      subuserlib.subuser.add(user,subuserName,imageSourceId,permissionsAccepter=permissionsAccepter,prompt=options.prompt,forceInternal=options.forceInternal,homeDir=os.path.expanduser(options.homeDir))
     else:
       subuserNames = list(set(args[1:]))
       subusers = []

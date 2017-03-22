@@ -22,7 +22,7 @@ from subuserlib.classes.subuserSubmodules.run.runReadyImage import RunReadyImage
 from subuserlib.classes.subuserSubmodules.run.runtimeCache import RuntimeCache
 
 class Subuser(UserOwnedObject, Describable):
-  def __init__(self,user,name,imageId,executableShortcutInstalled,locked,serviceSubuserNames,imageSource=None,imageSourceName=None,repoName=None,entrypointsExposed=False):
+  def __init__(self,user,name,imageId,executableShortcutInstalled,locked,serviceSubuserNames,imageSource=None,imageSourceName=None,repoName=None,entrypointsExposed=False,nonDefaultHomeDir=None):
     self.name = name
     self.__imageSource = imageSource
     self.__repoName = repoName
@@ -39,6 +39,7 @@ class Subuser(UserOwnedObject, Describable):
     self.__runtimeCache = None
     self.__permissions = None
     self.__permissionsTemplate = None
+    self.nonDefaultHomeDir = nonDefaultHomeDir
     UserOwnedObject.__init__(self,user)
 
   @property
@@ -232,6 +233,8 @@ Please file a bug report explaining how you got here.\n"""+ str(e))
     Returns the path to the subuser's home dir. Unless the subuser is configured to have a stateless home, in which case returns None.
     """
     if self.permissions["basic-common-permissions"]["stateful-home"]:
+      if self.nonDefaultHomeDir is not None:
+        return self.nonDefaultHomeDir
       return os.path.join(self.user.config["subuser-home-dirs-dir"],self.name)
     else:
       return None

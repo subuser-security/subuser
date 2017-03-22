@@ -41,6 +41,7 @@ class Subusers(dict,UserOwnedObject,FileBackedObject):
       serializedSubuser["entrypoints-exposed"] = subuser.entryPointsExposed
       serializedSubuser["docker-image"] = subuser.imageId
       serializedSubuser["service-subusers"] = subuser.serviceSubuserNames
+      serializedSubuser["non-default-home-dir"] = subuser.nonDefaultHomeDir
       if subuser.locked:
         serializedDict["locked"][subuser.name] = serializedSubuser
       else:
@@ -73,7 +74,8 @@ class Subusers(dict,UserOwnedObject,FileBackedObject):
       serviceSubuserNames = retrieveAttribute("service-subusers",[])
       executableShortcutInstalled = retrieveAttribute("executable-shortcut-installed",False)
       entrypointsExposed = retrieveAttribute("entrypoints-exposed",False)
-      self[subuserName] = Subuser(self.user,subuserName,imageSourceName=imageSourceName,repoName=repoName,imageId=imageId,executableShortcutInstalled=executableShortcutInstalled,locked=locked,serviceSubuserNames=serviceSubuserNames,entrypointsExposed=entrypointsExposed)
+      nonDefaultHomeDir = retrieveAttribute("non-default-home-dir",None)
+      self[subuserName] = Subuser(self.user,subuserName,imageSourceName=imageSourceName,repoName=repoName,imageId=imageId,executableShortcutInstalled=executableShortcutInstalled,locked=locked,serviceSubuserNames=serviceSubuserNames,entrypointsExposed=entrypointsExposed,nonDefaultHomeDir=nonDefaultHomeDir)
 
   def getSortedList(self):
     """

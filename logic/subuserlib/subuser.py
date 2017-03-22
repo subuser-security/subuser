@@ -15,7 +15,7 @@ import subuserlib.verify
 import subuserlib.update
 import subuserlib.classes.exceptions as exceptions
 
-def add(user,subuserName,imageSourceIdentifier,permissionsAccepter,prompt=False,forceInternal=False):
+def add(user,subuserName,imageSourceIdentifier,permissionsAccepter,prompt=False,forceInternal=False,homeDir=None):
   if subuserName.startswith("!") and not forceInternal:
     sys.exit("A subusers may not have names beginning with ! as these names are reserved for internal use.")
   if subuserName in user.registry.subusers:
@@ -25,16 +25,16 @@ def add(user,subuserName,imageSourceIdentifier,permissionsAccepter,prompt=False,
     imageSource = subuserlib.resolve.resolveImageSource(user,imageSourceIdentifier)
   except (KeyError,subuserlib.resolve.ResolutionError) as keyError:
     sys.exit("Could not add subuser.  The image source "+imageSourceIdentifier+" does not exist.\n"+str(keyError))
-  addFromImageSource(user,subuserName,imageSource,permissionsAccepter,prompt)
+  addFromImageSource(user,subuserName,imageSource,permissionsAccepter,prompt,homeDir=homeDir)
 
-def addFromImageSource(user,subuserName,imageSource,permissionsAccepter,prompt=False):
-  addFromImageSourceNoVerify(user,subuserName,imageSource)
+def addFromImageSource(user,subuserName,imageSource,permissionsAccepter,prompt=False,homeDir=None):
+  addFromImageSourceNoVerify(user,subuserName,imageSource,homeDir=homeDir)
   subuser = user.registry.subusers[subuserName]
   subuserlib.verify.verify(user,subusers=[subuser],permissionsAccepter=permissionsAccepter,prompt=prompt)
   user.registry.commit()
 
-def addFromImageSourceNoVerify(user,subuserName,imageSource):
-  subuser = subuserlib.classes.subuser.Subuser(user,subuserName,None,False,False,[],imageSource=imageSource)
+def addFromImageSourceNoVerify(user,subuserName,imageSource,homeDir=None):
+  subuser = subuserlib.classes.subuser.Subuser(user,subuserName,None,False,False,[],imageSource=imageSource,nonDefaultHomeDir=homeDir)
   user.registry.subusers[subuserName] = subuser
 
 def remove(user,subusers):
