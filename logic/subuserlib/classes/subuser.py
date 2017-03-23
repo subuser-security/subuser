@@ -54,6 +54,11 @@ class Subuser(UserOwnedObject, Describable):
         raise NoImageSourceException()
     return self.__imageSource
 
+  @imageSource.setter
+  def imageSource(self,new_image_source):
+    self.__imageSource=new_image_source
+    self.imageId = None
+
   @property
   def imageSourceName(self):
     if self.__imageSource is None:

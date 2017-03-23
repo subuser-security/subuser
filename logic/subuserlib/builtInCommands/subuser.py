@@ -13,16 +13,16 @@ import subuserlib.verify
 import subuserlib.profile
 
 def parseCliArgs(sysargs):
-  usage = "usage: subuser subuser [add|remove|add-to-path|remove-from-path|edit-permissions|expose-entrypoints|hide-entrypoints] NAME [IMAGESOURCE]"
+  usage = "usage: subuser subuser [add|remove|add-to-path|remove-from-path|edit-permissions|expose-entrypoints|hide-entrypoints|change-image] NAME [IMAGESOURCE]"
   description = """
 
 Add and remove subusers.  Create shorcuts for launching subusers.
 
 EXAMPLES:
 
-Add a new subuser named foo based on the image foo@default.
+Add a new subuser named foo based on the image image-name@repository.
 
-    $ subuser subuser add foo foo@default
+    $ subuser subuser add foo image-name@repository
 
 Remove the subuser named foo.
 
@@ -60,6 +60,10 @@ To remove the entrypoints from the PATH use
 Edit a subuser's permissions.
 
     $ subuser subuser edit-permissions foo
+
+Change which image the subuser is associated with.
+
+    $ subuser subuser change-image foo image-name@repository
 """
   parser=optparse.OptionParser(usage=usage,description=description,formatter=subuserlib.commandLineArguments.HelpFormatterThatDoesntReformatDescription())
   parser.add_option("--prefix",dest="prefix",default=None,help="When removing subusers, remove all subusers who's names start with prefix.")
@@ -84,12 +88,15 @@ def runCommand(sysargs):
   with lockedUser as user:
     user.registry.commit_message = " ".join(["subuser","subuser"]+sysargs)
     permissionsAccepter = AcceptPermissionsAtCLI(user,alwaysAccept = options.accept)
-    if action == "add":
+    if action == "add" or action == "change-image":
       if not len(args) == 3:
         sys.exit("Wrong number of arguments to add.  See `subuser subuser -h`.")
       subuserName = args[1]
       imageSourceId = args[2]
-      subuserlib.subuser.add(user,subuserName,imageSourceId,permissionsAccepter=permissionsAccepter,prompt=options.prompt,forceInternal=options.forceInternal,homeDir=os.path.expanduser(options.homeDir))
+      if action == "add":
+        subuserlib.subuser.add(user,subuserName,imageSourceId,permissionsAccepter=permissionsAccepter,prompt=options.prompt,forceInternal=options.forceInternal,homeDir=os.path.expanduser(options.homeDir))
+      elif action == "change-image":
+        subuserlib.subuser.changeImage(user,subuserName,imageSourceId,permissionsAccepter=permissionsAccepter,prompt=options.prompt)
     else:
       subuserNames = list(set(args[1:]))
       subusers = []

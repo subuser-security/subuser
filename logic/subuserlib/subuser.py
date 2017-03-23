@@ -68,6 +68,19 @@ def remove(user,subusers):
     subuserlib.verify.verify(user)
     user.registry.commit()
 
+def changeImage(user,subuserName,imageSourceIdentifier,permissionsAccepter,prompt=False):
+  if not subuserName in user.registry.subusers:
+    sys.exit("Subuser "+subuserName+" does not exist.")
+  user.registry.logChange("Changing the image for subuser "+subuserName+" to "+imageSourceIdentifier)
+  try:
+    imageSource = subuserlib.resolve.resolveImageSource(user,imageSourceIdentifier)
+  except (KeyError,subuserlib.resolve.ResolutionError) as keyError:
+    sys.exit("Could not change image.  The image source "+imageSourceIdentifier+" does not exist.\n"+str(keyError))
+  subuser = user.registry.subusers[subuserName]
+  subuser.imageSource = imageSource
+  subuserlib.verify.verify(user,subusers=[subuser],permissionsAccepter=permissionsAccepter,prompt=prompt)
+  user.registry.commit()
+
 def setExecutableShortcutInstalled(user,subusers,installed):
   for subuser in subusers:
     if installed:
