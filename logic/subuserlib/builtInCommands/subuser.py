@@ -94,7 +94,11 @@ def runCommand(sysargs):
       subuserName = args[1]
       imageSourceId = args[2]
       if action == "add":
-        subuserlib.subuser.add(user,subuserName,imageSourceId,permissionsAccepter=permissionsAccepter,prompt=options.prompt,forceInternal=options.forceInternal,homeDir=os.path.expanduser(options.homeDir))
+        if options.homeDir is not None:
+          homeDir = os.path.expanduser(options.homeDir)
+        else:
+          homeDir = None
+        subuserlib.subuser.add(user,subuserName,imageSourceId,permissionsAccepter=permissionsAccepter,prompt=options.prompt,forceInternal=options.forceInternal,homeDir=homeDir)
       elif action == "change-image":
         subuserlib.subuser.changeImage(user,subuserName,imageSourceId,permissionsAccepter=permissionsAccepter,prompt=options.prompt)
     else:

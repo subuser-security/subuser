@@ -1,4 +1,4 @@
-Usage: subuser subuser [add|remove|add-to-path|remove-from-path|edit-permissions|expose-entrypoints|hide-entrypoints] NAME [IMAGESOURCE]
+Usage: subuser subuser [add|remove|add-to-path|remove-from-path|edit-permissions|expose-entrypoints|hide-entrypoints|change-image] NAME [IMAGESOURCE]
 
 
 
@@ -6,9 +6,9 @@ Add and remove subusers.  Create shorcuts for launching subusers.
 
 EXAMPLES:
 
-Add a new subuser named foo based on the image foo@default.
+Add a new subuser named foo based on the image image-name@repository.
 
-    $ subuser subuser add foo foo@default
+    $ subuser subuser add foo image-name@repository
 
 Remove the subuser named foo.
 
@@ -47,12 +47,18 @@ Edit a subuser's permissions.
 
     $ subuser subuser edit-permissions foo
 
+Change which image the subuser is associated with.
+
+    $ subuser subuser change-image foo image-name@repository
+
 Options:
-  -h, --help        show this help message and exit
-  --prefix=PREFIX   When removing subusers, remove all subusers who's names
-                    start with prefix.
-  --accept          Accept permissions without asking.
-  --prompt          Prompt before installing new images.
-  --force-internal  Force a subuser who's name starts with ! to be added,
-                    despite the fact that ! marks interal subusers and is
-                    normally forbidden.
+  -h, --help          show this help message and exit
+  --prefix=PREFIX     When removing subusers, remove all subusers who's names
+                      start with prefix.
+  --home-dir=HOMEDIR  When adding a subuser set its home dir on the host to a
+                      non-default location.
+  --accept            Accept permissions without asking.
+  --prompt            Prompt before installing new images.
+  --force-internal    Force a subuser who's name starts with ! to be added,
+                      despite the fact that ! marks interal subusers and is
+                      normally forbidden.
