@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -* coding: utf-8 -*-
 
 """
 This is a Class which allows one to manipulate a git repository.
@@ -19,6 +19,8 @@ if subuserlib.test.testing:
   def getUser():
     return subuserlib.test.getUser()
 
+gitExecutable = None
+
 class GitRepository(UserOwnedObject):
   def __init__(self,user,path):
     UserOwnedObject.__init__(self,user)
@@ -26,23 +28,27 @@ class GitRepository(UserOwnedObject):
     self.__gitExecutable = None
 
   def getGitExecutable(self):
-    if self.__gitExecutable is None:
-      self.__gitExecutable = [subuserlib.executablePath.which("git",excludeDir=self.user.config["bin-dir"])]
-      if self.__gitExecutable is None:
+    global gitExecutable
+    if gitExecutable is None:
+      gitExecutable = [subuserlib.executablePath.which("git",excludeDir=self.user.config["bin-dir"])]
+      if gitExecutable is None:
         sys.exit("Git is not installed. Subuser requires git to run.")
-      def getConfig(key):
-        (returncode,stdout,stderr) = self.user.endUser.callCollectOutput(self.__gitExecutable + ["config","--get",key])
-        if returncode == 0:
-          return stdout
-        else:
-          return None
-      if getConfig("user.name") is None or getConfig("user.email") is None:
-        sys.exit("""You must configure git's user.name and user.email options before using subuser.
+    return gitExecutable
+
+  def assertGitSetup(self):
+    self.getGitExecutable()
+    def getConfig(key):
+      (returncode,stdout,stderr) = self.user.endUser.callCollectOutput(gitExecutable + ["config","--get",key])
+      if returncode == 0:
+        return stdout
+      else:
+        return None
+    if getConfig("user.name") is None or getConfig("user.email") is None:
+      sys.exit("""You must configure git's user.name and user.email options before using subuser.
 Do so by running
 $ git config --global user.name "John Doe"
 $ git config --global user.email johndoe@example.com
 """)
-    return self.__gitExecutable
 
   def clone(self,origin):
     """
@@ -147,18 +153,14 @@ class GitFileStructure(FileStructure):
     self.commit = commit
     self.__lsTreeCache = {}
 
-  def lsTree(self, subfolder, extraArgs=[]):
+  def lsTree(self):
     """
     Returns a list of tuples of the form:
     (mode,type,hash,path)
 
     Coresponding to the items found in the subfolder.
     """
-    if not subfolder.endswith("/"):
-      subfolder += "/"
-    if subfolder == "/":
-      subfolder = "./"
-    args = extraArgs+[self.commit,subfolder]
+    args = [self.commit,"-rtl"]
     argsTuple = tuple(args)
     try:
       return self.__lsTreeCache[argsTuple]
@@ -166,20 +168,19 @@ class GitFileStructure(FileStructure):
       pass
     (returncode,output) = self.gitRepository.runCollectOutput(["ls-tree"]+args)
     if returncode != 0:
-      return [] # This commenting out is intentional. It is simpler to just return [] here than to check if the repository is properly initialized everywhere else.
+      return [] # It is simpler to just return [] here than to check if the repository is properly initialized everywhere else.
     lines = output.splitlines()
     items = []
     for line in lines:
-      mode,objectType,rest = line.split(" ",2)
-      objectHash,path = rest.split("\t",1)
-      items.append((mode,objectType,objectHash,path))
+      mode,objectType,objectHash,size,path = line.split(maxsplit=4)
+      line = {"mode":mode,"type":objectType,"hash":objectHash,"size":size,"path":path}
+      items.append(line)
     self.__lsTreeCache[argsTuple] = items
     return items
 
-  def ls(self, subfolder, extraArgs=[]):
+  def ls(self, subfolder,objectType=None):
     """
-    Returns a list of file and folder paths.
-    Paths are relative to the repository as a whole.
+    Returns a list of file and folder names.
 
     >>> from subuserlib.classes.gitRepository import GitRepository
     >>> gitRepository = GitRepository(subuserlib.classes.gitRepository.getUser(),subuserlib.classes.gitRepository.hashtestDir)
@@ -187,11 +188,16 @@ class GitFileStructure(FileStructure):
     >>> print(",".join(fileStructure.ls("./")))
     bar,blah
     """
-    items = self.lsTree(subfolder,extraArgs)
-    paths = []
+    if subfolder == "./" or subfolder == "/":
+      subfolder = ""
+    items = self.lsTree()
+    names = []
     for item in items:
-      paths.append(item[3])
-    return paths
+      folder,name = os.path.split(item["path"])
+      if os.path.normpath(folder) == os.path.normpath(subfolder):
+        if objectType is None or objectType == item["type"]:
+          names.append(name)
+    return names
 
   def lsFiles(self,subfolder):
     """
@@ -204,7 +210,7 @@ class GitFileStructure(FileStructure):
     >>> print(",".join(fileStructure.lsFiles("./")))
     blah
     """
-    return list(set(self.ls(subfolder)) - set(self.lsFolders(subfolder)))
+    return self.ls(subfolder,"blob")
 
   def lsFolders(self,subfolder):
     """
@@ -217,7 +223,7 @@ class GitFileStructure(FileStructure):
     >>> print(",".join(fileStructure.lsFolders("./")))
     bar
     """
-    return self.ls(subfolder,extraArgs=["-d"])
+    return self.ls(subfolder,"tree")
 
   def exists(self,path):
     """
@@ -229,11 +235,12 @@ class GitFileStructure(FileStructure):
     >>> fileStructure.exists("./non-existant")
     False
     """
-    try:
-      self.read(path)
-      return True
-    except OSError:
-      return False
+    (dir,filename) = os.path.split(path)
+    for object in self.lsTree():
+      (_,existing_filename) = os.path.split(object["path"])
+      if filename == existing_filename:
+        return True
+    return False
 
   def read(self,path):
     """
@@ -248,7 +255,7 @@ class GitFileStructure(FileStructure):
     """
     (errorcode,content) = self.gitRepository.runCollectOutput(["show",self.commit+":"+path],eatStderr=True)
     if errorcode != 0:
-      raise OSError("Git show exited with error "+str(errorcode)+". File does not exist.\nPath: "+path+"\nCommit: "+self.commit+"\n")
+      raise OSError("Git show exited with error "+str(errorcode)+". File does not exist.\nRepo:"+self.gitRepository.path+"\nPath: "+path+"\nCommit: "+self.commit+"\n")
     return content
 
   def readBinary(self,path):
@@ -262,10 +269,23 @@ class GitFileStructure(FileStructure):
     >>> print(fileStructure.getModeString("./blah"))
     100644
     """
-    allObjects = self.lsTree("./",extraArgs=["-r"])
+    allObjects = self.lsTree()
     for treeObject in allObjects:
-      if os.path.normpath(treeObject[3]) == os.path.normpath(path):
-        return int(treeObject[0],8)
+      if os.path.normpath(treeObject["path"]) == os.path.normpath(path):
+        return int(treeObject["mode"],8)
+
+  def getSize(self,path):
+    """
+    >>> from subuserlib.classes.gitRepository import GitRepository
+    >>> gitRepository = GitRepository(subuserlib.classes.gitRepository.getUser(),subuserlib.classes.gitRepository.hashtestDir)
+    >>> fileStructure = gitRepository.getFileStructureAtCommit("master")
+    >>> print(fileStructure.getSize("./blah"))
+    9
+    """
+    allObjects = self.lsTree()
+    for treeObject in allObjects:
+      if os.path.normpath(treeObject["path"]) == os.path.normpath(path):
+        return int(treeObject["size"],10)
 
 class GitException(Exception):
   pass

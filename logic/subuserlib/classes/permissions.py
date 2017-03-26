@@ -37,7 +37,7 @@ class Permissions(collections.OrderedDict,UserOwnedObject,FileBackedObject):
 
   def save(self,_have_lock=False):
     if (not self.user._has_lock) and (not _have_lock):
-      sys.exit("Programmer error. Saving permissions without first aquiring lock! Please report this incident to: https://github.com/subuser-security/subuser/issues")
+      raise Exception("Programmer error. Saving permissions without first aquiring lock! Please report this incident to: https://github.com/subuser-security/subuser/issues")
     with self.user.endUser.get_file(self.writePath,'w') as fd:
       fd.write(subuserlib.permissions.getJSONString(self))
 

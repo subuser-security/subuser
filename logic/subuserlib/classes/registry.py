@@ -56,7 +56,7 @@ class Registry(userOwnedObject.UserOwnedObject):
     if not os.path.exists(os.path.join(self.user.config["registry-dir"],".git")):
       self.initialized = False
       # Ensure git is setup before we start to make changes.
-      self.gitRepository.getGitExecutable()
+      self.gitRepository.assertGitSetup()
       self.user.endUser.makedirs(self.user.config["registry-dir"])
       self.gitRepository.run(["init"])
       self.logChange("Initial commit.")
@@ -135,12 +135,11 @@ class Registry(userOwnedObject.UserOwnedObject):
         # TODO Note: We don't close the file descriptors, because doing so makes the pipe close on the other end too. This would be a file descriptor leak if this method was used in any long running process(which it is not).
 
   def cleanOutOldPermissions(self):
-    for _,_,_,permissionsPath in self.gitRepository.getFileStructureAtCommit(self.gitReadHash).lsTree("permissions"):
-      _,subuserName = os.path.split(permissionsPath)
-      exists = os.path.exists(os.path.join(self.registryDir,permissionsPath))
-      if exists and subuserName not in self.subusers:
+    for permissions_folder_name in self.gitRepository.getFileStructureAtCommit(self.gitReadHash).lsFolders("permissions"):
+      exists = os.path.exists(os.path.join(self.registryDir,"permissions",permissions_folder_name))
+      if exists and permissions_folder_name not in self.subusers:
         self.logChange("Removing left over permissions for no-longer extant subuser %s"%subuserName,2)
         try:
-          self.gitRepository.run(["rm","-r",permissionsPath])
+          self.gitRepository.run(["rm","-r",os.path.join("permissions",permissions_folder_name)])
         except subuserlib.classes.gitRepository.GitException as e:
           self.log(" %s"%str(e))

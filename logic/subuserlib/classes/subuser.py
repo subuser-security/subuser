@@ -134,7 +134,7 @@ Please file a bug report explaining how you got here.\n"""+ str(e))
     if self.__permissionsTemplate is None:
       permissionsDotJsonWritePath = os.path.join(self.permissionsDir,"permissions-template.json")
       registryFileStructure = self.user.registry.gitRepository.getFileStructureAtCommit(self.user.registry.gitReadHash)
-      if os.path.join(self.relativePermissionsDir,"permissions-template.json") in registryFileStructure.lsFiles(self.relativePermissionsDir):
+      if "permissions-template.json" in registryFileStructure.lsFiles(self.relativePermissionsDir):
         initialPermissions = subuserlib.permissions.load(permissionsString=registryFileStructure.read(os.path.join(self.relativePermissionsDir,"permissions-template.json")),logger=self.user.registry)
         save = False
       else:

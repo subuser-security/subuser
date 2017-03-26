@@ -14,6 +14,19 @@ from subuserlib import test
 from subuserlib import paths
 from subuserlib.classes.userOwnedObject import UserOwnedObject
 
+def timeit(func):
+    import functools,time
+    @functools.wraps(func)
+    def newfunc(*args, **kwargs):
+        startTime = time.time()
+        ret = func(*args, **kwargs)
+        elapsedTime = time.time() - startTime
+        print('function [{}] finished in {} ms'.format(
+            func.__name__, int(elapsedTime * 1000)))
+        return ret
+    return newfunc
+
+
 class EndUser(UserOwnedObject,object):
   def __init__(self,user,name=None):
     UserOwnedObject.__init__(self,user)
@@ -110,11 +123,13 @@ class EndUser(UserOwnedObject,object):
     (stdout,stderr) = process.communicate()
     return process.returncode
   
+  #@timeit
   def callCollectOutput(self,args,cwd=None):
     """
     Run the command and return a tuple with: (returncode,the output to stdout as a string,stderr as a string).
     """
     args = self.getSudoArgs() + args
+    #print(args)
     process = subprocess.Popen(args,stdout=subprocess.PIPE,stderr=subprocess.PIPE,cwd=cwd)
     (stdout,stderr) = process.communicate()
     return (process.returncode,stdout.decode("utf-8"),stderr.decode("utf-8"))

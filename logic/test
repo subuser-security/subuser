@@ -111,6 +111,7 @@ elif "doctest" in sys.argv:
     (failures,_) = doctest.testmod(module,optionflags=optionflags)
     if failures:
       sys.exit(failures)
+  doctest.testfile("../test/global-doctests")
   print("Tests passed.")
 else:
   if not "logic" in os.listdir(os.getcwd()):

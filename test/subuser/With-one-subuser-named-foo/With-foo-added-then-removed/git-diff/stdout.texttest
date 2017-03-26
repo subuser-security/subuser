@@ -1,58 +1,44 @@
 diff --git a/commit_log b/commit_log
-index 2f7ec41..ec05514 100644
+index 7a7c0dd..4943ec2 100644
 --- a/commit_log
 +++ b/commit_log
-@@ -112,3 +112,51 @@ Running garbage collector on temporary repositories...
- Clearing directory /home/timothy/.texttest/tmp/texttest.05Mar191334.2622/texttest/subuser/With-one-subuser-named-foo/With-foo-added-then-removed/git-diff/.subuser/volumes/execute
- Clearing directory /home/timothy/.texttest/tmp/texttest.05Mar191334.2622/texttest/subuser/With-one-subuser-named-foo/With-foo-added-then-removed/git-diff/.subuser/volumes/x11
+@@ -56,3 +56,37 @@ Running garbage collector on temporary repositories...
+ Clearing directory /home/timothy/.texttest/tmp/texttest.30Mar230739.26078/texttest/subuser/With-one-subuser-named-foo/With-foo-added-then-removed/git-diff/.subuser/volumes/execute
+ Clearing directory /home/timothy/.texttest/tmp/texttest.30Mar230739.26078/texttest/subuser/With-one-subuser-named-foo/With-foo-added-then-removed/git-diff/.subuser/volumes/x11
  Verify complete.
-+/home/timothy/.texttest/tmp/texttest.05Mar191334.2622/texttest/subuser/With-one-subuser-named-foo/With-foo-added-then-removed/git-diff/.subuser/registry: /usr/bin/git ls-tree master ./
++/home/timothy/.texttest/tmp/texttest.30Mar230739.26078/texttest/subuser/With-one-subuser-named-foo/With-foo-added-then-removed/git-diff/.subuser/registry: /usr/bin/git ls-tree master -rtl
 +
-+/home/timothy/.texttest/tmp/texttest.05Mar191334.2622/texttest/subuser/With-one-subuser-named-foo/With-foo-added-then-removed/git-diff/.subuser/registry: /usr/bin/git ls-tree -d master ./
-+
-+/home/timothy/.texttest/tmp/texttest.05Mar191334.2622/texttest/subuser/With-one-subuser-named-foo/With-foo-added-then-removed/git-diff/.subuser/registry: /usr/bin/git show master:subusers.json
++/home/timothy/.texttest/tmp/texttest.30Mar230739.26078/texttest/subuser/With-one-subuser-named-foo/With-foo-added-then-removed/git-diff/.subuser/registry: /usr/bin/git show master:subusers.json
 +
 +Removing subuser foo
-+/home/timothy/.texttest/tmp/texttest.05Mar191334.2622/texttest/subuser/With-one-subuser-named-foo/With-foo-added-then-removed/git-diff/.subuser/registry: /usr/bin/git show master:permissions/foo/permissions.json
++/home/timothy/.texttest/tmp/texttest.30Mar230739.26078/texttest/subuser/With-one-subuser-named-foo/With-foo-added-then-removed/git-diff/.subuser/registry: /usr/bin/git show master:permissions/foo/permissions.json
 +
 + If you wish to remove the subusers image, issue the command $ subuser remove-old-images
-+/home/timothy/.texttest/tmp/texttest.05Mar191334.2622/texttest/subuser/With-one-subuser-named-foo/With-foo-added-then-removed/git-diff/.subuser/registry: /usr/bin/git rm permissions/foo/permissions.json permissions/foo/permissions-template.json
++/home/timothy/.texttest/tmp/texttest.30Mar230739.26078/texttest/subuser/With-one-subuser-named-foo/With-foo-added-then-removed/git-diff/.subuser/registry: /usr/bin/git rm permissions/foo/permissions.json permissions/foo/permissions-template.json
 +rm 'permissions/foo/permissions-template.json'
 +rm 'permissions/foo/permissions.json'
 +
-+/home/timothy/.texttest/tmp/texttest.05Mar191334.2622/texttest/subuser/With-one-subuser-named-foo/With-foo-added-then-removed/git-diff/.subuser/registry: /usr/bin/git rm permissions/foo/permissions.json permissions/foo/permissions-template.json
++/home/timothy/.texttest/tmp/texttest.30Mar230739.26078/texttest/subuser/With-one-subuser-named-foo/With-foo-added-then-removed/git-diff/.subuser/registry: /usr/bin/git rm permissions/foo/permissions.json permissions/foo/permissions-template.json
 +
 +fatal: pathspec 'permissions/foo/permissions.json' did not match any files
 +Verifying subuser configuration.
 +Verifying registry consistency...
 +Unregistering any non-existant installed images.
-+/home/timothy/.texttest/tmp/texttest.05Mar191334.2622/texttest/subuser/With-one-subuser-named-foo/With-foo-added-then-removed/git-diff/.subuser/registry: /usr/bin/git ls-tree master permissions/
++/home/timothy/.texttest/tmp/texttest.30Mar230739.26078/texttest/subuser/With-one-subuser-named-foo/With-foo-added-then-removed/git-diff/.subuser/registry: /usr/bin/git ls-tree master -rtl
 +
 +Running garbage collector on temporary repositories...
-+/home/timothy/.texttest/tmp/texttest.05Mar191334.2622/texttest/subuser/With-one-subuser-named-foo/With-foo-added-then-removed/git-diff/.subuser/registry: /usr/bin/git ls-tree master ./
++/home/timothy/.texttest/tmp/texttest.30Mar230739.26078/texttest/subuser/With-one-subuser-named-foo/With-foo-added-then-removed/git-diff/.subuser/registry: /usr/bin/git ls-tree master -rtl
 +
-+/home/timothy/.texttest/tmp/texttest.05Mar191334.2622/texttest/subuser/With-one-subuser-named-foo/With-foo-added-then-removed/git-diff/.subuser/registry: /usr/bin/git ls-tree -d master ./
++/home/timothy/.texttest/tmp/texttest.30Mar230739.26078/texttest/subuser/With-one-subuser-named-foo/With-foo-added-then-removed/git-diff/.subuser/registry: /usr/bin/git show master:repository-states.json
 +
-+/home/timothy/.texttest/tmp/texttest.05Mar191334.2622/texttest/subuser/With-one-subuser-named-foo/With-foo-added-then-removed/git-diff/.subuser/registry: /usr/bin/git show master:repository-states.json
++/home/timothy/.texttest/tmp/texttest.30Mar230739.26078/texttest/subuser/With-one-subuser-named-foo/With-foo-added-then-removed/git-diff/.subuser/repositories/default: /usr/bin/git ls-tree efe9a570e67eb59c4562c95dd2579967da5fcd0d -rtl
 +
-+/home/timothy/.texttest/tmp/texttest.05Mar191334.2622/texttest/subuser/With-one-subuser-named-foo/With-foo-added-then-removed/git-diff/.subuser/repositories/default: /usr/bin/git show b04a8f040abb716e4407a19b6a0e8105a69b74f3:./.subuser.json
-+fatal: Path '.subuser.json' does not exist in 'b04a8f040abb716e4407a19b6a0e8105a69b74f3'
-+/home/timothy/.texttest/tmp/texttest.05Mar191334.2622/texttest/subuser/With-one-subuser-named-foo/With-foo-added-then-removed/git-diff/.subuser/repositories/default: /usr/bin/git ls-tree -d b04a8f040abb716e4407a19b6a0e8105a69b74f3 ./
++/home/timothy/.texttest/tmp/texttest.30Mar230739.26078/texttest/subuser/With-one-subuser-named-foo/With-foo-added-then-removed/git-diff/.subuser/registry: /usr/bin/git ls-tree master -rtl
 +
-+/home/timothy/.texttest/tmp/texttest.05Mar191334.2622/texttest/subuser/With-one-subuser-named-foo/With-foo-added-then-removed/git-diff/.subuser/repositories/default: /usr/bin/git show b04a8f040abb716e4407a19b6a0e8105a69b74f3:./foo/permissions.json
++/home/timothy/.texttest/tmp/texttest.30Mar230739.26078/texttest/subuser/With-one-subuser-named-foo/With-foo-added-then-removed/git-diff/.subuser/registry: /usr/bin/git show master:repositories.json
 +
-+/home/timothy/.texttest/tmp/texttest.05Mar191334.2622/texttest/subuser/With-one-subuser-named-foo/With-foo-added-then-removed/git-diff/.subuser/repositories/default: /usr/bin/git show b04a8f040abb716e4407a19b6a0e8105a69b74f3:./subuser-internal-xpra-client/permissions.json
-+
-+/home/timothy/.texttest/tmp/texttest.05Mar191334.2622/texttest/subuser/With-one-subuser-named-foo/With-foo-added-then-removed/git-diff/.subuser/repositories/default: /usr/bin/git show b04a8f040abb716e4407a19b6a0e8105a69b74f3:./subuser-internal-xpra-server/permissions.json
-+
-+/home/timothy/.texttest/tmp/texttest.05Mar191334.2622/texttest/subuser/With-one-subuser-named-foo/With-foo-added-then-removed/git-diff/.subuser/registry: /usr/bin/git ls-tree master ./
-+
-+/home/timothy/.texttest/tmp/texttest.05Mar191334.2622/texttest/subuser/With-one-subuser-named-foo/With-foo-added-then-removed/git-diff/.subuser/registry: /usr/bin/git ls-tree -d master ./
-+
-+/home/timothy/.texttest/tmp/texttest.05Mar191334.2622/texttest/subuser/With-one-subuser-named-foo/With-foo-added-then-removed/git-diff/.subuser/registry: /usr/bin/git show master:repositories.json
-+
-+Clearing directory /home/timothy/.texttest/tmp/texttest.05Mar191334.2622/texttest/subuser/With-one-subuser-named-foo/With-foo-added-then-removed/git-diff/.subuser/volumes/execute
-+Clearing directory /home/timothy/.texttest/tmp/texttest.05Mar191334.2622/texttest/subuser/With-one-subuser-named-foo/With-foo-added-then-removed/git-diff/.subuser/volumes/x11
++Clearing directory /home/timothy/.texttest/tmp/texttest.30Mar230739.26078/texttest/subuser/With-one-subuser-named-foo/With-foo-added-then-removed/git-diff/.subuser/volumes/execute
++Clearing directory /home/timothy/.texttest/tmp/texttest.30Mar230739.26078/texttest/subuser/With-one-subuser-named-foo/With-foo-added-then-removed/git-diff/.subuser/volumes/x11
 +Verify complete.
 diff --git a/permissions/foo/permissions-template.json b/permissions/foo/permissions-template.json
 deleted file mode 100644
@@ -83,10 +69,10 @@ index 8d1fe9b..0000000
 -}
 \ No newline at end of file
 diff --git a/subusers.json b/subusers.json
-index 2864fc0..9e26dfe 100644
+index 5b37c99..9e26dfe 100644
 --- a/subusers.json
 +++ b/subusers.json
-@@ -1,10 +1 @@
+@@ -1,11 +1 @@
 -{
 - "foo": {
 -  "source-repo": "default",
@@ -94,7 +80,8 @@ index 2864fc0..9e26dfe 100644
 -  "executable-shortcut-installed": false,
 -  "entrypoints-exposed": false,
 -  "docker-image": "2",
--  "service-subusers": []
+-  "service-subusers": [],
+-  "non-default-home-dir": null
 - }
 -}
 \ No newline at end of file

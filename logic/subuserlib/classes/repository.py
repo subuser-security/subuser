@@ -33,8 +33,8 @@ class Repository(OrderedDict,UserOwnedObject,Describable):
     self.gitRepository = GitRepository(user,self.repoPath)
     if not self.isPresent():
       self.updateSources(initialUpdate=True)
-    self.repoConfig = self.loadRepoConfig()
     if self.isPresent():
+      self.repoConfig = self.loadRepoConfig()
       self.loadImageSources()
 
   @property
@@ -210,7 +210,6 @@ class Repository(OrderedDict,UserOwnedObject,Describable):
     Load ImageSources from disk into memory.
     """
     imageNames = self.fileStructure.lsFolders(self.relativeImageSourcesDir)
-    imageNames = [os.path.basename(path) for path in imageNames]
     for imageName in imageNames:
       imageSource = ImageSource(self.user,self,imageName)
       if self.fileStructure.exists(imageSource.getRelativePermissionsFilePath()):

@@ -53,16 +53,17 @@ def archiveBuildContext(archive,relativeBuildContextPath,repositoryFileStructure
   contexttarfile = tarfile.open(mode="w",fileobj=archive)
   if relativeBuildContextPath and repositoryFileStructure:
     def addFolder(folder):
-      for filePathRelativeToRepository in repositoryFileStructure.lsFiles(folder):
-        filePathRelativeToBuildContext = os.path.relpath(filePathRelativeToRepository,relativeBuildContextPath)
+      for filename in repositoryFileStructure.lsFiles(folder):
+        filePathRelativeToBuildContext = os.path.join(folder,filename)
         exclude = False
         for excludePattern in excludePatterns:
           if fnmatch.fnmatch(filePathRelativeToBuildContext,excludePattern):
             exclude = True
+            break
         if not exclude:
-          addFileFromContents(path=filePathRelativeToBuildContext,contents=repositoryFileStructure.readBinary(filePathRelativeToRepository),mode=repositoryFileStructure.getMode(filePathRelativeToRepository))
-      for folderPathRelativeToRepository in repositoryFileStructure.lsFolders(folder):
-        addFolder(folderPathRelativeToRepository)
+          addFileFromContents(path=filePathRelativeToBuildContext,contents=repositoryFileStructure.readBinary(filePathRelativeToBuildContext),mode=repositoryFileStructure.getMode(filePathRelativeToBuildContext))
+      for subFolder in repositoryFileStructure.lsFolders(folder):
+        addFolder(os.path.join(folder,subFolder))
     addFolder(relativeBuildContextPath)
   # Add the provided Dockerfile if necessary
   if not dockerfile == None:
