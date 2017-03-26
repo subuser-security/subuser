@@ -25,7 +25,7 @@ Here is an example showing how I launch subuser dev when working on `textgraph <
 Shorter clearer log messages
 ----------------------------
 
-As a debian user, I occasionally get bitten by a package upgrade or install that doesn't work. All of a sudden, my system will start misbehaving and I won't know why. I always google apt-get logs and am always disappointed with `the results <http://askubuntu.com/questions/425809/where-are-the-logs-for-apt-get>`_. So with subuser, I decided to do better. Again due to my own arrogance, I didn't really think about what was wrong with the apt logs. I decided to throw subuser's registry files into git, pin a giant and opaque log message on to my commits, and call it a day. This lead to unusable logs. Subuser 0.6 improves this at least a bit. Now when you run ``subuser registry log`` you will see a list of the subuser commands that you have run that have left changes to the registry.
+As a debian user, I occasionally get bitten by a package upgrade or install that doesn't work. All of a sudden, my system will start misbehaving and I won't know why. I always google apt-get logs and am always disappointed with `the results <https://askubuntu.com/questions/425809/where-are-the-logs-for-apt-get>`_. So with subuser, I decided to do better. Again due to my own arrogance, I didn't really think about what was wrong with the apt logs. I decided to throw subuser's registry files into git, pin a giant and opaque log message on to my commits, and call it a day. This lead to unusable logs. Subuser 0.6 improves this at least a bit. Now when you run ``subuser registry log`` you will see a list of the subuser commands that you have run that have left changes to the registry.
 
 .. code-block:: bash
 

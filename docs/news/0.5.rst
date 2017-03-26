@@ -31,7 +31,7 @@ Thanks to
 - `Tal Wrii (talwrii) <https://github.com/talwrii>`_ for editing the docs.
 - Fred Burton for helping with the transition to Python 3.
 - Maddx for patiently walking through many bugs he ran into and helping me solve them
-- Antonin Martin of the `XPRA <http://xpra.org>`_ project for help getting XPRA working smoothly. He is extremely kind, responsive, and patient!
+- Antonin Martin of the `XPRA <https://xpra.org>`_ project for help getting XPRA working smoothly. He is extremely kind, responsive, and patient!
 
 Future plans
 ------------

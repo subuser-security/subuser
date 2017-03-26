@@ -58,11 +58,11 @@ Related projects
 
  This is a patchset for the Linux kernel which improves kernel security.  It can help make subuser more secure by reducing the risk that a program will escape it's container by finding a kernel exploit.
 
- * `Docker <http://docker.com>`_
+ * `Docker <https://docker.com>`_
 
  Docker is the containment system that powers subuser.
 
- * `LXC <http://linuxcontainers.org>`_
+ * `LXC <https://linuxcontainers.org>`_
 
  LXC is a competitor and backend to Docker.
 

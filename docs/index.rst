@@ -32,10 +32,10 @@ What is subuser?
 Subuser is free open-source software
 ------------------------------------
 
-Subuser is licensed under the LGPL v3. You can download the source code by clicking `here. <http://github.com/subuser-security/subuser>`_
+Subuser is licensed under the LGPL v3. You can download the source code by clicking `here <https://github.com/subuser-security/subuser>`_.
 
-`Download source  <http://github.com/subuser-security/subuser>`_
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+`Download source  <https://github.com/subuser-security/subuser>`_
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The problem
 -----------
@@ -57,7 +57,7 @@ Right now I'm editing this file in `vim`.  `vim` is not installed on my computer
 
   $ vim README.md
 
-Subuser turns a docker container into a normal program.  But this program is not fully privileged.  It can only access the directory from which it was called, `not my entire home dir <http://xkcd.com/1200/>`_.  Each subuser is assigned a specific set of permissions, just like in Android.  You can see an example `permissions.json` file below::
+Subuser turns a docker container into a normal program.  But this program is not fully privileged.  It can only access the directory from which it was called, `not my entire home dir <https://xkcd.com/1200/>`_.  Each subuser is assigned a specific set of permissions, just like in Android.  You can see an example `permissions.json` file below::
 
   {
     "description"                : "A web browser."

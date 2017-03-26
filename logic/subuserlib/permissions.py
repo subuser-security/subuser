@@ -640,7 +640,7 @@ docs_header = """The permissions.json file format
 
 A permissions.json file is a file which describes the rights or permissions of a given subuser.  These permissions pertain mainly to that image's ability to interact with it's host operating system.
 
-Each permissions.json file is to be a valid `json <http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf>`_ file containing a single json object.
+Each permissions.json file is to be a valid `json <https://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf>`_ file containing a single json object.
 
 All permissions are optional. If they are not included in the ``permissions.json`` file, than they are set to their default (and most restrictive) setting.
 

@@ -13,7 +13,7 @@ The ``repositories.json`` files are to be arranged into a hierarchy.  Subuser wi
 
 ``$SUBUSERDIR`` is the directory where the subuser source resides.
 
-Each repositories.json file is to be a valid `json <http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf>`_ file containing a single json object.
+Each repositories.json file is to be a valid `json <https://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf>`_ file containing a single json object.
 
 This object is a set of key value pairs where each key is the name of a subuser repository.
 
