@@ -13,7 +13,7 @@ Each config file may be partial.  That is, if the user wants to specify some opt
 
 ``$SUBUSERDIR`` is the directory where the subuser source resides.  It corresponds to the root of this git repository.
 
-Each config.json file is to be a valid `json <http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf>`_ file containing a single json object.
+Each config.json file is to be a valid `json <https://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf>`_ file containing a single json object.
 
 Properties
 -----------

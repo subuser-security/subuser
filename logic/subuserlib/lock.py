@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """
-File locking helper functions. Originally taken from http://stackoverflow.com/questions/5255220/fcntl-flock-how-to-implement-a-timeout
+File locking helper functions. Originally taken from https://stackoverflow.com/questions/5255220/fcntl-flock-how-to-implement-a-timeout
 """
 
 #external imports

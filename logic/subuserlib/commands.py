@@ -17,7 +17,7 @@ def getBuiltIn():
   """
   Get a list of the names of the built in subuser commands.
   """
-  # Ugly hack courtesy of http://stackoverflow.com/questions/487971/is-there-a-standard-way-to-list-names-of-python-modules-in-a-package
+  # Ugly hack courtesy of https://stackoverflow.com/questions/487971/is-there-a-standard-way-to-list-names-of-python-modules-in-a-package
   return [name for _, name, _ in pkgutil.iter_modules([os.path.dirname(subuserlib.builtInCommands.__file__)])]
 
 def getExternal():

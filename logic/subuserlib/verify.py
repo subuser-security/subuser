@@ -139,7 +139,7 @@ def cleanupRuntimeDirs(user):
   """
   def is_process_running(process_id):
     """
-    Taken from: http://stackoverflow.com/questions/7647167/check-if-a-process-is-running-in-python-in-linux-unix
+    Taken from: https://stackoverflow.com/questions/7647167/check-if-a-process-is-running-in-python-in-linux-unix
     """
     try:
       os.kill(process_id, 0)

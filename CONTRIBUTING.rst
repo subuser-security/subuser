@@ -3,7 +3,7 @@ Contributing
 
 Changes should be submitted in the form of a pull request.  If you do not have a github account, pull requests may be sent to the timothyhobbs@seznam.cz
 
-There is no need to sign a contributor agreement.  All changes belong to you and you agree to provide them to the world under the conditions of the LGPLv3 or later license agreement.
+There is no need to sign a contributor agreement.  All changes belong to you and you agree to provide them to the world under the conditions of the LGPL-3.0 license agreement.
 
 Coding guidelines
 -----------------
@@ -36,4 +36,3 @@ There are no clear guidelines on how to become a maintainer. It is expected that
  - Respect the :doc:`community guidelines <../community>`. Don't be racist or sexist or otherwise unacceptable.
 
  - Don't be pseudonymous. I know that a project like subuser which has security as one of its goals will attract pseudonymous users. However, security is also to some extent a matter of trust. Unfortunately, I cannot accept pseudonymous users as maintainers. You must have a real name associated with your online identity.
-

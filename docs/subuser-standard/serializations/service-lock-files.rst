@@ -21,7 +21,7 @@ There are a number of service containers which may need to run in order to suppo
 xpra service containers
 '''''''''''''''''''''''
 
-`xpra <http://xpra.org>`_ service containers provide a contained X11 server for the subuser to draw windows to. This allows the subuser to display windows without compromising the security of the system.
+`xpra <https://xpra.org>`_ service containers provide a contained X11 server for the subuser to draw windows to. This allows the subuser to display windows without compromising the security of the system.
 
 The ``xpra.json`` lock file contains a JSON object with the following properites:
 

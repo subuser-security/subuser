@@ -58,7 +58,7 @@ class EndUser(UserOwnedObject,object):
     if self.proxiedByOtherUser:
       os.chown(path,self.uid,self.gid)
 
-  #Thanks http://stackoverflow.com/questions/25791311/creating-a-file-with-python-using-sudo-makes-its-owner-root
+  #Thanks https://stackoverflow.com/questions/25791311/creating-a-file-with-python-using-sudo-makes-its-owner-root
   def create_file(self,path):
     #create containing folder
     directory,_ = os.path.split(path)
@@ -78,7 +78,7 @@ class EndUser(UserOwnedObject,object):
     """
     Create directory + parents, if the directory does not yet exist. Newly created directories will be owned by the user.
     """
-    # Taken from http://stackoverflow.com/questions/3167154/how-to-split-a-dos-path-into-its-components-in-python
+    # Taken from https://stackoverflow.com/questions/3167154/how-to-split-a-dos-path-into-its-components-in-python
     folders = []
     path = os.path.realpath(path)
     while 1:

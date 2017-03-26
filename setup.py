@@ -29,7 +29,7 @@ setuptools.setup(
   url="http://subuser.org",
   author="Timothy Hobbs",
   author_email="timothy@hobbs.cz",
-  license="LGPLv3",
+  license="LGPL-3.0",
   packages=["subuserlib","subuserlib.classes","subuserlib.builtInCommands","subuserlib.classes.docker","subuserlib.classes.subuserSubmodules","subuserlib.classes.subuserSubmodules.run","subuserlib.classes.permissionsAccepters"],
   package_dir={"subuserlib": "logic/subuserlib",
                "subuserlib.builtInCommands":"logic/subuserlib/builtInCommands",

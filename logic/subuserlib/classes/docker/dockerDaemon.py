@@ -139,7 +139,7 @@ class DockerDaemon(UserOwnedObject):
     self.getConnection().request("GET","/v1.13/images/"+imageTagOrId+"/json")
     response = self.getConnection().getresponse()
     if not response.status == 200:
-      response.read() # Read the response and discard it to prevent the server from getting locked up: http://stackoverflow.com/questions/3231543/python-httplib-responsenotready
+      response.read() # Read the response and discard it to prevent the server from getting locked up: https://stackoverflow.com/questions/3231543/python-httplib-responsenotready
       return None
     else:
       properties = json.loads(response.read().decode("utf-8"))
@@ -218,7 +218,7 @@ class DockerDaemon(UserOwnedObject):
     self.getConnection().request("GET","/v1.13/info")
     response = self.getConnection().getresponse()
     if not response.status == 200:
-      response.read() # Read the response and discard it to prevent the server from getting locked up: http://stackoverflow.com/questions/3231543/python-httplib-responsenotready
+      response.read() # Read the response and discard it to prevent the server from getting locked up: https://stackoverflow.com/questions/3231543/python-httplib-responsenotready
       return None
     else:
       return json.loads(response.read().decode("utf-8"))

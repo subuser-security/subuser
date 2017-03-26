@@ -23,7 +23,7 @@ Right now I'm editing this file in ``vim``.  ``vim`` is not installed on my comp
 
     $ vim README.md
 
-Subuser turns a docker container into a normal program.  But this program is not fully privileged.  It can only access the directory from which it was called, `not my entire home dir <http://xkcd.com/1200/>`_.  Each subuser is assigned a specific set of permissions, just like in Android.  You can see an example ``permissions.json`` file bellow.
+Subuser turns a docker container into a normal program.  But this program is not fully privileged.  It can only access the directory from which it was called, `not my entire home dir <https://xkcd.com/1200/>`_.  Each subuser is assigned a specific set of permissions, just like in Android.  You can see an example ``permissions.json`` file bellow.
 
 ::
 
