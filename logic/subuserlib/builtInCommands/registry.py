@@ -62,7 +62,7 @@ def runCommand(realArgs):
       user.endUser.makedirs(liveLogDir)
     os.mkfifo(liveLogPath)
     user.endUser.chown(liveLogPath)
-    # Why use os.open? http://stackoverflow.com/questions/5782279/why-does-a-read-only-open-of-a-named-pipe-block
+    # Why use os.open? https://stackoverflow.com/questions/5782279/why-does-a-read-only-open-of-a-named-pipe-block
     liveLog = os.open(liveLogPath,os.O_RDONLY|os.O_NONBLOCK)
     q = False
     line = ""

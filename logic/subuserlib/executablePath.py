@@ -16,7 +16,7 @@ def isExecutable(fpath):
   return os.path.isfile(fpath) and os.access(fpath, os.X_OK)
 
 programs = {}
-# Origonally taken from: http://stackoverflow.com/questions/377017/test-if-executable-exists-in-python
+# Origonally taken from: https://stackoverflow.com/questions/377017/test-if-executable-exists-in-python
 def which(program,excludeDir=None):
   """
   @type program: string

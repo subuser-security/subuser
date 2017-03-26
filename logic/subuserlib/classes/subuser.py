@@ -216,7 +216,7 @@ Please file a bug report explaining how you got here.\n"""+ str(e))
       if self.permissions["user-dirs"]:
         for userDir in self.permissions["user-dirs"]:
           symlinkPath = os.path.join(self.homeDirOnHost,userDir)
-          # http://stackoverflow.com/questions/15718006/check-if-directory-is-symlink
+          # https://stackoverflow.com/questions/15718006/check-if-directory-is-symlink
           if symlinkPath.endswith("/"):
             symlinkPath = symlinkPath[:-1]
           destinationPath = os.path.join("/subuser/userdirs",userDir)
