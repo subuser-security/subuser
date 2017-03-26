@@ -25,7 +25,7 @@ Thanks to
 
 - `Sergio Martínez Portela <https://codigoparallevar.com/blog/>`_ (`kenkeiras <https://github.com/kenkeiras>`_) for adding bash autocompletion support to subuser.
 - `Rui Pinheiro (ruipgpinheiro) <https://github.com/ruipgpinheiro>`_ for fixing a tricky race condition in the XPRA - X11 bridge launch code.
-- `Robin Schneider (ypid) <http://ypid.de/>`_ for documentation fixes and refactoring work.
+- `Robin Schneider (ypid) <https://me.ypid.de/>`_ for documentation fixes and refactoring work.
 - `Stanislas Leduc (shannara) <https://github.com/shannara>`_ for packaging subuser for debian and working on the RPMs too!
 - `Pál Tamás (folti) <https://github.com/folti>`_ for fixing a bug in the sound card support code.
 - `Tal Wrii (talwrii) <https://github.com/talwrii>`_ for editing the docs.
@@ -58,4 +58,3 @@ Moving away from Docker
 Now that `runc <http://runc.io/>`_ and other light weight unixy container runtimes are being developed, it is time for subuser to move away from Docker. While Docker has allowed subuser to prove the concept of contained deskop applications, the Docker daemon has performance limitations, and also limits our ability to customize the runtime to be perfectly suited for desktop apps. Docker's layer based image system is also very limited and does not allow subuser to take advantage of modern disk space and bandwidth saving content addressable deduplication schemes.
 
 I have been working with `Eric Myhre <http://exultant.us/>`_ of the `repeatr <http://repeatr.io/>`_ project to put together an improved system for managing subuser images and running subuser containers. While the ideas have been flying thick and fast, we will not be integrating our work into the subuser main line untill we're sure that you won't notice that anything has changed. When the big day comes, we won't break anything, but it might take us a long while to get there :)
-

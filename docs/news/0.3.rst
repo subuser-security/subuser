@@ -44,7 +44,7 @@ Release stats and thanks
 There have been some 179 commits since the 0.2 release. 7 contributors have contributed during this time:
 
 - `peter1000 <https://github.com/peter1000>`_
-- `Robin Schneider <https://github.com/ypid>`_
+- `Robin Schneider <https://me.ypid.de/>`_
 - `Christian Berendt <https://github.com/berendt>`_
 - `Marc Laporte <https://github.com/marclaporte>`_
 - `Dan Muresan <https://github.com/danmbox>`_
