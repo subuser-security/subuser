@@ -22,6 +22,11 @@ clean:
 	rm -r subuser.egg-info ; exit 0
 	rm -r build ; exit 0
 
+qa: qa-miscellaneous qa-https-everywhere
+
+qa-miscellaneous:
+	$(REPO_FILES) | grep -zZv 'setup.py$$' | xargs --null sed -i 's#LGPL\s*v3#LGPL-3.0#g;'
+
 qa-https-everywhere:
 	$(REPO_FILES) | xargs --null sed --regexp-extended --in-place 's#http(:\\?/\\?/)(momentjs\.com|overpass-turbo\.eu|www\.gnu\.org|stackoverflow\.com|(:?www\.)?openstreetmap\.(org|de)|nominatim\.openstreetmap\.org|taginfo\.openstreetmap\.org|wiki\.openstreetmap\.org|josm.openstreetmap.de|www.openstreetmap.org\\/copyright|github\.com|xkcd\.com|www\.heise\.de|www\.readthedocs\.org|askubuntu\.com|xpra\.org|docker\.com|linuxcontainers\.org|www\.ecma-international\.org|www\.w3\.org|example\.com|www\.example\.com)#https\1\2#g;'
 	$(REPO_FILES) | xargs --null sed -i 's#http://overpass-api\.de#https://overpass-api.de#g;'

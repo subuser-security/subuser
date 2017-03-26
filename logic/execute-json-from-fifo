@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 # This file is copyright Timothy Hobbs
-# And is released under the LGPLv3 license
+# And is released under the LGPL-3.0 license
 
 import json
 import subprocess

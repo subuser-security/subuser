@@ -32,7 +32,7 @@ What is subuser?
 Subuser is free open-source software
 ------------------------------------
 
-Subuser is licensed under the LGPL v3. You can download the source code by clicking `here <https://github.com/subuser-security/subuser>`_.
+Subuser is licensed under the LGPL-3.0. You can download the source code by clicking `here <https://github.com/subuser-security/subuser>`_.
 
 `Download source  <https://github.com/subuser-security/subuser>`_
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
