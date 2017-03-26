@@ -1,7 +1,7 @@
 Subuser 0.5 - the path to stability
 ===================================
 
-In subuser 0.5 release cycle we've seen an overall trend towards the stabalization of the source tree, a reduction in bugs, and the beginning of work packaging subuser. Thanks to `Stanislas Leduc <https://github.com/shannara>`_, subuser is now in Debian sid and Ubuntu Yakkety! Packages for the RPM based distributions are in the works. You can find the packaging code `here <https://github.com/shannara/subuser-packaging>`_.
+In subuser 0.5 release cycle we've seen an overall trend towards the stabilization of the source tree, a reduction in bugs, and the beginning of work packaging subuser. Thanks to `Stanislas Leduc <https://github.com/shannara>`_, subuser is now in Debian sid and Ubuntu Yakkety! Packages for the RPM based distributions are in the works. You can find the packaging code `here <https://github.com/shannara/subuser-packaging>`_.
 
 One of the major stepping stones on the way to subuser stability was the solidification of UTF-8 support. This meant that we had to drop support for Python 2.
 
@@ -29,7 +29,7 @@ Thanks to
 - `Stanislas Leduc (shannara) <https://github.com/shannara>`_ for packaging subuser for debian and working on the RPMs too!
 - `Pál Tamás (folti) <https://github.com/folti>`_ for fixing a bug in the sound card support code.
 - `Tal Wrii (talwrii) <https://github.com/talwrii>`_ for editing the docs.
-- Fred Burton for helping with the transition to Pyhton 3.
+- Fred Burton for helping with the transition to Python 3.
 - Maddx for patiently walking through many bugs he ran into and helping me solve them
 - Antonin Martin of the `XPRA <http://xpra.org>`_ project for help getting XPRA working smoothly. He is extremely kind, responsive, and patient!
 
@@ -46,9 +46,9 @@ Subuser needs a gui. A gui has already been in the works for a while yet it has 
 Desktop integration
 ^^^^^^^^^^^^^^^^^^^
 
-Unlike `flatpak <http://flatpak.org/>`_, subuser has been built with a security first mindset. We'll never have an option to dissable the sandbox. However, this isolation has meant that desktop integration is lacking.
+Unlike `flatpak <http://flatpak.org/>`_, subuser has been built with a security first mindset. We'll never have an option to disable the sandbox. However, this isolation has meant that desktop integration is lacking.
 
-It currently isn't possible to open a document with your favorite PDF reader from Firefox when Firefox is running inside subuser. Subuser also does not configure MIME types automatically so that you could open a document using a subuser from your file mananger. These two features will hopefully be in the next release.
+It currently isn't possible to open a document with your favorite PDF reader from Firefox when Firefox is running inside subuser. Subuser also does not configure MIME types automatically so that you could open a document using a subuser from your file manager. These two features will hopefully be in the next release.
 
 Finally, subuser does not have great support for opening files using a file dialog. There should be a way for a subuser to request a user selected file without giving that subuser access to the full home directory. This is a bit more complicated and will take some time to sort out. Don't expect this support in the next release cycle.
 
@@ -57,4 +57,4 @@ Moving away from Docker
 
 Now that `runc <http://runc.io/>`_ and other light weight unixy container runtimes are being developed, it is time for subuser to move away from Docker. While Docker has allowed subuser to prove the concept of contained deskop applications, the Docker daemon has performance limitations, and also limits our ability to customize the runtime to be perfectly suited for desktop apps. Docker's layer based image system is also very limited and does not allow subuser to take advantage of modern disk space and bandwidth saving content addressable deduplication schemes.
 
-I have been working with `Eric Myhre <http://exultant.us/>`_ of the `repeatr <http://repeatr.io/>`_ project to put together an improved system for managing subuser images and running subuser containers. While the ideas have been flying thick and fast, we will not be integrating our work into the subuser main line untill we're sure that you won't notice that anything has changed. When the big day comes, we won't break anything, but it might take us a long while to get there :)
+I have been working with `Eric Myhre <http://exultant.us/>`_ of the `repeatr <http://repeatr.io/>`_ project to put together an improved system for managing subuser images and running subuser containers. While the ideas have been flying thick and fast, we will not be integrating our work into the subuser main line until we're sure that you won't notice that anything has changed. When the big day comes, we won't break anything, but it might take us a long while to get there :)
