@@ -25,7 +25,7 @@ class Permissions(collections.OrderedDict,UserOwnedObject,FileBackedObject):
     Return the SHA512 hash of the given permissions.
     """
     hasher = hashlib.sha512()
-    hasher.update(subuserlib.permissions.getJSONString(self).encode('utf-8'))
+    hasher.update(self.json.encode('utf-8'))
     return hasher.hexdigest()
 
   def applyChanges(self,permissionsToRemove,permissionsToAddOrChange):
@@ -47,3 +47,7 @@ class Permissions(collections.OrderedDict,UserOwnedObject,FileBackedObject):
 
   def describe(self):
     self.user.registry.log(self.description)
+
+  @property
+  def json(self):
+    return subuserlib.permissions.getJSONString(self)

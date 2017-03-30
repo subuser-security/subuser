@@ -33,6 +33,13 @@ class ImageSource(UserOwnedObject,Describable):
     """
     return self.name + "@" + self.repo.displayName
 
+  def serializeToDict(self):
+    return {"name":self.name
+           ,"repo":self.repo.displayName
+           ,"identifier":self.getIdentifier()
+           ,"permissions":self.permissions
+           }
+
   def getDockerImageTag(self):
     longTag = "subuser-" + self.user.endUser.name + "-" + self.getIdentifier()
     return subuserlib.docker.buildImageTag(longTag,self.getHash())

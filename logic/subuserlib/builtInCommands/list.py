@@ -69,7 +69,7 @@ def runCommand(sysargs):
       except (OSError,subuserlib.resolve.ResolutionError):
         sys.exit("Repository id: "+repoIdentifier+" could not be resolved.")
       if options.json:
-        availableDict[repository.name] = repository.serializeToDict()
+        availableDict[repository.displayName] = repository.serializeToDict()
       else:
        if options.long:
          subuserlib.print.printWithoutCrashing("Images available for instalation from the repo: " + repository.name)
