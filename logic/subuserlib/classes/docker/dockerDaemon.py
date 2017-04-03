@@ -54,14 +54,15 @@ def archiveBuildContext(archive,relativeBuildContextPath,repositoryFileStructure
   if relativeBuildContextPath and repositoryFileStructure:
     def addFolder(folder):
       for filename in repositoryFileStructure.lsFiles(folder):
-        filePathRelativeToBuildContext = os.path.join(folder,filename)
+        filePathRelativeToRepository = os.path.join(folder,filename)
+        filePathRelativeToBuildContext = os.path.relpath(filePathRelativeToRepository,relativeBuildContextPath)
         exclude = False
         for excludePattern in excludePatterns:
           if fnmatch.fnmatch(filePathRelativeToBuildContext,excludePattern):
             exclude = True
             break
         if not exclude:
-          addFileFromContents(path=filePathRelativeToBuildContext,contents=repositoryFileStructure.readBinary(filePathRelativeToBuildContext),mode=repositoryFileStructure.getMode(filePathRelativeToBuildContext))
+          addFileFromContents(path=filePathRelativeToBuildContext,contents=repositoryFileStructure.readBinary(filePathRelativeToRepository),mode=repositoryFileStructure.getMode(filePathRelativeToRepository))
       for subFolder in repositoryFileStructure.lsFolders(folder):
         addFolder(os.path.join(folder,subFolder))
     addFolder(relativeBuildContextPath)

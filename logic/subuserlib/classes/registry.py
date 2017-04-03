@@ -138,7 +138,7 @@ class Registry(userOwnedObject.UserOwnedObject):
     for permissions_folder_name in self.gitRepository.getFileStructureAtCommit(self.gitReadHash).lsFolders("permissions"):
       exists = os.path.exists(os.path.join(self.registryDir,"permissions",permissions_folder_name))
       if exists and permissions_folder_name not in self.subusers:
-        self.logChange("Removing left over permissions for no-longer extant subuser %s"%subuserName,2)
+        self.logChange("Removing left over permissions for no-longer extant subuser %s"%permissions_folder_name,2)
         try:
           self.gitRepository.run(["rm","-r",os.path.join("permissions",permissions_folder_name)])
         except subuserlib.classes.gitRepository.GitException as e:
