@@ -45,8 +45,8 @@ class Permissions(collections.OrderedDict,UserOwnedObject,FileBackedObject):
   def description(self):
     return subuserlib.permissions.getDescription(self)
 
-  def describe(self):
-    self.user.registry.log(self.description)
+  def describe(self,rst=False):
+    self.user.registry.log(subuserlib.permissions.getDescription(self,rst=rst))
 
   @property
   def json(self):

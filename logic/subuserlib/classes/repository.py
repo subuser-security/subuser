@@ -202,7 +202,7 @@ class Repository(OrderedDict,UserOwnedObject,Describable):
     """
     imageSourcesDict = {}
     for name,imageSource in self.items():
-      imageSourcesDict[name] = {}
+      imageSourcesDict[name] = imageSource.serializeToDict()
     return imageSourcesDict
 
   def loadImageSources(self):

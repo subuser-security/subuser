@@ -546,9 +546,9 @@ def getJSONString(permissions):
   permissionsToSave = getNonDefaultPermissions(permissions)
   return json.dumps(permissionsToSave,indent=1, separators=(',', ': '))
 
-def getDescription(permissionsToDescribe):
+def getDescription(permissionsToDescribe,rst=False):
   descriptionTemplate = {
-    "level_heading":" %s"
+    "level_heading":"\n%s" if rst else " %s"
    ,"permission_description":"  - %s: %s"
    ,"sub_permission_description":"   * %s"
    }
@@ -566,9 +566,13 @@ def getDescription(permissionsToDescribe):
         describedSomething = True
         descriptionForThisLevel.append(descriptionTemplate["permission_description"]%(permission,attributes["describe"](permissionValue)))
         if "subpermissions" in attributes and type(permissionValue) == OrderedDict:
+          if rst:
+            descriptionForThisLevel.append("")
           for subpermission,subattributes in attributes["subpermissions"].items():
             if permissionValue[subpermission]:
               descriptionForThisLevel.append(descriptionTemplate["sub_permission_description"]%subattributes["describe"](permissionValue[subpermission]))
+          if rst:
+            descriptionForThisLevel.append("")
     if describedSomething:
       description += descriptionForThisLevel
   return "\n".join(description)

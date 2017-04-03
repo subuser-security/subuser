@@ -116,14 +116,24 @@ class ImageSource(UserOwnedObject,Describable):
       self.__permissions = subuserlib.classes.permissions.Permissions(self.user,initialPermissions,writePath=self.getPermissionsFilePath())
     return self.__permissions
 
-  def describe(self):
+  def description(self,rst=False):
+    if rst:
+      description = self.getIdentifier().replace("@","\\@") + "\n"
+      description += "-"*len(self.getIdentifier()) + "\n\n"
+    else:
+      description = self.getIdentifier() + "\n"
+    description += "To install this image run:" + (":\n\n" if rst else "\n")
+    description += "   subuser subuser add <subuser-name> "+self.getIdentifier()+"\n\n"
+    return description
+
+  def describe(self,rst=False):
     """
     Describe this ImageSource including it's default permissions.
 
     Prints to standard output.
     """
-    subuserlib.print.printWithoutCrashing(self.getIdentifier())
-    self.permissions.describe()
+    subuserlib.print.printWithoutCrashing(self.description(rst=rst))
+    self.permissions.describe(rst=rst)
 
   def build(self,parent,useCache=False):
     imageFileType = self.getImageFileType()

@@ -34,6 +34,7 @@ def parseCliArgs(sysargs):
   parser=optparse.OptionParser(usage=usage,description=description,formatter=subuserlib.commandLineArguments.HelpFormatterThatDoesntReformatDescription())
   parser.add_option("--long",dest="long",action="store_true",default=False,help="Display more information about each item.")
   parser.add_option("--json",dest="json",action="store_true",default=False,help="Display results in JSON format.")
+  parser.add_option("--rst",dest="rst",action="store_true",default=False,help="Display results in RestructuredText format.")
   parser.add_option("--internal",dest="internal",action="store_true",default=False,help="Include internal subusers in the list. These are subusers which are automatically created and used by subuser internally.")
   parser.add_option("--broken",dest="broken",action="store_true",default=False,help="When listing installed images option, list the Ids of broken/orphaned images. Otherwise has no effect. Without this option, broken/orphaned images are simply not listed.")
   return parser.parse_args(args=sysargs)
@@ -72,14 +73,21 @@ def runCommand(sysargs):
         availableDict[repository.displayName] = repository.serializeToDict()
       else:
        if options.long:
-         subuserlib.print.printWithoutCrashing("Images available for instalation from the repo: " + repository.name)
+         if options.rst:
+           subuserlib.print.printWithoutCrashing(repository.displayName + "\n"+"="*len(repository.displayName)+"\n")
+         else:
+           subuserlib.print.printWithoutCrashing("Images available for instalation from the repo: " + repository.displayName)
        for imageSource in repository.getSortedList():
          if not options.long:
            identifier = imageSource.getIdentifier()
-           subuserlib.print.printWithoutCrashing(identifier)
+           prefix = ""
+           if options.rst:
+             prefix = " - "
+           subuserlib.print.printWithoutCrashing(prefix + identifier)
          else:
            try:
-             imageSource.describe()
+             imageSource.describe(rst=options.rst)
+             subuserlib.print.printWithoutCrashing("")
            except SyntaxError as e:
              subuserlib.print.printWithoutCrashing(str(e))
              subuserlib.print.printWithoutCrashing("Cannot describe this image source as loading it is forbidden.")
