@@ -2,7 +2,7 @@
 
 """
 This module defines collors for colloring text in an ANSI terminal.
-The list is taken from http://stackoverflow.com/questions/287871/print-in-terminal-with-colors-using-python
+The list is taken from https://stackoverflow.com/questions/287871/print-in-terminal-with-colors-using-python
 """
 
 #external imports

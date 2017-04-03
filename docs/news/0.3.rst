@@ -8,7 +8,7 @@ The 0.3 release marks a stabilization of the code base and the completion of the
 The Xpra X11 bridge
 -------------------
 
-Since the start of application containerization, X11 has been a sore point for security enthusiasts. There is a general feeling that everyone is waiting for Wayland to solve this problem. Recently, a new project `OZ <https://github.com/subgraph/oz>`_ came out and demonstrated that `Xpra <http://xpra.org>`_ may be used as a secure bridge between a containers X server and the host. Of course Wayland is still cool, but we have Xpra now.
+Since the start of application containerization, X11 has been a sore point for security enthusiasts. There is a general feeling that everyone is waiting for Wayland to solve this problem. Recently, a new project `OZ <https://github.com/subgraph/oz>`_ came out and demonstrated that `Xpra <https://xpra.org>`_ may be used as a secure bridge between a containers X server and the host. Of course Wayland is still cool, but we have Xpra now.
 
 With the 0.3 release, subuser follows OZ's lead and uses Xpra to create a secure X11 bridge.
 
@@ -44,7 +44,7 @@ Release stats and thanks
 There have been some 179 commits since the 0.2 release. 7 contributors have contributed during this time:
 
 - `peter1000 <https://github.com/peter1000>`_
-- `Robin Schneider <https://github.com/ypid>`_
+- `Robin Schneider <https://me.ypid.de/>`_
 - `Christian Berendt <https://github.com/berendt>`_
 - `Marc Laporte <https://github.com/marclaporte>`_
 - `Dan Muresan <https://github.com/danmbox>`_

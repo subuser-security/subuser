@@ -22,7 +22,7 @@ class Container(UserOwnedObject):
     self.user.dockerDaemon.getConnection().request("GET","/v1.13/containers/"+self.id+"/json")
     response = self.user.dockerDaemon.getConnection().getresponse()
     if not response.status == 200:
-      response.read() # Read the response and discard it to prevent the server from getting locked up: http://stackoverflow.com/questions/3231543/python-httplib-responsenotready
+      response.read() # Read the response and discard it to prevent the server from getting locked up: https://stackoverflow.com/questions/3231543/python-httplib-responsenotready
       return None
     else:
       return json.loads(response.read().decode("utf-8"))

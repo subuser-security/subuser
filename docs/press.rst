@@ -3,7 +3,7 @@ Press
 
 .. raw :: html
 
-    <a class="reference external" href="http://www.heise.de/ix/heft/Verpacker-3277783.html" style="color:black">
+    <a class="reference external" href="https://www.heise.de/ix/heft/Verpacker-3277783.html" style="color:black">
     <img alt="logo" class="align-left" src="_images/heise.png" style="width: 10em;" />
     <div class="line"><strong>28.07.2016</strong></div>
     <div class="line" style="color: #2980b9">Verpacker</div>

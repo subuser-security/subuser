@@ -5,7 +5,7 @@ In the context of subuser, a ``repository-states.json`` file is a file which ser
 
 Unlike ``repositories.json`` this is a per-user file which is non-hierarchical.
 
-Each repository-states.json file is to be a valid `json <http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf>`_ file containing a single json object.
+Each repository-states.json file is to be a valid `json <https://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf>`_ file containing a single json object.
 
 This object is a set of key value pairs where each key is the identifier of a subuser repository.
 
