@@ -21,6 +21,7 @@ Options:
   -h, --help  show this help message and exit
   --long      Display more information about each item.
   --json      Display results in JSON format.
+  --rst       Display results in RestructuredText format.
   --internal  Include internal subusers in the list. These are subusers which
               are automatically created and used by subuser internally.
   --broken    When listing installed images option, list the Ids of

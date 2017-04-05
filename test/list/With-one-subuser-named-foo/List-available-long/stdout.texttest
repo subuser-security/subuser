@@ -1,13 +1,28 @@
 Images available for instalation from the repo: default
 foo@default
+To install this image run:
+   subuser subuser add <subuser-name> foo@default
+
+
  Prelude:
   - executable: /usr/bin/foo
   - entrypoints: 'foo', 'bar'
+
 subuser-internal-xpra-client@default
+To install this image run:
+   subuser subuser add <subuser-name> subuser-internal-xpra-client@default
+
+
  Prelude:
   - description: Test xpra-x11 bridge client
   - maintainer: Timothy Hobbs <timothyhobbs@seznam.cz>
+
 subuser-internal-xpra-server@default
+To install this image run:
+   subuser subuser add <subuser-name> subuser-internal-xpra-server@default
+
+
  Prelude:
   - description: Text xpra-x11 bridge server.
   - maintainer: Timothy Hobbs <timothyhobbs@seznam.cz>
+

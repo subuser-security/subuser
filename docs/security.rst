@@ -19,6 +19,11 @@ Subuser is not, and will never be, completely secure.  However, there are degree
 Security Bulletins
 ------------------
 
+2017
+^^^^
+
+1. 06.04.2017 - The ``build-context`` property of ``.subuser.json`` could contain a relative path which was outside of the image repository when using local file based repositories (this did not effect git).
+
 2016
 ^^^^
 

@@ -178,7 +178,7 @@ class GitFileStructure(FileStructure):
     self.__lsTreeCache[argsTuple] = items
     return items
 
-  def ls(self, subfolder,objectType=None):
+  def _ls(self, subfolder,objectType=None):
     """
     Returns a list of file and folder names.
 
@@ -199,7 +199,7 @@ class GitFileStructure(FileStructure):
           names.append(name)
     return names
 
-  def lsFiles(self,subfolder):
+  def _lsFiles(self,subfolder):
     """
     Returns a list of paths to files in the subfolder.
     Paths are relative to the repository as a whole.
@@ -212,7 +212,7 @@ class GitFileStructure(FileStructure):
     """
     return self.ls(subfolder,"blob")
 
-  def lsFolders(self,subfolder):
+  def _lsFolders(self,subfolder):
     """
     Returns a list of paths to folders in the subfolder.
     Paths are relative to the repository as a whole.
@@ -225,7 +225,7 @@ class GitFileStructure(FileStructure):
     """
     return self.ls(subfolder,"tree")
 
-  def exists(self,path):
+  def _exists(self,path):
     """
     >>> from subuserlib.classes.gitRepository import GitRepository
     >>> gitRepository = GitRepository(subuserlib.classes.gitRepository.getUser(),subuserlib.classes.gitRepository.hashtestDir)
@@ -242,7 +242,7 @@ class GitFileStructure(FileStructure):
         return True
     return False
 
-  def read(self,path):
+  def _read(self,path):
     """
     Returns the contents of the given file at the given commit.
 
@@ -258,10 +258,10 @@ class GitFileStructure(FileStructure):
       raise OSError("Git show exited with error "+str(errorcode)+". File does not exist.\nRepo:"+self.gitRepository.path+"\nPath: "+path+"\nCommit: "+self.commit+"\n")
     return content
 
-  def readBinary(self,path):
+  def _readBinary(self,path):
     return self.read(path).encode()
 
-  def getMode(self,path):
+  def _getMode(self,path):
     """
     >>> from subuserlib.classes.gitRepository import GitRepository
     >>> gitRepository = GitRepository(subuserlib.classes.gitRepository.getUser(),subuserlib.classes.gitRepository.hashtestDir)
@@ -274,7 +274,7 @@ class GitFileStructure(FileStructure):
       if os.path.normpath(treeObject["path"]) == os.path.normpath(path):
         return int(treeObject["mode"],8)
 
-  def getSize(self,path):
+  def _getSize(self,path):
     """
     >>> from subuserlib.classes.gitRepository import GitRepository
     >>> gitRepository = GitRepository(subuserlib.classes.gitRepository.getUser(),subuserlib.classes.gitRepository.hashtestDir)

@@ -1,4 +1,8 @@
 foo@default
+To install this image run:
+   subuser subuser add <subuser-name> foo@default
+
+
  Prelude:
   - executable: /usr/bin/foo
   - entrypoints: 'foo', 'bar'
