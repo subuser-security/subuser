@@ -48,11 +48,13 @@ class Runtime(UserOwnedObject):
 
   def getRunReadyImageId(self):
     try:
-      return self.subuser.getRunReadyImage().id
+      image = self.subuser.getRunReadyImage().id
+      if image is None:
+        raise KeyError()
+      else:
+        return image
     except KeyError:
-      runtimeCache = str(os.listdir(self.user.config["runtime-cache"]))
-      sys.exit(runtimeCache +"\n"+self.subuser.getRuntimeCache().runtimeCacheFilePath+ """
-No run ready image is prepaired for this subuser. Please run:
+      sys.exit("""No run ready image is prepaired for this subuser. Please run:
 
 $ subuser repair
 """)
