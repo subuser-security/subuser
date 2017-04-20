@@ -24,7 +24,7 @@ class RuntimeCache(dict,UserOwnedObject,FileBackedObject):
 
   @property
   def runtimeCacheFilePath(self):
-    return os.path.join(self.pathToCurrentImagesRuntimeCacheDir,self.subuser.permissions.getHash()+".json")
+    return os.path.join(self.pathToCurrentImagesRuntimeCacheDir,self.subuser.getRunReadyImage().sourceHash+".json")
 
   def save(self):
     try:

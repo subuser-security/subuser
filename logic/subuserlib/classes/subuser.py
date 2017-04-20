@@ -249,7 +249,7 @@ Please file a bug report explaining how you got here.\n"""+ str(e))
     if self.permissions["as-root"]:
       return "/root/"
     else:
-      return self.user.endUser.homeDir
+      return "/home/subuser/"
 
   def describe(self):
     print("Subuser: "+self.name)

@@ -6,12 +6,16 @@ Contains code that prepairs a subuser's image to be run.
 
 #external imports
 import os
+import hashlib
 #internal imports
 from subuserlib.classes.userOwnedObject import UserOwnedObject
 import subuserlib.classes.exceptions
 import subuserlib.docker
 
 class RunReadyImage(UserOwnedObject):
+  """
+  This class represents the run ready image associated with a given subuser. It is tied to the subuser and its latest permissions.
+  """
   def __init__(self,user,subuser):
     self.subuser = subuser
     self.__id = None
@@ -29,13 +33,22 @@ class RunReadyImage(UserOwnedObject):
       self.__id = self.subuser.getRuntimeCache()["run-ready-image-id"]
     return self.__id
 
+  @property
+  def sourceHash(self):
+    """
+    Return the SHA512 hash of the Dockerfile used to generate the latest RunReadyImage
+    """
+    hasher = hashlib.sha512()
+    hasher.update(self.generateImagePreparationDockerfile().encode("utf-8"))
+    return hasher.hexdigest()
+
   def generateImagePreparationDockerfile(self):
     """
     There is still some preparation that needs to be done before an image is ready to be run.  But this preparation requires run time information, so we cannot preform that preparation at build time.
     """
     dockerfileContents  = "FROM "+self.subuser.imageId+"\n"
-    dockerfileContents += "RUN useradd --uid="+str(self.user.endUser.uid)+" "+self.user.endUser.name+" ;export exitstatus=$? ; if [ $exitstatus -eq 4 ] ; then echo uid exists ; elif [ $exitstatus -eq 9 ]; then echo username exists. ; else exit $exitstatus ; fi\n"
-    dockerfileContents += "RUN test -d "+self.user.endUser.homeDir+" || mkdir "+self.user.endUser.homeDir+" && chown "+self.user.endUser.name+" "+self.user.endUser.homeDir+"\n"
+    dockerfileContents += "RUN useradd --uid="+str(self.user.endUser.uid)+" subuser ;export exitstatus=$? ; if [ $exitstatus -eq 4 ] ; then echo uid exists ; elif [ $exitstatus -eq 9 ]; then echo username exists. ; else exit $exitstatus ; fi\n"
+    dockerfileContents += "RUN test -d /home/subuser || mkdir /home/subuser && chown subuser /home/subuser\n"
     if self.subuser.permissions["serial-devices"]:
       dockerfileContents += "RUN groupadd dialout; export exitstatus=$? ; if [ $exitstatus -eq 4 ] ; then echo gid exists ; elif [ $exitstatus -eq 9 ]; then echo groupname exists. ; else exit $exitstatus ; fi\n"
       dockerfileContents += "RUN groupadd uucp; export exitstatus=$? ; if [ $exitstatus -eq 4 ] ; then echo gid exists ; elif [ $exitstatus -eq 9 ]; then echo groupname exists. ; else exit $exitstatus ; fi\n"

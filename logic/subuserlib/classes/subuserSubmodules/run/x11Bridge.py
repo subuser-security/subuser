@@ -53,7 +53,7 @@ class XpraX11Bridge(Service):
     Get the dictionary of permissions that are specific to this particular subuser and therefore are not packaged in the xpra server image source.
     """
     permissions = {}
-    permissions["system-dirs"] = {self.getServerSideX11Path():"/tmp/.X11-unix",self.getXpraHomeDir():self.user.endUser.homeDir}
+    permissions["system-dirs"] = {self.getServerSideX11Path():"/tmp/.X11-unix",self.getXpraHomeDir():"/home/subuser"}
     return permissions
 
   def getSubuserSpecificClientPermissions(self):
@@ -221,7 +221,7 @@ class XpraX11Bridge(Service):
     serverRuntime.logIfInteractive("Starting xpra server...")
     serverRuntime.hostname = self.getServerSubuserHostname()
     self.user.registry.log("Hostname set.",verbosityLevel=4)
-    serverRuntime.setEnvVar("TMPDIR",os.path.join(self.user.endUser.homeDir,"tmp"))
+    serverRuntime.setEnvVar("TMPDIR",os.path.join("/home/subuser","tmp"))
     serverRuntime.background = True
     serverRuntime.backgroundSuppressOutput = suppressOutput
     serverRuntime.setBackgroundCollectOutput(False,True)
@@ -243,7 +243,7 @@ class XpraX11Bridge(Service):
     clientRuntime = self.getClientSubuser().getRuntime(os.environ)
     clientRuntime.logIfInteractive("Starting xpra client...")
     clientRuntime.setEnvVar("XPRA_SOCKET_HOSTNAME","server")
-    clientRuntime.setEnvVar("TMPDIR",os.path.join(self.user.endUser.homeDir,"tmp"))
+    clientRuntime.setEnvVar("TMPDIR",os.path.join("/home/subuser","tmp"))
     clientRuntime.background = True
     clientRuntime.backgroundSuppressOutput = suppressOutput
     (clientContainer, clientProcess) = clientRuntime.run(args=clientArgs)
