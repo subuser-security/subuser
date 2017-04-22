@@ -11,8 +11,6 @@ def version():
   with open("VERSION") as f:
     return f.read().strip()
 
-pathToThisSourceFile = os.path.abspath(inspect.getfile(inspect.currentframe()))
-
 commands = ["logic/subuser","logic/execute-json-from-fifo"]
 
 setuptools.setup(
