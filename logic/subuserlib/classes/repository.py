@@ -228,10 +228,11 @@ class Repository(OrderedDict,UserOwnedObject,Describable):
     if self.isLocal:
       return True
     # Default
-    newCommitHash = self.gitRepository.getHashOfRef("refs/remotes/origin/master")
+    master = "refs/remotes/origin/master"
+    newCommitHash = self.gitRepository.getHashOfRef(master)
     # First we check for version constraints on the repository.
-    if self.gitRepository.getFileStructureAtCommit("master").exists("./.subuser.json"):
-      configFileContents = self.gitRepository.getFileStructureAtCommit("master").read("./.subuser.json")
+    if self.gitRepository.getFileStructureAtCommit(master).exists("./.subuser.json"):
+      configFileContents = self.gitRepository.getFileStructureAtCommit(master).read("./.subuser.json")
       configAtMaster = json.loads(configFileContents)
       if "subuser-version-constraints" in configAtMaster:
         versionConstraints = configAtMaster["subuser-version-constraints"]
