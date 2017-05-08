@@ -205,9 +205,11 @@ class DockerDaemon(UserOwnedObject):
     # Now we move to regex code stolen from the official python Docker bindings. This is REALLY UGLY!
     outputLines = output.split("\n")
     search = r'Successfully built ([0-9a-f]+)' #This is REALLY ugly!
-    match = re.search(search, outputLines[-1]) #This is REALLY ugly!
-    if not match:
-      match = re.search(search, outputLines[-2]) #This is REALLY ugly!
+    match = None
+    for line in reversed(outputLines):
+      match = re.search(search, line) #This is REALLY ugly!
+      if match:
+        break
     if not match:
       raise exceptions.ImageBuildException("Unexpected server response when building image.")
     shortId = match.group(1) #This is REALLY ugly!
