@@ -123,7 +123,7 @@ class Registry(userOwnedObject.UserOwnedObject):
 
   def logToLiveLog(self,announcement):
     announcementJson = json.dumps(announcement)
-    liveLogDir=os.path.join(self.user.homeDir,".subuser/registry-live-log")
+    liveLogDir=os.path.join(self.user.endUser.homeDir,".subuser/registry-live-log")
     if os.path.isdir(liveLogDir):
       for liveLogPid in os.listdir(liveLogDir):
         liveLogPath = os.path.join(liveLogDir,liveLogPid)
