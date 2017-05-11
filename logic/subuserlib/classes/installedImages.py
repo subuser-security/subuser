@@ -53,11 +53,7 @@ class InstalledImages(OrderedDict,UserOwnedObject,FileBackedObject):
     # Build a dictionary of installed images.
     installedImagesDict = OrderedDict()
     for _,installedImage in self.items():
-      imageAttributes = OrderedDict()
-      imageAttributes["image-source-hash"] = installedImage.imageSourceHash
-      imageAttributes["image-source"] = installedImage.imageSourceName
-      imageAttributes["source-repo"] = installedImage.sourceRepoId
-      installedImagesDict[installedImage.imageId] = imageAttributes
+      installedImagesDict[installedImage.imageId] = installedImage.serializeToDict()
     return installedImagesDict
 
   def save(self):

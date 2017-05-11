@@ -73,6 +73,13 @@ class InstalledImage(UserOwnedObject,Describable):
       print("Image is broken, image source does not exist!")
     print("Last update time: "+self.getCreationDateTime())
 
+  def serializeToDict(self):
+    imageAttributes = OrderedDict()
+    imageAttributes["image-source-hash"] = self.imageSourceHash
+    imageAttributes["image-source"] = self.imageSourceName
+    imageAttributes["source-repo"] = self.sourceRepoId
+    return imageAttributes
+
   def checkForUpdates(self):
     """
     Check for updates using the image's built in check-for-updates script. This launches the script as root in a privilageless container. Returns True if the image needs to be updated.

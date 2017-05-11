@@ -20,15 +20,22 @@ def parseCliArgs(sysargs):
       List all subuser images available for instalation
   subusers
       List all installed subusers
+  subuser <subuser-name>
+      Describe a given subuser
   installed-images
       List all installed images. The the format is "<image-source> <image-id>". If the --long option is used, then information about each image is displayed.
+  image <image-identifier>
+      Describe a given image.
   repositories
       List all repositories. By default, lists repository names(or their paths in case they are temporary). With the --long option, more info about each repository is printed.
 
   EXAMPLES:
 
-    $ subuser list available --long
     $ subuser list subusers
+    $ subuser list subusers <subuser-name> <another-subuser-name>
+    $ subuser list available --long
+    $ subuser list available <repo-name> <another-repo-name>
+    $ subuser list image <image-id> <another-image-id>
     $ subuser list installed-images
 """
   parser=optparse.OptionParser(usage=usage,description=description,formatter=subuserlib.commandLineArguments.HelpFormatterThatDoesntReformatDescription())
@@ -96,18 +103,36 @@ def runCommand(sysargs):
     if options.json:
       subuserlib.print.printWithoutCrashing(json.dumps(availableDict,indent=1,separators=(",",": ")))
     sys.exit()
-  elif args[0] == 'subusers':
+  elif args[0] == 'subusers' or args[0] == 'subuser':
+    if args[0] == 'subuser':
+      options.long = True
+    if len(args) > 1:
+      subusersToList = args[1:]
+    else:
+      subusersToList = user.registry.subusers.keys()
     if options.json:
-      subuserlib.print.printWithoutCrashing(json.dumps(user.registry.subusers.serializeToDict(),indent=1,separators=(",",": ")))
+      subusersDict = user.registry.subusers.serializeToDict()
+      toBeShownDict = {}
+      for name in subusersToList:
+        try:
+          toBeShownDict[name] = subusersDict["unlocked"][name]
+        except KeyError:
+          try:
+            toBeShownDict[name] = subusersDict["locked"][name]
+          except KeyError:
+            sys.exit("Subuser "+name+" does not exist.")
+      subuserlib.print.printWithoutCrashing(json.dumps(toBeShownDict,indent=1,separators=(",",": ")))
       sys.exit()
     if options.long:
       subuserlib.print.printWithoutCrashing("The following subusers are registered.")
-    for name,subuser in user.registry.subusers.items():
+    for name in subusersToList:
+      if not name in user.registry.subusers:
+        sys.exit("Subuser "+name+" does not exist.")
       if options.internal or not name.startswith("!"):
         if not options.long:
           subuserlib.print.printWithoutCrashing(name)
         else:
-          subuser.describe()
+          user.registry.subusers[name].describe()
   elif args[0] == 'installed-images':
     if options.json:
       subuserlib.print.printWithoutCrashing(json.dumps(user.installedImages.serializeToDict(),indent=1,separators=(",",": ")))
@@ -126,6 +151,18 @@ def runCommand(sysargs):
       else:
         subuserlib.print.printWithoutCrashing("------------------")
         installedImage.describe()
+  elif args[0] == 'image':
+    if len(args) > 1:
+      imagesToList = args[1:]
+    for imageName in imagesToList:
+      try:
+        imageSource = subuserlib.resolve.resolveImageSource(user,imageName)
+      except KeyError as ke:
+        sys.exit(str(ke))
+      if options.json:
+        subuserlib.print.printWithoutCrashing(json.dumps(imageSource.serializeToDict(),indent=1,separators=(",",": ")))
+      else:
+        imageSource.describe()
   elif args[0] == 'repositories':
     if options.json:
       subuserlib.print.printWithoutCrashing(json.dumps(user.registry.repositories.serializeToDict(),indent=1,separators=(",",": ")))

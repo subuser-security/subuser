@@ -7,6 +7,7 @@ Images in subuser are built from ImageSource objects.
 #external imports
 import os
 import uuid
+from collections import OrderedDict
 #internal imports
 from subuserlib.classes.userOwnedObject import UserOwnedObject
 from subuserlib.classes.describable import Describable
@@ -34,11 +35,13 @@ class ImageSource(UserOwnedObject,Describable):
     return self.name + "@" + self.repo.displayName
 
   def serializeToDict(self):
-    return {"name":self.name
-           ,"repo":self.repo.displayName
-           ,"identifier":self.getIdentifier()
-           ,"permissions":self.permissions
-           }
+    return OrderedDict(
+        [("name", self.name)
+        ,("repo", self.repo.displayName)
+        ,("identifier",self.getIdentifier())
+        ,("permissions",self.permissions)
+        ,("installed-images",self.installedImagesDict)
+        ,("latest-installed-image",self.getLatestInstalledImage().imageId)])
 
   def getDockerImageTag(self):
     longTag = "subuser-" + self.user.endUser.name + "-" + self.getIdentifier()
@@ -96,6 +99,13 @@ class ImageSource(UserOwnedObject,Describable):
       if installedImage.imageSourceName == self.name and installedImage.sourceRepoId == self.repo.name:
         installedImagesBasedOnThisImageSource.append(installedImage)
     return installedImagesBasedOnThisImageSource
+
+  @property
+  def installedImagesDict(self):
+    dict = OrderedDict()
+    for image in self.installedImages:
+      dict[image.imageId] = image.serializeToDict()
+    return dict
 
   def getPermissionsFilePath(self):
     relativePath = self.getRelativePermissionsFilePath()
