@@ -78,7 +78,11 @@ class XpraX11Bridge(Service):
 
   def arePermissionsUpToDate(self):
     areClientPermissionsUpToDate = isSubDict(self.getSubuserSpecificClientPermissions(),self.getClientSubuser().permissions)
+    if not areClientPermissionsUpToDate:
+      self.user.registry.log("Client permissions:\n"+str(self.getClientSubuser().permissions)+ "\n differ from defaults:\n"+str(self.getSubuserSpecificClientPermissions()),verbosityLevel=4)
     areServerPermissionsUpToDate = isSubDict(self.getSubuserSpecificServerPermissions(),self.getServerSubuser().permissions)
+    if not areServerPermissionsUpToDate:
+      self.user.registry.log("Server permissions:\n"+str(self.getServerSubuser().permissions)+ "\n differ from defaults:\n"+str(self.getSubuserSpecificServerPermissions()),verbosityLevel=4)
     return areClientPermissionsUpToDate and areServerPermissionsUpToDate
 
   def setup(self):
