@@ -95,7 +95,10 @@ def readAndPrintStreamingBuildStatus(user,response):
       jsonSegmentBytes = b''
     except ValueError:
       pass
-  return output.decode("utf-8")
+  output = output.decode("utf-8")
+  if not output.strip().startswith("{"):
+    user.registry.log(output)
+  return output
 
 class DockerDaemon(UserOwnedObject):
   def __init__(self,user):
