@@ -62,7 +62,7 @@ class InstalledImage(UserOwnedObject,Describable):
     try:
       self.user.registry.log("Removing image %s"%self.imageId)
       self.user.dockerDaemon.removeImage(self.imageId)
-    except (dockerDaemon.ImageDoesNotExistsException,dockerDaemon.ContainerDependsOnImageException,dockerDaemon.ServerErrorException) as e:
+    except (dockerDaemon.ImageDoesNotExistsException,dockerDaemon.ServerErrorException) as e:
       self.user.registry.log("Error removing image: "+self.imageId+"\n"+str(e))
 
   def describe(self):

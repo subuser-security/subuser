@@ -5,6 +5,7 @@ from collections import OrderedDict
 #internal imports
 import subuserlib.verify
 import subuserlib.print
+import subuserlib.classes.docker.dockerDaemon as dockerDaemon
 
 def getInstalledImagesThatAreInUse(user):
   """
@@ -50,8 +51,20 @@ def removeOldImages(user,dryrun=False,yes=False,sourceRepo=None,imageSourceName=
     user.registry.log("")
     removeImages = True
   if yes or removeImages:
-    for installedImage in imagesToBeRemoved:
-      installedImage.removeCachedRuntimes()
-      installedImage.removeDockerImage()
+    # This is a very basic emulation of a topological sort,
+    # so we can remove images which depend on eachother.
+    nextRound = imagesToBeRemoved
+    didSomething = True
+    while nextRound and didSomething:
+      thisRound = nextRound
+      nextRound = []
+      didSomething = False
+      for installedImage in thisRound:
+        installedImage.removeCachedRuntimes()
+        try:
+          installedImage.removeDockerImage()
+          didSomething = True
+        except dockerDaemon.ContainerDependsOnImageException:
+          nextRound.append(installedImage)
     subuserlib.verify.verify(user)
     user.registry.commit()
