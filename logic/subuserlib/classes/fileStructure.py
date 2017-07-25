@@ -129,9 +129,24 @@ class FileStructure():
     Traceback (most recent call last):
     ...
     OSError: ./bar/../../../foo does not exist in file structure.
+
+    Absolute paths are absolute nonos
+
+    >>> fileStructure.assertLegalPath("/bar")
+    Traceback (most recent call last):
+    ...
+    OSError: /bar does not exist in file structure.
+
+    Checks symlinks as well.
     """
-    if os.path.relpath(path,"./").startswith(".."):
+    if path.startswith("/") or os.path.relpath(path,"./").startswith(".."):
       raise IOError(path + " does not exist in file structure.")
+    try:
+      path = self.realpath(path)
+      if os.path.relpath(path,"./").startswith(".."):
+        raise IOError(path + " is a symlink pointing out of filestructure which is not allowed.")
+    except AttributeError:
+      pass
 
   def getModeString(self,path):
     """
@@ -170,7 +185,6 @@ class FileStructure():
     hash = hashFunction()
     # TODO - what about symlinks?
     # TODO - what about devices?
-    # TODO - what about hard link loops?
     # TODO - what about sockets?
     # TODO - what about named pipes?
     def hashFile(path):
@@ -322,3 +336,6 @@ class BasicFileStructure(FileStructure):
     9
     """
     return os.stat(self.getPathInStructure(path))[stat.ST_SIZE]
+
+  def realpath(self,path):
+    return os.path.realpath(self.getPathInStructure(path))

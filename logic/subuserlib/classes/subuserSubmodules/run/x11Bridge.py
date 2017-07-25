@@ -34,6 +34,7 @@ import sys
 import hashlib
 #internal imports
 from subuserlib.classes.service import Service
+from collections import OrderedDict
 import subuserlib.verify
 import subuserlib.subuser
 
@@ -52,16 +53,22 @@ class XpraX11Bridge(Service):
     """
     Get the dictionary of permissions that are specific to this particular subuser and therefore are not packaged in the xpra server image source.
     """
-    permissions = {}
-    permissions["system-dirs"] = {self.getServerSideX11Path():"/tmp/.X11-unix",self.getXpraHomeDir():"/home/subuser"}
+    permissions = OrderedDict()
+    permissions["system-dirs"] = OrderedDict(
+                  [ (self.getXpraHomeDir(),"/home/subuser")
+                  , (self.getServerSideX11Path(),"/tmp/.X11-unix") ])
     return permissions
 
   def getSubuserSpecificClientPermissions(self):
     """
     Get the dictionary of permissions that are specific to this particular subuser and therefore are not packaged in the xpra client image source.
     """
-    permissions = {}
-    permissions["system-dirs"] = {self.getXpraSocket():os.path.join(self.getClientSubuser().dockersideHome,".xpra","server-100"),self.getXpraTmpDir():os.path.join(self.getClientSubuser().dockersideHome,"tmp")}
+    permissions = OrderedDict()
+    permissions["system-dirs"] = OrderedDict(
+      [ (self.getXpraSocket()
+        ,os.path.join(self.getClientSubuser().dockersideHome,".xpra","server-100"))
+      , (self.getXpraTmpDir()
+        ,os.path.join(self.getClientSubuser().dockersideHome,"tmp"))])
     return permissions
 
   def setupServerPermissions(self):
@@ -89,12 +96,14 @@ class XpraX11Bridge(Service):
     """
     Do any setup required in order to create a functional bridge: Creating subusers building images ect.
     """
+    self.user.registry.log("Ensuring x11 bridge setup for subuser "+self.subuser.name,verbosityLevel=5)
     newSubuserNames = []
     if not self.isSetup():
       self.addServerSubuser()
       self.addClientSubuser()
       newSubuserNames = [self.getServerSubuserName(),self.getClientSubuserName()]
     if not self.arePermissionsUpToDate():
+      self.user.registry.log("Updating x11 bridge permissions for subuser "+self.subuser.name,verbosityLevel=4)
       self.setupServerPermissions()
       self.setupClientPermissions()
       newSubuserNames = [self.getServerSubuserName(),self.getClientSubuserName()]
@@ -303,5 +312,11 @@ bridges = {"xpra":XpraX11Bridge}
 def isSubDict(subDict,dictionary):
   for key in subDict.keys():
     if (not key in dictionary) or (not subDict[key] == dictionary[key]):
+      if (key in dictionary) and (type(subDict[key]) == type(dictionary[key]) == OrderedDict):
+        for innerDictKey in subDict[key].keys():
+          if not innerDictKey in dictionary[key]:
+            pass
+          elif not subDict[key][innerDictKey] == dictionary[key][innerDictKey]:
+            print(key+"."+innerDictKey+"  "+str(subDict[key][innerDictKey])+" != "+str(dictionary[key][innerDictKey]))
       return False
   return True

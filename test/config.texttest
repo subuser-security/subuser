@@ -21,6 +21,8 @@ stdout:.texttest\/tmp.*\/texttest{REPLACE texttest-write-dir}
 stdout:show .*:{REPLACE show <commit>:}
 stdout:ls-tree -d .* {REPLACE ls-tree -d <commit> }
 stdout: does not exist in .*{REPLACE does not exist in <commit>}
+stdout:.subuser/volumes/execute/.*:{REPLACE .subuser/volumes/execute/<pid>}
+stdout:/usr/bin/git ls-tree .* -rtl{REPLACE /usr/bin/git ls-tree <commit> -rtl}
 
 stderr:.texttest\/tmp.*\/texttest{REPLACE texttest-write-dir}
 stderr:home/[^/\']*{REPLACE home/user}

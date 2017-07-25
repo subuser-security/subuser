@@ -18,7 +18,7 @@ from subuserlib.classes.installationTask import InstallationTask
 import subuserlib.classes.exceptions as exceptions
 import subuserlib.classes.subuser
 
-def verify(user,permissionsAccepter=None,checkForUpdatesExternally=False,subusers=[],prompt=False,useCache=False):
+def verify(user,permissionsAccepter=None,checkForUpdatesExternally=False,subusers=[],prompt=False,useCache=False,build=True):
   """
    Ensure that:
      - Registry is consistent; warns the user about subusers that point to non-existant source images.
@@ -28,12 +28,14 @@ def verify(user,permissionsAccepter=None,checkForUpdatesExternally=False,subuser
   """
   user.registry.log("Verifying subuser configuration.")
   user.registry.log("Verifying registry consistency...",2)
+  subusersWithNoImageSource = []
   for subuser in subusers:
     try:
       subuser.imageSource
     except subuserlib.classes.subuser.NoImageSourceException:
       user.registry.log("WARNING: "+subuser.name+" is no longer present in it's source repository. Support for this progam may have been dropped.")
       try:
+        subusersWithNoImageSource.append(subuser)
         subusers.remove(subuser)
       except ValueError:
         pass
@@ -44,29 +46,33 @@ def verify(user,permissionsAccepter=None,checkForUpdatesExternally=False,subuser
     user.registry.setChanged(True)
     user.registry.log("Approving permissions...",verbosityLevel=3)
     (failedSubusers,permissionParsingExceptions) = approvePermissions(user,subusers,permissionsAccepter)
-    user.registry.log("Permissions approved...",verbosityLevel=3)
-    subusers = [x for x in subusers if x not in failedSubusers]
+    user.registry.log("Permissions set...",verbosityLevel=3)
     for failedSubuser in failedSubusers:
+      user.registry.log("No new permissions for subuser "+failedSubuser.name+" were not accepted.",5)
       try:
         failedSubuser.permissions
       except subuserlib.classes.subuser.SubuserHasNoPermissionsException:
+        user.registry.log("Deleting subuser "+failedSubuser.name+" as it has no permissions.",verbosityLevel=3)
         del user.registry.subusers[failedSubuser.name]
+        subusers.remove(failedSubuser)
     subusers += ensureServiceSubusersAreSetup(user,subusers)
-    installationTask = InstallationTask(user,subusersToBeUpdatedOrInstalled=subusers,checkForUpdatesExternally=checkForUpdatesExternally)
-    outOfDateSubusers = installationTask.getOutOfDateSubusers()
-    if outOfDateSubusers:
-      user.registry.log("New images for the following subusers need to be installed:")
-      for subuser in outOfDateSubusers:
+    subusers += ensureServiceSubusersAreSetup(user,subusersWithNoImageSource)
+    if build:
+      installationTask = InstallationTask(user,subusersToBeUpdatedOrInstalled=subusers,checkForUpdatesExternally=checkForUpdatesExternally)
+      outOfDateSubusers = installationTask.getOutOfDateSubusers()
+      if outOfDateSubusers:
+        user.registry.log("New images for the following subusers need to be installed:")
+        for subuser in outOfDateSubusers:
+          user.registry.log(subuser.name)
+        if (not prompt) or (prompt and (not input("Would you like to install those images now? [Y/n]") == "n")):
+          installationTask.updateOutOfDateSubusers(useCache=useCache)
+      subusersWhosImagesFailedToBuild = installationTask.getSubusersWhosImagesFailedToBuild()
+      if subusersWhosImagesFailedToBuild:
+        user.registry.log("Images for the following subusers failed to build:")
+      for subuser in subusersWhosImagesFailedToBuild:
         user.registry.log(subuser.name)
-      if (not prompt) or (prompt and (not input("Would you like to install those images now? [Y/n]") == "n")):
-        installationTask.updateOutOfDateSubusers(useCache=useCache)
     for exception in permissionParsingExceptions:
       user.registry.log(str(exception))
-    subusersWhosImagesFailedToBuild = installationTask.getSubusersWhosImagesFailedToBuild()
-    if subusersWhosImagesFailedToBuild:
-      user.registry.log("Images for the following subusers failed to build:")
-    for subuser in subusersWhosImagesFailedToBuild:
-      user.registry.log(subuser.name)
     for subuser in subusers:
       try:
         subuser.getRunReadyImage().setup()
@@ -106,11 +112,13 @@ def approvePermissions(user,subusers,permissionsAccepter):
   return (subusersWhosPermissionsFailedToParse,exceptions)
 
 def ensureServiceSubusersAreSetup(user,subusers):
-  newServiceSubusers = []
+  serviceSubusers = []
   for subuser in subusers:
     if subuser.permissions["gui"]:
-      newServiceSubusers += subuser.x11Bridge.setup()
-  return newServiceSubusers
+      serviceSubusers += subuser.x11Bridge.setup()
+    else:
+      user.registry.log("Not setting up x11 bridge for "+subuser.name+" because that subuser does not have the gui permission.",5)
+  return serviceSubusers
 
 def trimUnneededTempRepos(user):
   user.registry.log("Running garbage collector on temporary repositories...",2)

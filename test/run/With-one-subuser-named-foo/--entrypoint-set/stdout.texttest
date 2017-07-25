@@ -1,2 +1,2 @@
-Execute docker with args: ['run', '--rm', '-i', '-e', 'HOME=/home/timothy', '--workdir=/home/timothy', '--net=none', '-e', 'USER=timothy', '--user=1000', '--hostname', '<random-hostname>', '--entrypoint', '/bin/bash', '3']
+Execute docker with args: ['run', '--rm', '-i', '-e', 'HOME=/home/subuser/', '--workdir=/home/subuser/', '--net=none', '-e', 'USER=subuser', '--user=1000', '--hostname', '<random-hostname>', '--entrypoint', '/bin/bash', '3']
 Cwd:None

@@ -6,15 +6,22 @@ Usage: subuser list WHAT_TO_LIST [options]
       List all subuser images available for instalation
   subusers
       List all installed subusers
+  subuser <subuser-name>
+      Describe a given subuser
   installed-images
       List all installed images. The the format is "<image-source> <image-id>". If the --long option is used, then information about each image is displayed.
+  image <image-identifier>
+      Describe a given image.
   repositories
       List all repositories. By default, lists repository names(or their paths in case they are temporary). With the --long option, more info about each repository is printed.
 
   EXAMPLES:
 
-    $ subuser list available --long
     $ subuser list subusers
+    $ subuser list subusers <subuser-name> <another-subuser-name>
+    $ subuser list available --long
+    $ subuser list available <repo-name> <another-repo-name>
+    $ subuser list image <image-id> <another-image-id>
     $ subuser list installed-images
 
 Options:

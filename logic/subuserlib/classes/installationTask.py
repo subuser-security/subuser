@@ -53,7 +53,9 @@ class InstallationTask(UserOwnedObject):
         except exceptions.ImageBuildException as e:
           self.user.registry.log(str(e))
           self.__subusersWhosImagesFailedToBuild.add(subuser)
-    return self.__outOfDateSubusers
+    outOfDateSubusers = list(self.__outOfDateSubusers)
+    outOfDateSubusers.sort(key=lambda s:s.name)
+    return outOfDateSubusers
 
   def isUpToDate(self,imageSource):
     installedImage = imageSource.getLatestInstalledImage()

@@ -9,3 +9,4 @@ Options:
   -h, --help  show this help message and exit
   --accept    Acceppt permissions without asking.
   --prompt    Prompt before installing new images.
+  --no-build  Don't build missing images.

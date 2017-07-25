@@ -1,7 +1,7 @@
 The image will be prepared using the Dockerfile:
 FROM 2
-RUN useradd --uid=1000 timothy ;export exitstatus=$? ; if [ $exitstatus -eq 4 ] ; then echo uid exists ; elif [ $exitstatus -eq 9 ]; then echo username exists. ; else exit $exitstatus ; fi
-RUN test -d /home/timothy || mkdir /home/timothy && chown timothy /home/timothy
+RUN useradd --uid=1000 subuser ;export exitstatus=$? ; if [ $exitstatus -eq 4 ] ; then echo uid exists ; elif [ $exitstatus -eq 9 ]; then echo username exists. ; else exit $exitstatus ; fi
+RUN test -d /home/subuser || mkdir /home/subuser && chown subuser /home/subuser
 
 The command to launch the image is:
-docker 'run' '--rm' '-i' '-e' 'HOME=/home/timothy' '--workdir=/home/timothy' '--net=none' '-e' 'USER=timothy' '--user=1000' '--hostname' '<random-hostname>' '--entrypoint' '/usr/bin/bar' '3'
+docker 'run' '--rm' '-i' '-e' 'HOME=/home/subuser/' '--workdir=/home/subuser/' '--net=none' '-e' 'USER=subuser' '--user=1000' '--hostname' '<random-hostname>' '--entrypoint' '/usr/bin/bar' '3'

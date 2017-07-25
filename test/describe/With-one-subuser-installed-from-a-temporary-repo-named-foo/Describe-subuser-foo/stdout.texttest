@@ -1,6 +1,7 @@
+The following subusers are registered.
 Subuser: foo
 ------------------
-bar@file:////home/timothy/.texttest/tmp/texttest.16Feb215032.9454/texttest/describe/With-one-subuser-installed-from-a-temporary-repo-named-foo/Describe-subuser-foo/test-repos/remote-test-repo
+bar@file:////home/subuser/.texttest/tmp/texttest.25Jul164346.7/texttest/describe/With-one-subuser-installed-from-a-temporary-repo-named-foo/Describe-subuser-foo/test-repos/remote-test-repo
 Docker image Id: 2
  Prelude:
   - description: bar
