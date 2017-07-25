@@ -4,16 +4,16 @@ RUN useradd --uid=1000 subuser ;export exitstatus=$? ; if [ $exitstatus -eq 4 ] 
 RUN test -d /home/subuser || mkdir /home/subuser && chown subuser /home/subuser
 RUN groupadd dialout; export exitstatus=$? ; if [ $exitstatus -eq 4 ] ; then echo gid exists ; elif [ $exitstatus -eq 9 ]; then echo groupname exists. ; else exit $exitstatus ; fi
 RUN groupadd uucp; export exitstatus=$? ; if [ $exitstatus -eq 4 ] ; then echo gid exists ; elif [ $exitstatus -eq 9 ]; then echo groupname exists. ; else exit $exitstatus ; fi
-RUN usermod -a -G dialout timothy
-RUN usermod -a -G uucp timothy
-RUN (umask 337; echo "timothy ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/allowsudo )
+RUN usermod -a -G dialout subuser
+RUN usermod -a -G uucp subuser
+RUN (umask 337; echo "subuser ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/allowsudo )
 
 The command to launch the image is:
 docker \
   `run` \
   `--rm` \
   `-i` \
-  `--volume=/home/subuser/.texttest/tmp/texttest.25Jul175646.9155/texttest/run/With-one-subuser-supa-which-has-all-the-permissions/dry-run-supa/.subuser/homes/supa:/root/:rw` \
+  `--volume=/home/subuser/.texttest/tmp/texttest.25Jul210650.7/texttest/run/With-one-subuser-supa-which-has-all-the-permissions/dry-run-supa/.subuser/homes/supa:/root/:rw` \
   `-e` \
   `HOME=/root/` \
   `--memory=3g` \
@@ -21,9 +21,9 @@ docker \
   `-e` \
   `DISPLAY=unix:100` \
   `--volume` \
-  `/home/subuser/.texttest/tmp/texttest.25Jul175646.9155/texttest/run/With-one-subuser-supa-which-has-all-the-permissions/dry-run-supa/.subuser/volumes/xpra/supa/tmp/.X11-unix:/tmp/.X11-unix:rw` \
-  `--volume=/home/timothy/Downloads:/subuser/userdirs/Downloads:rw` \
-  `--volume=/home/subuser/.texttest/tmp/texttest.25Jul175646.9155/texttest/run/With-one-subuser-supa-which-has-all-the-permissions/dry-run-supa:/pwd:rw` \
+  `/home/subuser/.texttest/tmp/texttest.25Jul210650.7/texttest/run/With-one-subuser-supa-which-has-all-the-permissions/dry-run-supa/.subuser/volumes/xpra/supa/tmp/.X11-unix:/tmp/.X11-unix:rw` \
+  `--volume=/home/subuser/Downloads:/subuser/userdirs/Downloads:rw` \
+  `--volume=/home/subuser/.texttest/tmp/texttest.25Jul210650.7/texttest/run/With-one-subuser-supa-which-has-all-the-permissions/dry-run-supa:/pwd:rw` \
   `--workdir=/pwd` \
   `--net=bridge` \
   `--volume=/var/log:/host/logs:rw` \
@@ -33,7 +33,7 @@ docker \
   `--volume=/var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket:rw` \
   `--user=0` \
   `--volume` \
-  `/home/subuser/.texttest/tmp/texttest.25Jul175646.9155/texttest/run/With-one-subuser-supa-which-has-all-the-permissions/dry-run-supa/.subuser/volumes/execute/9929:/subuser/execute:rw` \
+  `/home/subuser/.texttest/tmp/texttest.25Jul210650.7/texttest/run/With-one-subuser-supa-which-has-all-the-permissions/dry-run-supa/.subuser/volumes/execute/717:/subuser/execute:rw` \
   `--privileged` \
   `--hostname` \
   `<random-hostname>` \
