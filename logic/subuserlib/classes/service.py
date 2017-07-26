@@ -13,6 +13,7 @@ import os
 import errno
 import fcntl
 import shutil
+import sys
 from collections import OrderedDict
 #internal imports
 from subuserlib.classes.userOwnedObject import UserOwnedObject
@@ -102,10 +103,14 @@ class Service(UserOwnedObject):
     """
     noMoreClients = False
     with self.getLock() as lockFile:
-      serviceStatus = json.load(lockFile, object_pairs_hook=OrderedDict)
+      try:
+        lock_info = lockFile.read()
+        serviceStatus = json.loads(lock_info, object_pairs_hook=OrderedDict)
+      except ValueError as e:
+        sys.exit("Error in lock file. Failed to release lock:\n"+lock_info+"\n"+str(e))
       serviceStatus["client-counter"] = serviceStatus["client-counter"] - 1
       if serviceStatus["client-counter"] < 0:
-        raise RemoveClientException("The client-counter is already zero. Client cannot be removed!")
+        raise RemoveClientException("The client-counter is already zero. Client cannot be removed! \n" + str(serviceStatus))
       if serviceStatus["client-counter"] == 0:
         self.stop(serviceStatus)
         noMoreClients = True
