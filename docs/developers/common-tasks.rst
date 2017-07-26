@@ -53,8 +53,8 @@ Set the ``SUBUSER_VERBOSITY`` environment variable to 3 to see more messages. Th
 
 Prepairing a release
 --------------------
-1. Run all test suits including the xpra-bridge test suit.
-2. Bump ``VERSION`` file.
+1. Run the pre-release checklist by running the pre-release script.
+2. Bump the ``VERSION`` file.
 3. Tag release::
 
     $ git tag -s major.minor.reallyminor

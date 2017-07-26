@@ -13,3 +13,4 @@
 /build/
 .subuser-dev
 /code-reader/
+test/mock-home

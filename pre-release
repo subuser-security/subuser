@@ -1,0 +1,57 @@
+#!/bin/bash
+# Prerelease checklist:
+if [ "$1" = "run-xterms" ]; then
+  ./logic/subuser run xterm &
+  ./logic/subuser run xterm &
+  ./logic/subuser run xterm
+  exit
+fi
+if [ -f pre-release ]; then
+  echo Welcome to the pre-release checklist!
+  echo To run without installing prerequesits for xpra-bridge test,
+  echo set the NO_XPRA_BRIDGE env var. 
+else
+ echo The pre-release checklist must be run from the subuser source directory.
+ exit
+fi
+# - Run texttest-dev
+./logic/subuser dev texttest-dev
+# - Make ./test/mock-home
+mkdir ./test/mock-home
+oldhome=$HOME
+printf -v HOME "%s/test/mock-home" $PWD
+# - Run xpra-x11 bridge test suit
+git config --global user.name John Doe
+git config --global user.email johndoe@example.com
+read -p "Would you like to test the XPRA-X11 bridge? (Takes a long time) [y/n] " -r
+echo
+if [[ $REPLY =~ ^[Yy]$ ]] ; then
+  ./logic/subuser subuser add xterm xterm@default
+  notify-send 'Finished adding test xterm subuser.'
+  ./logic/subuser list subusers --long
+  (            xfce4-terminal -e './pre-release run-xterms' ) &
+  ( sleep  5 ; xfce4-terminal -e './pre-release run-xterms' ) &
+  ( sleep 10 ; xfce4-terminal -e './pre-release run-xterms' )
+  ./logic/subuser subuser remove xterm
+  clear
+fi
+
+# - Add a subuser
+./logic/subuser subuser add foo foo@$PWD/test/test-repos/default-test-repo
+# - Remove subuser
+./logic/subuser subuser remove foo
+# - Remove old images
+./logic/subuser remove-old-images
+# - Delete ./test/mock-home
+notify-send 'Done with tests.'
+read -p "Done with tests. Should I remove the mock home dir? " -r
+echo
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+  echo Deleting mock home dir.
+  rm -rf ./test/mock-home
+fi
+echo Congradulations! You are done with the pre-release procedure.
+echo If everything went as planned, you may now procede to make the
+echo release by following the instructions here:
+echo http://subuser.org/developers/common-tasks.html

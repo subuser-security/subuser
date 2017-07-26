@@ -15,45 +15,10 @@ import subuserlib.paths
 
 if "--help" in sys.argv:
   print("""
-To launch the test suit, run ``subuser test``. The first time you run it, instalation of the test suit will take a long time, so be patient.
-
-You can also run launch the xpra bridge tests by running ``subuser test xpra-bridge``.
-
+This script can be used to launch the doctest test suit.
+To do so run ./logic/test doctest
 """)
   sys.exit()
-elif "xpra-bridge" in sys.argv:
-  temp_dir = tempfile.mkdtemp(prefix="subuser-test-xpra-bridge")
-  env = copy.copy(os.environ)
-  env["HOME"] = os.path.join(temp_dir,"test-home")
-  os.makedirs(env["HOME"])
-  xtermSubuserName = "xterm"
-  #configure git
-  command = ["git","config","--global","user.name","John Doe"]
-  subprocess.call(command,env=env)
-  command = ["git","config","--global","user.email","johndoe@example.com"]
-  subprocess.call(command,env=env)
-  #add xterm subuser
-  command = [os.path.join(subuserlib.paths.getSubuserDir(),"logic","subuser"),"subuser","add",xtermSubuserName,"xterm@default","--force-internal"]
-  subprocess.call(command,env=env)
-  pid = os.fork()
-  if pid:
-    counter = "a"
-  else:
-    counter = "b"
-  for i in range(1,6):
-    print(counter+" "+str(i))
-    command = ["xterm","-e",os.path.join(subuserlib.paths.getSubuserDir(),"logic","subuser")+" run "+xtermSubuserName]
-    subprocess.call(command,env=env)
-  if pid:
-    os.waitpid(pid,0)
-    input("Press ENTER to continue.")
-    #remove xterm subuser
-    command = [os.path.join(subuserlib.paths.getSubuserDir(),"logic","subuser"),"subuser","remove",xtermSubuserName,"--force-internal"]
-    subprocess.call(command,env=env)
-    #remove old images 
-    command = [os.path.join(subuserlib.paths.getSubuserDir(),"logic","subuser"),"remove-old-images"]
-    subprocess.call(command,env=env)
-    shutil.rmtree(temp_dir)
 elif "doctest" in sys.argv:
   #import locale
   #locale.setlocale(locale.LC_ALL, '')
@@ -113,8 +78,3 @@ elif "doctest" in sys.argv:
       sys.exit(failures)
   doctest.testfile("../test/global-doctests")
   print("Tests passed.")
-else:
-  if not "logic" in os.listdir(os.getcwd()):
-    sys.exit("You must first cd to the subuser source directory to test subuser.")
-  command = [os.path.join(subuserlib.paths.getSubuserDir(),"logic","subuser"),"dev","texttest"]
-  subprocess.call(command)
