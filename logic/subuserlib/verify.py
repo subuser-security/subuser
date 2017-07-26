@@ -85,7 +85,7 @@ def verify(user,permissionsAccepter=None,checkForUpdatesExternally=False,subuser
   cleanupRuntimeDirs(user)
   cleanUpRuntimeCache(user)
   cleanUpAfterImproperlyTerminatedServices(user)
-  user.registry.log("Verify complete.")
+  user.registry.log("Verify complete.",notify=True)
 
 def approvePermissions(user,subusers,permissionsAccepter):
   subusersWhosPermissionsFailedToParse = []

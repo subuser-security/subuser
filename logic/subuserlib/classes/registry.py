@@ -16,6 +16,8 @@ from subuserlib.classes import subusers
 from subuserlib.classes import userOwnedObject
 from subuserlib.classes.gitRepository import GitRepository
 import subuserlib.print
+import subuserlib.subprocessExtras as subprocessExtras
+import subuserlib.executablePath
 
 class Registry(userOwnedObject.UserOwnedObject):
   def __init__(self,user,gitReadHash="master", ignoreVersionLocks=False, initialized = False):
@@ -63,11 +65,12 @@ class Registry(userOwnedObject.UserOwnedObject):
       self.commit("Initial commit.",_no_lock_needed = True)
     self.initialized = True
 
-  def log(self,message,verbosityLevel=1):
+  def log(self,message,verbosityLevel=1,notify=False):
     """
     If the current verbosity level is equal to or greater than verbosityLevel, print the message to the screen.
     If the current verbosity level is equal to or greater than verbosityLevel minus one, add the message to the log.
     Do not mark the registry as changed.
+    The notify option will create a popup dialog with the message if the notify-send command exists.
     """
     message = message.rstrip()
     if (verbosityLevel-1) <= self.logOutputVerbosity:
@@ -78,6 +81,8 @@ class Registry(userOwnedObject.UserOwnedObject):
       print(CURSOR_UP_ONE + ERASE_LINE + CURSOR_UP_ONE)
     if verbosityLevel <= self.logOutputVerbosity:
       subuserlib.print.printWithoutCrashing(message)
+      if notify and subuserlib.executablePath.which("notify-send"):
+        subprocessExtras.call(["notify-send",message])
     self.lastVerbosityLevel = verbosityLevel
 
   def logChange(self,message,verbosityLevel=1):
