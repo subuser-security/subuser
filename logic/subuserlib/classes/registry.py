@@ -16,7 +16,6 @@ from subuserlib.classes import subusers
 from subuserlib.classes import userOwnedObject
 from subuserlib.classes.gitRepository import GitRepository
 import subuserlib.print
-import subuserlib.subprocessExtras as subprocessExtras
 import subuserlib.executablePath
 
 class Registry(userOwnedObject.UserOwnedObject):
@@ -82,7 +81,7 @@ class Registry(userOwnedObject.UserOwnedObject):
     if verbosityLevel <= self.logOutputVerbosity:
       subuserlib.print.printWithoutCrashing(message)
       if notify and subuserlib.executablePath.which("notify-send"):
-        subprocessExtras.call(["notify-send",message])
+        self.user.endUser.call(["notify-send",message])
     self.lastVerbosityLevel = verbosityLevel
 
   def logChange(self,message,verbosityLevel=1):
