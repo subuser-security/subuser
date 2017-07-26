@@ -99,6 +99,13 @@ class FileStructure():
   def _getSize(self,path):
     pass
 
+  @abc.abstractmethod
+  def isLegalSymlink(self,path):
+    """
+    If the path is a symlink. Make sure it doesn't point out of the structure.
+    """
+    pass
+
   def assertLegalPath(self,path):
     """
     Throw an exception if path is a relative path going up outside of the file structure.
@@ -137,14 +144,14 @@ class FileStructure():
     ...
     OSError: /bar does not exist in file structure.
 
-    Checks symlinks as well.
+    Checks for symlinks too.
     """
     if path.startswith("/") or os.path.relpath(path,"./").startswith(".."):
       raise IOError(path + " does not exist in file structure.")
     try:
       path = self.realpath(path)
-      if os.path.relpath(path,"./").startswith(".."):
-        raise IOError(path + " is a symlink pointing out of filestructure which is not allowed.")
+      if not self.isLegalSymlink(path):
+        raise IOError(path + " is a symlink which points outside of the filestructure which is not allowed.")
     except AttributeError:
       pass
 
@@ -339,3 +346,6 @@ class BasicFileStructure(FileStructure):
 
   def realpath(self,path):
     return os.path.realpath(self.getPathInStructure(path))
+
+  def isLegalSymlink(self,path):
+    return not os.path.relpath(path,self.path).startswith("..")

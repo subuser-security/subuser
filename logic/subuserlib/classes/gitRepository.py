@@ -287,5 +287,12 @@ class GitFileStructure(FileStructure):
       if os.path.normpath(treeObject["path"]) == os.path.normpath(path):
         return int(treeObject["size"],10)
 
+  def isLegalSymlink(self,path):
+    """
+    There shouldn't be any risk involved with symlinks in git,
+    since git already reads only files which have been checked in.
+    """
+    return True
+
 class GitException(Exception):
   pass
