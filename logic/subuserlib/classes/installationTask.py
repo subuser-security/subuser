@@ -50,7 +50,7 @@ class InstallationTask(UserOwnedObject):
             if subuser.locked:
               self.user.registry.log("Subuser "+subuser.name+" has no image. But is locked. Marking for installation anyways.")
             self.__outOfDateSubusers.add(subuser)
-        except exceptions.ImageBuildException as e:
+        except (exceptions.ImageBuildException, subuserlib.classes.subuser.NoImageSourceException) as e :
           self.user.registry.log(str(e))
           self.__subusersWhosImagesFailedToBuild.add(subuser)
     outOfDateSubusers = list(self.__outOfDateSubusers)
