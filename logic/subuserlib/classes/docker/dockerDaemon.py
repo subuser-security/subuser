@@ -214,7 +214,7 @@ class DockerDaemon(UserOwnedObject):
       if match:
         break
     if not match:
-      raise exceptions.ImageBuildException("Unexpected server response when building image.")
+      raise exceptions.ImageBuildException("Unexpected server response when building image. \n " + output)
     shortId = match.group(1) #This is REALLY ugly!
     return self.getImageProperties(shortId)["Id"]
 
