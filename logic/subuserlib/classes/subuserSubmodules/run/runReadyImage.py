@@ -23,6 +23,9 @@ class RunReadyImage(UserOwnedObject):
 
   def setup(self):
     if not "run-ready-image-id" in self.subuser.getRuntimeCache():
+      if not self.subuser.isImageInstalled():
+        self.user.registry.log("No working image for subuser "+self.subuser.name+" unable to prepair run ready image.")
+        return
       self.__id = self.build()
       self.subuser.getRuntimeCache()["run-ready-image-id"] = self.__id
       self.subuser.getRuntimeCache().save()
