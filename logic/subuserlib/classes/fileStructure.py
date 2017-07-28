@@ -148,12 +148,8 @@ class FileStructure():
     """
     if path.startswith("/") or os.path.relpath(path,"./").startswith(".."):
       raise IOError(path + " does not exist in file structure.")
-    try:
-      path = self.realpath(path)
-      if not self.isLegalSymlink(path):
-        raise IOError(path + " is a symlink which points outside of the filestructure which is not allowed.")
-    except AttributeError:
-      pass
+    if not self.isLegalSymlink(path):
+      raise IOError(path + " in file structure at "+self.path+" is a symlink which points outside of the filestructure which is not allowed.")
 
   def getModeString(self,path):
     """
@@ -348,4 +344,5 @@ class BasicFileStructure(FileStructure):
     return os.path.realpath(self.getPathInStructure(path))
 
   def isLegalSymlink(self,path):
+    path = self.realpath(path)
     return not os.path.relpath(path,self.path).startswith("..")
