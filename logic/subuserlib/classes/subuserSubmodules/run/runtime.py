@@ -80,6 +80,12 @@ $ subuser repair
   def getCidFile(self):
     return "/tmp/subuser-"+self.subuser.name
 
+  def prepUserDir(self,userDir):
+    pathOnHost = os.path.join(self.subuser.user.endUser.homeDir,userDir)
+    if not os.path.exists(pathOnHost):
+      self.user.endUser.makedirs(pathOnHost)
+    return pathOnHost
+
   def getBasicFlags(self):
     common = ["--rm"]
     if self.background:
@@ -160,7 +166,7 @@ $ subuser repair
      ("max-cpus", lambda p: ["--cpus="+str(p)] if p else []),
      # Moderate permissions
      ("gui", lambda p : ["-e","DISPLAY=unix:100","--volume",self.subuser.x11Bridge.getServerSideX11Path()+":/tmp/.X11-unix:rw"] if p else []),
-     ("user-dirs", lambda userDirs : ["--volume="+os.path.join(self.subuser.user.endUser.homeDir,userDir)+":"+os.path.join("/subuser/userdirs/",userDir)+":rw" for userDir in userDirs]),
+     ("user-dirs", lambda userDirs : ["--volume="+self.prepUserDir(userDir)+":"+os.path.join("/subuser/userdirs/",userDir)+":rw" for userDir in userDirs]),
      ("inherit-envvars", lambda envVars: [arg for var in envVars for arg in self.passOnEnvVar (var)]),
      ("sound-card", lambda p: self.getSoundCardArgs() if p else []),
      ("pulseaudio", lambda p: self.getPulseAudioArgs() if p else []),
