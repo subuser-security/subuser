@@ -49,9 +49,13 @@ class Subuser(UserOwnedObject, Describable):
     """
     if self.__imageSource is None:
       try:
-        self.__imageSource = self.user.registry.repositories[self.__repoName][self.__imageSourceName]
+        repo = self.user.registry.repositories[self.__repoName]
       except KeyError:
-        raise NoImageSourceException()
+        raise NoImageSourceException(" repo %s not found "%self.__repoName)
+      try:
+        self.__imageSource = repo[self.__imageSourceName]
+      except KeyError:
+        raise NoImageSourceException("Image source "+self.__imageSourceName+" not found in repo "+repo.displayName)
     return self.__imageSource
 
   @imageSource.setter
@@ -256,8 +260,8 @@ Please file a bug report explaining how you got here.\n"""+ str(e))
     print("------------------")
     try:
       print(self.imageSource.getIdentifier())
-    except subuserlib.classes.subuser.NoImageSourceException:
-      print("Warning: This subuser has no image, nor does it have a valid image source to install an image from.")
+    except subuserlib.classes.subuser.NoImageSourceException as e:
+      print("Warning: This subuser has no image source. %s"%e)
     print("Docker image Id: "+str(self.imageId))
     self.permissions.describe()
     print("")
