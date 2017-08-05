@@ -30,7 +30,7 @@ image ids to json objects which have the following attributes:
 
     "image-source-hash" : "51bcf28bcd4c01200ab7abd97d22a325e940fbd6"
 
-Depricated:
+Deprecated:
 -----------
 
  * ``last-update-time``: This is the ``last-update-time`` that was listed in the permissions.json file of the image source when the image was installed, or the last time the image was updated.
