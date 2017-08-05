@@ -659,8 +659,8 @@ Permissions are categorized into 4 levels of permissiveness:
 
 """
 
-depricatedPermissions = """
-Depricated
+deprecatedPermissions = """
+Deprecated
 ----------
 
 These permissions can still be used as top level permissions. However, they have now been rolled in as subpermissions to ``basic-common-permissions``.
@@ -715,5 +715,5 @@ def getDocs():
         docs += "  ``"+permission+"`` **subpermissions:**\n\n"
         for subpermission,subpermission_attrs in permission_attrs["subpermissions"].items():
           docs += get_permission_description("   -","    ",subpermission,subpermission_attrs)
-  docs += depricatedPermissions
+  docs += deprecatedPermissions
   return docs
