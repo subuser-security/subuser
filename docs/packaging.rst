@@ -74,7 +74,7 @@ Creating a `SubuserImagefile`
 
 Create a directory called `image` and add a `SubuserImagefile` to that directory. This is a very similar format to that of the Dockerfile.
 
-The only difference is the addition of a special `FROM-SUBUSER-IMAGE` command which takes :doc:`the identifier of a subuser image source <subuser-standard/image-source-identifiers>` as it's argument. For information on creating a Dockerfile, please see the `official documentation for writting Dockerfiles <https://docs.docker.com/reference/builder/>`_.
+The only difference is the addition of a special `FROM-SUBUSER-IMAGE` command which takes :doc:`the identifier of a subuser image source <subuser-standard/image-source-identifiers>` as it's argument. For information on creating a Dockerfile, please see the `official documentation for writing Dockerfiles <https://docs.docker.com/reference/builder/>`_.
 
 Example `SubuserImagefile`::
 
