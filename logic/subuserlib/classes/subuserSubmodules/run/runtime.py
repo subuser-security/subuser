@@ -8,6 +8,7 @@ Runtime environments which are prepared for subusers to run in.
 import sys
 import collections
 import os
+import subprocess
 import time
 import binascii
 import struct
@@ -127,12 +128,12 @@ $ subuser repair
     if "PULSE_SERVER" in self.env:
       pulseSocket = self.env["PULSE_SERVER"]
     else:
-      pulseSocket = os.path.join("/run","user",str(self.user.endUser.uid),"pulse","native")
+      pulseSocket = next(filter(None, map(lambda x: x[20:].decode('ascii') if x.startswith(b'Server String: unix:') else None, subprocess.check_output(["pactl", "info"]).split(b'\n'))), None)
     if "PULSE_COOKIE" in self.env:
       pulseCookieFile = self.env["PULSE_COOKIE"]
     else:
-      pulseCookieFile = os.path.join(self.subuser.homeDirOnHost,".pulse","cookie")
-    if os.path.exists(pulseSocket) and os.path.exists(pulseCookieFile):
+      pulseCookieFile = next((f for f in [os.path.join(os.getenv("HOME"), ".config", "pulse", "cookie"), os.path.join(os.getenv("HOME"),".pulse","cookie")] if os.path.exists(f)), None)
+    if pulseSocket is not None and pulseCookieFile is not None:
       return ["--volume="+pulseCookieFile+":/subuser/pulse/cookie"
              ,"--volume="+pulseSocket+":/subuser/pulse/socket"
              ,"-e"
