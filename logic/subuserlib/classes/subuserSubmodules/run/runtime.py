@@ -8,7 +8,6 @@ Runtime environments which are prepared for subusers to run in.
 import sys
 import collections
 import os
-import subprocess
 import time
 import binascii
 import struct
@@ -124,15 +123,22 @@ $ subuser repair
     return soundArgs
 
   def getPulseAudioArgs(self):
-    #TODO suport the plethora of alternate locations for these things...
     if "PULSE_SERVER" in self.env:
       pulseSocket = self.env["PULSE_SERVER"]
     else:
-      pulseSocket = next(filter(None, map(lambda x: x[20:].decode('ascii') if x.startswith(b'Server String: unix:') else None, subprocess.check_output(["pactl", "info"]).split(b'\n'))), None)
+      try:
+          pactl_output = self.user.endUser.callCollectOutput(["pactl", "info"])
+          if pactl_output[0] == 0:
+              pulseSocket = next(filter(None, map(lambda x: x[20:] if x.startswith("Server String: unix:") else None, pactl_output[1].split('\n'))), None)
+          else:
+              pulseSocket = None
+      except Exception as e:
+          pulseSocket = None
+
     if "PULSE_COOKIE" in self.env:
       pulseCookieFile = self.env["PULSE_COOKIE"]
     else:
-      pulseCookieFile = next((f for f in [os.path.join(os.getenv("HOME"), ".config", "pulse", "cookie"), os.path.join(os.getenv("HOME"),".pulse","cookie")] if os.path.exists(f)), None)
+      pulseCookieFile = next((f for f in [os.path.join(self.user.endUser.homeDir, ".config", "pulse", "cookie"), os.path.join(self.user.endUser.homeDir,".pulse","cookie")] if os.path.exists(f)), None)
     if pulseSocket is not None and pulseCookieFile is not None:
       return ["--volume="+pulseCookieFile+":/subuser/pulse/cookie"
              ,"--volume="+pulseSocket+":/subuser/pulse/socket"
