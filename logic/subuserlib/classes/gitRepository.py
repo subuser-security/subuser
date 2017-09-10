@@ -57,36 +57,27 @@ $ git config --global user.email johndoe@example.com
     return self.user.endUser.call(self.getGitExecutable()+["clone", origin, self.path])
 
   def run(self,args):
-    """
-    Run git with the given command line arguments.
-    """
-    try:
-      gitArgs = self.getGitExecutable()+args
-      (returncode,stdout,stderr) = self.user.endUser.callCollectOutput(gitArgs,cwd=self.path)
-      self.user.registry.log(self.path+": "+" ".join(gitArgs),verbosityLevel=3)
-      self.user.registry.log(stdout,verbosityLevel=3)
-      self.user.registry.log(stderr,verbosityLevel=3)
-      if stderr:
-        raise GitException(stderr)
-      return returncode
-    except OSError as e:
-      if e.errno == errno.EEXIST:
-        sys.exit("You must have git installed to use subuser.")
-      else:
-        raise e
-
-  def runShowOutput(self,args):
-    self.user.endUser.call(self.getGitExecutable()+args,cwd=self.path)
+    returncode,_ = self.__run(args)
+    return returncode
 
   def runCollectOutput(self,args,eatStderr=False):
+    return self.__run(args,eatStderr=eatStderr)
+
+  def __run(self,args,eatStderr=False):
     """
     Run git with the given command line arguments and return a tuple with (returncode,output).
     """
     try:
       gitArgs = self.getGitExecutable()+args
       (returncode,stdout,stderr) = self.user.endUser.callCollectOutput(gitArgs,cwd=self.path)
-      self.user.registry.log(self.path+": "+" ".join(gitArgs),verbosityLevel=3)
-      self.user.registry.log(stderr,verbosityLevel=3)
+      if ((not eatStderr) and stderr.strip()) or returncode != 0:
+        self.user.registry.log(self.path+": "+" ".join(gitArgs),verbosityLevel=2)
+        self.user.registry.log(stdout,verbosityLevel=2)
+        self.user.registry.log(stderr,verbosityLevel=2)
+      else:
+        self.user.registry.log(self.path+": "+" ".join(gitArgs),verbosityLevel=5)
+        self.user.registry.log(stdout,verbosityLevel=5)
+        self.user.registry.log(stderr,verbosityLevel=5)
       if stderr and not eatStderr:
         raise GitException(stderr)
       return (returncode,stdout)
@@ -95,6 +86,9 @@ $ git config --global user.email johndoe@example.com
         sys.exit("You must have git installed to use subuser.")
       else:
         raise e
+
+  def runShowOutput(self,args):
+    self.user.endUser.call(self.getGitExecutable()+args,cwd=self.path)
 
   def doesCommitExist(self,commit):
     """
