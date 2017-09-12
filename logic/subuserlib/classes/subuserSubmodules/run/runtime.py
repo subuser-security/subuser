@@ -123,16 +123,23 @@ $ subuser repair
     return soundArgs
 
   def getPulseAudioArgs(self):
-    #TODO suport the plethora of alternate locations for these things...
     if "PULSE_SERVER" in self.env:
       pulseSocket = self.env["PULSE_SERVER"]
     else:
-      pulseSocket = os.path.join("/run","user",str(self.user.endUser.uid),"pulse","native")
+      try:
+          pactl_output = self.user.endUser.callCollectOutput(["pactl", "info"])
+          if pactl_output[0] == 0:
+              pulseSocket = next(filter(None, map(lambda x: x[20:] if x.startswith("Server String: unix:") else None, pactl_output[1].split('\n'))), None)
+          else:
+              pulseSocket = None
+      except Exception as e:
+          pulseSocket = None
+
     if "PULSE_COOKIE" in self.env:
       pulseCookieFile = self.env["PULSE_COOKIE"]
     else:
-      pulseCookieFile = os.path.join(self.subuser.homeDirOnHost,".pulse","cookie")
-    if os.path.exists(pulseSocket) and os.path.exists(pulseCookieFile):
+      pulseCookieFile = next((f for f in [os.path.join(self.user.endUser.homeDir, ".config", "pulse", "cookie"), os.path.join(self.user.endUser.homeDir,".pulse","cookie")] if os.path.exists(f)), None)
+    if pulseSocket is not None and pulseCookieFile is not None:
       return ["--volume="+pulseCookieFile+":/subuser/pulse/cookie"
              ,"--volume="+pulseSocket+":/subuser/pulse/socket"
              ,"-e"
