@@ -224,6 +224,8 @@ class XpraX11Bridge(Service):
       else:
         permissionArgs.append(off)
     commonArgs = ["--no-daemon", "--no-notifications", "--mmap", "--opengl=no"]
+    commonEnvVars = { "XPRA_CLIPBOARD_LIMIT" : "45"
+                    , "XPRA_CLIPBOARDS"      : "CLIPBOARD" }
     # Launch xpra server
     serverArgs = ["start","--no-pulseaudio","--no-mdns","--encoding=rgb"]
     suppressOutput = not "SUBUSER_DEBUG_XPRA" in os.environ
@@ -235,6 +237,8 @@ class XpraX11Bridge(Service):
     serverRuntime.hostname = self.getServerSubuserHostname()
     self.user.registry.log("Hostname set.",verbosityLevel=4)
     serverRuntime.setEnvVar("TMPDIR",os.path.join("/home/subuser","tmp"))
+    for arg, value in commonEnvVars.items():
+      serverRuntime.setEnvVar(arg, value)
     serverRuntime.background = True
     serverRuntime.backgroundSuppressOutput = suppressOutput
     serverRuntime.setBackgroundCollectOutput(False,True)
@@ -257,6 +261,8 @@ class XpraX11Bridge(Service):
     clientRuntime.logIfInteractive("Starting xpra client...")
     clientRuntime.setEnvVar("XPRA_SOCKET_HOSTNAME","server")
     clientRuntime.setEnvVar("TMPDIR",os.path.join("/home/subuser","tmp"))
+    for arg, value in commonEnvVars.items():
+      clientRuntime.setEnvVar(arg, value)
     clientRuntime.background = True
     clientRuntime.backgroundSuppressOutput = suppressOutput
     (clientContainer, clientProcess) = clientRuntime.run(args=clientArgs)
