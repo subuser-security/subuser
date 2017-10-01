@@ -48,6 +48,8 @@ def runCommand(realArgs):
     sys.exit()
 
   if options.update:
+    for image,subuser in devSubusers.items():
+      subprocess.call([paths.getSubuserExecutable(),"subuser","change-image",subuser,image+"@./"])
     if not subprocess.call([paths.getSubuserExecutable(),"update","--use-cache","subusers"]+subuserNames) == 0:
       sys.exit()
 
