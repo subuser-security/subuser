@@ -23,7 +23,7 @@ def add(user,subuserName,imageSourceIdentifier,permissionsAccepter,prompt=False,
   user.registry.logChange("Adding subuser "+subuserName+" with image "+imageSourceIdentifier)
   try:
     imageSource = subuserlib.resolve.resolveImageSource(user,imageSourceIdentifier)
-  except (KeyError,subuserlib.resolve.ResolutionError) as keyError:
+  except (subuserlib.resolve.ResolutionError) as keyError:
     sys.exit("Could not add subuser.  The image source "+imageSourceIdentifier+" does not exist.\n"+str(keyError))
   addFromImageSource(user,subuserName,imageSource,permissionsAccepter,prompt,homeDir=homeDir)
 
@@ -74,8 +74,8 @@ def changeImage(user,subuserName,imageSourceIdentifier,permissionsAccepter,promp
   user.registry.logChange("Changing the image for subuser "+subuserName+" to "+imageSourceIdentifier)
   try:
     imageSource = subuserlib.resolve.resolveImageSource(user,imageSourceIdentifier)
-  except (KeyError,subuserlib.resolve.ResolutionError) as keyError:
-    sys.exit("Could not change image.  The image source "+imageSourceIdentifier+" does not exist.\n"+str(keyError))
+  except (subuserlib.resolve.ResolutionError) as e:
+    sys.exit("Could not change image.  The image source "+imageSourceIdentifier+" does not exist.\n"+str(e))
   subuser = user.registry.subusers[subuserName]
   subuser.imageSource = imageSource
   subuserlib.verify.verify(user,subusers=[subuser],permissionsAccepter=permissionsAccepter,prompt=prompt)

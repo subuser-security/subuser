@@ -34,8 +34,8 @@ def runCommand(realArgs):
   for imageSourceId in imageSourceIds:
     try:
       imageSource = subuserlib.resolve.resolveImageSource(user,imageSourceId)
-    except KeyError:
-      sys.exit("The image "+imageSourceId+" does not exist.")
+    except subuserlib.resolve.ResolutionError as e:
+      sys.exit(str(e))
     indent = 0
     for imageSourceInLineage in subuserlib.classes.installationTask.getTargetLineage(imageSource):
       displayLine = (" "*indent) + imageSourceInLineage.getIdentifier()

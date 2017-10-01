@@ -42,15 +42,16 @@ def resolveImageSource(user,imageSourcePath,contextRepository=None,allowLocalRep
   Adding new temporary repository ...
   bar
 
-  Throws an Key error:
+  Throws a ResolutionError:
     - If the repository does not exist
     - If the image is not in the repository
+    - If the image source string is invalid
 
   >>> try:
   ...   resolveImageSource(user,"non-existant@default")
-  ... except KeyError:
-  ...   print("KeyError")
-  KeyError
+  ... except ResolutionError:
+  ...   print("ResolutionError")
+  ResolutionError
   """
   if not contextRepository:
     contextRepository = user.registry.repositories["default"]
@@ -65,7 +66,7 @@ def resolveImageSource(user,imageSourcePath,contextRepository=None,allowLocalRep
   try:
     return repository[imageName]
   except KeyError:
-    raise KeyError(imageName + " could not be found in the repository. The following images exist in the repository: \"" + "\" \"".join(repository.keys())+"\"")
+    raise ResolutionError(imageName + " could not be found in repository '" + repository.name + "'. The following images exist in the repository:\n \"" + "\" \"".join(repository.keys())+"\"")
 
 def resolveRepository(user,repoIdentifier,allowLocalRepositories=True):
   # "./"
@@ -92,7 +93,10 @@ def resolveRepository(user,repoIdentifier,allowLocalRepositories=True):
   # "bar"
   elif not ":" in repoIdentifier and not "/" in repoIdentifier:
     if allowLocalRepositories or repoIdentifier == "default":
-      return user.registry.repositories[repoIdentifier]
+      try:
+        return user.registry.repositories[repoIdentifier]
+      except KeyError:
+        raise ResolutionError("Repo %s does not exist."%repoIdentifier)
     else:
       raise ResolutionError("Error when resolving repository identifier "+repoIdentifier+". Refering to repositories by name is forbidden in this context.")
   else:

@@ -74,8 +74,8 @@ def runCommand(sysargs):
         temp = True
       try:
         repository = subuserlib.resolve.resolveRepository(user,repoIdentifier)
-      except (OSError,subuserlib.resolve.ResolutionError):
-        sys.exit("Repository id: "+repoIdentifier+" could not be resolved.")
+      except subuserlib.resolve.ResolutionError as e:
+        sys.exit("Repository id: "+repoIdentifier+" could not be resolved.\n" + str(e))
       if options.json:
         availableDict[repository.displayName] = repository.serializeToDict()
       else:
@@ -157,8 +157,8 @@ def runCommand(sysargs):
     for imageName in imagesToList:
       try:
         imageSource = subuserlib.resolve.resolveImageSource(user,imageName)
-      except KeyError as ke:
-        sys.exit(str(ke))
+      except subuserlib.resolve.ResolutionError as e:
+        sys.exit(str(e))
       if options.json:
         subuserlib.print.printWithoutCrashing(json.dumps(imageSource.serializeToDict(),indent=1,separators=(",",": ")))
       else:
