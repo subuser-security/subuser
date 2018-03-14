@@ -128,6 +128,17 @@ $ git config --global user.email johndoe@example.com
       raise OSError("Running git in "+self.path+" with args "+str(command)+" failed.")
     return output.strip()
 
+  def doesHaveUncommittedChanges(self,ref):
+    command = ["diff-index","--name-only",ref]
+    (returncode,output) = self.runCollectOutput(command)
+    if returncode != 0:
+      # Just ignore it if command failed
+      return False
+    if output:
+      return True
+    else:
+      return False
+
 class GitFileStructure(FileStructure):
   def __init__(self,gitRepository,commit):
     """
