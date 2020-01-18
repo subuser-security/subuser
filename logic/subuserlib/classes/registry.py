@@ -8,6 +8,7 @@ Each user's settings are stored in a "registry". This is a git repository with a
 import os
 import errno
 import sys
+import shutil
 from contextlib import contextmanager
 import json
 #internal imports
@@ -59,7 +60,12 @@ class Registry(userOwnedObject.UserOwnedObject):
       # Ensure git is setup before we start to make changes.
       self.gitRepository.assertGitSetup()
       self.user.endUser.makedirs(self.user.config["registry-dir"])
-      self.gitRepository.run(["init"])
+      try:
+        self.gitRepository.run(["init"])
+      except subuserlib.classes.gitRepository.GitException as e:
+        # Remove partially initialized repository when 'init' command failed
+        shutil.rmtree(self.gitRepository.path)
+        sys.exit("Git failed with: '%s'." % str(e).strip())
       self.logChange("Initial commit.")
       self.commit("Initial commit.",_no_lock_needed = True)
     self.initialized = True

@@ -27,7 +27,10 @@ def getSubuserVersion(user):
   if os.path.exists(os.path.join(subuserlib.paths.getSubuserDir(),".git")):
     gitRepo = GitRepository(user,subuserlib.paths.getSubuserDir())
     gitHash = gitRepo.getHashOfRef("HEAD")
-    return stableVersion+"-dev-"+gitHash
+    devVersionString = stableVersion+"-dev-"+gitHash
+    if gitRepo.doesHaveUncommittedChanges("HEAD"):
+      devVersionString += "-dirty"
+    return devVersionString
   else:
     return stableVersion
 
