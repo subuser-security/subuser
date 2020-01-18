@@ -13,14 +13,13 @@ from subuserlib.classes.userOwnedObject import UserOwnedObject
 import subuserlib.classes.exceptions as exceptions
 
 class InstallationTask(UserOwnedObject):
-  def __init__(self,user,subusersToBeUpdatedOrInstalled,checkForUpdatesExternally=False):
-    UserOwnedObject.__init__(self,user)
-    self.__subusersToBeUpdated = subusersToBeUpdatedOrInstalled
+  def __init__(self,op):
+    UserOwnedObject.__init__(self,op.user)
+    self.op = op
     self.__upToDateImageSources = set()
     self.__outOfDateImageSources = set()
     self.__outOfDateSubusers = None
     self.__subusersWhosImagesFailedToBuild = set()
-    self.checkForUpdatesExternally = checkForUpdatesExternally
 
   def getOutOfDateSubusers(self):
     """
@@ -29,7 +28,7 @@ class InstallationTask(UserOwnedObject):
     if self.__outOfDateSubusers is None:
       self.user.registry.log("Checking if images need to be updated or installed...")
       self.__outOfDateSubusers = set()
-      for subuser in self.__subusersToBeUpdated:
+      for subuser in self.op.subusers:
         try:
           if (not subuser.locked) and (not (subuser.imageSource.getLatestInstalledImage() is None)):
             self.user.registry.log("Checking if subuser "+subuser.name+" is up to date.")
@@ -75,11 +74,11 @@ class InstallationTask(UserOwnedObject):
         return False
     if not installedImage.imageSourceHash == imageSource.getHash():
       return False
-    if self.checkForUpdatesExternally and installedImage.checkForUpdates():
+    if self.op.checkForUpdatesExternally and installedImage.checkForUpdates():
       return False
     return True
 
-  def updateOutOfDateSubusers(self,useCache=False):
+  def updateOutOfDateSubusers(self):
     """
     Install new images for those subusers which are out of date.
     """
@@ -90,12 +89,12 @@ class InstallationTask(UserOwnedObject):
           if imageSource in self.__upToDateImageSources:
             parent = imageSource.getLatestInstalledImage().imageId
           elif imageSource in self.__outOfDateImageSources:
-            parent = installImage(imageSource,parent=parent,useCache=useCache)
+            parent = installImage(imageSource,parent=parent)
             self.__outOfDateImageSources.remove(imageSource)
             self.__upToDateImageSources.add(imageSource)
           else:
             if not self.isUpToDate(imageSource):
-              parent = installImage(imageSource,parent=parent,useCache=useCache)
+              parent = installImage(imageSource,parent=parent)
             else:
               parent = imageSource.getLatestInstalledImage().imageId
             self.__upToDateImageSources.add(imageSource)
@@ -109,18 +108,18 @@ class InstallationTask(UserOwnedObject):
   def getSubusersWhosImagesFailedToBuild(self):
     return self.__subusersWhosImagesFailedToBuild
 
-def installImage(imageSource,parent,useCache=False):
+def installImage(imageSource,parent):
   """
   Install a image by building the given ImageSource.
   Register the newly installed image in the user's InstalledImages list.
   Return the Id of the newly installedImage.
   """
   imageSource.user.registry.logChange("Installing " + imageSource.name + " ...")
-  imageId = imageSource.build(parent,useCache=useCache)
+  imageId = imageSource.build(parent)
   imageSource.user.installedImages[imageId] = subuserlib.classes.installedImage.InstalledImage(imageSource.user,imageId,imageSource.name,imageSource.repo.name,imageSource.getHash())
   imageSource.user.installedImages.save()
   return imageId
-
+  
 def getTargetLineage(imageSource):
   """
   Return the lineage of the ImageSource, going from its base dependency up to itself.

@@ -173,10 +173,10 @@ class DockerDaemon(UserOwnedObject):
     """
     # Inspired by and partialy taken from https://github.com/docker/docker-py
     queryParameters =  {
-      'q': quiet,
-      'nocache': not useCache,
-      'rm': rm,
-      'forcerm': forceRm
+      'q': "true" if quiet else "false",
+      'nocache': "false" if useCache else "true",
+      'rm': "true" if rm  else "false",
+      'forcerm': "true" if forceRm else "false"
       }
     if tag:
       queryParameters["t"] = tag
@@ -188,7 +188,9 @@ class DockerDaemon(UserOwnedObject):
         exclude = list(filter(bool, repositoryFileStructure.read(dockerignore).split('\n')))
     with tempfile.NamedTemporaryFile() as tmpArchive:
       archiveBuildContext(tmpArchive,relativeBuildContextPath=relativeBuildContextPath,repositoryFileStructure=repositoryFileStructure,excludePatterns=excludePatterns,dockerfile=dockerfile)
-      self.getConnection().request("POST","/v1.18/build?"+queryParametersString,body=tmpArchive)
+      query = "/v1.18/build?"+queryParametersString
+      self.user.registry.log(query)
+      self.getConnection().request("POST",query,body=tmpArchive)
     try:
       response = self.getConnection().getresponse()
     except httplib.ResponseNotReady as rnr:

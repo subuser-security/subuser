@@ -59,6 +59,7 @@ Options:
                       non-default location.
   --accept            Accept permissions without asking.
   --prompt            Prompt before installing new images.
+  --no-build          Don't actually build images
   --force-internal    Force a subuser who's name starts with ! to be added,
                       despite the fact that ! marks interal subusers and is
                       normally forbidden.

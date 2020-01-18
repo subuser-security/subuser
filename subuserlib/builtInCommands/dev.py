@@ -49,7 +49,7 @@ def runCommand(realArgs):
 
   if options.update:
     for image,subuser in devSubusers.items():
-      subprocess.call([paths.getSubuserExecutable(),"subuser","change-image",subuser,image+"@./"])
+      subprocess.call([paths.getSubuserExecutable(),"subuser","--no-build","change-image",subuser,image+"@./"])
     if not subprocess.call([paths.getSubuserExecutable(),"update","--use-cache","subusers"]+subuserNames) == 0:
       sys.exit()
 
@@ -69,6 +69,7 @@ def runCommand(realArgs):
       devSubusers[devImage] = devSubuser
       with user.endUser.get_file(devSubuserRegistry,"w") as fd:
         json.dump(devSubusers,fd)
+
   if options.entrypoint is None:
     subprocess.call([paths.getSubuserExecutable(),"run",devSubuser])
   else:

@@ -8,12 +8,12 @@ import subprocess
 import getpass
 import grp
 #external imports
-import subuserlib.commands
-import subuserlib.test
+from subuserlib import commands
+from subuserlib import test
 
 def printHelp():
   print("You can use one of the following commands:")
-  for command in subuserlib.commands.getCommands():
+  for command in commands.getCommands():
     print(command)
   print("for more info about each option use: subuser <option> -h")
 
@@ -21,14 +21,14 @@ if len(sys.argv) < 2 or sys.argv[1] == "help" or sys.argv[1] == "--help" or sys.
   printHelp()
   exit()
 
-command = subuserlib.commands.getCommand(sys.argv[1])
+command = commands.getCommand(sys.argv[1])
 
 if not command:
   print("Command not found: "+sys.argv[1])
   printHelp()
   sys.exit(1)
 
-if not subuserlib.test.testing:
+if not test.testing:
   username = getpass.getuser()
   if not os.getuid() == 0:
     try:

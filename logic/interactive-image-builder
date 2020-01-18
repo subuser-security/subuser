@@ -1,0 +1,32 @@
+#!/usr/bin/python3
+import sys
+try:
+  import urwid
+except ImportError:
+  sys.exit("You must have urwid installed to run the interactive image builder.")
+
+"""
+[inputs]
+<green> ipfs ipfs://kjfldkjsklfdjsflkdsjfldksj/debian-jessie [x]
+→ / sha512:kjfldkjsklfdjsflkdsjfldksj
+<green> tar http://lkjfdlkjs.com/foo.tar.gz
+→ /lib-src sha512:kfjldksjflkdjfldskjsdfdslkjlkj [reget] [x]
+<green> tar http://kjlkjl.org/lala.tar.gz
+→ /bin-src sha512:kfjdlskjfewiojifeowfjeijefojoe  [reget] [x]
+[actions]
+<green> apt-get update && apt-get upgrade -y && apt-get install foo-bar
+sha512:eriojofzwepwiioewfjewofjewiojo
+<red>   cd /lib-src ; make [edit]
+Building foo.
+Error dependency bar not found.
+<grey>  cd /lib-src ; make install
+<grey>  cd /bin-src ; make
+<grey>  cd /bin-src ; make install
+[outputs]
+ - ignore
+   /bin-src
+   /lib-src
+ / → tar ./lala.tar.gz [x]
+"""
+
+

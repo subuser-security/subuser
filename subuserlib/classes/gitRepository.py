@@ -60,24 +60,22 @@ $ git config --global user.email johndoe@example.com
     returncode,_ = self.__run(args)
     return returncode
 
-  def runCollectOutput(self,args,eatStderr=False):
-    return self.__run(args,eatStderr=eatStderr)
+  def runCollectOutput(self,args,eatStderr=False,decode="utf8"):
+    return self.__run(args,eatStderr=eatStderr,decode=decode)
 
-  def __run(self,args,eatStderr=False):
+  def __run(self,args,eatStderr=False,decode="utf8"):
     """
     Run git with the given command line arguments and return a tuple with (returncode,output).
     """
     try:
       gitArgs = self.getGitExecutable()+args
-      (returncode,stdout,stderr) = self.user.endUser.callCollectOutput(gitArgs,cwd=self.path)
+      (returncode,stdout,stderr) = self.user.endUser.callCollectOutput(gitArgs,cwd=self.path,decode=decode)
+      verbosityLevel = 5
       if ((not eatStderr) and stderr.strip()) or returncode != 0:
-        self.user.registry.log(self.path+": "+" ".join(gitArgs),verbosityLevel=2)
-        self.user.registry.log(stdout,verbosityLevel=2)
-        self.user.registry.log(stderr,verbosityLevel=2)
-      else:
-        self.user.registry.log(self.path+": "+" ".join(gitArgs),verbosityLevel=5)
-        self.user.registry.log(stdout,verbosityLevel=5)
-        self.user.registry.log(stderr,verbosityLevel=5)
+        verbosityLevel = 2
+      self.user.registry.log(self.path+": "+" ".join(gitArgs),verbosityLevel=verbosityLevel)
+      self.user.registry.log(str(stdout),verbosityLevel=verbosityLevel)
+      self.user.registry.log(str(stderr),verbosityLevel=verbosityLevel)
       if stderr and not eatStderr:
         raise GitException(stderr)
       return (returncode,stdout)
@@ -258,13 +256,14 @@ class GitFileStructure(FileStructure):
     blahblah
     <BLANKLINE>
     """
-    (errorcode,content) = self.gitRepository.runCollectOutput(["show",self.commit+":"+path],eatStderr=True)
+    return self._readBinary(path).decode("utf-8")
+
+
+  def _readBinary(self,path):
+    (errorcode,content) = self.gitRepository.runCollectOutput(["show",self.commit+":"+path],eatStderr=True,decode=None)
     if errorcode != 0:
       raise OSError("Git show exited with error "+str(errorcode)+". File does not exist.\nRepo:"+self.gitRepository.path+"\nPath: "+path+"\nCommit: "+self.commit+"\n")
     return content
-
-  def _readBinary(self,path):
-    return self.read(path).encode()
 
   def _getMode(self,path):
     """

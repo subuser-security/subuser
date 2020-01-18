@@ -18,7 +18,7 @@ from subuserlib.classes.installationTask import InstallationTask
 import subuserlib.classes.exceptions as exceptions
 import subuserlib.classes.subuser
 
-def verify(user,permissionsAccepter=None,checkForUpdatesExternally=False,subusers=[],prompt=False,useCache=False,build=True):
+def verify(op):
   """
    Ensure that:
      - Registry is consistent; warns the user about subusers that point to non-existant source images.
@@ -26,66 +26,68 @@ def verify(user,permissionsAccepter=None,checkForUpdatesExternally=False,subuser
      - No-longer-needed temporary repositories are removed. All temporary repositories have at least one subuser who's image is built from one of the repository's image sources.
      - No-longer-needed installed images are removed.
   """
-  user.registry.log("Verifying subuser configuration.")
-  user.registry.log("Verifying registry consistency...",2)
+  user = op.user
+  registry = user.registry
+  registry.log("Verifying subuser configuration.")
+  registry.log("Verifying registry consistency...",2)
 
   subusersWithNoImageSource = {}
-  for subuser in subusers:
+  for subuser in op.subusers:
     try:
       subuser.imageSource
     except subuserlib.classes.subuser.NoImageSourceException:
       subusersWithNoImageSource[subuser.name] = subuser
   if subusersWithNoImageSource:
     for subuser in subusersWithNoImageSource.values():
-      subusers.remove(subuser)
-    user.registry.log("WARNING: The following subusers longer present in their source repositories. Support for these progams may have been dropped:")
+      op.subusers.remove(subuser)
+    registry.log("WARNING: The following subusers longer present in their source repositories. Support for these progams may have been dropped:")
     subuserNamesWithNoImageSource = list(subusersWithNoImageSource.keys())
     subuserNamesWithNoImageSource.sort()
-    user.registry.log(" ".join(subuserNamesWithNoImageSource))
+    registry.log(" ".join(subuserNamesWithNoImageSource))
 
-  user.registry.log("Unregistering any non-existant installed images.",2)
+  registry.log("Unregistering any non-existant installed images.",2)
   user.installedImages.unregisterNonExistantImages()
 
-  user.registry.cleanOutOldPermissions()
+  registry.cleanOutOldPermissions()
 
-  if subusers or subusersWithNoImageSource:
-    user.registry.setChanged(True)
-    user.registry.log("Loading and approving permissions...",verbosityLevel=2)
-    (failedSubusers,permissionParsingExceptions) = approvePermissions(user,subusers,permissionsAccepter)
+  if op.subusers or subusersWithNoImageSource:
+    registry.setChanged(True)
+    registry.log("Loading and approving permissions...",verbosityLevel=2)
+    (failedSubusers,permissionParsingExceptions) = approvePermissions(op)
     for exception in permissionParsingExceptions:
-      user.registry.log(str(exception))
-    user.registry.log("Permissions set...",verbosityLevel=2)
+      registry.log(str(exception))
+    registry.log("Permissions set...",verbosityLevel=2)
     for failedSubuser in failedSubusers:
-      user.registry.log("New permissions for subuser "+failedSubuser.name+" were not accepted.",5)
+      registry.log("New permissions for subuser "+failedSubuser.name+" were not accepted.",5)
       try:
         failedSubuser.permissions
       except subuserlib.classes.subuser.SubuserHasNoPermissionsException:
-        user.registry.log("Deleting subuser "+failedSubuser.name+" as it has no permissions.",verbosityLevel=3)
-        del user.registry.subusers[failedSubuser.name]
-        subusers.remove(failedSubuser)
-    user.registry.log("Setting up service subusers...",verbosityLevel=3)
-    subusers += ensureServiceSubusersAreSetup(user,subusers)
-    subusers += ensureServiceSubusersAreSetup(user,subusersWithNoImageSource.values())
-    user.registry.log("Service subusers set up...",verbosityLevel=3)
-    user.registry.log("Building images...",verbosityLevel=3)
-    if build:
-      installationTask = InstallationTask(user,subusersToBeUpdatedOrInstalled=subusers,checkForUpdatesExternally=checkForUpdatesExternally)
+        registry.log("Deleting subuser "+failedSubuser.name+" as it has no permissions.",verbosityLevel=3)
+        del registry.subusers[failedSubuser.name]
+        op.subusers.remove(failedSubuser)
+    registry.log("Setting up service subusers...",verbosityLevel=3)
+    op.subusers += ensureServiceSubusersAreSetup(op.user,op.subusers)
+    op.subusers += ensureServiceSubusersAreSetup(op.user,subusersWithNoImageSource.values())
+    registry.log("Service subusers set up...",verbosityLevel=3)
+    registry.log("Building images...",verbosityLevel=3)
+    if op.build:
+      installationTask = InstallationTask(op)
       outOfDateSubusers = installationTask.getOutOfDateSubusers()
       if outOfDateSubusers:
-        user.registry.log("New images for the following subusers need to be installed:")
+        registry.log("New images for the following subusers need to be installed:")
         for subuser in outOfDateSubusers:
-          user.registry.log(subuser.name)
-        if (not prompt) or (prompt and (not input("Would you like to install those images now? [Y/n]") == "n")):
-          installationTask.updateOutOfDateSubusers(useCache=useCache)
+          registry.log(subuser.name)
+        if (not op.prompt) or (op.prompt and (not input("Would you like to install those images now? [Y/n]") == "n")):
+          installationTask.updateOutOfDateSubusers()
       subusersWhosImagesFailedToBuild = installationTask.getSubusersWhosImagesFailedToBuild()
       if subusersWhosImagesFailedToBuild:
-        user.registry.log("Images for the following subusers failed to build:")
+        registry.log("Images for the following subusers failed to build:")
       for subuser in subusersWhosImagesFailedToBuild:
-        user.registry.log(subuser.name)
+        registry.log(subuser.name)
 
-    user.registry.log("Setting up run ready images...",verbosityLevel=3)
+    registry.log("Setting up run ready images...",verbosityLevel=3)
     failedSubusers = []
-    allSubusers = set(subusers)
+    allSubusers = set(op.subusers)
     allSubusers.update(subusersWithNoImageSource.values())
     for subuser in allSubusers:
       try:
@@ -94,21 +96,21 @@ def verify(user,permissionsAccepter=None,checkForUpdatesExternally=False,subuser
       except subuserlib.classes.subuserSubmodules.run.runtimeCache.NoRuntimeCacheForSubusersWhichDontHaveExistantImagesException:
         failedSubusers.append(subuser.name)
     if failedSubusers:
-      user.registry.log("The following subusers' images are missing or failed to build and cannot be run: %s"%" ".join(failedSubusers),verbosityLevel=3)
-    user.registry.log("Run ready images set up...",verbosityLevel=3)
+      registry.log("The following subusers' images are missing or failed to build and cannot be run: %s"%" ".join(failedSubusers),verbosityLevel=3)
+    registry.log("Run ready images set up...",verbosityLevel=3)
 
   user.installedImages.save()
-  trimUnneededTempRepos(user)
-  rebuildBinDir(user)
-  cleanupRuntimeDirs(user)
-  cleanUpRuntimeCache(user)
-  cleanUpAfterImproperlyTerminatedServices(user)
-  user.registry.log("Verify complete.",notify=True)
+  trimUnneededTempRepos(op.user)
+  rebuildBinDir(op.user)
+  cleanupRuntimeDirs(op.user)
+  cleanUpRuntimeCache(op.user)
+  cleanUpAfterImproperlyTerminatedServices(op.user)
+  registry.log("Verify complete.",notify=True)
 
-def approvePermissions(user,subusers,permissionsAccepter):
+def approvePermissions(op):
   subusersWhosPermissionsFailedToParse = []
   exceptions = []
-  for subuser in subusers:
+  for subuser in op.subusers:
     if subuser.locked:
       continue
     try:
@@ -118,7 +120,7 @@ def approvePermissions(user,subusers,permissionsAccepter):
     try:
       oldDefaults = subuser.getPermissionsTemplate()
       newDefaults = subuser.imageSource.permissions
-      permissionsAccepter.accept(subuser=subuser,oldDefaults=oldDefaults,newDefaults=newDefaults,userApproved=userApproved)
+      op.permissionsAccepter.accept(subuser=subuser,oldDefaults=oldDefaults,newDefaults=newDefaults,userApproved=userApproved)
       subuser.getPermissionsTemplate().update(subuser.imageSource.permissions)
       subuser.getPermissionsTemplate().save()
     except SyntaxError as e:

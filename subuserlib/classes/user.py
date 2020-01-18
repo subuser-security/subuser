@@ -16,6 +16,7 @@ from subuserlib.classes import config
 from subuserlib.classes import installedImages
 from subuserlib.classes.docker import dockerDaemon
 from subuserlib.classes.endUser import EndUser
+from subuserlib.classes.operation import Operation
 from subuserlib import test
 from subuserlib import paths
 import subuserlib.lock
@@ -37,6 +38,7 @@ class User(object):
     self.__installedImages = None
     self.__dockerDaemon = None
     self.__runtimeCache = None
+    self.__operation = None
     self._has_lock = _locked
     self.name = name
     if homeDir:
@@ -99,6 +101,15 @@ class User(object):
     if self.__dockerDaemon == None:
       self.__dockerDaemon = dockerDaemon.DockerDaemon(self)
     return self.__dockerDaemon
+
+  @property
+  def operation(self):
+    """
+    Get the :doc:`Operation <operation>` object.  This object contains runtime data relating to the current "operation". This includes image building configuration data as well as UX options.
+    """
+    if self.__operation == None:
+      self.__operation = Operation(self)
+    return self.__operation
 
 class LockedUser():
   def __init__(self,name=None,homeDir=None):

@@ -66,5 +66,5 @@ def removeOldImages(user,dryrun=False,yes=False,sourceRepo=None,imageSourceName=
           didSomething = True
         except dockerDaemon.ContainerDependsOnImageException:
           nextRound.append(installedImage)
-    subuserlib.verify.verify(user)
+    subuserlib.verify.verify(user.operation)
     user.registry.commit()

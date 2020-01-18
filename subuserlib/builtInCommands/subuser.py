@@ -70,6 +70,7 @@ Change which image the subuser is associated with.
   parser.add_option("--home-dir",dest="homeDir",default=None,help="When adding a subuser set its home dir on the host to a non-default location.")
   parser.add_option("--accept",dest="accept",action="store_true",default=False,help="Accept permissions without asking.")
   parser.add_option("--prompt",dest="prompt",action="store_true",default=False,help="Prompt before installing new images.")
+  parser.add_option("--no-build",dest="build",action="store_false",default=True,help="Don't actually build images")
   parser.add_option("--force-internal",dest="forceInternal",action="store_true",default=False,help="Force a subuser who's name starts with ! to be added, despite the fact that ! marks interal subusers and is normally forbidden.")
   return parser.parse_args(args=sysargs)
 
@@ -87,50 +88,63 @@ def runCommand(sysargs):
   lockedUser = LockedUser()
   with lockedUser as user:
     user.registry.commit_message = " ".join(["subuser","subuser"]+sysargs)
-    permissionsAccepter = AcceptPermissionsAtCLI(user,alwaysAccept = options.accept)
-    if action == "add" or action == "change-image":
+    user.operation.permissionsAccepter.alwaysAccept = options.accept
+    user.operation.build = options.build
+    user.operation.prompt = options.prompt
+    if action in ("add", "change-image"):
       if not len(args) == 3:
         sys.exit("Wrong number of arguments to add.  See `subuser subuser -h`.")
       subuserName = args[1]
       imageSourceId = args[2]
+
       if action == "add":
+        if subuserName.startswith("!") and not options.forceInternal:
+          sys.exit("A subusers may not have names beginning with ! as these names are reserved for internal use.")
         if options.homeDir is not None:
           homeDir = os.path.expanduser(options.homeDir)
         else:
           homeDir = None
-        subuserlib.subuser.add(user,subuserName,imageSourceId,permissionsAccepter=permissionsAccepter,prompt=options.prompt,forceInternal=options.forceInternal,homeDir=homeDir)
+        try:
+          subuserlib.subuser.add(user,subuserName,imageSourceId,homeDir=homeDir)
+        except subuserlib.resolve.ResolutionError as re:
+          sys.exit(re)
+
       elif action == "change-image":
-        subuserlib.subuser.changeImage(user,subuserName,imageSourceId,permissionsAccepter=permissionsAccepter,prompt=options.prompt)
+        try:
+          user.operation.loadSubusersByName([subuserName])
+        except LookupError as ke:
+          sys.exit(ke)
+        subuserlib.subuser.changeImage(user,imageSourceId)
+
     else:
       subuserNames = list(set(args[1:]))
-      subusers = []
       if not options.prefix is None:
         allSubuserNames = user.registry.subusers.keys()
         subuserNames.extend([subuserName for subuserName in allSubuserNames if subuserName.startswith(options.prefix)])
-      for subuserName in subuserNames:
-        try:
-          subusers.append(user.registry.subusers[subuserName])
-        except KeyError:
-          sys.exit("Subuser "+subuserName+" does not exist. Use --help for help.")
-      if subusers == []:
+      try:
+        user.operation.loadSubusersByName(subuserNames)
+      except LookupError as le:
+          sys.exit(str(le))
+      if user.operation.subusers == []:
         sys.exit("No subusers specified. Use --help for help.")
+
       if action == "remove":
-          subuserlib.subuser.remove(user,subusers)
+          subuserlib.subuser.remove(user.operation)
           sys.exit()
-      addAndRemoveCommands = [("add-to-path","remove-from-path",subuserlib.subuser.setExecutableShortcutInstalled),("expose-entrypoints","hide-entrypoints",lambda user,subusers,install:subuserlib.subuser.setEntrypointsExposed(user,subusers,install,permissionsAccepter))]
+
+      addAndRemoveCommands = [("add-to-path","remove-from-path",subuserlib.subuser.setExecutableShortcutInstalled)
+                             ,("expose-entrypoints","hide-entrypoints",lambda operation,install:subuserlib.subuser.setEntrypointsExposed(operation,install))]
       for add,remove,command in addAndRemoveCommands:
-        if action == add or action == remove:
-          if action == add:
-            install = True
-          elif action == remove:
-            install = False
-          command(user,subusers,install)
+        if action in (add,remove):
+          install = True if action == add else False
+          command(user.operation,install)
           sys.exit()
+
       if action == "edit-permissions":
         user.registry.logChange("Edit the permissions of:"+ " ".join(subuserNames))
-        for subuser in subusers:
+        for subuser in user.operation.subusers:
           subuser.editPermissionsCLI()
-        subuserlib.verify.verify(user,subusers=subusers,permissionsAccepter=permissionsAccepter,prompt=options.prompt)
+        subuserlib.verify.verify(user.operation)
         user.registry.commit()
         sys.exit()
       sys.exit("Action "+args[0]+" does not exist. Try:\n subuser subuser --help")

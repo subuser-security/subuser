@@ -30,7 +30,9 @@ def runCommand(realArgs):
   lockedUser = LockedUser()
   with lockedUser as user:
     user.registry.commit_message = " ".join(["subuser","repair"]+realArgs)
-    permissionsAccepter = AcceptPermissionsAtCLI(user,alwaysAccept = options.accept)
-    subusers = user.registry.subusers.getSortedList()
-    subuserlib.verify.verify(user,subusers=subusers,permissionsAccepter=permissionsAccepter,prompt=options.prompt,build=options.build)
+    user.operation.permissionsAccepter.alwaysAccept = options.accept
+    user.operation.subusers = user.registry.subusers.getSortedList()
+    user.operation.promt = options.prompt
+    user.operation.build = options.build
+    subuserlib.verify.verify(user.operation)
     user.registry.commit()

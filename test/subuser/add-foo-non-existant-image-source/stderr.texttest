@@ -1,3 +1,4 @@
-Cloning into '/home/timothy/.texttest/tmp/texttest.05Mar191334.2622/texttest/subuser/add-foo-non-existant-image-source/.subuser/repositories/default'...
+Cloning into '/home/subuser/.texttest/tmp/texttest.30Oct205728.13075/texttest/subuser/add-foo-non-existant-image-source/.subuser/repositories/default'...
 Could not add subuser.  The image source non-existant-image-source does not exist.
-'non-existant-image-source could not be found in the repository. The following images exist in the repository: "foo" "subuser-internal-xpra-client" "subuser-internal-xpra-server"'
+non-existant-image-source could not be found in repository 'default'. The following images exist in the repository:
+ "foo" "subuser-internal-xpra-client" "subuser-internal-xpra-server"

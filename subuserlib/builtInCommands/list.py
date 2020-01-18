@@ -57,21 +57,16 @@ def runCommand(sysargs):
   if len(args)==0:
     sys.exit("Nothing to list. Issue this command with the -h argument for help.")
   user = subuserlib.classes.user.User()
+
   if args[0] == 'available':
-    if len(args) > 1:
-      reposToList = args[1:]
-    else:
-      reposToList = user.registry.repositories.keys()
+    reposToList = args[1:] if len(args) > 1 else user.registry.repositories.keys()
     availableDict = {}
     for repoIdentifier in reposToList:
       try:
         repoIdentifier = repoIdentifier.decode("utf-8")
       except AttributeError:
         pass
-      if repoIdentifier in user.registry.repositories:
-        temp = False
-      else:
-        temp = True
+      temp = not repoIdentifier in user.registry.repositories
       try:
         repository = subuserlib.resolve.resolveRepository(user,repoIdentifier)
       except subuserlib.resolve.ResolutionError as e:
@@ -103,6 +98,7 @@ def runCommand(sysargs):
     if options.json:
       subuserlib.print.printWithoutCrashing(json.dumps(availableDict,indent=1,separators=(",",": ")))
     sys.exit()
+
   elif args[0] == 'subusers' or args[0] == 'subuser':
     if args[0] == 'subuser':
       options.long = True
@@ -125,14 +121,17 @@ def runCommand(sysargs):
       sys.exit()
     if options.long:
       subuserlib.print.printWithoutCrashing("The following subusers are registered.")
-    for name in subusersToList:
-      if not name in user.registry.subusers:
-        sys.exit("Subuser "+name+" does not exist.")
-      if options.internal or not name.startswith("!"):
+    try:
+      user.operation.loadSubusersByName(subusersToList)
+    except LookupError as ke:
+      sys.exit(ke)
+    for subuser in user.operation.subusers:
+      if options.internal or not subuser.internal:
         if not options.long:
-          subuserlib.print.printWithoutCrashing(name)
+          subuserlib.print.printWithoutCrashing(subuser.name)
         else:
-          user.registry.subusers[name].describe()
+          subuser.describe()
+
   elif args[0] == 'installed-images':
     if options.json:
       subuserlib.print.printWithoutCrashing(json.dumps(user.installedImages.serializeToDict(),indent=1,separators=(",",": ")))
@@ -151,6 +150,7 @@ def runCommand(sysargs):
       else:
         subuserlib.print.printWithoutCrashing("------------------")
         installedImage.describe()
+
   elif args[0] == 'image':
     if len(args) > 1:
       imagesToList = args[1:]
@@ -163,6 +163,7 @@ def runCommand(sysargs):
         subuserlib.print.printWithoutCrashing(json.dumps(imageSource.serializeToDict(),indent=1,separators=(",",": ")))
       else:
         imageSource.describe()
+
   elif args[0] == 'repositories':
     if options.json:
       subuserlib.print.printWithoutCrashing(json.dumps(user.registry.repositories.serializeToDict(),indent=1,separators=(",",": ")))
@@ -173,5 +174,6 @@ def runCommand(sysargs):
       else:
         repo.describe()
         subuserlib.print.printWithoutCrashing("")
+
   else:
     sys.exit(args[0] + " cannot be listed. Option unrecognized. Use --help for help.")

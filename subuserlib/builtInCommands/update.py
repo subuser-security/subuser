@@ -8,7 +8,6 @@ import subuserlib.commandLineArguments
 from subuserlib.classes.user import LockedUser
 import subuserlib.update
 import subuserlib.profile
-from subuserlib.classes.permissionsAccepters.acceptPermissionsAtCLI import AcceptPermissionsAtCLI
 
 #####################################################################################
 
@@ -54,42 +53,42 @@ def runCommand(realArgs):
   lockedUser = LockedUser()
   with lockedUser as user:
     user.registry.commit_message = " ".join(["subuser","update"]+realArgs)
-    permissionsAccepter = AcceptPermissionsAtCLI(user,alwaysAccept = options.accept)
+    operation = user.operation
+    operation.permissionsAccepter.alwaysAccept = options.accept
+    operation.prompt = options.prompt
+    operation.useCache = options.useCache
     if ["all"] == args:
-      subuserlib.update.all(user,permissionsAccepter=permissionsAccepter,prompt=options.prompt,useCache=options.useCache)
+      operation.subusers = list(user.registry.subusers.values())
+      subuserlib.update.run(operation)
     elif "subusers" == args[0]:
       subuserNamesToUpdate = args[1:]
-      subusersToUpdate = []
-      for subuserName in subuserNamesToUpdate:
-        try:
-          subusersToUpdate.append(user.registry.subusers[subuserName])
-        except KeyError:
-          sys.exit("Subuser "+subuserName+" does not exist. Use --help for help.")
-      if subusersToUpdate:
-        subuserlib.update.subusers(user,subusers=subusersToUpdate,permissionsAccepter=permissionsAccepter,prompt=options.prompt,useCache=options.useCache)
+      try:
+        operation.loadSubusersByName(subuserNamesToUpdate)
+      except LookupError as le:
+        sys.exit(le)
+      if operation.subusers:
+        subuserlib.update.run(operation)
       else:
         sys.exit("You did not specify any subusers to be updated. Use --help for help. Exiting...")
     elif "lock-subuser-to" == args[0]:
-      try:
-        subuserName = args[1]
-        commit = args[2]
-      except IndexError:
+      if len(args) < 3:      
         sys.exit("Wrong number of arguments.  Expected a subuser name and a commit.  Try running\nsubuser update --help\n for more info.")
+      subuserNames = args[1:-1]
+      commit = args[-1]
       try:
-        subuser = user.registry.subusers[subuserName]
-      except KeyError:
-        sys.exit("Subuser "+subuserName+" does not exist and therefore cannot be locked. Use --help for help.")
-      subuserlib.update.lockSubuser(user,subuser=subuser,commit=commit)
+        operation.loadSubusersByName(subuserNames)
+      except LookupError as le:
+        sys.exit(le)
+      subuserlib.update.lockSubusers(user.operation,commit=commit)
     elif "unlock-subuser" == args[0]:
-      try:
-        subuserName = args[1]
-      except IndexError:
+      if len(args) < 2:
         sys.exit("Wrong number of arguments.  Expected a subuser's name. Try running\nsubuser update --help\nfor more information.")
+      subuserNames = args[1:]
       try:
-        subuser = user.registry.subusers[subuserName]
-      except KeyError:
-        sys.exit("Subuser "+subuserName+" does not exist. Cannot lock. Use --help for help.")
-      subuserlib.update.unlockSubuser(user,subuser=subuser,permissionsAccepter=permissionsAccepter,prompt=options.prompt)
+        operation.loadSubusersByName(subuserNames)
+      except LookupError as le:
+        sys.exit(le)
+      subuserlib.update.unlockSubusers(operation)
     elif len(args) == 1:
       sys.exit(" ".join(args) + " is not a valid update subcommand. Please use subuser update -h for help.")
     else:

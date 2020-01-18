@@ -91,6 +91,13 @@ class Subuser(UserOwnedObject, Describable):
     return self.__entryPointsExposedThisRun
 
   @property
+  def internal(self):
+    """
+    Is this a non-user created subuser?
+    """
+    return self.name.startswith("!")
+
+  @property
   def permissionsDir(self):
     return os.path.join(self.user.config["registry-dir"],"permissions",self.name)
 

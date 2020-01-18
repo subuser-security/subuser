@@ -20,5 +20,5 @@ def checkoutNoCommit(user,commit):
 def rollback(user,commit):
   checkoutNoCommit(user,commit)
   user.registry.logChange("Rolling back to commit: "+commit)
-  subuserlib.verify.verify(user)
+  subuserlib.verify.verify(user.operation)
   user.registry.commit()

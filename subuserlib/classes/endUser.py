@@ -122,17 +122,20 @@ class EndUser(UserOwnedObject,object):
     process = subprocess.Popen(self.getSudoArgs()+command,cwd=cwd)
     (stdout,stderr) = process.communicate()
     return process.returncode
-  
+
   #@timeit
-  def callCollectOutput(self,args,cwd=None):
+  def callCollectOutput(self,args,cwd=None,decode='utf-8'):
     """
     Run the command and return a tuple with: (returncode,the output to stdout as a string,stderr as a string).
     """
     args = self.getSudoArgs() + args
-    #print(args)
     process = subprocess.Popen(args,stdout=subprocess.PIPE,stderr=subprocess.PIPE,cwd=cwd)
     (stdout,stderr) = process.communicate()
-    return (process.returncode,stdout.decode("utf-8"),stderr.decode("utf-8"))
+    if decode:
+        return (process.returncode,stdout.decode("utf-8"),stderr.decode("utf-8"))
+    else:
+        return (process.returncode,stdout,stderr)
+
 
   def Popen(self,command,*args,**kwargs):
     return subprocess.Popen(self.getSudoArgs()+command,*args,**kwargs)
