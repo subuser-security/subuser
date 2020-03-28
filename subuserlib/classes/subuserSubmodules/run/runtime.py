@@ -154,6 +154,11 @@ $ subuser repair
       ("stateful-home", lambda p : ["--volume="+self.subuser.homeDirOnHost+":"+self.subuser.dockersideHome+":rw","-e","HOME="+self.subuser.dockersideHome] if p else ["-e","HOME="+self.subuser.dockersideHome]),
       ("inherit-locale", lambda p : self.passOnEnvVar("LANG")+self.passOnEnvVar("LANGUAGE") if p else []),
       ("inherit-timezone", lambda p : self.passOnEnvVar("TZ")+["--volume=/etc/localtime:/etc/localtime:ro"] if p else [])])
+
+    if sys.platform == "darwin":
+      # Docker for desktop doesnt as deafult allow mounting of files under /etc
+      bcpd.pop("inherit-timezone", None)
+
     flags = []
     for permission,flagGenerator in bcpd.items():
       if type(bcps) == collections.OrderedDict and permission in bcps:

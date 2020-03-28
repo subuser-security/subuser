@@ -42,7 +42,8 @@ def getAndVerifyExecutable():
     sys.exit("""Error: Docker is not installed.
 
 For installation instructions see <https://www.docker.io/gettingstarted/#h_installation>""")
-  if not os.path.exists("/var/run/docker.pid"):
+
+  if (not os.path.exists("/var/run/docker.pid")) and (not os.access("/var/run/docker.sock", os.R_OK)):
     sys.exit("""Error: Docker is not running.  You can launch it as root with:
 
 # docker -d
