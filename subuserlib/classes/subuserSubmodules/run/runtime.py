@@ -149,15 +149,15 @@ $ subuser repair
     else:
       return []
 
-  def getBasicCommonPermissionFlags(self,bcps):
-    bcpd = collections.OrderedDict([
-      ("stateful-home", lambda p : ["--volume="+self.subuser.homeDirOnHost+":"+self.subuser.dockersideHome+":rw","-e","HOME="+self.subuser.dockersideHome] if p else ["-e","HOME="+self.subuser.dockersideHome]),
-      ("inherit-locale", lambda p : self.passOnEnvVar("LANG")+self.passOnEnvVar("LANGUAGE") if p else []),
-      ("inherit-timezone", lambda p : self.passOnEnvVar("TZ")+["--volume=/etc/localtime:/etc/localtime:ro"] if p else [])])
+  def getBasicCommonPermissionDict(self):
+    return collections.OrderedDict([
+        ("stateful-home", lambda p : ["--volume="+self.subuser.homeDirOnHost+":"+self.subuser.dockersideHome+":rw","-e","HOME="+self.subuser.dockersideHome] if p else ["-e","HOME="+self.subuser.dockersideHome]),
+        ("inherit-locale", lambda p : self.passOnEnvVar("LANG")+self.passOnEnvVar("LANGUAGE") if p else []),
+        ("inherit-timezone", lambda p : self.passOnEnvVar("TZ")+["--volume=/etc/localtime:/etc/localtime:ro"] if p else [])
+      ])
 
-    if sys.platform == "darwin":
-      # Docker for desktop doesnt as deafult allow mounting of files under /etc
-      bcpd.pop("inherit-timezone", None)
+  def getBasicCommonPermissionFlags(self,bcps):
+    bcpd = self.getBasicCommonPermissionDict()
 
     flags = []
     for permission,flagGenerator in bcpd.items():
@@ -355,3 +355,10 @@ $ subuser repair
     return reallyRun()
     #except KeyboardInterrupt:
     #  sys.exit(0)
+
+class DarwinRuntime(Runtime):
+  def getBasicCommonPermissionDict(self):
+    perms = super().getBasicCommonPermissionDict()
+    if perms.pop("inherit-timezone", True):
+      self.user.registry.log("Warning: inherit-timezone is set, but not supported on darwin.",verbosityLevel=4)
+    return perms

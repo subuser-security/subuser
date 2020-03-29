@@ -16,7 +16,7 @@ import subuserlib.permissions
 from subuserlib.classes.userOwnedObject import UserOwnedObject
 from subuserlib.classes.permissions import Permissions
 from subuserlib.classes.describable import Describable
-from subuserlib.classes.subuserSubmodules.run.runtime import Runtime
+from subuserlib.classes.subuserSubmodules.run.runtime import Runtime, DarwinRuntime
 from subuserlib.classes.subuserSubmodules.run.x11Bridge import X11Bridge
 from subuserlib.classes.subuserSubmodules.run.runReadyImage import RunReadyImage
 from subuserlib.classes.subuserSubmodules.run.runtimeCache import RuntimeCache
@@ -204,7 +204,10 @@ Please file a bug report explaining how you got here.\n"""+ str(e))
     Returns the subuser's Runtime object for it's current permissions, creating it if necessary.
     """
     if not self.__runtime:
-      self.__runtime = Runtime(self.user,subuser=self,environment=environment,extraDockerFlags=extraDockerFlags,entrypoint=entrypoint)
+      runtime_class = Runtime
+      if sys.platform == 'darwin':
+        runtime_class = DarwinRuntime
+      self.__runtime = runtime_class(self.user,subuser=self,environment=environment,extraDockerFlags=extraDockerFlags,entrypoint=entrypoint)
     return self.__runtime
 
   def getRuntimeCache(self):
