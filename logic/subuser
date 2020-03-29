@@ -30,23 +30,30 @@ if not command:
 
 if not test.testing:
   username = getpass.getuser()
-  if not os.getuid() == 0:
-    try:
-      dockergroupmembers = grp.getgrnam("docker").gr_mem
-    except KeyError:
+
+  if sys.platform.startswith("linux"):
+    if not os.getuid() == 0:
       try:
-        dockergroupmembers = grp.getgrnam("dockerroot").gr_mem
+        dockergroupmembers = grp.getgrnam("docker").gr_mem
       except KeyError:
-        dockergroupmembers = []
-    if not username in dockergroupmembers:
-      try:
-        sudogroupmembers = grp.getgrnam("sudo").gr_mem
-      except KeyError:
-        sudogroupmembers = []
-      if not username in sudogroupmembers:
-        sys.exit("""Error: You are not a member of the docker group nor the sudoers group.
-  
-  To learn how to become a member of the docker group please watch this video: <http://www.youtube.com/watch?v=ahgRx5U4V7E>""")
-      else:
-        sys.exit(subprocess.call(["sudo","-E",sys.argv[0]]+sys.argv[1:]))
+        try:
+          dockergroupmembers = grp.getgrnam("dockerroot").gr_mem
+        except KeyError:
+          dockergroupmembers = []
+      if not username in dockergroupmembers:
+        try:
+          sudogroupmembers = grp.getgrnam("sudo").gr_mem
+        except KeyError:
+          sudogroupmembers = []
+        if not username in sudogroupmembers:
+          sys.exit("""Error: You are not a member of the docker group nor the sudoers group.
+    
+    To learn how to become a member of the docker group please watch this video: <http://www.youtube.com/watch?v=ahgRx5U4V7E>""")
+        else:
+          sys.exit(subprocess.call(["sudo","-E",sys.argv[0]]+sys.argv[1:]))
+  elif sys.platform == 'darwin':
+    pass
+  else:
+    sys.exit("Error: Unsupported platform")
+
 command(sys.argv[2:])

@@ -55,6 +55,17 @@ System Requirements
 
  * sudo (if you don't want to become a member of the docker group)
 
+OS Requirements
+---------------
+
+ * Linux: Everything supported
+
+ * OSX with docker for desktop: Limited support
+
+   * `inherit-timezone` is ignored
+   * xpra (graphical apps) doesnt work
+   * Probaly other issues 
+
 Install with pip3: Stable version
 --------------------------------
 

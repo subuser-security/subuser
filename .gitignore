@@ -14,3 +14,4 @@
 .subuser-dev
 /code-reader/
 test/mock-home
+.mypy_cache
