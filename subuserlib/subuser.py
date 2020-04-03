@@ -43,7 +43,7 @@ def remove(operation):
     try:
       subuserHome = subuser.homeDirOnHost
       if subuserHome and os.path.exists(subuserHome):
-        registry.logChange(" If you wish to remove the subusers home directory, issule the command $ rm -r "+subuserHome)
+        registry.logChange(" If you wish to remove the subusers home directory, issue the command $ rm -r "+subuserHome)
     except:
       pass
     registry.logChange(" If you wish to remove the subusers image, issue the command $ subuser remove-old-images")
