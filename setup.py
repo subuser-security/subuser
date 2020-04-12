@@ -31,5 +31,6 @@ setuptools.setup(
   packages=setuptools.find_packages(),
   package_data={'subuserlib': ['data/*']},
   scripts=commands,
+  setup_requires=['wheel'],
   include_package_data=True,
   zip_safe=False)
