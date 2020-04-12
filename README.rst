@@ -6,6 +6,9 @@ Subuser - Securing the Linux desktop with Docker
 
 `Visit us at subuser.org <http://subuser.org>`_
 
+.. image:: https://github.com/subuser-security/subuser/workflows/ci/badge.svg?branch=master
+    :target: https://github.com/subuser-security/subuser/actions?query=workflow%3Aci+branch%3Amaster
+
 As free software developers we like to share.  We surf the web and discover new code.  We are eager to try it out.  We live out an orgy of love and trust, unafraid that some code we cloned from Git might be faulty or malicious.  We live in the 60s, carefree hippies.
 
 This is utopia.
