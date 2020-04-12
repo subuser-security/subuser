@@ -18,4 +18,4 @@ jobs:
         python-version: 3.8
     - name: Test
       run: |
-        python setup.py bdist_wheel
+        python setup.py test bdist_wheel
