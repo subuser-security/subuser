@@ -1,8 +1,8 @@
 Subuser - Securing the Linux desktop with Docker
 -------------------------------------------------
 
-.. image:: http://subuser.org/_static/images/subuser-logo.png
-   :target: http://subuser.org
+.. image:: https://avatars0.githubusercontent.com/u/6707097?s=200&v=4
+   :target: https://subuser.org
 
 `Visit us at subuser.org <http://subuser.org>`_
 
