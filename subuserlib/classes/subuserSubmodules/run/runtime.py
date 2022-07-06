@@ -70,7 +70,7 @@ $ subuser repair
 
   def getGraphicsCardDevices(self):
     try:
-      return list(filter(None,[device if not os.path.isdir(os.path.join("/dev/dri", device)) else None for device in os.listdir("/dev/dri")]))
+      return [device for device in os.listdir("/dev/dri") if not os.path.isdir(os.path.join("/dev/dri", device))]
     except FileNotFoundError as e:
       if subuserlib.test.testing:
         return ["card0","controlD64"]
