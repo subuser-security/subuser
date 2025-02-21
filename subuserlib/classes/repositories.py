@@ -16,7 +16,7 @@ from subuserlib.classes.userOwnedObject import UserOwnedObject
 from subuserlib.classes.repository import Repository
 import subuserlib.loadMultiFallbackJsonConfigFile
 
-class Repositories(collections.Mapping,UserOwnedObject,FileBackedObject):
+class Repositories(collections.abc.Mapping,UserOwnedObject,FileBackedObject):
   def __init__(self,user):
     self.systemRepositories = {} # TODO rename and document these variables
     self.userRepositories = {}
