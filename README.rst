@@ -4,7 +4,7 @@ Subuser - Securing the Linux desktop with Docker
 .. image:: https://avatars0.githubusercontent.com/u/6707097?s=200&v=4
    :target: https://subuser.org
 
-`Visit us at subuser.org <http://subuser.org>`_
+`Visit us at subuser.org <https://subuser.org>`_
 
 .. image:: https://github.com/subuser-security/subuser/workflows/ci/badge.svg?branch=master
     :target: https://github.com/subuser-security/subuser/actions?query=workflow%3Aci+branch%3Amaster
@@ -26,7 +26,7 @@ Right now I'm editing this file in ``vim``.  ``vim`` is not installed on my comp
 
     $ vim README.md
 
-Subuser turns a docker container into a normal program.  But this program is not fully privileged.  It can only access the directory from which it was called, `not my entire home dir <https://xkcd.com/1200/>`_.  Each subuser is assigned a specific set of permissions, just like in Android.  You can see an example ``permissions.json`` file bellow.
+Subuser turns a Docker container into a normal program.  But this program is not fully privileged.  It can only access the directory from which it was called, `not my entire home dir <https://xkcd.com/1200/>`_.  Each subuser is assigned a specific set of permissions, just like in Android.  You can see an example ``permissions.json`` file below.
 
 ::
 
@@ -54,7 +54,7 @@ System Requirements
 
  * Git
 
- * X11 and the xauth utility (You almost certainly have this)
+ * X11 - X.Org X server - and the xauth utility (You almost certainly have this)
 
  * sudo (if you don't want to become a member of the docker group)
 
@@ -80,11 +80,13 @@ Install with pip3: Stable version
 
 Find ``sudo`` and add your username to the end of the line.
 
-2. Install subuser from pip3.
+2. Install subuser from pip3.  In a virtual environment if Python 3 is managed by Debian/Ubuntu distribution packaging.
 
   $ sudo pip3 install subuser
 
 3. Add ``~/.subuser/bin`` to your path by adding the line ``PATH=$HOME/.subuser/bin:$PATH`` to the end of your ``.bashrc`` file.
+
+  $ echo -n -e '\nPATH=$HOME/.subuser/bin:$PATH' >> ~/.bashrc
 
 4. Log out and then back in again.
 
@@ -104,10 +106,12 @@ Install from git: Development version
 
 3. Add ``subuser/logic`` and ``~/.subuser/bin`` to your path by adding the line ``PATH=$HOME/subuser/logic:$HOME/.subuser/bin:$PATH`` to the end of your ``.bashrc`` file.
 
+  $ echo -n -e '\nPATH=$HOME/subuser/logic:$HOME/.subuser/bin:$PATH' >> ~/.bashrc
+
 .. note:: You will need to change the path to ``subuser/logic`` to refer to the location to which you downloaded subuser.
 
 4. Log out and then back in again.
 
 5. Done!
 
-To learn more and read the full manual please visit `subuser.org <http://subuser.org>`_
+To learn more and read the full manual please visit `subuser.org <https://subuser.org>`_
