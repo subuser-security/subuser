@@ -86,7 +86,7 @@ Find ``sudo`` and add your username to the end of the line.
 
 3. Add ``~/.subuser/bin`` to your path by adding the line ``PATH=$HOME/.subuser/bin:$PATH`` to the end of your ``.bashrc`` file.
 
-  $ echo -n -e '\nPATH=$HOME/.subuser/bin:$PATH' >> ~/.bashrc
+  $ echo -n -e '\\nPATH=$HOME/.subuser/bin:$PATH' >> ~/.bashrc
 
 4. Log out and then back in again.
 
@@ -106,7 +106,7 @@ Install from git: Development version
 
 3. Add ``subuser/logic`` and ``~/.subuser/bin`` to your path by adding the line ``PATH=$HOME/subuser/logic:$HOME/.subuser/bin:$PATH`` to the end of your ``.bashrc`` file.
 
-  $ echo -n -e '\nPATH=$HOME/subuser/logic:$HOME/.subuser/bin:$PATH' >> ~/.bashrc
+  $ echo -n -e '\\nPATH=$HOME/subuser/logic:$HOME/.subuser/bin:$PATH' >> ~/.bashrc
 
 .. note:: You will need to change the path to ``subuser/logic`` to refer to the location to which you downloaded subuser.
 
