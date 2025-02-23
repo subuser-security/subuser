@@ -65,28 +65,32 @@ OS Requirements
 
  * OSX with docker for desktop: Limited support
 
-   * `inherit-timezone` is ignored
-   * xpra (graphical apps) doesnt work
-   * Probaly other issues 
+   * ``inherit-timezone`` is ignored
+   * xpra (graphical apps) doesn't work
+   * Probably other issues 
 
 Install with pip3: Stable version
 --------------------------------
 
-1. Add yourself to the sudo group (or the docker group).
+1. Add yourself to the ``sudo`` group (or the ``docker`` group).
 
-::
+   ::
 
-   $ sudo nano /etc/group
+       $ sudo nano /etc/group
 
-Find ``sudo`` and add your username to the end of the line.
+   Find ``sudo`` and add your username to the end of the line.
 
 2. Install subuser from pip3.  In a virtual environment if Python 3 is managed by Debian/Ubuntu distribution packaging.
 
-  $ sudo pip3 install subuser
+   ::
+
+       $ sudo pip3 install subuser
 
 3. Add ``~/.subuser/bin`` to your path by adding the line ``PATH=$HOME/.subuser/bin:$PATH`` to the end of your ``.bashrc`` file.
 
-  $ echo -n -e '\\nPATH=$HOME/.subuser/bin:$PATH' >> ~/.bashrc
+   ::
+
+       $ echo -n -e '\nPATH=$HOME/.subuser/bin:$PATH' >> ~/.bashrc
 
 4. Log out and then back in again.
 
@@ -95,23 +99,23 @@ Find ``sudo`` and add your username to the end of the line.
 Install from git: Development version
 -------------------------------------
 
-1. Add yourself to the `sudo` group (this is not necesary if you are already a member of the docker group).
+1. Add yourself to the ``sudo`` group (this is not necessary if you are already a member of the ``docker`` group).
 
-2. Download the subuser repository
+2. Download the subuser repository::
 
-  ::
-
-  $ cd
-  $ git clone https://github.com/subuser-security/subuser
+      $ cd
+      $ git clone https://github.com/subuser-security/subuser
 
 3. Add ``subuser/logic`` and ``~/.subuser/bin`` to your path by adding the line ``PATH=$HOME/subuser/logic:$HOME/.subuser/bin:$PATH`` to the end of your ``.bashrc`` file.
 
-  $ echo -n -e '\\nPATH=$HOME/subuser/logic:$HOME/.subuser/bin:$PATH' >> ~/.bashrc
+   ::
 
-.. note:: You will need to change the path to ``subuser/logic`` to refer to the location to which you downloaded subuser.
+       $ echo -n -e '\nPATH=$HOME/subuser/logic:$HOME/.subuser/bin:$PATH' >> ~/.bashrc
+
+   .. note:: You will need to change the path to ``subuser/logic`` to refer to the location to which you downloaded subuser.
 
 4. Log out and then back in again.
 
 5. Done!
 
-To learn more and read the full manual please visit `subuser.org <https://subuser.org>`_
+To learn more and read the full manual please visit `subuser.org <https://subuser.org>`_.
